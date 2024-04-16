@@ -1,0 +1,19 @@
+<!DOCTYPE RCC><RCC version="1.0">
+    <qresource prefix="imagenes">
+        <file>actualizar-alumno.png</file>
+        <file>asistencia-alumno.png</file>
+        <file>asistencia.png</file>
+        <file>balance.png</file>
+        <file>buscar-alumno.png</file>
+        <file>disciplina.png</file>
+        <file>eliminar-alumno.png</file>
+        <file>empleado.png</file>
+        <file>excel.png</file>
+        <file>flecha-combo.png</file>
+        <file>hora.png</file>
+        <file>icono-QMessage.png</file>
+        <file>logo.png</file>
+        <file>registro-alumno.png</file>
+        <file>resumen.png</file>
+    </qresource>
+</RCC>
