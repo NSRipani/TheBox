@@ -65,7 +65,7 @@ class VentanaPrincipal(QMainWindow):
         registrar_button = QPushButton(" REGISTRAR", self)
         registrar_button.setStyleSheet(style.estilo)
         registrar_button.setCursor(Qt.CursorShape.PointingHandCursor)
-        registrar_button.setFixedSize(200, 60)
+        registrar_button.setFixedSize(200, 55)
         icon = QIcon("img/registro-alumno.png")
         registrar_button.setIcon(icon)
         registrar_button.setIconSize(QSize(25,25))
@@ -74,7 +74,7 @@ class VentanaPrincipal(QMainWindow):
         update_button = QPushButton(" ACTUALIZAR", self)
         update_button.setStyleSheet(style.estilo)
         update_button.setCursor(Qt.CursorShape.PointingHandCursor)
-        update_button.setFixedSize(200, 60)
+        update_button.setFixedSize(200, 55)
         icon2 = QIcon("img/actualizar-alumno.png")
         update_button.setIcon(icon2)
         update_button.setIconSize(QSize(25,25))
@@ -83,7 +83,7 @@ class VentanaPrincipal(QMainWindow):
         delete_button = QPushButton(" ELIMINAR", self)
         delete_button.setCursor(Qt.CursorShape.PointingHandCursor)
         delete_button.setStyleSheet(style.estilo)
-        delete_button.setFixedSize(200, 60)
+        delete_button.setFixedSize(200, 55)
         icon3 = QIcon("img/eliminar-alumno.png")
         delete_button.setIcon(icon3)
         delete_button.setIconSize(QSize(25,25))
@@ -92,11 +92,20 @@ class VentanaPrincipal(QMainWindow):
         actividad_button = QPushButton(" DISCIPLINA", self)
         actividad_button.setCursor(Qt.CursorShape.PointingHandCursor)
         actividad_button.setStyleSheet(style.estilo)
-        actividad_button.setFixedSize(200, 60)
+        actividad_button.setFixedSize(200, 55)
         icon4 = QIcon("img/disciplina.png")
         actividad_button.setIcon(icon4)
         actividad_button.setIconSize(QSize(25,25))
         actividad_button.clicked.connect(self.activity)
+        
+        pagos_button = QPushButton(" PAGOS", self)
+        pagos_button.setCursor(Qt.CursorShape.PointingHandCursor)
+        pagos_button.setStyleSheet(style.estilo)
+        pagos_button.setFixedSize(200, 55)
+        iconPagos = QIcon("img/cobrar.png")
+        pagos_button.setIcon(iconPagos)
+        pagos_button.setIconSize(QSize(40,40))
+        pagos_button.clicked.connect(self.pagos)
         
         balances_button = QPushButton(" BALANCES", self)
         balances_button.setCursor(Qt.CursorShape.PointingHandCursor)
@@ -104,13 +113,13 @@ class VentanaPrincipal(QMainWindow):
         icon5 = QIcon("img/balance.png")
         balances_button.setIcon(icon5)
         balances_button.setIconSize(QSize(30,30))
-        balances_button.setFixedSize(200, 60)
+        balances_button.setFixedSize(200, 55)
         balances_button.clicked.connect(self.balances)
         
         self.asistencia_button = QPushButton(" ASISTENCIA", self)
         self.asistencia_button.setCursor(Qt.CursorShape.PointingHandCursor)
         self.asistencia_button.setStyleSheet(style.estilo)
-        self.asistencia_button.setFixedSize(200, 60)
+        self.asistencia_button.setFixedSize(200, 55)
         icon6 = QIcon("img/asistencia-alumno.png")
         self.asistencia_button.setIcon(icon6)
         self.asistencia_button.setIconSize(QSize(25,25))
@@ -119,7 +128,7 @@ class VentanaPrincipal(QMainWindow):
         empleados_button = QPushButton(" EMPLEADOS", self)
         empleados_button.setCursor(Qt.CursorShape.PointingHandCursor)
         empleados_button.setStyleSheet(style.estilo)
-        empleados_button.setFixedSize(200, 60)
+        empleados_button.setFixedSize(200, 55)
         icon7 = QIcon("img/empleado.png")
         empleados_button.setIcon(icon7)
         empleados_button.setIconSize(QSize(25,25))
@@ -128,17 +137,17 @@ class VentanaPrincipal(QMainWindow):
         horas = QPushButton(" HORAS", self)
         horas.setCursor(Qt.CursorShape.PointingHandCursor)
         horas.setStyleSheet(style.estilo)
-        horas.setFixedSize(200, 60)
+        horas.setFixedSize(200, 55)
         icon7 = QIcon("img/hora.png")
         horas.setIcon(icon7)
         horas.setIconSize(QSize(25,25))
         horas.clicked.connect(self.horas)
         
-        gastos_button = QPushButton(" RESUMEN", self)
+        gastos_button = QPushButton(" CONTABILIDAD", self)
         gastos_button.setCursor(Qt.CursorShape.PointingHandCursor)
         gastos_button.setStyleSheet(style.estilo)
-        gastos_button.setFixedSize(200, 60)
-        icon8 = QIcon("img/resumen.png")
+        gastos_button.setFixedSize(200, 55)
+        icon8 = QIcon("img/contabilidad.png")
         gastos_button.setIcon(icon8)
         gastos_button.setIconSize(QSize(30,30))
         gastos_button.clicked.connect(self.registro_de_ingYegreso)
@@ -152,21 +161,23 @@ class VentanaPrincipal(QMainWindow):
         frame_layout.addWidget(logo_label)
         frame_layout.setAlignment(logo_label, Qt.AlignmentFlag.AlignHCenter)
         frame_layout.addWidget(registrar_button)
-        frame_layout.setSpacing(20)
+        frame_layout.setSpacing(15)
         frame_layout.addWidget(update_button)
-        frame_layout.setSpacing(20)
+        frame_layout.setSpacing(15)
         frame_layout.addWidget(delete_button)
-        frame_layout.setSpacing(20)
+        frame_layout.setSpacing(15)
         frame_layout.addWidget(actividad_button)
-        frame_layout.setSpacing(20)
+        frame_layout.setSpacing(15)
+        frame_layout.addWidget(pagos_button)
+        frame_layout.setSpacing(15)
         frame_layout.addWidget(balances_button)
-        frame_layout.setSpacing(20)
+        frame_layout.setSpacing(15)
         frame_layout.addWidget(self.asistencia_button)
-        frame_layout.setSpacing(20)
+        frame_layout.setSpacing(15)
         frame_layout.addWidget(empleados_button)
-        frame_layout.setSpacing(20)
+        frame_layout.setSpacing(15)
         frame_layout.addWidget(horas)
-        frame_layout.setSpacing(20)
+        frame_layout.setSpacing(15)
         frame_layout.addWidget(gastos_button)
         
         # Agregar el frame al QVBoxLayout
@@ -723,9 +734,12 @@ class VentanaPrincipal(QMainWindow):
         disciplina4 = QLabel('Disciplina:',comboActiv)
         disciplina4.setStyleSheet(style.label)
         disciplina4.setFixedWidth(100)
-        self.input_disciplina4 = QLineEdit(comboActiv)
+        self.input_disciplina4 = QComboBox(comboActiv)
         self.input_disciplina4.setStyleSheet(style.estilo_lineedit)
         self.input_disciplina4.setFixedWidth(200)
+        listaDisciplinas = ["- Elije una disciplina","Musculación","Cross Funcional","Funcional","Gap","Ritmos","Kids","Adultos","Stretching","Cardio"]
+        self.input_disciplina4.addItems(listaDisciplinas)
+        self.input_disciplina4.setStyleSheet(style.estilo_combo)
         layout_H9.addWidget(disciplina4)        # EN ESTA LINEA COMO LA SIGUIENTE, AGREGA LOS ALEMENTOS AL LAYOUT HORIZONTAL
         layout_H9.addWidget(self.input_disciplina4)
         
@@ -1820,9 +1834,12 @@ class VentanaPrincipal(QMainWindow):
     
     def activity(self):
         self.tab.setCurrentIndex(3)
-        
-    def balances(self):
+    
+    def pagos(self):
         self.tab.setCurrentIndex(4)
+    
+    def balances(self):
+        self.tab.setCurrentIndex(5)
         
         # FUNCION QUE VINCULA LA VENTANA DE ASISTENCIA
     def assistance(self):
@@ -1831,13 +1848,13 @@ class VentanaPrincipal(QMainWindow):
         self.boton.raise_()
         
     def empleados(self):
-        self.tab.setCurrentIndex(5)
+        self.tab.setCurrentIndex(6)
         
     def horas(self):
-        self.tab.setCurrentIndex(6)
+        self.tab.setCurrentIndex(7)
     
     def registro_de_ingYegreso(self):
-        self.tab.setCurrentIndex(7)
+        self.tab.setCurrentIndex(8)
                
     def guardar(self):
         nombre1 = self.input_nombre1.text().capitalize().title()
@@ -1886,6 +1903,10 @@ class VentanaPrincipal(QMainWindow):
                 values = (nombre1, apellido1, dni, sexo, edad, celu, fecha)
                 cursor.execute(query, values)
                 db.commit()
+                
+                # Obtener el ID del nuevo usuario
+                cursor.execute("SELECT LAST_INSERT_ID() AS id_usuario")
+                id_usuario = cursor.fetchone()['id_usuario']
                 
                 if cursor:
                     mensaje_ingreso_datos("Registro de alumnos","Registro cargado")
@@ -2492,7 +2513,7 @@ class VentanaPrincipal(QMainWindow):
     
     # -------------- PESTAÑA DE DISCIPLINA -----------------
     def guardarACTIV(self):
-        actividad = self.input_disciplina4.text().capitalize().title()
+        actividad = self.input_disciplina4.currentText()
         precio = self.input_precio.text().replace(".","")
 
         patronA = re.compile(r'^[a-zA-ZáéíóúÁÉÍÓÚüÜ\'\s]+$') 
@@ -2513,10 +2534,15 @@ class VentanaPrincipal(QMainWindow):
                 cursor = db.cursor()
                 cursor.execute("INSERT INTO disciplina (nombre, precio) VALUES (%s, %s)", (actividad, precio),)
                 db.commit()
+                
+                # Obtener el ID del nuevo usuario
+                cursor.execute("SELECT LAST_INSERT_ID() AS id_disciplina")
+                id_usuario = cursor.fetchone()['id_disciplina']
+                
                 if cursor:      
                     mensaje_ingreso_datos("Registro de alumnos","Registro cargado")
                     
-                    self.input_disciplina4.clear()
+                    self.input_disciplina4.setCurrentIndex(0)
                     self.input_precio.clear()
                 else:
                     mensaje_ingreso_datos("Registro de alumnos","Registro no cargado")
@@ -2609,7 +2635,7 @@ class VentanaPrincipal(QMainWindow):
         self.input_id.setEnabled(False)
         
         self.input_id.setText(str(id_dis))
-        self.input_disciplina4.setText(disc6)
+        self.input_disciplina4.setCurrentText(disc6)
         self.input_precio.setText(str(pesos))  # Convertir a texto antes de asignar al QLineEdit 
         
         self.tableActivi.clearSelection()  # Deseleccionar la fila eliminada
@@ -2620,7 +2646,7 @@ class VentanaPrincipal(QMainWindow):
             return
         self.input_id.setEnabled(True)
         id_dis = int(self.tableActivi.item(self.tableActivi.currentRow(), 0).text())
-        actividad = self.input_disciplina4.text().capitalize().title()
+        actividad = self.input_disciplina4.currentText()
         precio = self.input_precio.text().replace(".","")
         
         patronB = re.compile(r'^[a-zA-ZáéíóúÁÉÍÓÚüÜ\'\s]+$') 
@@ -2647,7 +2673,7 @@ class VentanaPrincipal(QMainWindow):
                     mensaje_ingreso_datos("Registro de alumnos","Registro actualizado")
 
                     self.input_id.clear()
-                    self.input_disciplina4.clear()
+                    self.input_disciplina4.setCurrentIndex(0)
                     self.input_precio.clear()
                   
                     self.mostrarACTIC()
