@@ -326,7 +326,6 @@ class VentanaPrincipal(QMainWindow):
         self.input_celular = QLineEdit(customer_details)
         self.input_celular.setStyleSheet(style.estilo_lineedit)
         self.input_celular.setFixedWidth(200)
-        self.input_celular.setMaxLength(10)
         self.input_celular.setPlaceholderText("Ej: 3424789123")
         layout_H2.addWidget(celular)         # EN ESTA LINEA COMO LA SIGUIENTE, AGREGA LOS ALEMENTOS AL LAYOUT HORIZONTAL
         layout_H2.addWidget(self.input_celular)
@@ -539,7 +538,6 @@ class VentanaPrincipal(QMainWindow):
         self.input_celular2.setPlaceholderText("Ej: 3424789123")
         self.input_celular2.setEnabled(False)
         self.input_celular2.setFixedWidth(200)
-        self.input_celular2.setMaxLength(10)
         layout_ele3.addWidget(celular2)       # EN ESTA LINEA COMO LA SIGUIENTE, AGREGA LOS ALEMENTOS AL LAYOUT HORIZONTAL
         layout_ele3.addWidget(self.input_celular2)
         
@@ -1889,7 +1887,7 @@ class VentanaPrincipal(QMainWindow):
             return
         edad = int(edad)
         
-        if not celu.isdigit() or not len(celu) == 10 or not patron2.match(celu):
+        if not (celu.isdigit() and patron2.match(celu)):
             mensaje_ingreso_datos("Registro de alumnos","El 'celular' debe ser:\n\n- Valores numéricos.\n- Contener 10 dígitos.\n- No contener puntos(.)")
             return
         celu = int(celu)
@@ -1903,11 +1901,7 @@ class VentanaPrincipal(QMainWindow):
                 values = (nombre1, apellido1, dni, sexo, edad, celu, fecha)
                 cursor.execute(query, values)
                 db.commit()
-                
-                # # Obtener el ID del nuevo usuario
-                # cursor.execute("SELECT LAST_INSERT_ID() AS id_usuario")
-                # id_usuario = cursor.fetchone()['id_usuario']
-                
+                                
                 if cursor:
                     mensaje_ingreso_datos("Registro de alumnos","Registro cargado")
                     
@@ -2180,7 +2174,7 @@ class VentanaPrincipal(QMainWindow):
                                 fecha = QDate.fromString(str(val), "yyyy-MM-dd")  # Convertir la fecha a objeto QDate
                                 item.setText(fecha.toString("dd-MM-yyyy"))  # Establecer el formato de visualización
                             
-                            if j in [3, 4, 5, 7]:  # Ajustar alineación para ciertas columnas
+                            if j in [3, 4, 5, 6, 7]:  # Ajustar alineación para ciertas columnas
                                 item.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
                             self.tablaUpdateRecord.setItem(i, j, item)
                 else:
@@ -2364,7 +2358,7 @@ class VentanaPrincipal(QMainWindow):
             mensaje_ingreso_datos("Registro de alumnos","El 'edad' debe ser:\n- Valores numéricos.\n- Contener 2 dígitos.\n- No contener puntos(.)")
             return
         
-        if not (celu2.isnumeric() and len(celu2) == 10 and patronNum.match(celu2)):
+        if not (celu2.isnumeric() and patronNum.match(celu2)):
             mensaje_ingreso_datos("Registro de alumnos","El 'celular' debe ser: \n- Valores numéricos. \n- Contener 10 dígitos.\n- No contener puntos(.)")
             return
         
