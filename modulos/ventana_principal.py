@@ -1889,7 +1889,7 @@ class VentanaPrincipal(QMainWindow):
             return
         edad = int(edad)
         
-        if not celu.isdigit() or not len(celu) == 10:
+        if not celu.isdigit() or not len(celu) == 10 or not patron2.match(celu):
             mensaje_ingreso_datos("Registro de alumnos","El 'celular' debe ser:\n\n- Valores numéricos.\n- Contener 10 dígitos.\n- No contener puntos(.)")
             return
         celu = int(celu)
@@ -1904,9 +1904,9 @@ class VentanaPrincipal(QMainWindow):
                 cursor.execute(query, values)
                 db.commit()
                 
-                # Obtener el ID del nuevo usuario
-                cursor.execute("SELECT LAST_INSERT_ID() AS id_usuario")
-                id_usuario = cursor.fetchone()['id_usuario']
+                # # Obtener el ID del nuevo usuario
+                # cursor.execute("SELECT LAST_INSERT_ID() AS id_usuario")
+                # id_usuario = cursor.fetchone()['id_usuario']
                 
                 if cursor:
                     mensaje_ingreso_datos("Registro de alumnos","Registro cargado")
@@ -2535,9 +2535,9 @@ class VentanaPrincipal(QMainWindow):
                 cursor.execute("INSERT INTO disciplina (nombre, precio) VALUES (%s, %s)", (actividad, precio),)
                 db.commit()
                 
-                # Obtener el ID del nuevo usuario
-                cursor.execute("SELECT LAST_INSERT_ID() AS id_disciplina")
-                id_usuario = cursor.fetchone()['id_disciplina']
+                # # Obtener el ID del nuevo usuario
+                # cursor.execute("SELECT LAST_INSERT_ID() AS id_disciplina")
+                # id_usuario = cursor.fetchone()['id_disciplina']
                 
                 if cursor:      
                     mensaje_ingreso_datos("Registro de alumnos","Registro cargado")
