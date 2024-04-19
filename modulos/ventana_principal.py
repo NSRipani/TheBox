@@ -98,14 +98,14 @@ class VentanaPrincipal(QMainWindow):
         actividad_button.setIconSize(QSize(25,25))
         actividad_button.clicked.connect(self.activity)
         
-        pagos_button = QPushButton(" PAGOS", self)
-        pagos_button.setCursor(Qt.CursorShape.PointingHandCursor)
-        pagos_button.setStyleSheet(style.estilo)
-        pagos_button.setFixedSize(200, 55)
-        iconPagos = QIcon("img/cobrar.png")
-        pagos_button.setIcon(iconPagos)
-        pagos_button.setIconSize(QSize(40,40))
-        pagos_button.clicked.connect(self.pagos)
+        # pagos_button = QPushButton(" PAGOS", self)
+        # pagos_button.setCursor(Qt.CursorShape.PointingHandCursor)
+        # pagos_button.setStyleSheet(style.estilo)
+        # pagos_button.setFixedSize(200, 55)
+        # iconPagos = QIcon("img/cobrar.png")
+        # pagos_button.setIcon(iconPagos)
+        # pagos_button.setIconSize(QSize(40,40))
+        # pagos_button.clicked.connect(self.pagos)
         
         balances_button = QPushButton(" BALANCES", self)
         balances_button.setCursor(Qt.CursorShape.PointingHandCursor)
@@ -168,8 +168,8 @@ class VentanaPrincipal(QMainWindow):
         frame_layout.setSpacing(15)
         frame_layout.addWidget(actividad_button)
         frame_layout.setSpacing(15)
-        frame_layout.addWidget(pagos_button)
-        frame_layout.setSpacing(15)
+        # frame_layout.addWidget(pagos_button)
+        # frame_layout.setSpacing(15)
         frame_layout.addWidget(balances_button)
         frame_layout.setSpacing(15)
         frame_layout.addWidget(self.asistencia_button)
@@ -197,8 +197,8 @@ class VentanaPrincipal(QMainWindow):
         pestania_deleteRecord.setStyleSheet("background-color: #f48c06;")
         pestania_actividad = QWidget()
         pestania_actividad.setStyleSheet("background-color: #f48c06;")
-        pestania_PAGOS = QWidget()
-        pestania_PAGOS.setStyleSheet("background-color: #f48c06;")
+        # pestania_PAGOS = QWidget()
+        # pestania_PAGOS.setStyleSheet("background-color: #f48c06;")
         pestania_view = QWidget()
         pestania_view.setStyleSheet("background-color: #f48c06;")
         pestania_empleados = QWidget()
@@ -212,20 +212,20 @@ class VentanaPrincipal(QMainWindow):
         self.tab.addTab(pestania_record, 'REGISTRAR')
         self.tab.setCursor(Qt.CursorShape.PointingHandCursor) # Se coloca el icono de la 'manito' al posicionar sobre la pestaña
         self.tab.addTab(pestania_updateRecord, 'ACTUALIZAR')
-        self.tab.setCursor(Qt.CursorShape.PointingHandCursor)
+        # self.tab.setCursor(Qt.CursorShape.PointingHandCursor)
         self.tab.addTab(pestania_deleteRecord, 'ELIMINAR')
-        self.tab.setCursor(Qt.CursorShape.PointingHandCursor)
+        # self.tab.setCursor(Qt.CursorShape.PointingHandCursor)
         self.tab.addTab(pestania_actividad, 'DISCIPLINA')
-        self.tab.setCursor(Qt.CursorShape.PointingHandCursor)
-        self.tab.addTab(pestania_PAGOS, 'PAGOS')
-        self.tab.setCursor(Qt.CursorShape.PointingHandCursor)
+        # self.tab.setCursor(Qt.CursorShape.PointingHandCursor)
+        # self.tab.addTab(pestania_PAGOS, 'PAGOS')
+        # self.tab.setCursor(Qt.CursorShape.PointingHandCursor)
         self.tab.addTab(pestania_view, 'BALANCE')
-        self.tab.setCursor(Qt.CursorShape.PointingHandCursor)
+        # self.tab.setCursor(Qt.CursorShape.PointingHandCursor)
         self.tab.addTab(pestania_empleados, 'EMPLEADOS')
-        self.tab.setCursor(Qt.CursorShape.PointingHandCursor)
+        # self.tab.setCursor(Qt.CursorShape.PointingHandCursor)
         self.tab.addTab(pestania_horas, 'HORAS')
-        self.tab.setCursor(Qt.CursorShape.PointingHandCursor)
-        self.tab.addTab(pestania_resumen, 'RESUMEN')
+        # self.tab.setCursor(Qt.CursorShape.PointingHandCursor)
+        self.tab.addTab(pestania_resumen, 'CONTABILIDAD')
         
         # ----------------------------------------------------
         # PESTAÑA REGISTRAR
@@ -405,10 +405,6 @@ class VentanaPrincipal(QMainWindow):
         self.tablaRecord = QTableWidget()
         self.tablaRecord.setStyleSheet(style.esttabla)
         grid1.addWidget(self.tablaRecord,1,0,1,1)
-        
-        # Establece los layout horizontales a la grilla 
-        # grid1.addLayout(botonera_registro,2,0,1,1)
-        # grid1.addLayout(botonera_registro2,3,0,1,1)
         
         # conecta las señales a las funciones
         button_Guardar.clicked.connect(self.guardar)
@@ -755,15 +751,15 @@ class VentanaPrincipal(QMainWindow):
         layout_botones9_10 = QHBoxLayout()
         layout_botones9_10.setAlignment(Qt.AlignmentFlag.AlignRight)
         button_Gurd = QPushButton('GUARDAR',comboActiv)
-        button_Gurd.setFixedWidth(250)
+        button_Gurd.setFixedWidth(200)
         button_Gurd.setCursor(Qt.CursorShape.PointingHandCursor)
         button_Gurd.setStyleSheet(style.estilo_boton)
         button_Tabla = QPushButton('MOSTRAR TABLA',comboActiv)
-        button_Tabla.setFixedWidth(250)
+        button_Tabla.setFixedWidth(200)
         button_Tabla.setCursor(Qt.CursorShape.PointingHandCursor)
         button_Tabla.setStyleSheet(style.estilo_boton)
         button_Actaul = QPushButton('ACTUALIZAR',comboActiv)
-        button_Actaul.setFixedWidth(250)
+        button_Actaul.setFixedWidth(200)
         button_Actaul.setCursor(Qt.CursorShape.PointingHandCursor)
         button_Actaul.setStyleSheet(style.estilo_boton)
         
@@ -771,22 +767,22 @@ class VentanaPrincipal(QMainWindow):
         layout_botones11_12 = QHBoxLayout()
         layout_botones11_12.setAlignment(Qt.AlignmentFlag.AlignRight)
         button_Elim = QPushButton('ELIMINAR',comboActiv)
-        button_Elim.setFixedWidth(250)
+        button_Elim.setFixedWidth(200)
         button_Elim.setCursor(Qt.CursorShape.PointingHandCursor)
         button_Elim.setStyleSheet(style.estilo_boton)
         limpiar_tabla = QPushButton('LIMPIAR TABLA',comboActiv)
-        limpiar_tabla.setFixedWidth(250)
+        limpiar_tabla.setFixedWidth(200)
         limpiar_tabla.setCursor(Qt.CursorShape.PointingHandCursor)
         limpiar_tabla.setStyleSheet(style.estilo_boton)
         button_limp = QPushButton('LIMPIAR CAMPOS',comboActiv)
-        button_limp.setFixedWidth(250)
+        button_limp.setFixedWidth(200)
         button_limp.setCursor(Qt.CursorShape.PointingHandCursor)
         button_limp.setStyleSheet(style.estilo_boton)
         
         lay_excel = QHBoxLayout()
         lay_excel.setAlignment(Qt.AlignmentFlag.AlignRight)
         excel = QPushButton('DESCARGAR PLANILLA', comboActiv)
-        excel.setFixedWidth(250)
+        excel.setFixedWidth(200)
         excel.setCursor(Qt.CursorShape.PointingHandCursor)
         excel.setStyleSheet(style.boton_excel)
         
@@ -844,181 +840,182 @@ class VentanaPrincipal(QMainWindow):
         pestania_actividad.setLayout(tab4_layout)
         
         #-----------------------------------------------------------------
-        # PESTAÑA DE PAGOS
-        # CREA EL GrupoBOX
-        grupo_pagos = QGroupBox("Detalle de pagos", pestania_PAGOS)
-        grupo_pagos.setStyleSheet(style.estilo_grupo)
+        # # PESTAÑA DE PAGOS
+        # # CREA EL GrupoBOX
+        # grupo_pagos = QGroupBox("Detalle de pagos", pestania_PAGOS)
+        # grupo_pagos.setStyleSheet(style.estilo_grupo)
         
-        # ESTABLECE EL COMBOBOX A LA GRILLA
-        gr = QGridLayout(grupo_pagos)
+        # # ESTABLECE EL COMBOBOX A LA GRILLA
+        # gr = QGridLayout(grupo_pagos)
         
-        v = QVBoxLayout()
+        # v = QVBoxLayout()
         
-        # CREA LAYOUT HORIZONTAL PARA LOS ELEMENTOS 
-        layout_elementos_pagos = QHBoxLayout()
-        layout_elementos_pagos.setAlignment(Qt.AlignmentFlag.AlignLeft)
-        layout_elementos_pagos2 = QHBoxLayout()
-        layout_elementos_pagos2.setAlignment(Qt.AlignmentFlag.AlignLeft)
+        # # CREA LAYOUT HORIZONTAL PARA LOS ELEMENTOS 
+        # layout_elementos_pagos = QHBoxLayout()
+        # layout_elementos_pagos.setAlignment(Qt.AlignmentFlag.AlignLeft)
+        # layout_elementos_pagos2 = QHBoxLayout()
+        # layout_elementos_pagos2.setAlignment(Qt.AlignmentFlag.AlignLeft)
         
-        idDis = QLabel('ID Disciplina:',grupo_pagos)
-        idDis.setStyleSheet(style.label)
-        idDis.setFixedWidth(120)
-        self.idDis = QLineEdit(grupo_pagos)
-        self.idDis.setStyleSheet(style.estilo_lineedit)
-        self.idDis.setFixedWidth(50)
-        layout_elementos_pagos.addWidget(idDis)     # EN ESTA LINEA COMO LA SIGUIENTE, AGREGA LOS ALEMENTOS AL LAYOUT HORIZONTAL
-        layout_elementos_pagos.addWidget(self.idDis)
+        # idDis = QLabel('ID Precio:',grupo_pagos)
+        # idDis.setStyleSheet(style.label)
+        # idDis.setFixedWidth(80)
+        # self.idDis = QLineEdit(grupo_pagos)
+        # self.idDis.setStyleSheet(style.estilo_lineedit)
+        # self.idDis.setFixedWidth(50)
+        # layout_elementos_pagos.addWidget(idDis)     # EN ESTA LINEA COMO LA SIGUIENTE, AGREGA LOS ALEMENTOS AL LAYOUT HORIZONTAL
+        # layout_elementos_pagos.addWidget(self.idDis)
         
-        #  Conexión a la base de datos MySQL
-        conn = conectar_base_de_datos()
-        cursor = conn.cursor()
+        # idDis = QLabel('ID Disciplina:',grupo_pagos)
+        # idDis.setStyleSheet(style.label)
+        # idDis.setFixedWidth(120)
+        # self.idDis = QLineEdit(grupo_pagos)
+        # self.idDis.setStyleSheet(style.estilo_lineedit)
+        # self.idDis.setFixedWidth(50)
+        # layout_elementos_pagos.addWidget(idDis)     # EN ESTA LINEA COMO LA SIGUIENTE, AGREGA LOS ALEMENTOS AL LAYOUT HORIZONTAL
+        # layout_elementos_pagos.addWidget(self.idDis)
+        
+        # #  Conexión a la base de datos MySQL
+        # conn = conectar_base_de_datos()
+        # cursor = conn.cursor()
 
-        # Consulta para obtener los datos de una columna específica
-        cursor.execute("SELECT id_disciplina FROM usuario_disciplina")
-        datos = cursor.fetchall()
-        listado = [str(item[0]) for item in datos]
+        # # Consulta para obtener los datos de una columna específica
+        # cursor.execute("SELECT id_disciplina FROM usuario_disciplina")
+        # datos = cursor.fetchall()
+        # listado = [str(item[0]) for item in datos]
 
-        disc = QCompleter(listado)
-        disc.setFilterMode(Qt.MatchFlag.MatchStartsWith)
-        disc.popup().setStyleSheet(style.completer)
-        self.idDis.setCompleter(disc)
-        
-        if self.idDis.setCompleter(disc):
-            conn = conectar_base_de_datos()
-            cursor = conn.cursor()
-            cursor.execute("SELECT id_usuario FROM usuario_disciplina")
-            dato = cursor.fetchone()
-            if dato:
-                self.idUser.setText(dato[0])
+        # disc = QCompleter(listado)
+        # disc.setFilterMode(Qt.MatchFlag.MatchStartsWith)
+        # disc.popup().setStyleSheet(style.completer)
+        # self.idDis.setCompleter(disc)
+                       
+        # cursor.close()
+        # conn.close()
                 
-        cursor.close()
-        conn.close()
-                
-        idUser = QLabel('ID Usuario:',grupo_pagos)
-        idUser.setStyleSheet(style.label)
-        idUser.setFixedWidth(100)
-        self.idUser = QLineEdit(grupo_pagos)
-        self.idUser.setStyleSheet(style.estilo_lineedit)
-        self.idUser.setFixedWidth(50)
-        layout_elementos_pagos.addWidget(idUser)     # EN ESTA LINEA COMO LA SIGUIENTE, AGREGA LOS ALEMENTOS AL LAYOUT HORIZONTAL
-        layout_elementos_pagos.addWidget(self.idUser)
+        # idUser = QLabel('ID Usuario:',grupo_pagos)
+        # idUser.setStyleSheet(style.label)
+        # idUser.setFixedWidth(100)
+        # self.idUser = QLineEdit(grupo_pagos)
+        # self.idUser.setStyleSheet(style.estilo_lineedit)
+        # self.idUser.setFixedWidth(50)
+        # layout_elementos_pagos.addWidget(idUser)     # EN ESTA LINEA COMO LA SIGUIENTE, AGREGA LOS ALEMENTOS AL LAYOUT HORIZONTAL
+        # layout_elementos_pagos.addWidget(self.idUser)
         
-        monto = QLabel('Precio($):',grupo_pagos)
-        monto.setStyleSheet(style.label)
-        monto.setFixedWidth(120)
-        self.monto = QLineEdit(grupo_pagos)
-        self.monto.setStyleSheet(style.estilo_lineedit)
-        self.monto.setFixedWidth(100)
-        self.monto.setPlaceholderText("Ej: 5000")
-        layout_elementos_pagos2.addWidget(monto)     # EN ESTA LINEA COMO LA SIGUIENTE, AGREGA LOS ALEMENTOS AL LAYOUT HORIZONTAL
-        layout_elementos_pagos2.addWidget(self.monto)  
+        # monto = QLabel('Precio($):',grupo_pagos)
+        # monto.setStyleSheet(style.label)
+        # monto.setFixedWidth(80)
+        # self.monto = QLineEdit(grupo_pagos)
+        # self.monto.setStyleSheet(style.estilo_lineedit)
+        # self.monto.setFixedWidth(100)
+        # self.monto.setPlaceholderText("Ej: 5000")
+        # layout_elementos_pagos2.addWidget(monto)     # EN ESTA LINEA COMO LA SIGUIENTE, AGREGA LOS ALEMENTOS AL LAYOUT HORIZONTAL
+        # layout_elementos_pagos2.addWidget(self.monto)  
         
-        fechaDePago = QLabel('Fecha de pago:',grupo_pagos)
-        fechaDePago.setStyleSheet(style.label)
-        fechaDePago.setFixedWidth(140)
-        self.input_fechaDePago = QDateEdit(grupo_pagos)
-        self.input_fechaDePago.setCursor(Qt.CursorShape.PointingHandCursor)
-        self.input_fechaDePago.setLocale(QLocale("es-AR"))
-        self.input_fechaDePago.setStyleSheet(style.estilo_fecha)
-        self.input_fechaDePago.setFixedWidth(200)
-        self.input_fechaDePago.setDate(QDate.currentDate()) 
-        self.input_fechaDePago.setCalendarPopup(True)
-        self.input_fechaDePago.setDisplayFormat("dd/MM/yyyy")
-        layout_elementos_pagos.addWidget(fechaDePago)        # EN ESTA LINEA COMO LA SIGUIENTE, AGREGA LOS ALEMENTOS AL LAYOUT HORIZONTAL
-        layout_elementos_pagos.addWidget(self.input_fechaDePago)
+        # fechaDePago = QLabel('Fecha de pago:',grupo_pagos)
+        # fechaDePago.setStyleSheet(style.label)
+        # fechaDePago.setFixedWidth(140)
+        # self.input_fechaDePago = QDateEdit(grupo_pagos)
+        # self.input_fechaDePago.setCursor(Qt.CursorShape.PointingHandCursor)
+        # self.input_fechaDePago.setLocale(QLocale("es-AR"))
+        # self.input_fechaDePago.setStyleSheet(style.estilo_fecha)
+        # self.input_fechaDePago.setFixedWidth(200)
+        # self.input_fechaDePago.setDate(QDate.currentDate()) 
+        # self.input_fechaDePago.setCalendarPopup(True)
+        # self.input_fechaDePago.setDisplayFormat("dd/MM/yyyy")
+        # layout_elementos_pagos.addWidget(fechaDePago)        # EN ESTA LINEA COMO LA SIGUIENTE, AGREGA LOS ALEMENTOS AL LAYOUT HORIZONTAL
+        # layout_elementos_pagos.addWidget(self.input_fechaDePago)
         
-        tipoDePago = QLabel('Medio de pago:',grupo_pagos)
-        tipoDePago.setStyleSheet(style.label)
-        tipoDePago.setFixedWidth(155)
-        self.input_tipoDePago = QComboBox(grupo_pagos)
-        self.input_tipoDePago.setStyleSheet(style.estilo_combo)
-        self.input_tipoDePago.setFixedWidth(300)
-        self.input_tipoDePago.addItems(["- Seleccione medio de pago","Efectivo", "Transferecia"])
-        layout_elementos_pagos2.addWidget(tipoDePago)    # EN ESTA LINEA COMO LA SIGUIENTE, AGREGA LOS ALEMENTOS AL LAYOUT HORIZONTAL
-        layout_elementos_pagos2.addWidget(self.input_tipoDePago)
+        # tipoDePago = QLabel('Medio de pago:',grupo_pagos)
+        # tipoDePago.setStyleSheet(style.label)
+        # tipoDePago.setFixedWidth(155)
+        # self.input_tipoDePago = QComboBox(grupo_pagos)
+        # self.input_tipoDePago.setStyleSheet(style.estilo_combo)
+        # self.input_tipoDePago.setFixedWidth(300)
+        # self.input_tipoDePago.addItems(["- Seleccione medio de pago","Efectivo", "Transferecia"])
+        # layout_elementos_pagos2.addWidget(tipoDePago)    # EN ESTA LINEA COMO LA SIGUIENTE, AGREGA LOS ALEMENTOS AL LAYOUT HORIZONTAL
+        # layout_elementos_pagos2.addWidget(self.input_tipoDePago)
         
-        # estado = QLabel('Estado:',grupo_pagos)
-        # estado.setStyleSheet(style.label)
-        # estado.setFixedWidth(80)
-        # self.input_estado = QLineEdit(grupo_pagos)
-        # self.input_estado.setStyleSheet(style.estilo_lineedit)
-        # self.input_estado.setFixedWidth(150)
-        # layout_elementos_pagos2.addWidget(estado)        # EN ESTA LINEA COMO LA SIGUIENTE, AGREGA LOS ALEMENTOS AL LAYOUT HORIZONTAL
-        # layout_elementos_pagos2.addWidget(self.input_estado)
+        # # estado = QLabel('Estado:',grupo_pagos)
+        # # estado.setStyleSheet(style.label)
+        # # estado.setFixedWidth(80)
+        # # self.input_estado = QLineEdit(grupo_pagos)
+        # # self.input_estado.setStyleSheet(style.estilo_lineedit)
+        # # self.input_estado.setFixedWidth(150)
+        # # layout_elementos_pagos2.addWidget(estado)        # EN ESTA LINEA COMO LA SIGUIENTE, AGREGA LOS ALEMENTOS AL LAYOUT HORIZONTAL
+        # # layout_elementos_pagos2.addWidget(self.input_estado)
         
-        layoutBoton = QHBoxLayout() 
-        layoutBoton.setAlignment(Qt.AlignmentFlag.AlignRight)
-        guar_pagos = QPushButton('GUARDAR', grupo_pagos)
-        guar_pagos.setCursor(Qt.CursorShape.PointingHandCursor)
-        guar_pagos.setFixedWidth(250)
-        guar_pagos.setStyleSheet(style.estilo_boton) 
-        most_pagos = QPushButton('MOSTRAR', grupo_pagos)
-        most_pagos.setFixedWidth(250)
-        most_pagos.setCursor(Qt.CursorShape.PointingHandCursor)
-        most_pagos.setStyleSheet(style.estilo_boton)
-        layoutBoton.addWidget(guar_pagos)
-        layoutBoton.addWidget(most_pagos)
+        # layoutBoton = QHBoxLayout() 
+        # layoutBoton.setAlignment(Qt.AlignmentFlag.AlignRight)
+        # guar_pagos = QPushButton('GUARDAR', grupo_pagos)
+        # guar_pagos.setCursor(Qt.CursorShape.PointingHandCursor)
+        # guar_pagos.setFixedWidth(250)
+        # guar_pagos.setStyleSheet(style.estilo_boton) 
+        # most_pagos = QPushButton('MOSTRAR', grupo_pagos)
+        # most_pagos.setFixedWidth(250)
+        # most_pagos.setCursor(Qt.CursorShape.PointingHandCursor)
+        # most_pagos.setStyleSheet(style.estilo_boton)
+        # layoutBoton.addWidget(guar_pagos)
+        # layoutBoton.addWidget(most_pagos)
         
-        layoutBoton2 = QHBoxLayout() 
-        layoutBoton2.setAlignment(Qt.AlignmentFlag.AlignRight)
-        act_pagos = QPushButton('ACTUALIZAR', grupo_pagos)
-        act_pagos.setCursor(Qt.CursorShape.PointingHandCursor)
-        act_pagos.setFixedWidth(250)
-        act_pagos.setStyleSheet(style.estilo_boton)
-        eli_pagos = QPushButton('ELIMINAR', grupo_pagos)
-        eli_pagos.setCursor(Qt.CursorShape.PointingHandCursor)
-        eli_pagos.setFixedWidth(250)
-        eli_pagos.setStyleSheet(style.estilo_boton)
-        layoutBoton2.addWidget(act_pagos)
-        layoutBoton2.addWidget(eli_pagos)
+        # layoutBoton2 = QHBoxLayout() 
+        # layoutBoton2.setAlignment(Qt.AlignmentFlag.AlignRight)
+        # act_pagos = QPushButton('ACTUALIZAR', grupo_pagos)
+        # act_pagos.setCursor(Qt.CursorShape.PointingHandCursor)
+        # act_pagos.setFixedWidth(250)
+        # act_pagos.setStyleSheet(style.estilo_boton)
+        # eli_pagos = QPushButton('ELIMINAR', grupo_pagos)
+        # eli_pagos.setCursor(Qt.CursorShape.PointingHandCursor)
+        # eli_pagos.setFixedWidth(250)
+        # eli_pagos.setStyleSheet(style.estilo_boton)
+        # layoutBoton2.addWidget(act_pagos)
+        # layoutBoton2.addWidget(eli_pagos)
         
-        layout_panilla = QHBoxLayout() 
-        layout_panilla.setAlignment(Qt.AlignmentFlag.AlignRight)
-        planilla = QPushButton('PLANILLA', grupo_pagos)
-        planilla.setFixedWidth(250)
-        planilla.setCursor(Qt.CursorShape.PointingHandCursor)
-        planilla.setStyleSheet(style.boton_excel)
-        layout_panilla.addWidget(planilla)
+        # layout_panilla = QHBoxLayout() 
+        # layout_panilla.setAlignment(Qt.AlignmentFlag.AlignRight)
+        # planilla = QPushButton('PLANILLA', grupo_pagos)
+        # planilla.setFixedWidth(250)
+        # planilla.setCursor(Qt.CursorShape.PointingHandCursor)
+        # planilla.setStyleSheet(style.boton_excel)
+        # layout_panilla.addWidget(planilla)
         
-        l1 = QHBoxLayout()
-        l1.addLayout(layout_elementos_pagos)
-        l1.addLayout(layoutBoton)
-        l2 = QHBoxLayout()
-        l2.addLayout(layout_elementos_pagos2)
-        l2.addLayout(layoutBoton2)
-        l3 = QHBoxLayout()
-        l3.addLayout(layout_panilla)
+        # l1 = QHBoxLayout()
+        # l1.addLayout(layout_elementos_pagos)
+        # l1.addLayout(layoutBoton)
+        # l2 = QHBoxLayout()
+        # l2.addLayout(layout_elementos_pagos2)
+        # l2.addLayout(layoutBoton2)
+        # l3 = QHBoxLayout()
+        # l3.addLayout(layout_panilla)
         
-        # contenedor de los layout horizontales
-        v.addLayout(l1)
-        v.addLayout(l2)
-        v.addLayout(l3)
+        # # contenedor de los layout horizontales
+        # v.addLayout(l1)
+        # v.addLayout(l2)
+        # v.addLayout(l3)
         
-        # Señales de botones
-        guar_pagos.clicked.connect(self.guardarPagos)
-        # most_pagos.clicked.connect(self.mostrarPagos)
-        # act_pagos.clicked.connect(self.actualizarPagos)
-        # eli_pagos.clicked.connect(self.eliminarPagos)
+        # # Señales de botones
+        # guar_pagos.clicked.connect(self.guardarPagos)
+        # # most_pagos.clicked.connect(self.mostrarPagos)
+        # # act_pagos.clicked.connect(self.actualizarPagos)
+        # # eli_pagos.clicked.connect(self.eliminarPagos)
         
         
-        # AGREGA AL "GRID"
-        gr.addLayout(v,0,0,1,1)
-        # gr.addLayout(layout_botones11_12,4,0,1,1)
+        # # AGREGA AL "GRID"
+        # gr.addLayout(v,0,0,1,1)
+        # # gr.addLayout(layout_botones11_12,4,0,1,1)
         
-        # CREA LA TABLA
-        self.tablePagos = QTableWidget(grupo_pagos)
-        self.tablePagos.setStyleSheet(style.esttabla)
+        # # CREA LA TABLA
+        # self.tablePagos = QTableWidget(grupo_pagos)
+        # self.tablePagos.setStyleSheet(style.esttabla)
         
-        # ESTABLECE LA TABLA A LA GRILLA
-        gr.addWidget(self.tablePagos,1,0,1,1)
+        # # ESTABLECE LA TABLA A LA GRILLA
+        # gr.addWidget(self.tablePagos,1,0,1,1)
         
-        # Establecer el diseño del QGroupBox
-        grupo_pagos.setLayout(gr)
+        # # Establecer el diseño del QGroupBox
+        # grupo_pagos.setLayout(gr)
         
-        # Agregar el QGroupBox a la primera pestaña (tab1)
-        tab_pagos_layout = QVBoxLayout()
-        tab_pagos_layout.addWidget(grupo_pagos)
-        pestania_PAGOS.setLayout(tab_pagos_layout)
+        # # Agregar el QGroupBox a la primera pestaña (tab1)
+        # tab_pagos_layout = QVBoxLayout()
+        # tab_pagos_layout.addWidget(grupo_pagos)
+        # pestania_PAGOS.setLayout(tab_pagos_layout)
         
         #-----------------------------------------------------------------
         # PESTAÑA DE BALANCES
@@ -1240,7 +1237,7 @@ class VentanaPrincipal(QMainWindow):
         
         id_emp = QLabel('ID:',grupo_empleados)
         id_emp.setStyleSheet(style.label)
-        id_emp.setFixedWidth(25)
+        id_emp.setFixedWidth(40)
         self.id_emp = QLineEdit(grupo_empleados)
         self.id_emp.setStyleSheet(style.estilo_lineedit)
         self.id_emp.setEnabled(False)
@@ -1278,7 +1275,7 @@ class VentanaPrincipal(QMainWindow):
         
         dni_emp = QLabel('DNI:',grupo_empleados)
         dni_emp.setStyleSheet(style.label)
-        dni_emp.setFixedWidth(55)
+        dni_emp.setFixedWidth(40)
         self.dni_emp = QLineEdit(grupo_empleados)
         self.dni_emp.setStyleSheet(style.estilo_lineedit)
         self.dni_emp.setFixedWidth(200)
@@ -1300,7 +1297,7 @@ class VentanaPrincipal(QMainWindow):
         
         fecha = QLabel("Fecha:", grupo_empleados)
         fecha.setStyleSheet(style.label)
-        fecha.setFixedWidth(80)
+        fecha.setFixedWidth(60)
         self.fecha = QDateEdit(grupo_empleados)
         self.fecha.setStyleSheet(style.estilo_fecha)
         self.fecha.setLocale(QLocale("es-AR"))
@@ -2814,44 +2811,44 @@ class VentanaPrincipal(QMainWindow):
             except Exception as e:
                 aviso_Advertencia_De_excel("Advertencia", f"No se pudo guardar el archivo: {str(e)}.\nEL archivo que deseas reemplazar esta en uso, de2ebes cerrar el archivo y luego guardarlo. El nombre puede ser parecido pero no igual.")
     
-    # ----------- PESTAÑA PAGOS -----------------
-    def guardarPagos(self):
-        mont = self.monto.text()
-        tipo = self.input_tipoDePago.currentText()
-        date = self.input_fechaDePago.date().toPyDate()
+    # # ----------- PESTAÑA PAGOS -----------------
+    # def guardarPagos(self):
+    #     mont = self.monto.text()
+    #     tipo = self.input_tipoDePago.currentText()
+    #     date = self.input_fechaDePago.date().toPyDate()
         
-        patro = re.compile(r'^[0-9]+$')
-        if not mont.isdigit() or not patro.match(mont):
-            mensaje_ingreso_datos("Registro de alumnos","El monto debe ser número entero y sin coma ','.")
-            return
-        if mont:
-            mont = int(mont)
+    #     patro = re.compile(r'^[0-9]+$')
+    #     if not mont.isdigit() or not patro.match(mont):
+    #         mensaje_ingreso_datos("Registro de alumnos","El monto debe ser número entero y sin coma ','.")
+    #         return
+    #     if mont:
+    #         mont = int(mont)
         
-        patronB = re.compile(r'^[a-zA-ZáéíóúÁÉÍÓÚüÜ\'\s]+$') 
-        if not isinstance(tipo, str) or not patronB.match(tipo):
-            mensaje_ingreso_datos("Registro de alumnos","Debe elegir un tipo de pago")
-            return
-        save = inicio("Registro de pagos","¿Desea guardar el registro?")
-        if save == QMessageBox.StandardButton.Yes:
-            try:
-                db = conectar_base_de_datos()
-                cursor = db.cursor()
-                cursor.execute("INSERT INTO pago (precio, modalidad, estado, fecha) VALUE (%s, %s, %s)", (mont, tipo, date),)
-                db.commit()
-                if cursor:
-                    mensaje_ingreso_datos("Registro de pagos","Registro cargado")
-                    self.monto.clear()
-                    self.input_tipoDePago.clear()
-                    self.input_fechaDePago.setDate(QDate.currentDate())
-                else:
-                    mensaje_ingreso_datos("Registro de pagos","Registro no cargado")
+    #     patronB = re.compile(r'^[a-zA-ZáéíóúÁÉÍÓÚüÜ\'\s]+$') 
+    #     if not isinstance(tipo, str) or not patronB.match(tipo):
+    #         mensaje_ingreso_datos("Registro de alumnos","Debe elegir un tipo de pago")
+    #         return
+    #     save = inicio("Registro de pagos","¿Desea guardar el registro?")
+    #     if save == QMessageBox.StandardButton.Yes:
+    #         try:
+    #             db = conectar_base_de_datos()
+    #             cursor = db.cursor()
+    #             cursor.execute("INSERT INTO pago (precio, modalidad, estado, fecha) VALUE (%s, %s, %s)", (mont, tipo, date),)
+    #             db.commit()
+    #             if cursor:
+    #                 mensaje_ingreso_datos("Registro de pagos","Registro cargado")
+    #                 self.monto.clear()
+    #                 self.input_tipoDePago.clear()
+    #                 self.input_fechaDePago.setDate(QDate.currentDate())
+    #             else:
+    #                 mensaje_ingreso_datos("Registro de pagos","Registro no cargado")
                     
-                cursor.close()
-                db.close()
-            except Error as ex:
-                errorConsulta("Registro de pagos",f"Error en la cosulta: {str(ex)}")
-        else:
-            print("Error executing the query", ex)
+    #             cursor.close()
+    #             db.close()
+    #         except Error as ex:
+    #             errorConsulta("Registro de pagos",f"Error en la cosulta: {str(ex)}")
+    #     else:
+    #         print("Error executing the query", ex)
             
     # ----------- PESTAÑA BALANCE -----------------
     def consultar(self):
