@@ -20,7 +20,7 @@ from PyQt6.QtCore import *
 # Módulo de para las cajas de mensajes
 from modulos.mensajes import mensaje_ingreso_datos, errorConsulta, inicio, aviso_descargaExitosa, aviso_Advertencia_De_excel, resultado_empleado, aviso_resultado, mensaje_horas_empleados, aviso_resultado_asistencias
 from modulos.style_item import itemColor_TOTAL, itemColor_RESULTADO
-
+from utilidades.completar_combobox import actualizar_combobox_user, actualizar_combobox_disc
 # Módulo de Registro de Asistencia
 from modulos.asistencia import Asistencia
 
@@ -843,20 +843,8 @@ class VentanaPrincipal(QMainWindow):
         layout_elementos_pagos2.addWidget(idUser)     # EN ESTA LINEA COMO LA SIGUIENTE, AGREGA LOS ALEMENTOS AL LAYOUT HORIZONTAL
         layout_elementos_pagos2.addWidget(self.idUser)
     
-        #  Conexión a la base de datos MySQL
-        conn = conectar_base_de_datos()
-        cursor = conn.cursor()
-
-        # Consulta para obtener los datos de una columna específica
-        cursor.execute("SELECT dni FROM usuario ORDER BY dni ASC")
-        datos = cursor.fetchall()
-        
-        for resultado in datos:
-            self.idUser.addItem(str(resultado[0]), resultado)
+        actualizar_combobox_user(self,idUser)
         self.idUser.currentData()[0]
-                    
-        cursor.close()
-        conn.close()
         
         idDis = QLabel('Disciplina:',grupo_pagos)
         idDis.setStyleSheet(style.label)
@@ -868,20 +856,12 @@ class VentanaPrincipal(QMainWindow):
         layout_elementos_pagos2.addWidget(idDis)     # EN ESTA LINEA COMO LA SIGUIENTE, AGREGA LOS ALEMENTOS AL LAYOUT HORIZONTAL
         layout_elementos_pagos2.addWidget(self.idDis)
         
-        #  Conexión a la base de datos MySQL
-        conn = conectar_base_de_datos()
-        cursor = conn.cursor()
-
-        # Consulta para obtener los datos de una columna específica
-        cursor.execute("SELECT id_disciplina, nombre, precio FROM disciplina ORDER BY nombre ASC")
-        resultados = cursor.fetchall()
-        print(resultados)
-        for resultado in resultados:
-            self.idDis.addItem(str(resultado[1]), resultado)
+        actualizar_combobox_disc(self,idDis)
         self.idDis.currentData()[0]
                         
-        cursor.close()
-        conn.close()       
+        def showEvent(self, event):
+            actualizar_combobox_user(self,idUser)
+            actualizar_combobox_disc(self,idDis)     
                
         fechaDePago = QLabel('Fecha de pago:',grupo_pagos)
         fechaDePago.setStyleSheet(style.label)
@@ -1813,8 +1793,9 @@ class VentanaPrincipal(QMainWindow):
     
     def pagos(self):
         self.tab.setCurrentIndex(4)
-        # seleccion_de_disciplina(self,idDis=str)
-        # seleccion_de_usuario(self,idUser=int)
+        actualizar_combobox_user(self,idUser=int)
+        actualizar_combobox_disc(self,idDis=str)
+        
 
     def balances(self):
         self.tab.setCurrentIndex(5)
@@ -1866,7 +1847,7 @@ class VentanaPrincipal(QMainWindow):
             return
         edad = int(edad)
         
-        if not (celu.isdigit() and patron2.match(celu)):
+        if not (celu.isdigit() and len(celu) == 10 and patron2.match(celu)):
             mensaje_ingreso_datos("Registro de alumnos","El 'celular' debe ser:\n\n- Valores numéricos.\n- Contener 10 dígitos.\n- No contener puntos(.)")
             return
         celu = int(celu)
