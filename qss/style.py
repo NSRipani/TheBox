@@ -298,51 +298,53 @@ estilo_combo = """
     QScrollBar:vertical {
         border-left-color: 1px solid black;
         background: #c0c0c0;
-        width: 25px;
-        margin: 25.5px 0 25.5px 0;
+        width: 30px;
+        margin: 30.5px 0 30.5px 0;
         border-radius: 0px;
     }
 
     /* HANDLE BAR VERTICAL */
     QScrollBar::handle:vertical {    
-        background-color: #ff8c00;
+        background-color: #fcfcfc;
         border: 1px solid black;
     }
     QScrollBar::handle:vertical:hover {    
-        background-color: rgba(255,140,0,0.5);
+        background-color: #cccccc;
     }
     QScrollBar::handle:vertical:pressed {    
-        background-color: #f6bd60;
+        background-color: #999999;
     }
 
     /* BTN TOP - SCROLLBAR */
     QScrollBar::sub-line:vertical {
         border: 1px solid black;
         background: url("img/flecha-combo.png");
-        height: 25px;
+        background-color: #fcfcfc;
+        height: 30px;
         subcontrol-position: top;
         subcontrol-origin: margin;
     }
     QScrollBar::sub-line:vertical:hover {    
-        background-color: rgba(255,140,0,0.5);
+        background-color: #cccccc;
     }
     QScrollBar::sub-line:vertical:pressed {    
-        background-color: #f6bd60;
+        background-color: #999999;
     }
 
     /* BTN BOTTOM - SCROLLBAR */
     QScrollBar::add-line:vertical {
         border: 1px solid black;
         background: url("img/flecha-combo.png");
-        height: 25px;
+        background-color: #fcfcfc;
+        height: 30px;
         subcontrol-position: bottom;
         subcontrol-origin: margin;
     }
     QScrollBar::add-line:vertical:hover {    
-        background-color: rgba(255,140,0,0.5);
+        background-color: #cccccc;
     }
     QScrollBar::add-line:vertical:pressed {    
-        background-color: #f6bd60;
+        background-color: #999999;
     }
 
     /* RESET ARROW */

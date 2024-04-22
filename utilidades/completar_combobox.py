@@ -1,6 +1,6 @@
 from conexion_DB.dataBase import conectar_base_de_datos
 
-def actualizar_combobox_user(self,idUser):
+def actualizar_combobox_user(self):
     conn = conectar_base_de_datos()
     cursor = conn.cursor()
     
@@ -16,7 +16,7 @@ def actualizar_combobox_user(self,idUser):
     cursor.close()
     conn.close()
     
-def actualizar_combobox_disc(self, idDis):
+def actualizar_combobox_disc(self):
     #  Conexión a la base de datos MySQL
     conn = conectar_base_de_datos()
     cursor = conn.cursor()
@@ -28,7 +28,7 @@ def actualizar_combobox_disc(self, idDis):
     resultados = cursor.fetchall()
 
     for resultado in resultados:
-        self.idDis.addItem(str(resultado[1]), resultado)
+        self.idDis.addItem(str(resultado[1]).capitalize().title(), resultado)
                         
     cursor.close()
     conn.close() 
