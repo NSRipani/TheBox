@@ -20,7 +20,7 @@ from PyQt6.QtCore import *
 # Módulo de para las cajas de mensajes
 from modulos.mensajes import mensaje_ingreso_datos, errorConsulta, inicio, aviso_descargaExitosa, aviso_Advertencia_De_excel, resultado_empleado, aviso_resultado, mensaje_horas_empleados, aviso_resultado_asistencias
 from modulos.style_item import itemColor_TOTAL, itemColor_RESULTADO
-from utilidades.completar_combobox import actualizar_combobox_user, actualizar_combobox_disc
+from utilidades.completar_combobox import actualizar_combobox_user, actualizar_combobox_disc, obtener_monto
 # Módulo de Registro de Asistencia
 from modulos.asistencia import Asistencia
 
@@ -857,7 +857,12 @@ class VentanaPrincipal(QMainWindow):
         
         actualizar_combobox_disc(self)
         self.idDis.currentData()[0]
-               
+        
+        # mostrar_monto = QLabel()
+        # mostrar_monto.setText(self.idDis.currentData(obtener_monto()))
+        # mostrar_monto.setFixedWidth(100)
+        # layout_elementos_pagos.addWidget(mostrar_monto)
+        
         fechaDePago = QLabel('Fecha de pago:',grupo_pagos)
         fechaDePago.setStyleSheet(style.label)
         fechaDePago.setFixedWidth(140)

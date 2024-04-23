@@ -32,3 +32,14 @@ def actualizar_combobox_disc(self):
                         
     cursor.close()
     conn.close() 
+    
+# def obtener_monto():
+ 
+#     db = conectar_base_de_datos()
+#     cursor = db.cursor()
+#     cursor.execute("SELECT precio FROM disciplina")
+#     monto = cursor.fetchall()[0]
+#     cursor.close()
+#     db.close() 
+    
+#     return monto
