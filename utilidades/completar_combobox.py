@@ -32,3 +32,18 @@ def actualizar_combobox_disc(self):
                         
     cursor.close()
     conn.close() 
+
+def completar_nombre_empleado(self):
+    #  Conexión a la base de datos MySQL
+    conn = conectar_base_de_datos()
+    cursor = conn.cursor()
+    
+    self.id_horas_empleado.clear()
+    cursor.execute("SELECT id_empleado, nombre, apellido FROM registro_empleado ORDER BY nombre ASC")
+    resultados = cursor.fetchall()
+
+    for resultado in resultados:
+        self.id_horas_empleado.addItem(str(resultado[1]).capitalize().title(), resultado)
+    
+    cursor.close()
+    conn.close() 

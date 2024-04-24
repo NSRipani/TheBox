@@ -20,7 +20,7 @@ from PyQt6.QtCore import *
 # Módulo de para las cajas de mensajes
 from modulos.mensajes import mensaje_ingreso_datos, errorConsulta, inicio, aviso_descargaExitosa, aviso_Advertencia_De_excel, resultado_empleado, aviso_resultado, mensaje_horas_empleados, aviso_resultado_asistencias
 from modulos.style_item import itemColor_TOTAL, itemColor_RESULTADO
-from utilidades.completar_combobox import actualizar_combobox_user, actualizar_combobox_disc
+from utilidades.completar_combobox import actualizar_combobox_user, actualizar_combobox_disc,completar_nombre_empleado
 # Módulo de Registro de Asistencia
 from modulos.asistencia import Asistencia
 
@@ -857,13 +857,13 @@ class VentanaPrincipal(QMainWindow):
         
         actualizar_combobox_disc(self)
         self.idDis.currentData()[0]
-        precio = self.idDis.currentData()[2]
-        label_monto = QLabel(grupo_pagos)
-        layout_elementos_pagos.addWidget(label_monto)
-        self.idDis.currentIndexChanged.connect(self.mostrar_precio)
         
-        def mostrar_precio(self):
-            label_monto.setText(str(f" ${precio}"))
+        label_monto = QLabel(grupo_pagos)
+        label_monto.setStyleSheet(style.label)
+        layout_elementos_pagos.addWidget(label_monto)
+        
+        precio = self.idDis.currentData()[2]
+        label_monto.setText(str(f" ${precio}"))
         
         
         fechaDePago = QLabel('Fecha de pago:',grupo_pagos)
@@ -979,18 +979,22 @@ class VentanaPrincipal(QMainWindow):
         layout_V4 = QVBoxLayout()
         
         # LAYOUT HORIZONTAL
-        layout_H14 = QHBoxLayout()
-        layout_H15 = QHBoxLayout()
+        elementos = QHBoxLayout()
+        elementos.setAlignment(Qt.AlignmentFlag.AlignLeft)
+        elementos2 = QHBoxLayout()
+        elementos2.setAlignment(Qt.AlignmentFlag.AlignLeft)
+        elementos3 = QHBoxLayout()
+        elementos3.setAlignment(Qt.AlignmentFlag.AlignLeft)
         
         view_nomb = QLabel("Nombre:",comboView)
         view_nomb.setStyleSheet(style.label)
-        view_nomb.setFixedWidth(120)
+        view_nomb.setFixedWidth(140)
         self.view_nomb = QLineEdit(comboView)
-        self.view_nomb.setFixedWidth(300)
+        self.view_nomb.setFixedWidth(200)
         self.view_nomb.setStyleSheet(style.estilo_lineedit)
-        layout_H14.addWidget(view_nomb)     # EN ESTA LINEA COMO LA SIGUIENTE, AGREGA LOS ALEMENTOS AL LAYOUT HORIZONTAL
-        layout_H14.addWidget(self.view_nomb)
-        layout_H14.addSpacing(10)
+        elementos.addWidget(view_nomb)     # EN ESTA LINEA COMO LA SIGUIENTE, AGREGA LOS ALEMENTOS AL LAYOUT HORIZONTAL
+        elementos.addWidget(self.view_nomb)
+        # layout_H14.addSpacing(10)
         
         #  Conexión a la base de datos MySQL
         conn = conectar_base_de_datos()
@@ -1011,13 +1015,13 @@ class VentanaPrincipal(QMainWindow):
         
         view_apellido = QLabel("Apellido:",comboView)
         view_apellido.setStyleSheet(style.label)
-        view_apellido.setFixedWidth(100)
+        view_apellido.setFixedWidth(80)
         self.view_apellido = QLineEdit(comboView)
         self.view_apellido.setStyleSheet(style.estilo_lineedit)
-        self.view_apellido.setFixedWidth(300)
-        layout_H14.addWidget(view_apellido)     # EN ESTA LINEA COMO LA SIGUIENTE, AGREGA LOS ALEMENTOS AL LAYOUT HORIZONTAL
-        layout_H14.addWidget(self.view_apellido)
-        layout_H14.addSpacing(10)
+        self.view_apellido.setFixedWidth(200)
+        elementos.addWidget(view_apellido)     # EN ESTA LINEA COMO LA SIGUIENTE, AGREGA LOS ALEMENTOS AL LAYOUT HORIZONTAL
+        elementos.addWidget(self.view_apellido)
+        # layout_H14.addSpacing(10)
                 
         view_disciplina = QLabel("Disciplina:", comboView)
         view_disciplina.setStyleSheet(style.label)
@@ -1026,55 +1030,25 @@ class VentanaPrincipal(QMainWindow):
         lista = ["- Elije una disciplina","Musculación","Cross Funcional","Funcional","Gap","Ritmos","Kids","Adultos","Stretching","Cardio"]
         self.view_disciplina.addItems(lista)
         self.view_disciplina.setStyleSheet(style.estilo_combo)
-        self.view_disciplina.setFixedWidth(300)
-        layout_H14.addWidget(view_disciplina)       # EN ESTA LINEA COMO LA SIGUIENTE, AGREGA LOS ALEMENTOS AL LAYOUT HORIZONTAL
-        layout_H14.addWidget(self.view_disciplina)
-        layout_H14.addSpacing(370)      # AGREGA ESPACIO ENTRE ELEMENTOS
+        self.view_disciplina.setFixedWidth(200)
+        elementos.addWidget(view_disciplina)       # EN ESTA LINEA COMO LA SIGUIENTE, AGREGA LOS ALEMENTOS AL LAYOUT HORIZONTAL
+        elementos.addWidget(self.view_disciplina)
+        # layout_H14.addSpacing(370)      # AGREGA ESPACIO ENTRE ELEMENTOS
                 
-        view_asistencia = QLabel("Asistentcia:", comboView)
-        view_asistencia.setStyleSheet(style.label)
-        view_asistencia.setFixedWidth(120)
-        self.view_asistencia = QDateEdit(comboView)
-        self.view_asistencia.setStyleSheet(style.estilo_fecha)
-        self.view_asistencia.setLocale(QLocale("es-AR"))
-        self.view_asistencia.setCursor(Qt.CursorShape.PointingHandCursor)
-        self.view_asistencia.setFixedWidth(300)
-        self.view_asistencia.setDate(QDate.currentDate())
-        self.view_asistencia.setDisplayFormat("dd/MM/yyyy")
-        self.view_asistencia.setCalendarPopup(True)
-        layout_H15.addWidget(view_asistencia)       # EN ESTA LINEA COMO LA SIGUIENTE, AGREGA LOS ALEMENTOS AL LAYOUT HORIZONTAL
-        layout_H15.addWidget(self.view_asistencia)
-
-        view_al = QLabel("Al:", comboView)
-        view_al.setStyleSheet(style.label)
-        view_al.setFixedWidth(30)
-        self.view_al = QDateEdit(comboView)
-        self.view_al.setStyleSheet(style.estilo_fecha)
-        self.view_al.setLocale(QLocale("es-AR"))
-        self.view_al.setCursor(Qt.CursorShape.PointingHandCursor)
-        self.view_al.setFixedWidth(300)
-        self.view_al.setDate(QDate.currentDate())
-        self.view_al.setDisplayFormat("dd/MM/yyyy")
-        self.view_al.setCalendarPopup(True)
-        layout_H15.addSpacing(5)
-        layout_H15.addWidget(view_al)       # EN ESTA LINEA COMO LA SIGUIENTE, AGREGA LOS ALEMENTOS AL LAYOUT HORIZONTAL
-        layout_H15.addWidget(self.view_al)
-        layout_H15.addSpacing(10)       # AGREGA ESPACIO ENTRE ELEMENTOS
-        
         view_fechaDePago = QLabel("Fecha de pago:", comboView)
         view_fechaDePago.setStyleSheet(style.label)
-        view_fechaDePago.setFixedWidth(150)
+        view_fechaDePago.setFixedWidth(140)
         self.view_fechaDePago = QDateEdit(comboView)
         self.view_fechaDePago.setStyleSheet(style.estilo_fecha)
         self.view_fechaDePago.setLocale(QLocale("es-AR"))
         self.view_fechaDePago.setCursor(Qt.CursorShape.PointingHandCursor)
-        self.view_fechaDePago.setFixedWidth(300)
+        self.view_fechaDePago.setFixedWidth(200)
         self.view_fechaDePago.setDate(QDate.currentDate())
         self.view_fechaDePago.setDisplayFormat("dd/MM/yyyy")
         self.view_fechaDePago.setCalendarPopup(True)
-        layout_H15.addWidget(view_fechaDePago)      # EN ESTA LINEA COMO LA SIGUIENTE, AGREGA LOS ALEMENTOS AL LAYOUT HORIZONTAL
-        layout_H15.addWidget(self.view_fechaDePago)
-        layout_H15.addSpacing(5)
+        elementos2.addWidget(view_fechaDePago)      # EN ESTA LINEA COMO LA SIGUIENTE, AGREGA LOS ALEMENTOS AL LAYOUT HORIZONTAL
+        elementos2.addWidget(self.view_fechaDePago)
+        elementos2.addSpacing(5)
         
         view_al2 = QLabel("Al:", comboView)
         view_al2.setStyleSheet(style.label)
@@ -1083,57 +1057,92 @@ class VentanaPrincipal(QMainWindow):
         self.view_al2.setStyleSheet(style.estilo_fecha)
         self.view_al2.setLocale(QLocale("es-AR"))
         self.view_al2.setCursor(Qt.CursorShape.PointingHandCursor)
-        self.view_al2.setFixedWidth(300)
+        self.view_al2.setFixedWidth(200)
         self.view_al2.setDate(QDate.currentDate())
         self.view_al2.setDisplayFormat("dd/MM/yyyy")
         self.view_al2.setCalendarPopup(True)
-        layout_H15.addWidget(view_al2)      # EN ESTA LINEA COMO LA SIGUIENTE, AGREGA LOS ALEMENTOS AL LAYOUT HORIZONTAL
-        layout_H15.addWidget(self.view_al2)
-        layout_H15.setContentsMargins(0,0,50,0)     # AGREGA MARGEN ENTRE ELEMENTOS
+        elementos2.addWidget(view_al2)      # EN ESTA LINEA COMO LA SIGUIENTE, AGREGA LOS ALEMENTOS AL LAYOUT HORIZONTAL
+        elementos2.addWidget(self.view_al2)
+        elementos2.setContentsMargins(0,0,50,0)     # AGREGA MARGEN ENTRE ELEMENTOS
         
-        # AGREGAR LAYOUT VERTICAL LOS LAYOUT HORIZONTALES
-        layout_V4.addLayout(layout_H14)
-        layout_V4.addLayout(layout_H15)
+        view_asistencia = QLabel("Asistentcia:", comboView)
+        view_asistencia.setStyleSheet(style.label)
+        view_asistencia.setFixedWidth(140)
+        self.view_asistencia = QDateEdit(comboView)
+        self.view_asistencia.setStyleSheet(style.estilo_fecha)
+        self.view_asistencia.setLocale(QLocale("es-AR"))
+        self.view_asistencia.setCursor(Qt.CursorShape.PointingHandCursor)
+        self.view_asistencia.setFixedWidth(200)
+        self.view_asistencia.setDate(QDate.currentDate())
+        self.view_asistencia.setDisplayFormat("dd/MM/yyyy")
+        self.view_asistencia.setCalendarPopup(True)
+        elementos3.addWidget(view_asistencia)       # EN ESTA LINEA COMO LA SIGUIENTE, AGREGA LOS ALEMENTOS AL LAYOUT HORIZONTAL
+        elementos3.addWidget(self.view_asistencia)
+
+        view_al = QLabel("Al:", comboView)
+        view_al.setStyleSheet(style.label)
+        view_al.setFixedWidth(30)
+        self.view_al = QDateEdit(comboView)
+        self.view_al.setStyleSheet(style.estilo_fecha)
+        self.view_al.setLocale(QLocale("es-AR"))
+        self.view_al.setCursor(Qt.CursorShape.PointingHandCursor)
+        self.view_al.setFixedWidth(200)
+        self.view_al.setDate(QDate.currentDate())
+        self.view_al.setDisplayFormat("dd/MM/yyyy")
+        self.view_al.setCalendarPopup(True)
+        elementos3.addSpacing(5)
+        elementos3.addWidget(view_al)       # EN ESTA LINEA COMO LA SIGUIENTE, AGREGA LOS ALEMENTOS AL LAYOUT HORIZONTAL
+        elementos3.addWidget(self.view_al)
+        elementos3.addSpacing(10)       # AGREGA ESPACIO ENTRE ELEMENTOS
         
-        # AGREGAR AL "GRID" EL LAYOUT VERTICAL
-        grid5.addLayout(layout_V4,0,0,1,5)
-        
-        # CREA LA TABLA DENTRO DEL COMBOBOX
-        self.tablaVIEW = QTableWidget(comboView)
-        self.tablaVIEW.setStyleSheet(style.esttabla)
-        
-        # AGREGAR AL "GRID" LA TABLA
-        grid5.addWidget(self.tablaVIEW,1,0,1,5)
-        
-        # AGREGAR LAYOUT HORIZONTAL PARA BOTONES
         layout_H18 = QHBoxLayout() 
+        layout_H18.setAlignment(Qt.AlignmentFlag.AlignRight)
         button14 = QPushButton('TABLA POR ALUMNO', comboView)
+        button14.setFixedWidth(200)
         button14.setCursor(Qt.CursorShape.PointingHandCursor)
         button14.setStyleSheet(style.estilo_boton)
-        button15 = QPushButton('TABLA GENERAL DE ALUMNOS', comboView)
-        button15.setCursor(Qt.CursorShape.PointingHandCursor)
-        button15.setStyleSheet(style.estilo_boton)
-        button16 = QPushButton('TOTAL GENERAL DE DISCIPLINAS', comboView)
-        button16.setCursor(Qt.CursorShape.PointingHandCursor)
-        button16.setStyleSheet(style.estilo_boton)
-        sacar_tabla = QPushButton('LIMPIAR TABLA', comboView)
-        sacar_tabla.setCursor(Qt.CursorShape.PointingHandCursor)
-        sacar_tabla.setStyleSheet(style.estilo_boton)
-        
-        # AGREGAR LAYOUT HORIZONTAL PARA BOTONES
-        layout_H19 = QHBoxLayout()
         button17 = QPushButton('TOTAL POR DISCIPLINAS', comboView)
+        button17.setFixedWidth(200)
         button17.setCursor(Qt.CursorShape.PointingHandCursor)
         button17.setStyleSheet(style.estilo_boton)
-        button18 = QPushButton('ASISTENCIA GENERAL', comboView)
-        button18.setCursor(Qt.CursorShape.PointingHandCursor)
-        button18.setStyleSheet(style.estilo_boton)
         button19 = QPushButton('ASISTENCIA POR ALUMNO', comboView)
+        button19.setFixedWidth(200)
         button19.setCursor(Qt.CursorShape.PointingHandCursor)
         button19.setStyleSheet(style.estilo_boton)
+        layout_H18.addWidget(button14)
+        layout_H18.addWidget(button17)
+        layout_H18.addWidget(button19)
+        
+        layout_H19 = QHBoxLayout()
+        layout_H19.setAlignment(Qt.AlignmentFlag.AlignRight)
+        button15 = QPushButton('TABLA DE ALUMNOS', comboView)
+        button15.setFixedWidth(200)
+        button15.setCursor(Qt.CursorShape.PointingHandCursor)
+        button15.setStyleSheet(style.estilo_boton)
+        button16 = QPushButton('TOTAL DE DISCIPLINAS', comboView)
+        button16.setFixedWidth(200)
+        button16.setCursor(Qt.CursorShape.PointingHandCursor)
+        button16.setStyleSheet(style.estilo_boton)
+        button18 = QPushButton('TOTAL ASISTENCIA', comboView)
+        button18.setFixedWidth(200)
+        button18.setCursor(Qt.CursorShape.PointingHandCursor)
+        button18.setStyleSheet(style.estilo_boton)
+        layout_H19.addWidget(button15)
+        layout_H19.addWidget(button16)
+        layout_H19.addWidget(button18)
+        
+        layout_H20 = QHBoxLayout()
+        layout_H20.setAlignment(Qt.AlignmentFlag.AlignRight)
+        sacar_tabla = QPushButton('LIMPIAR TABLA', comboView)
+        sacar_tabla.setFixedWidth(200)
+        sacar_tabla.setCursor(Qt.CursorShape.PointingHandCursor)
+        sacar_tabla.setStyleSheet(style.estilo_boton)
         bottonExcel = QPushButton('DESCARGAR PLANILLA', comboView)
+        bottonExcel.setFixedWidth(200)
         bottonExcel.setCursor(Qt.CursorShape.PointingHandCursor)
         bottonExcel.setStyleSheet(style.boton_excel)
+        layout_H20.addWidget(sacar_tabla)
+        layout_H20.addWidget(bottonExcel)
         
         # CONECCION DE SEÑALES A LAS FUNCIONES
         button14.clicked.connect(self.consultar)
@@ -1145,19 +1154,31 @@ class VentanaPrincipal(QMainWindow):
         button19.clicked.connect(self.consultar6)
         bottonExcel.clicked.connect(self.tabla_balance)
         
-        # AGREGAR A LOS "LAYOUT"
-        layout_H18.addWidget(button14)
-        layout_H18.addWidget(button15)
-        layout_H18.addWidget(button16)
-        layout_H18.addWidget(sacar_tabla)
-        layout_H19.addWidget(button17)
-        layout_H19.addWidget(button18)
-        layout_H19.addWidget(button19)
-        layout_H19.addWidget(bottonExcel)
+        horizontal = QHBoxLayout()
+        horizontal.addLayout(elementos)
+        horizontal.addLayout(layout_H18)
+        horizontal2 = QHBoxLayout()
+        horizontal2.addLayout(elementos2)
+        horizontal2.addLayout(layout_H19)
+        horizontal3 = QHBoxLayout()
+        horizontal3.addLayout(elementos3)
+        horizontal3.addLayout(layout_H20)
+
         
-        # AGREGAR AL "GRID" LOS LAYOUT HORIZONTALES
-        grid5.addLayout(layout_H18,2,0,1,5)
-        grid5.addLayout(layout_H19,3,0,1,5)
+        # AGREGAR LAYOUT VERTICAL LOS LAYOUT HORIZONTALES
+        layout_V4.addLayout(horizontal)
+        layout_V4.addLayout(horizontal2)
+        layout_V4.addLayout(horizontal3)
+        
+        # AGREGAR AL "GRID" EL LAYOUT VERTICAL
+        grid5.addLayout(layout_V4,0,0,1,5)
+        
+        # CREA LA TABLA DENTRO DEL COMBOBOX
+        self.tablaVIEW = QTableWidget(comboView)
+        self.tablaVIEW.setStyleSheet(style.esttabla)
+        
+        # AGREGAR AL "GRID" LA TABLA
+        grid5.addWidget(self.tablaVIEW,1,0,1,5)
         
         # AGREAGA EL QCOMBOBOX AL GRID
         comboView.setLayout(grid5)
@@ -1184,15 +1205,15 @@ class VentanaPrincipal(QMainWindow):
         layout_emp1 = QHBoxLayout()
         layout_emp1.setAlignment(Qt.AlignmentFlag.AlignLeft)
         
-        id_emp = QLabel('ID:',grupo_empleados)
-        id_emp.setStyleSheet(style.label)
-        id_emp.setFixedWidth(40)
-        self.id_emp = QLineEdit(grupo_empleados)
-        self.id_emp.setStyleSheet(style.estilo_lineedit)
-        self.id_emp.setEnabled(False)
-        self.id_emp.setFixedWidth(50)
-        layout_emp.addWidget(id_emp)        # EN ESTA LINEA COMO LA SIGUIENTE, AGREGA LOS ALEMENTOS AL LAYOUT HORIZONTAL
-        layout_emp.addWidget(self.id_emp)
+        # id_emp = QLabel('ID:',grupo_empleados)
+        # id_emp.setStyleSheet(style.label)
+        # id_emp.setFixedWidth(40)
+        # self.id_emp = QLineEdit(grupo_empleados)
+        # self.id_emp.setStyleSheet(style.estilo_lineedit)
+        # self.id_emp.setEnabled(False)
+        # self.id_emp.setFixedWidth(50)
+        # layout_emp.addWidget(id_emp)        # EN ESTA LINEA COMO LA SIGUIENTE, AGREGA LOS ALEMENTOS AL LAYOUT HORIZONTAL
+        # layout_emp.addWidget(self.id_emp)
         
         nombre_emp = QLabel('Nombre:',grupo_empleados)
         nombre_emp.setStyleSheet(style.label)
@@ -1205,7 +1226,7 @@ class VentanaPrincipal(QMainWindow):
         
         apellido_emp = QLabel('Apellido:',grupo_empleados)
         apellido_emp.setStyleSheet(style.label)
-        apellido_emp.setFixedWidth(80)
+        apellido_emp.setFixedWidth(100)
         self.apellido_emp = QLineEdit(grupo_empleados)
         self.apellido_emp.setStyleSheet(style.estilo_lineedit)
         self.apellido_emp.setFixedWidth(200)
@@ -1214,7 +1235,7 @@ class VentanaPrincipal(QMainWindow):
         
         sexo_emp = QLabel('Sexo:',grupo_empleados)
         sexo_emp.setStyleSheet(style.label)
-        sexo_emp.setFixedWidth(55)
+        sexo_emp.setFixedWidth(60)
         self.sexo_emp = QComboBox(grupo_empleados)
         self.sexo_emp.setStyleSheet(style.estilo_combo)
         self.sexo_emp.setFixedWidth(200)
@@ -1224,7 +1245,7 @@ class VentanaPrincipal(QMainWindow):
         
         dni_emp = QLabel('DNI:',grupo_empleados)
         dni_emp.setStyleSheet(style.label)
-        dni_emp.setFixedWidth(40)
+        dni_emp.setFixedWidth(80)
         self.dni_emp = QLineEdit(grupo_empleados)
         self.dni_emp.setStyleSheet(style.estilo_lineedit)
         self.dni_emp.setFixedWidth(200)
@@ -1362,49 +1383,25 @@ class VentanaPrincipal(QMainWindow):
         layout_horas.setAlignment(Qt.AlignmentFlag.AlignLeft)
         layout_horas2 = QHBoxLayout()
         layout_horas2.setAlignment(Qt.AlignmentFlag.AlignLeft)
-               
-        id_hora = QLabel('ID Hora:',grupo_horas)
-        id_hora.setStyleSheet(style.label)
-        id_hora.setFixedWidth(80)
-        self.id_hora = QLineEdit(grupo_horas)
-        self.id_hora.setStyleSheet(style.estilo_lineedit)
-        self.id_hora.setEnabled(False)
-        self.id_hora.setFixedWidth(50)
-        layout_horas.addWidget(id_hora)       # EN ESTA LINEA COMO LA SIGUIENTE, AGREGA LOS ALEMENTOS AL LAYOUT HORIZONTAL
-        layout_horas.addWidget(self.id_hora)
-        
-        id_horas_empleado = QLabel('ID Empleado:',grupo_horas)
+                      
+        id_horas_empleado = QLabel('Nombre:',grupo_horas)
         id_horas_empleado.setStyleSheet(style.label)
-        id_horas_empleado.setFixedWidth(130)
-        self.id_horas_empleado = QLineEdit(grupo_horas)
-        self.id_horas_empleado.setStyleSheet(style.estilo_lineedit)
-        self.id_horas_empleado.setFixedWidth(50)
+        id_horas_empleado.setFixedWidth(100)
+        self.id_horas_empleado = QComboBox(grupo_horas)
+        self.id_horas_empleado.setStyleSheet(style.estilo_combo)
+        self.id_horas_empleado.setFixedWidth(200)
         layout_horas.addWidget(id_horas_empleado)        # EN ESTA LINEA COMO LA SIGUIENTE, AGREGA LOS ALEMENTOS AL LAYOUT HORIZONTAL
         layout_horas.addWidget(self.id_horas_empleado)
 
-        # Conexión a la base de datos MySQL
-        conn = conectar_base_de_datos()
-        cursor = conn.cursor()
-
-        # Consulta para obtener los datos de una columna específica
-        cursor.execute("SELECT id_empleado FROM registro_empleado")
-        datos = cursor.fetchall()
-        list_empleados = [str(item[0]) for item in datos]
-
-        lista_empleados = QCompleter(list_empleados)
-        lista_empleados.setFilterMode(Qt.MatchFlag.MatchStartsWith)
-        lista_empleados.popup().setStyleSheet(style.completer)
-        self.id_horas_empleado.setCompleter(lista_empleados)
-        
-        cursor.close()
-        conn.close()
+        completar_nombre_empleado(self)
+        self.id_horas_empleado.currentData()[0]
         
         horas_tra = QLabel('Horas diarias:',grupo_horas)
         horas_tra.setStyleSheet(style.label)
         horas_tra.setFixedWidth(120)
         self.horas_tra = QLineEdit(grupo_horas)
         self.horas_tra.setStyleSheet(style.estilo_lineedit)
-        self.horas_tra.setFixedWidth(100)
+        self.horas_tra.setFixedWidth(60)
         layout_horas.addWidget(horas_tra)        # EN ESTA LINEA COMO LA SIGUIENTE, AGREGA LOS ALEMENTOS AL LAYOUT HORIZONTAL
         layout_horas.addWidget(self.horas_tra)
         
@@ -1424,7 +1421,7 @@ class VentanaPrincipal(QMainWindow):
         
         periodo = QLabel("Período:", grupo_horas)
         periodo.setStyleSheet(style.label)
-        periodo.setFixedWidth(80)
+        periodo.setFixedWidth(100)
         self.periodo = QDateEdit(grupo_horas)
         self.periodo.setStyleSheet(style.estilo_fecha)
         self.periodo.setLocale(QLocale("es-AR"))
@@ -1806,9 +1803,10 @@ class VentanaPrincipal(QMainWindow):
         
     def empleados(self):
         self.tab.setCurrentIndex(6)
-        
+    
     def horas(self):
         self.tab.setCurrentIndex(7)
+        completar_nombre_empleado(self)
     
     def registro_de_ingYegreso(self):
         self.tab.setCurrentIndex(8)
@@ -3584,7 +3582,7 @@ class VentanaPrincipal(QMainWindow):
             errorConsulta("Registro de alumnos",f"Error en la consulta: {str(ex)}")
             print("Error executing the query", ex) 
         
-    def tabla_balance(self,consulta_activada):
+    def tabla_balance(self):
         if self.tablaVIEW.rowCount() == 0:
             mensaje_ingreso_datos("Descarga de archivo","Primero debe mostrar una tabla antes de descargarla en un archivo Excel.")
             return
@@ -3657,7 +3655,6 @@ class VentanaPrincipal(QMainWindow):
             
     # ----------------------- EMPLEADOS -------------------------------------
     def guardar_empleado(self):
-        # id_emp = self.id_emp.text()
         nom_emp = self.nombre_emp.text().capitalize().title()
         apell_emp = self.apellido_emp.text().capitalize().title()
         sex_emp = self.sexo_emp.currentText() #.text().capitalize().title()
@@ -3687,18 +3684,11 @@ class VentanaPrincipal(QMainWindow):
         if not (cel.isnumeric() and len(cel) == 10 and patron_mun.match(cel)):
             mensaje_ingreso_datos("Registro de empleado","El celular debe ser numérico y contener 10 números enteros")
             return
-        cel = int(cel)
         
         empleado = inicio("Registro de empleado","¿Desea guardar los datos?")
         if empleado == QMessageBox.StandardButton.Yes:
             try:
-                db = mysql.connector.connect(
-                    host="localhost",
-                    port="3306",
-                    user="root",
-                    password="root",
-                    database="thebox_bd"
-                )
+                db = conectar_base_de_datos()
                 cursor = db.cursor()
                 query = "INSERT INTO registro_empleado (nombre, apellido, sexo, dni, celular, fecha) VALUES (%s,%s,%s,%s,%s,%s)"
                 values = (nom_emp,apell_emp,sex_emp,dni_emp,cel,fecha)
@@ -3707,7 +3697,6 @@ class VentanaPrincipal(QMainWindow):
                 
                 if cursor:
                     mensaje_ingreso_datos("Registro de empleado","Registro cargado")
-                    
                     self.nombre_emp.clear()
                     self.apellido_emp.clear()
                     self.sexo_emp.setCurrentIndex(0)
@@ -3728,7 +3717,7 @@ class VentanaPrincipal(QMainWindow):
     def autocompleto_de_datos_empleado(self):
         fila = self.tablaEmp.currentRow()
         
-        id_emple = self.tablaEmp.item(fila,0).text()
+        # id_emple = self.tablaEmp.item(fila,0).text()
         nom_emp = self.tablaEmp.item(fila,1).text()
         apell_emp = self.tablaEmp.item(fila,2).text()
         sex_emp = self.tablaEmp.item(fila,3).text()
@@ -3737,7 +3726,7 @@ class VentanaPrincipal(QMainWindow):
         fecha = self.tablaEmp.item(fila,6).text()
         fecha = QDate.fromString(fecha,"dd-MM-yyyy")
         
-        self.id_emp.setText(id_emple)
+        # self.id_emp.setText(id_emple)
         self.nombre_emp.setText(nom_emp)
         self.apellido_emp.setText(apell_emp)
         self.sexo_emp.setCurrentText(sex_emp)
@@ -3782,18 +3771,11 @@ class VentanaPrincipal(QMainWindow):
         if not (cel.isnumeric() and len(cel) == 10 and patron_mun.match(cel)):
             mensaje_ingreso_datos("Registro de empleado","El celular debe ser numérico y contener 10 números enteros")
             return
-        cel = int(cel)
         
         empleado_Actualizar = inicio("Busqueda de empleado","¿Seguro que desea actulizar?")
         if empleado_Actualizar == QMessageBox.StandardButton.Yes:   
             try:
-                db = mysql.connector.connect(
-                    host="localhost",
-                    port="3306",
-                    user="root",
-                    password="root",
-                    database="thebox_bd"
-                )
+                db = conectar_base_de_datos()
                 cursor = db.cursor()
                 query = "UPDATE registro_empleado SET nombre = %s, apellido = %s, sexo = %s, dni = %s, celular = %s, fecha = %s WHERE id_empleado = %s"
                 values = (nom_emp,apell_emp,sex_emp,dni_emp,cel,fecha,id_empl)
@@ -3802,7 +3784,6 @@ class VentanaPrincipal(QMainWindow):
                 
                 if cursor:
                     mensaje_ingreso_datos("Registro de empleado","Registro actualizado")
-                    self.id_emp.clear()
                     self.nombre_emp.clear()
                     self.apellido_emp.clear()
                     self.sexo_emp.setCurrentIndex(0)
@@ -3823,61 +3804,51 @@ class VentanaPrincipal(QMainWindow):
         else:
             print("No se actualiza registro")
     
-    def mostrar_empleado(self):
-        empleado_tabla = inicio("Registro de empleado","¿Desea mostrar tabla de empleados?")    
-        if empleado_tabla == QMessageBox.StandardButton.Yes:   
-            try:
-                db = mysql.connector.connect(
-                    host="localhost",
-                    port="3306",
-                    user="root",
-                    password="root",
-                    database="thebox_bd"
-                )
-                cursor = db.cursor()
-                cursor.execute(f"SELECT * FROM registro_empleado ORDER BY id_empleado")
-                busqueda = cursor.fetchall()
-                if busqueda:
-                    resultado_empleado("Registro de empleado",f"Se encontraron {len(busqueda)} coincidencias.")
+    def mostrar_empleado(self):  
+        try:
+            db = conectar_base_de_datos()
+            cursor = db.cursor()
+            cursor.execute(f"SELECT * FROM registro_empleado ORDER BY id_empleado")
+            busqueda = cursor.fetchall()
+            if len(busqueda) > 0:
+                resultado_empleado("Registro de empleado",f"Se encontraron {len(busqueda)} coincidencias.")
+            
+                headers = [description[0].replace('_', ' ').upper() for description in cursor.description]
                 
-                    headers = [description[0].replace('_', ' ').upper() for description in cursor.description]
+                self.tablaEmp.setRowCount(len(busqueda))
+                self.tablaEmp.setColumnCount(len(busqueda[0]))
+                self.tablaEmp.setHorizontalHeaderLabels(headers)
+                
+                # Establecer la propiedad de "stretch" en el encabezado horizontal
+                header = self.tablaEmp.horizontalHeader()
+                header.setSectionResizeMode(QHeaderView.ResizeMode.Stretch)
+                header.setAutoScroll(True)
+                
+                # Ajustar el tamaño de las filas para que se ajusten al contenido
+                self.tablaEmp.verticalHeader().setSectionResizeMode(QHeaderView.ResizeMode.ResizeToContents)
+                self.tablaEmp.setSelectionBehavior(QTableWidget.SelectionBehavior.SelectRows)
+                self.tablaEmp.setEditTriggers(QAbstractItemView.EditTrigger.NoEditTriggers)
                     
-                    self.tablaEmp.setRowCount(len(busqueda))
-                    self.tablaEmp.setColumnCount(len(busqueda[0]))
-                    self.tablaEmp.setHorizontalHeaderLabels(headers)
-                    
-                    # Establecer la propiedad de "stretch" en el encabezado horizontal
-                    header = self.tablaEmp.horizontalHeader()
-                    header.setSectionResizeMode(QHeaderView.ResizeMode.Stretch)
-                    header.setAutoScroll(True)
-                    
-                    # Ajustar el tamaño de las filas para que se ajusten al contenido
-                    self.tablaEmp.verticalHeader().setSectionResizeMode(QHeaderView.ResizeMode.ResizeToContents)
-                    self.tablaEmp.setSelectionBehavior(QTableWidget.SelectionBehavior.SelectRows)
-                    self.tablaEmp.setEditTriggers(QAbstractItemView.EditTrigger.NoEditTriggers)
+                for i, row in enumerate(busqueda):
+                    for j, val in enumerate(row):
+                        item = QTableWidgetItem(str(val))
                         
-                    for i, row in enumerate(busqueda):
-                        for j, val in enumerate(row):
-                            item = QTableWidgetItem(str(val))
-                            
-                            # Indices de las columnas que contienen fechas
-                            if j == 6:  
-                                fecha = QDate.fromString(str(val), "yyyy-MM-dd")  # Convertir la fecha a objeto QDate
-                                item.setText(fecha.toString("dd-MM-yyyy"))  # Establecer el formato de visualización
-                            
-                            if j in [4,5,6]:  # Ajustar alineación para ciertas columnas
-                                item.setTextAlignment(Qt.AlignmentFlag.AlignCenter)   
-                            self.tablaEmp.setItem(i, j, item)
-                else:
-                    resultado_empleado("Registro de empleado",f"Se encontraron {len(busqueda)} coincidencias.")
-                    
-                cursor.close()
-                db.close()
-            except Error as ex:
-                errorConsulta("Registro de empleado",f"Error en la consulta: {str(ex)}")
-                print("Error executing the query", ex)
-        else:
-            print("No se elimina registro")
+                        # Indices de las columnas que contienen fechas
+                        if j == 6:  
+                            fecha = QDate.fromString(str(val), "yyyy-MM-dd")  # Convertir la fecha a objeto QDate
+                            item.setText(fecha.toString("dd-MM-yyyy"))  # Establecer el formato de visualización
+                        
+                        if j in [0,4,5,6]:  # Ajustar alineación para ciertas columnas
+                            item.setTextAlignment(Qt.AlignmentFlag.AlignCenter)   
+                        self.tablaEmp.setItem(i, j, item)
+            else:
+                resultado_empleado("Registro de empleado",f"Se encontraron {len(busqueda)} coincidencias.")
+                
+            cursor.close()
+            db.close()
+        except Error as ex:
+            errorConsulta("Registro de empleado",f"Error en la consulta: {str(ex)}")
+            print("Error executing the query", ex)
     
     def limpiar_tabla_empleados(self):
         # Obtener el número de filas de la tabla
@@ -3888,7 +3859,6 @@ class VentanaPrincipal(QMainWindow):
             self.tablaEmp.removeRow(0) 
     
     def limpiar_camp(self):
-        self.id_emp.clear()
         self.nombre_emp.clear()
         self.apellido_emp.clear()
         self.sexo_emp.setCurrentIndex(0)
@@ -3917,7 +3887,6 @@ class VentanaPrincipal(QMainWindow):
                     mensaje_ingreso_datos("Registro de empleado","Registro eliminado")
                     self.tablaEmp.removeRow(selectedRow)
 
-                    self.id_emp.clear()
                     self.nombre_emp.clear()
                     self.apellido_emp.clear()
                     self.sexo_emp.clear()
@@ -3992,39 +3961,27 @@ class VentanaPrincipal(QMainWindow):
             
     # ----------------------- REGISTRO HORAS EMPLEADOS -------------------------------------
     def guardar_horas(self):
-        id_hora_emp = self.id_horas_empleado.text()
+        id_hora_emp = self.id_horas_empleado.currentData()[0]#self.id_horas_empleado.text()
         horas_horas = self.horas_tra.text()
         fecha_horas = self.fecha_tra.date().toPyDate()
         
         patron_mun = re.compile(r'^[0-9]+$')
-        if not (id_hora_emp.isnumeric() and len(id_hora_emp) > 0 and patron_mun.match(id_hora_emp)):
-            mensaje_ingreso_datos("Registro de empleado","El DNI debe ser numérico")
-            return
-        id_hora_emp = int(id_hora_emp)
-                
-        if not (horas_horas.isdigit() or len(horas_horas) == "" or 0 < len(horas_horas) >= 2 and patron_mun.match(horas_horas)):
-            mensaje_ingreso_datos("Registro de empleado","El número de horas debe ser numérico.")
+        if not (horas_horas.isnumeric() and patron_mun.match(horas_horas)):
+            mensaje_ingreso_datos("Registro de empleado","El DNI debe ser numérico y contener 8 números enteros")
             return
         horas_horas = int(horas_horas)
         
         empleado = inicio("Registro de empleado","¿Desea guardar los datos?")
         if empleado == QMessageBox.StandardButton.Yes:
             try:
-                db = mysql.connector.connect(
-                    host="localhost",
-                    port="3306",
-                    user="root",
-                    password="root",
-                    database="thebox_bd"
-                )
+                db = conectar_base_de_datos()
                 cursor = db.cursor()
-                cursor.execute("INSERT INTO empleado (id_empleado,horas_diaria,fecha) VALUES (%s,%s,%s)", (id_hora_emp,horas_horas,fecha_horas),)
+                cursor.execute("INSERT INTO hora (id_empleado,horas_diaria,fecha) VALUES (%s,%s,%s)", (id_hora_emp,horas_horas,fecha_horas))
                 db.commit()
                 
                 if cursor:
                     mensaje_ingreso_datos("Registro de empleado","Registro cargado")
-                    self.id_hora.clear()
-                    self.id_horas_empleado.clear()
+                    self.id_horas_empleado.currentIndex()
                     self.horas_tra.clear()
                     self.fecha_tra.setDate(QDate.currentDate())
                 else:
@@ -4038,6 +3995,68 @@ class VentanaPrincipal(QMainWindow):
         else:
             print("no se guardo")
     
+    def mostrar_horas(self):  
+        try:
+            db = conectar_base_de_datos()
+            cursor = db.cursor()
+            cursor.execute("SELECT h.id_hora, h.id_empleado, e.nombre, h.horas_diaria, h.fecha FROM hora as h INNER JOIN registro_empleado as e on h.id_empleado = e.id_empleado ORDER BY id_empleado, fecha")
+            busqueda = cursor.fetchall()
+            if busqueda:
+                resultado_empleado("Registro de empleado",f"Se encontraron {len(busqueda)} coincidencias.")
+            
+                headers = [description[0].replace('_', ' ').upper() for description in cursor.description]
+                
+                self.tablaHoras.setRowCount(len(busqueda))
+                self.tablaHoras.setColumnCount(len(busqueda[0]))
+                self.tablaHoras.setHorizontalHeaderLabels(headers)
+                
+                # Establecer la propiedad de "stretch" en el encabezado horizontal
+                header = self.tablaHoras.horizontalHeader()
+                header.setSectionResizeMode(QHeaderView.ResizeMode.Stretch)
+                header.setAutoScroll(True)
+                vert_header = self.tablaHoras.verticalHeader()
+                vert_header.setVisible(False)
+                # Ajustar el tamaño de las filas para que se ajusten al contenido
+                self.tablaHoras.verticalHeader().setSectionResizeMode(QHeaderView.ResizeMode.ResizeToContents)
+                self.tablaHoras.setSelectionBehavior(QTableWidget.SelectionBehavior.SelectRows)
+                self.tablaHoras.setEditTriggers(QAbstractItemView.EditTrigger.NoEditTriggers)
+                    
+                self.tablaHoras.setRowCount(len(busqueda) + 1)   
+                
+                for i, row in enumerate(busqueda):
+                    for j, val in enumerate(row):
+                        item = QTableWidgetItem(str(val))
+                        
+                        # Indices de las columnas que contienen fechas
+                        if j == 3:  
+                            fecha = QDate.fromString(str(val), "yyyy-MM-dd")  # Convertir la fecha a objeto QDate
+                            item.setText(fecha.toString("dd-MM-yyyy"))  # Establecer el formato de visualización
+                        
+                        if j in [0,1,2,3]:  # Ajustar alineación para ciertas columnas
+                            item.setTextAlignment(Qt.AlignmentFlag.AlignCenter)   
+                        self.tablaHoras.setItem(i, j, item)
+                
+                # Calcular y mostrar la suma de las horas diarias en la fila adicional
+                total_horas = sum(int(row[2]) for row in busqueda)
+                motrar_total_horas2 = QTableWidgetItem('TOTAL:')
+                motrar_total_horas2.setFont(itemColor_TOTAL(motrar_total_horas2))  # Funcion para estilos de item
+                motrar_total_horas2.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
+                self.tablaHoras.setItem(len(busqueda), 1, motrar_total_horas2)
+                
+                suma_horas2 = QTableWidgetItem(str(total_horas))
+                suma_horas2.setFont(itemColor_RESULTADO(suma_horas2))  # Funcion para estilos de item
+                suma_horas2.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
+                self.tablaHoras.setItem(len(busqueda), 2, suma_horas2)
+                
+            else:
+                resultado_empleado("Registro de empleado",f"Se encontraron {len(busqueda)} coincidencias.")
+                
+            cursor.close()
+            db.close()
+        except Error as ex:
+            errorConsulta("Registro de empleado",f"Error en la consulta: {str(ex)}")
+            print("Error executing the query", ex)
+    
     def autocompleto_de_datos_horas(self):
         fila = self.tablaHoras.currentRow()
         if fila == -1:  # Verifica si no se ha seleccionado ninguna fila
@@ -4048,15 +4067,13 @@ class VentanaPrincipal(QMainWindow):
             mensaje_ingreso_datos("Registro de Ingresos-Egresos","La última fila no debe ser precionada")
             return
         
-        id_ref = self.tablaHoras.item(fila,0).text()
-        id_ref = int(id_ref)
         id_emple = self.tablaHoras.item(fila,1).text()
         horas_h = self.tablaHoras.item(fila,2).text()
         fecha_h = self.tablaHoras.item(fila, 3).text()
         fecha_h = QDate.fromString(fecha_h, "dd-MM-yyyy")
 
         # Autocompletar los QLineEdits y la fecha
-        self.id_horas_empleado.setText(id_emple)
+        self.id_horas_empleado.setCurrentText(id_emple)
         self.horas_tra.setText(horas_h)
         self.fecha_tra.setDate(fecha_h)
 
@@ -4065,48 +4082,37 @@ class VentanaPrincipal(QMainWindow):
     def actualizar_horas(self):
         # Verificar si se ha seleccionado una fila
         if not self.tablaHoras.currentItem():
-            mensaje_ingreso_datos("Registro de empleado","Debe seleccionar el empleado te la tabla para actualizar")
+            mensaje_ingreso_datos("Registro de horas","Debe seleccionar el registro de la tabla para actualizar")
             return
         
         id_ref = self.tablaHoras.item(self.tablaHoras.currentRow(), 0).text()
         id_ref = int(id_ref)
-        idemp = self.id_horas_empleado.text()
+        idemp = self.id_horas_empleado.currentData()[0]#self.id_horas_empleado.currentText()
         horas_h = self.horas_tra.text()
         fecha_h = self.fecha_tra.date().toPyDate()
             
         patron_mun = re.compile(r'^[0-9]+$')
-        if not (idemp.isnumeric() and len(idemp) > 0 and patron_mun.match(idemp)):
-            mensaje_ingreso_datos("Registro de empleado","El ID debe ser numérico")
-            return
-        idemp = int(idemp)
         
         if not (horas_h.isdigit() or len(horas_h) == "" or 0 < len(horas_h) >= 2 and patron_mun.match(horas_h)):
-            mensaje_ingreso_datos("Registro de empleado","El número de horas debe ser numérico.")
+            mensaje_ingreso_datos("Registro de horas","Las 'Horas diaria' debe ser numérico.")
             return
         horas_h = int(horas_h)
         
-        empleado_Actualizar = inicio("Busqueda de Alumnos","¿Seguro que desea actulizar?")
+        empleado_Actualizar = inicio("Busqueda de horas","¿Seguro que desea actulizar?")
         if empleado_Actualizar == QMessageBox.StandardButton.Yes:   
             try:
-                db = mysql.connector.connect(
-                    host="localhost",
-                    port="3306",
-                    user="root",
-                    password="root",
-                    database="thebox_bd"
-                )
+                db = conectar_base_de_datos()
                 cursor = db.cursor()
-                cursor.execute("UPDATE empleado SET id_empleado = %s, horas_diaria = %s, fecha = %s WHERE id_hora = %s", (idemp,horas_h,fecha_h,id_ref),)
+                cursor.execute("UPDATE hora SET id_empleado = %s, horas_diaria = %s, fecha = %s WHERE id_hora = %s", (idemp,horas_h,fecha_h,id_ref))
                 db.commit() 
                 
                 if cursor:
-                    mensaje_ingreso_datos("Registro de alumnos","Registro actualizado")                    
-                    self.id_hora.clear()
-                    self.id_horas_empleado.clear()
+                    mensaje_ingreso_datos("Registro de horas","Registro actualizado")
+                    self.id_horas_empleado.currentIndex()
                     self.horas_tra.clear()
                     self.fecha_tra.setDate(QDate.currentDate())
                 else:
-                    mensaje_ingreso_datos("Registro de alumnos","Registro no actualizado")
+                    mensaje_ingreso_datos("Registro de horas","Registro no actualizado")
                     
                 cursor.close()
                 db.close() 
@@ -4114,54 +4120,45 @@ class VentanaPrincipal(QMainWindow):
                 self.tablaHoras.clearSelection() # Deselecciona la fila
                 
             except Error as ex:
-                errorConsulta("Registro de alumnos",f"Error en la consulta: {str(ex)}")
+                errorConsulta("Registro de horas",f"Error en la consulta: {str(ex)}")
                 print("Error executing the query", ex)
         else:
             print("No se actualiza registro")
       
     def limpiar_campos_hosas(self):
-        self.id_hora.clear()
-        self.id_horas_empleado.clear()
+        self.id_horas_empleado.currentIndex(0)
         self.horas_tra.clear()
         self.fecha_tra.setDate(QDate.currentDate())
       
     def eliminar_horas(self):
         # Primero corroborar la seleccion de la fila
         if not self.tablaHoras.currentItem():
-            mensaje_ingreso_datos("Registro de alumnos","Debe buscar el empleado a eliminar")
+            mensaje_ingreso_datos("Registro de horas","Debe buscar el registro a eliminar")
             return
         
         # Selecciona la fila acutal
         selectedRow = self.tablaHoras.currentRow()
         id_hor = int(self.tablaHoras.item(selectedRow, 0).text())
         
-        empleado_eliminar = inicio("Registro de empleado","¿Desea eliminar el empleado?")
+        empleado_eliminar = inicio("Registro de horas","¿Desea eliminar el registro?")
         if empleado_eliminar == QMessageBox.StandardButton.Yes:
             try:
-                db = mysql.connector.connect(
-                    host="localhost",
-                    port="3306",
-                    user="root",
-                    password="root",
-                    database="thebox_bd"
-                )
+                db = conectar_base_de_datos()
                 cursor = db.cursor()
-                query = f"DELETE FROM empleado WHERE id_ref = {id_hor}"
+                query = f"DELETE FROM hora WHERE id_ref = {id_hor}"
                 cursor.execute(query)
                 
                 if cursor:
-                    mensaje_ingreso_datos("Registro de empleado","Registro eliminado")
+                    mensaje_ingreso_datos("Registro de horas","Registro eliminado")
                     self.tablaHoras.removeRow(selectedRow)
 
-                    self.id_hora.clear()
-                    self.id_horas_empleado.clear()
+                    self.id_horas_empleado.currentIndex(0)
                     self.horas_tra.clear()
                     self.fecha_tra.setDate(QDate.currentDate())
                 
                     self.tablaHoras.clearSelection()  # Deseleccionar la fila eliminada
-
                 else:
-                    mensaje_ingreso_datos("Registro de empleado","Registro no eliminado")
+                    mensaje_ingreso_datos("Registro de horas","Registro no eliminado")
 
                 cursor.close()
                 db.commit()
@@ -4173,83 +4170,8 @@ class VentanaPrincipal(QMainWindow):
         else:
             print("No se elimino registro")
 
-    def mostrar_horas(self):
-        empleado_tabla = inicio("Registro de empleado","¿Desea mostrar tabla de empleados?")    
-        if empleado_tabla == QMessageBox.StandardButton.Yes:   
-            try:
-                db = mysql.connector.connect(
-                    host="localhost",
-                    port="3306",
-                    user="root",
-                    password="root",
-                    database="thebox_bd"
-                )
-                cursor = db.cursor()
-                cursor.execute("SELECT * FROM registro_empleado ORDER BY id_empleado, fecha")
-                busqueda = cursor.fetchall()
-                if busqueda:
-                    resultado_empleado("Registro de empleado",f"Se encontraron {len(busqueda)} coincidencias.")
-                
-                    headers = [description[0].replace('_', ' ').upper() for description in cursor.description]
-                    
-                    self.tablaHoras.setRowCount(len(busqueda))
-                    self.tablaHoras.setColumnCount(len(busqueda[0]))
-                    self.tablaHoras.setHorizontalHeaderLabels(headers)
-                    
-                    # Establecer la propiedad de "stretch" en el encabezado horizontal
-                    header = self.tablaHoras.horizontalHeader()
-                    header.setSectionResizeMode(QHeaderView.ResizeMode.Stretch)
-                    header.setAutoScroll(True)
-                    
-                    # Ajustar el tamaño de las filas para que se ajusten al contenido
-                    self.tablaHoras.verticalHeader().setSectionResizeMode(QHeaderView.ResizeMode.ResizeToContents)
-                    self.tablaHoras.setSelectionBehavior(QTableWidget.SelectionBehavior.SelectRows)
-                    self.tablaHoras.setEditTriggers(QAbstractItemView.EditTrigger.NoEditTriggers)
-                        
-                    self.tablaHoras.setRowCount(len(busqueda) + 1)   
-                    
-                    for i, row in enumerate(busqueda):
-                        for j, val in enumerate(row):
-                            item = QTableWidgetItem(str(val))
-                            
-                            # Indices de las columnas que contienen fechas
-                            if j == 7:  
-                                fecha = QDate.fromString(str(val), "yyyy-MM-dd")  # Convertir la fecha a objeto QDate
-                                item.setText(fecha.toString("dd-MM-yyyy"))  # Establecer el formato de visualización
-                            
-                            if j in [4, 5, 6, 7]:  # Ajustar alineación para ciertas columnas
-                                item.setTextAlignment(Qt.AlignmentFlag.AlignCenter)   
-                            self.tablaHoras.setItem(i, j, item)
-                    
-                    # Calcular y mostrar la suma de las horas diarias en la fila adicional
-                    total_horas = sum(int(row[6]) for row in busqueda)
-                    motrar_total_horas2 = QTableWidgetItem('TOTAL:')
-                    motrar_total_horas2.setFont(itemColor_TOTAL(motrar_total_horas2))  # Funcion para estilos de item
-                    motrar_total_horas2.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
-                    self.tablaHoras.setItem(len(busqueda), 5, motrar_total_horas2)
-                    
-                    suma_horas2 = QTableWidgetItem(str(total_horas))
-                    suma_horas2.setFont(itemColor_RESULTADO(suma_horas2))  # Funcion para estilos de item
-                    suma_horas2.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
-                    self.tablaHoras.setItem(len(busqueda), 6, suma_horas2)
-                    
-                else:
-                    resultado_empleado("Registro de empleado",f"Se encontraron {len(busqueda)} coincidencias.")
-                    
-                cursor.close()
-                db.close()
-            except Error as ex:
-                errorConsulta("Registro de empleado",f"Error en la consulta: {str(ex)}")
-                print("Error executing the query", ex)
-        else:
-            print("No se elimina registro")
-    
     def horas_empleados(self):   
-        idHORAS = self.id_horas.text()
-        patron_mun = re.compile(r'^[0-9]+$')
-        if not (idHORAS.isnumeric() and len(idHORAS) > 0 and patron_mun.match(idHORAS)):
-            mensaje_ingreso_datos("Registro de empleado","El ID del empleado debe ser numérico")
-            return
+        idNombre = self.id_horas_empleado.currentData()[0]
             
         principio = self.periodo.date().toString("yyyy-MM-dd")
         if not self.periodo.date().toString("yyyy-MM-dd"):
@@ -4262,22 +4184,16 @@ class VentanaPrincipal(QMainWindow):
             return
         
         try:
-            db = mysql.connector.connect(
-                host="localhost",
-                port="3306",
-                user="root",
-                password="root",
-                database="thebox_bd"
-            )
+            db = conectar_base_de_datos()
             cursor = db.cursor()
-            query = f"SELECT * FROM empleado WHERE id_empleado = '{idHORAS}' AND fecha BETWEEN '{principio}' AND '{final}' ORDER BY nombre, fecha"
+            query = f"SELECT * FROM registro_empleado WHERE id_empleado = '{idNombre}' AND fecha BETWEEN '{principio}' AND '{final}' ORDER BY nombre, fecha"
             cursor.execute(query)
             busqueda = cursor.fetchall()
                         
             if busqueda:
                 resultado_empleado("Calculo de horas diarias",f"Se encontraron {len(busqueda)} coincidencias.")
                 
-                self.id_horas.clear()
+                self.id_horas_empleado.currentIndex(0)
                 self.periodo.setDate(QDate.currentDate())
                 
                 headers = [description[0].replace('_', ' ').upper() for description in cursor.description]
@@ -4342,15 +4258,9 @@ class VentanaPrincipal(QMainWindow):
             mensaje_horas_empleados("Calculo de horas diarias","La fecha final debe ser posterior a la fecha de inicio.")
             return
         try:
-            db = mysql.connector.connect(
-                host="localhost",
-                port="3306",
-                user="root",
-                password="root",
-                database="thebox_bd"
-            )
+            db = conectar_base_de_datos()
             cursor = db.cursor()
-            query = f"SELECT * FROM empleado WHERE fecha BETWEEN '{principio}' AND '{final}' ORDER BY nombre, fecha"
+            query = f"SELECT * FROM registro_empleado WHERE fecha BETWEEN '{principio}' AND '{final}' ORDER BY nombre, fecha"
             cursor.execute(query)
             busqueda = cursor.fetchall()
                         
