@@ -1525,7 +1525,7 @@ class VentanaPrincipal(QMainWindow):
         button03.clicked.connect(self.limpiar_campos_hosas)
         button_actualizar_horas.clicked.connect(self.actualizar_horas)
         button_eliminar_horas.clicked.connect(self.eliminar_horas)
-        button_horas_por_empleado.clicked.connect(self.horas_empleados)
+        button_horas_por_empleado.clicked.connect(self.horas_empleado)
         execel_horas.clicked.connect(self.excel_horas)
         
         # AGREDA EL LAYOUT VERTICAL A LA GRILLA
@@ -1563,19 +1563,19 @@ class VentanaPrincipal(QMainWindow):
         layout_libro = QHBoxLayout()
         layout_libro.setAlignment(Qt.AlignmentFlag.AlignLeft)
         
-        idConcepto = QLabel('ID:',grupo_resumen)
-        idConcepto.setStyleSheet(style.label)
-        idConcepto.setFixedWidth(80)
-        self.idConcepto = QLineEdit(grupo_resumen)
-        self.idConcepto.setStyleSheet(style.estilo_lineedit)
-        self.idConcepto.setEnabled(False)
-        self.idConcepto.setFixedWidth(50)
-        layout_libro.addWidget(idConcepto)  # EN ESTA LINEA COMO LA SIGUIENTE, AGREGA LOS ALEMENTOS AL LAYOUT HORIZONTAL
-        layout_libro.addWidget(self.idConcepto)
+        # idConcepto = QLabel('ID:',grupo_resumen)
+        # idConcepto.setStyleSheet(style.label)
+        # idConcepto.setFixedWidth(80)
+        # self.idConcepto = QLineEdit(grupo_resumen)
+        # self.idConcepto.setStyleSheet(style.estilo_lineedit)
+        # self.idConcepto.setEnabled(False)
+        # self.idConcepto.setFixedWidth(50)
+        # layout_libro.addWidget(idConcepto)  # EN ESTA LINEA COMO LA SIGUIENTE, AGREGA LOS ALEMENTOS AL LAYOUT HORIZONTAL
+        # layout_libro.addWidget(self.idConcepto)
         
         fecha_gastos = QLabel('Fecha:',grupo_resumen)
         fecha_gastos.setStyleSheet(style.label)
-        fecha_gastos.setFixedWidth(60)
+        fecha_gastos.setFixedWidth(80)
         self.fecha_gastos = QDateEdit(grupo_resumen)
         self.fecha_gastos.setLocale(QLocale("es-AR"))
         self.fecha_gastos.setStyleSheet(style.estilo_fecha)
@@ -1614,7 +1614,7 @@ class VentanaPrincipal(QMainWindow):
         debe.setFixedWidth(80)
         self.debe = QLineEdit(grupo_resumen)
         self.debe.setStyleSheet(style.estilo_lineedit)
-        self.debe.setFixedWidth(200)
+        self.debe.setFixedWidth(150)
         layout_conepto.addWidget(debe)    # EN ESTA LINEA COMO LA SIGUIENTE, AGREGA LOS ALEMENTOS AL LAYOUT HORIZONTAL
         layout_conepto.addWidget(self.debe)
         
@@ -1623,7 +1623,7 @@ class VentanaPrincipal(QMainWindow):
         haber.setFixedWidth(90)
         self.haber = QLineEdit(grupo_resumen)
         self.haber.setStyleSheet(style.estilo_lineedit)
-        self.haber.setFixedWidth(200)
+        self.haber.setFixedWidth(150)
         layout_conepto.addWidget(haber)   # EN ESTA LINEA COMO LA SIGUIENTE, AGREGA LOS ALEMENTOS AL LAYOUT HORIZONTAL
         layout_conepto.addWidget(self.haber)
        
@@ -3717,7 +3717,6 @@ class VentanaPrincipal(QMainWindow):
     def autocompleto_de_datos_empleado(self):
         fila = self.tablaEmp.currentRow()
         
-        # id_emple = self.tablaEmp.item(fila,0).text()
         nom_emp = self.tablaEmp.item(fila,1).text()
         apell_emp = self.tablaEmp.item(fila,2).text()
         sex_emp = self.tablaEmp.item(fila,3).text()
@@ -3726,7 +3725,6 @@ class VentanaPrincipal(QMainWindow):
         fecha = self.tablaEmp.item(fila,6).text()
         fecha = QDate.fromString(fecha,"dd-MM-yyyy")
         
-        # self.id_emp.setText(id_emple)
         self.nombre_emp.setText(nom_emp)
         self.apellido_emp.setText(apell_emp)
         self.sexo_emp.setCurrentText(sex_emp)
@@ -3741,6 +3739,7 @@ class VentanaPrincipal(QMainWindow):
         if not self.tablaEmp.currentItem():
             mensaje_ingreso_datos("Registro de empleado","Debe seleccionar el empleado te la tabla para actualizar")
             return
+        
         id_empl = int(self.tablaEmp.item(self.tablaEmp.currentRow(), 0).text())
         nom_emp = self.nombre_emp.text().capitalize().title()
         apell_emp = self.apellido_emp.text().capitalize().title()
@@ -3823,6 +3822,9 @@ class VentanaPrincipal(QMainWindow):
                 header = self.tablaEmp.horizontalHeader()
                 header.setSectionResizeMode(QHeaderView.ResizeMode.Stretch)
                 header.setAutoScroll(True)
+                
+                titulosV = self.tablaEmp.verticalHeader()
+                titulosV.setVisible(False)
                 
                 # Ajustar el tamaño de las filas para que se ajusten al contenido
                 self.tablaEmp.verticalHeader().setSectionResizeMode(QHeaderView.ResizeMode.ResizeToContents)
@@ -3961,13 +3963,13 @@ class VentanaPrincipal(QMainWindow):
             
     # ----------------------- REGISTRO HORAS EMPLEADOS -------------------------------------
     def guardar_horas(self):
-        id_hora_emp = self.id_horas_empleado.currentData()[0]#self.id_horas_empleado.text()
+        id_hora_emp = self.id_horas_empleado.currentData()[0]
         horas_horas = self.horas_tra.text()
         fecha_horas = self.fecha_tra.date().toPyDate()
         
         patron_mun = re.compile(r'^[0-9]+$')
         if not (horas_horas.isnumeric() and patron_mun.match(horas_horas)):
-            mensaje_ingreso_datos("Registro de empleado","El DNI debe ser numérico y contener 8 números enteros")
+            mensaje_ingreso_datos("Registro de empleado","Las 'Horas diarias' debe ser numérico.")
             return
         horas_horas = int(horas_horas)
         
@@ -4001,7 +4003,7 @@ class VentanaPrincipal(QMainWindow):
             cursor = db.cursor()
             cursor.execute("SELECT h.id_hora, h.id_empleado, e.nombre, h.horas_diaria, h.fecha FROM hora as h INNER JOIN registro_empleado as e on h.id_empleado = e.id_empleado ORDER BY id_empleado, fecha")
             busqueda = cursor.fetchall()
-            if busqueda:
+            if len(busqueda) > 0:
                 resultado_empleado("Registro de empleado",f"Se encontraron {len(busqueda)} coincidencias.")
             
                 headers = [description[0].replace('_', ' ').upper() for description in cursor.description]
@@ -4014,8 +4016,10 @@ class VentanaPrincipal(QMainWindow):
                 header = self.tablaHoras.horizontalHeader()
                 header.setSectionResizeMode(QHeaderView.ResizeMode.Stretch)
                 header.setAutoScroll(True)
+                
                 vert_header = self.tablaHoras.verticalHeader()
                 vert_header.setVisible(False)
+                
                 # Ajustar el tamaño de las filas para que se ajusten al contenido
                 self.tablaHoras.verticalHeader().setSectionResizeMode(QHeaderView.ResizeMode.ResizeToContents)
                 self.tablaHoras.setSelectionBehavior(QTableWidget.SelectionBehavior.SelectRows)
@@ -4028,25 +4032,25 @@ class VentanaPrincipal(QMainWindow):
                         item = QTableWidgetItem(str(val))
                         
                         # Indices de las columnas que contienen fechas
-                        if j == 3:  
+                        if j == 4:  
                             fecha = QDate.fromString(str(val), "yyyy-MM-dd")  # Convertir la fecha a objeto QDate
                             item.setText(fecha.toString("dd-MM-yyyy"))  # Establecer el formato de visualización
                         
-                        if j in [0,1,2,3]:  # Ajustar alineación para ciertas columnas
+                        if j in [0,1,3,4]:  # Ajustar alineación para ciertas columnas
                             item.setTextAlignment(Qt.AlignmentFlag.AlignCenter)   
                         self.tablaHoras.setItem(i, j, item)
                 
                 # Calcular y mostrar la suma de las horas diarias en la fila adicional
-                total_horas = sum(int(row[2]) for row in busqueda)
+                total_horas = sum(int(row[3]) for row in busqueda)
                 motrar_total_horas2 = QTableWidgetItem('TOTAL:')
                 motrar_total_horas2.setFont(itemColor_TOTAL(motrar_total_horas2))  # Funcion para estilos de item
                 motrar_total_horas2.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
-                self.tablaHoras.setItem(len(busqueda), 1, motrar_total_horas2)
+                self.tablaHoras.setItem(len(busqueda), 2, motrar_total_horas2)
                 
                 suma_horas2 = QTableWidgetItem(str(total_horas))
                 suma_horas2.setFont(itemColor_RESULTADO(suma_horas2))  # Funcion para estilos de item
                 suma_horas2.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
-                self.tablaHoras.setItem(len(busqueda), 2, suma_horas2)
+                self.tablaHoras.setItem(len(busqueda), 3, suma_horas2)
                 
             else:
                 resultado_empleado("Registro de empleado",f"Se encontraron {len(busqueda)} coincidencias.")
@@ -4067,13 +4071,13 @@ class VentanaPrincipal(QMainWindow):
             mensaje_ingreso_datos("Registro de Ingresos-Egresos","La última fila no debe ser precionada")
             return
         
-        id_emple = self.tablaHoras.item(fila,1).text()
-        horas_h = self.tablaHoras.item(fila,2).text()
-        fecha_h = self.tablaHoras.item(fila, 3).text()
+        emple = self.tablaHoras.item(fila,2).text()
+        horas_h = self.tablaHoras.item(fila,3).text()
+        fecha_h = self.tablaHoras.item(fila, 4).text()
         fecha_h = QDate.fromString(fecha_h, "dd-MM-yyyy")
 
         # Autocompletar los QLineEdits y la fecha
-        self.id_horas_empleado.setCurrentText(id_emple)
+        self.id_horas_empleado.setCurrentText(emple)
         self.horas_tra.setText(horas_h)
         self.fecha_tra.setDate(fecha_h)
 
@@ -4126,7 +4130,6 @@ class VentanaPrincipal(QMainWindow):
             print("No se actualiza registro")
       
     def limpiar_campos_hosas(self):
-        self.id_horas_empleado.currentIndex(0)
         self.horas_tra.clear()
         self.fecha_tra.setDate(QDate.currentDate())
       
@@ -4145,14 +4148,16 @@ class VentanaPrincipal(QMainWindow):
             try:
                 db = conectar_base_de_datos()
                 cursor = db.cursor()
-                query = f"DELETE FROM hora WHERE id_ref = {id_hor}"
+                query = f"DELETE FROM hora WHERE id_hora = {id_hor}"
                 cursor.execute(query)
                 
                 if cursor:
                     mensaje_ingreso_datos("Registro de horas","Registro eliminado")
                     self.tablaHoras.removeRow(selectedRow)
 
-                    self.id_horas_empleado.currentIndex(0)
+                    if self.tablaHoras.rowCount() == 1:
+                        self.tablaHoras.setRowCount(0)  # Eliminar el registro de las sumatorias
+                    
                     self.horas_tra.clear()
                     self.fecha_tra.setDate(QDate.currentDate())
                 
@@ -4170,7 +4175,7 @@ class VentanaPrincipal(QMainWindow):
         else:
             print("No se elimino registro")
 
-    def horas_empleados(self):   
+    def horas_empleado(self):   
         idNombre = self.id_horas_empleado.currentData()[0]
             
         principio = self.periodo.date().toString("yyyy-MM-dd")
@@ -4186,14 +4191,12 @@ class VentanaPrincipal(QMainWindow):
         try:
             db = conectar_base_de_datos()
             cursor = db.cursor()
-            query = f"SELECT * FROM registro_empleado WHERE id_empleado = '{idNombre}' AND fecha BETWEEN '{principio}' AND '{final}' ORDER BY nombre, fecha"
-            cursor.execute(query)
+            cursor.execute(f"SELECT h.id_hora, h.id_empleado, e.nombre, h.horas_diaria, h.fecha FROM hora AS h INNER JOIN registro_empleado AS e ON h.id_empleado = '{idNombre}' AND e.id_empleado = '{idNombre}' AND h.fecha BETWEEN '{principio}' AND '{final}' ORDER BY e.nombre, h.fecha")
             busqueda = cursor.fetchall()
                         
-            if busqueda:
+            if len(busqueda) > 0:
                 resultado_empleado("Calculo de horas diarias",f"Se encontraron {len(busqueda)} coincidencias.")
                 
-                self.id_horas_empleado.currentIndex(0)
                 self.periodo.setDate(QDate.currentDate())
                 
                 headers = [description[0].replace('_', ' ').upper() for description in cursor.description]
@@ -4207,6 +4210,9 @@ class VentanaPrincipal(QMainWindow):
                 header.setSectionResizeMode(QHeaderView.ResizeMode.Stretch)
                 header.setAutoScroll(True)
                 
+                encabezados_very = self.tablaHoras.verticalHeader()
+                encabezados_very.setVisible(False)
+                
                 # Ajustar el tamaño de las filas para que se ajusten al contenido
                 self.tablaHoras.verticalHeader().setSectionResizeMode(QHeaderView.ResizeMode.ResizeToContents)
                 self.tablaHoras.setSelectionBehavior(QTableWidget.SelectionBehavior.SelectRows)
@@ -4218,25 +4224,25 @@ class VentanaPrincipal(QMainWindow):
                         item = QTableWidgetItem(str(val))
                         
                         #Indices de las columnas que contienen fechas
-                        if j == 7:  
+                        if j == 4:  
                             fecha = QDate.fromString(str(val), "yyyy-MM-dd")  # Convertir la fecha a objeto QDate
                             item.setText(fecha.toString("dd-MM-yyyy"))  # Establecer el formato de visualización
                         
-                        if j in [4,5,6,7]:  # Ajustar alineación para ciertas columnas
+                        if j in [0,1,3,4]:  # Ajustar alineación para ciertas columnas
                             item.setTextAlignment(Qt.AlignmentFlag.AlignCenter)   
                         self.tablaHoras.setItem(i, j, item)
                    
                 # Calcular y mostrar la suma de las horas diarias en la fila adicional
-                total_horas = sum(int(row[6]) for row in busqueda)
+                total_horas = sum(int(row[3]) for row in busqueda)
                 total_horas_empleados = QTableWidgetItem('TOTAL:')
                 total_horas_empleados.setFont(itemColor_TOTAL(total_horas_empleados))  # Funcion para estilos de item
                 total_horas_empleados.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
-                self.tablaHoras.setItem(len(busqueda), 5, total_horas_empleados)
+                self.tablaHoras.setItem(len(busqueda), 2, total_horas_empleados)
                 
                 item_seuma_horas = QTableWidgetItem(str(total_horas))
                 item_seuma_horas.setFont(itemColor_RESULTADO(item_seuma_horas))  # Funcion para estilos de item
                 item_seuma_horas.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
-                self.tablaHoras.setItem(len(busqueda), 6, item_seuma_horas)
+                self.tablaHoras.setItem(len(busqueda), 3, item_seuma_horas)
             
             else:    
                 resultado_empleado("Calculo de horas diarias",f"Se encontraron {len(busqueda)} coincidencias.")
@@ -4260,11 +4266,10 @@ class VentanaPrincipal(QMainWindow):
         try:
             db = conectar_base_de_datos()
             cursor = db.cursor()
-            query = f"SELECT * FROM registro_empleado WHERE fecha BETWEEN '{principio}' AND '{final}' ORDER BY nombre, fecha"
-            cursor.execute(query)
+            cursor.execute(f"SELECT h.id_hora, h.id_empleado, e.nombre, h.horas_diaria, h.fecha FROM hora AS h INNER JOIN registro_empleado AS e ON h.id_empleado = e.id_empleado AND h.fecha BETWEEN '{principio}' AND '{final}' ORDER BY e.nombre, h.fecha")
             busqueda = cursor.fetchall()
                         
-            if busqueda:
+            if len(busqueda) > 0:
                 resultado_empleado("Calculo de horas diarias",f"Se encontraron {len(busqueda)} coincidencias.")
                 
                 self.periodo.setDate(QDate.currentDate())
@@ -4279,6 +4284,9 @@ class VentanaPrincipal(QMainWindow):
                 header = self.tablaHoras.horizontalHeader()
                 header.setSectionResizeMode(QHeaderView.ResizeMode.Stretch)
                 
+                encabezados_very = self.tablaHoras.verticalHeader()
+                encabezados_very.setVisible(False)
+                
                 # Ajustar el tamaño de las filas para que se ajusten al contenido
                 self.tablaHoras.verticalHeader().setSectionResizeMode(QHeaderView.ResizeMode.ResizeToContents)
                 self.tablaHoras.setSelectionBehavior(QTableWidget.SelectionBehavior.SelectRows)
@@ -4290,25 +4298,25 @@ class VentanaPrincipal(QMainWindow):
                         item = QTableWidgetItem(str(val))
                         
                         #Indices de las columnas que contienen fechas
-                        if j == 7:  
+                        if j == 4:  
                             fecha = QDate.fromString(str(val), "yyyy-MM-dd")  # Convertir la fecha a objeto QDate
                             item.setText(fecha.toString("dd-MM-yyyy"))  # Establecer el formato de visualización
                         
-                        if j in [4,5,6,7]:  # Ajustar alineación para ciertas columnas
+                        if j in [0,1,3,4]:  # Ajustar alineación para ciertas columnas
                             item.setTextAlignment(Qt.AlignmentFlag.AlignCenter)   
                         self.tablaHoras.setItem(i, j, item)
                         
                     # Calcular y mostrar la suma de las horas diarias en la fila adicional
-                    total_horas = sum(int(row[6]) for row in busqueda)
+                    total_horas = sum(int(row[3]) for row in busqueda)
                     item_total_horas2 = QTableWidgetItem('TOTAL:')
                     item_total_horas2.setFont(itemColor_TOTAL(item_total_horas2))  # Funcion para estilos de item
                     item_total_horas2.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
-                    self.tablaHoras.setItem(len(busqueda), 5, item_total_horas2)
+                    self.tablaHoras.setItem(len(busqueda), 2, item_total_horas2)
                     
                     item_suma_horas2 = QTableWidgetItem(str(total_horas))
                     item_suma_horas2.setFont(itemColor_RESULTADO(item_suma_horas2))  # Funcion para estilos de item
                     item_suma_horas2.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
-                    self.tablaHoras.setItem(len(busqueda), 6, item_suma_horas2)
+                    self.tablaHoras.setItem(len(busqueda), 3, item_suma_horas2)
             else:
                 resultado_empleado("Calculo de horas diarias",f"Se encontraron {len(busqueda)} coincidencias.")
    
@@ -4427,13 +4435,7 @@ class VentanaPrincipal(QMainWindow):
         ingYegreso = inicio("Registro de Ingresos-Egresos","¿Desea guardar los datos?")
         if ingYegreso == QMessageBox.StandardButton.Yes: 
             try:
-                db = mysql.connector.connect(
-                    host="localhost",
-                    port="3306",
-                    user="root",
-                    password="root",
-                    database="thebox_bd"
-                )
+                db = conectar_base_de_datos()
                 cursor = db.cursor()
                 query = "INSERT INTO contabilidad (fecha, concepto_debe, concepto_haber, debe, haber) VALUES (%s, %s, %s, %s, %s)"
                 values = (origen, descripcion_debe,descripcion_haber, deber, haberes)
@@ -4470,7 +4472,7 @@ class VentanaPrincipal(QMainWindow):
             mensaje_ingreso_datos("Registro de Ingresos-Egresos","La última fila no debe ser precionada")
             return
         
-        id_concepto = int(self.tablaGastos.item(rows,0).text())
+        # id_concepto = int(self.tablaGastos.item(rows,0).text())
         fecha1 = self.tablaGastos.item(rows,1).text()
         fecha1 = QDate.fromString(fecha1,"dd-MM-yyyy")
         conceptoDebe = self.tablaGastos.item(rows,2).text()
@@ -4480,7 +4482,7 @@ class VentanaPrincipal(QMainWindow):
         haber_valor = self.tablaGastos.item(rows,5).text()
         haber_valor = int(haber_valor)
         
-        self.idConcepto.setText(str(id_concepto))
+        # self.idConcepto.setText(str(id_concepto))
         self.fecha_gastos.setDate(fecha1)
         self.concepto_debe.setText(conceptoDebe)
         self.concepto_haber.setText(conceptoHaber)
@@ -4522,20 +4524,13 @@ class VentanaPrincipal(QMainWindow):
             return
 
         try:
-            db = mysql.connector.connect(
-                host="localhost",
-                port="3306",
-                user="root",
-                password="root",
-                database="thebox_bd"
-            )
+            db = conectar_base_de_datos()
             cursor = db.cursor()
             query = f"UPDATE contabilidad SET fecha = '{inicio}', concepto_debe = '{descripcion}', concepto_haber = '{descripcion_h}', debe = '{deber}', haber = '{haberes}' WHERE id_concepto = '{id_concepto}'"
             cursor.execute(query)
             db.commit()
             if cursor:
                 mensaje_ingreso_datos("Registro de Ingresos-Egresos","Datos cargados correctamente")
-                self.idConcepto.clear()
                 self.fecha_gastos.setDate(QDate.currentDate())
                 self.concepto_debe.clear()
                 self.concepto_haber.clear()
@@ -4565,18 +4560,12 @@ class VentanaPrincipal(QMainWindow):
         ver_datos = inicio("Registro de Ingresos-Egresos","¿Desea ver datos de empleados?")
         if ver_datos == QMessageBox.StandardButton.Yes:
             try:
-                db = mysql.connector.connect(
-                    host="localhost",
-                    port="3306",
-                    user="root",
-                    password="root",
-                    database="thebox_bd"
-                )
+                db = conectar_base_de_datos()
                 cursor = db.cursor()
                 query = f"SELECT * FROM contabilidad WHERE fecha BETWEEN '{principio}' AND '{final}'"
                 cursor.execute(query)
                 busqueda = cursor.fetchall()
-                if busqueda:
+                if len(busqueda) > 0:
                     self.fecha_periodo.setDate(QDate.currentDate())
                     resultado_empleado("Calculo de horas diarias",f"Se encontraron {len(busqueda)} coincidencias.")
                     
@@ -4590,6 +4579,9 @@ class VentanaPrincipal(QMainWindow):
                     header = self.tablaGastos.horizontalHeader()
                     header.setSectionResizeMode(QHeaderView.ResizeMode.Stretch)
                     header.setAutoScroll(True)
+                    
+                    vertical = self.tablaGastos.verticalHeader()
+                    vertical.setVisible(False)
                     
                     # Ajustar el tamaño de las filas para que se ajusten al contenido
                     self.tablaGastos.verticalHeader().setSectionResizeMode(QHeaderView.ResizeMode.ResizeToContents)
@@ -4610,8 +4602,10 @@ class VentanaPrincipal(QMainWindow):
                                 item.setText(fecha.toString("dd-MM-yyyy"))  # Establecer el formato de visualización
                             if j == 3:
                                 item.setTextAlignment(Qt.AlignmentFlag.AlignRight)   
-                            if j in [1, 4, 5]:  # Ajustar alineación para ciertas columnas
-                                item.setTextAlignment(Qt.AlignmentFlag.AlignCenter)   
+                            if j == 1:  # Ajustar alineación para ciertas columnas
+                                item.setTextAlignment(Qt.AlignmentFlag.AlignCenter) 
+                            if j in [4, 5]:
+                                item.setTextAlignment(Qt.AlignmentFlag.AlignRight) 
                             self.tablaGastos.setItem(i, j, item)
                             
                         # Calcular y mostrar la suma de las horas diarias en la fila adicional
@@ -4621,15 +4615,15 @@ class VentanaPrincipal(QMainWindow):
                         item_total_horas.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
                         self.tablaGastos.setItem(len(busqueda), 3, item_total_horas)
                         
-                        item_suma_horas1 = QTableWidgetItem(str(f"$ {total_debe}"))
+                        item_suma_horas1 = QTableWidgetItem(str(total_debe))
                         item_suma_horas1.setFont(itemColor_RESULTADO(item_suma_horas1))  # Funcion para estilos de item
-                        item_suma_horas1.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
+                        item_suma_horas1.setTextAlignment(Qt.AlignmentFlag.AlignRight)
                         self.tablaGastos.setItem(len(busqueda), 4, item_suma_horas1)
                         
                         total_haber = sum(int(row[5]) for row in busqueda)
-                        item_suma_horas2 = QTableWidgetItem(str(f"$ {total_haber}"))
+                        item_suma_horas2 = QTableWidgetItem(str(total_haber))
                         item_suma_horas2.setFont(itemColor_RESULTADO(item_suma_horas2))  # Funcion para estilos de item
-                        item_suma_horas2.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
+                        item_suma_horas2.setTextAlignment(Qt.AlignmentFlag.AlignRight)
                         self.tablaGastos.setItem(len(busqueda), 5, item_suma_horas2)
                         
                 else:
@@ -4654,13 +4648,7 @@ class VentanaPrincipal(QMainWindow):
         tabla = inicio("Registro de Ingresos-Egresos","¿Desea eliminar registro")
         if tabla == QMessageBox.StandardButton.Yes:
             try:
-                db = mysql.connector.connect(
-                    host="localhost",
-                    port="3306",
-                    user="root",
-                    password="root",
-                    database="thebox_bd"
-                )
+                db = conectar_base_de_datos()
                 cursor = db.cursor()
                 query = f"DELETE FROM contabilidad WHERE id_concepto = {idconcepto}"
                 cursor.execute(query)
@@ -4674,7 +4662,6 @@ class VentanaPrincipal(QMainWindow):
                     if self.tablaGastos.rowCount() == 1:
                         self.tablaGastos.setRowCount(0)  # Eliminar el registro de las sumatorias
 
-                    self.idConcepto.clear()
                     self.fecha_gastos.setDate(QDate.currentDate())
                     self.concepto_debe.clear()
                     self.concepto_haber.clear()
