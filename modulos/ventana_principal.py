@@ -185,9 +185,10 @@ class VentanaPrincipal(QMainWindow):
         
         # Crea un TAB(Pestaña)
         self.tab = QTabWidget()
+        self.tab.setCursor(Qt.CursorShape.PointingHandCursor)
         self.tab.setStyleSheet(style.estilo_tab)
         self.tab.setUsesScrollButtons(True)
-        
+               
         # Crea las pestañas 
         pestania_record = QWidget()
         pestania_record.setStyleSheet("background-color: #f48c06;")
@@ -198,7 +199,6 @@ class VentanaPrincipal(QMainWindow):
         pestania_actividad = QWidget()
         pestania_actividad.setStyleSheet("background-color: #f48c06;")
         pestania_pagos = QWidget()
-        pestania_pagos.isEnabled()
         pestania_pagos.setStyleSheet("background-color: #f48c06;")
         pestania_view = QWidget()
         pestania_view.setStyleSheet("background-color: #f48c06;")
@@ -219,7 +219,6 @@ class VentanaPrincipal(QMainWindow):
         self.tab.addTab(pestania_empleados, 'EMPLEADOS')
         self.tab.addTab(pestania_horas, 'HORAS')
         self.tab.addTab(pestania_resumen, 'CONTABILIDAD')
-        self.tab.setCursor(Qt.CursorShape.PointingHandCursor) # Se coloca el icono de la 'manito' al posicionar sobre la pestaña
    
         # ----------------------------------------------------
         # PESTAÑA REGISTRAR
@@ -391,6 +390,7 @@ class VentanaPrincipal(QMainWindow):
         
         # Crear una QTableWidget
         self.tablaRecord = QTableWidget()
+        self.tablaRecord.setCursor(Qt.CursorShape.PointingHandCursor)
         self.tablaRecord.setStyleSheet(style.esttabla)
         grid1.addWidget(self.tablaRecord,1,0,1,1)
         
@@ -425,18 +425,7 @@ class VentanaPrincipal(QMainWindow):
         layout_ele2.setAlignment(Qt.AlignmentFlag.AlignLeft)
         layout_ele3 = QHBoxLayout()
         layout_ele3.setAlignment(Qt.AlignmentFlag.AlignLeft)
-        
-        # Labels y LineEdits para nombre, apellido, dni y año        
-        # id2 = QLabel('ID Usuario:',update_customer_details)
-        # id2.setStyleSheet(style.label)
-        # id2.setFixedWidth(100)
-        # self.id2 = QLineEdit(update_customer_details)
-        # self.id2.setFixedWidth(200)
-        # self.id2.setStyleSheet(style.estilo_lineedit)
-        # self.id2.setEnabled(False)
-        # layout_ele1.addWidget(id2)         # EN ESTA LINEA COMO LA SIGUIENTE, AGREGA LOS ALEMENTOS AL LAYOUT HORIZONTAL
-        # layout_ele1.addWidget(self.id2)
-        
+                
         nombre2 = QLabel('Nombre:',update_customer_details)
         nombre2.setStyleSheet(style.label)
         nombre2.setFixedWidth(80)
@@ -584,6 +573,7 @@ class VentanaPrincipal(QMainWindow):
         
         # Crear una QTableWidget
         self.tablaUpdateRecord = QTableWidget(update_customer_details)
+        self.tablaUpdateRecord.setCursor(Qt.CursorShape.PointingHandCursor)
         self.tablaUpdateRecord.setStyleSheet(style.esttabla)
         
         # PARA TABLA DE PESTAÑA ACTUALIZAR
@@ -673,6 +663,7 @@ class VentanaPrincipal(QMainWindow):
         grid3.addLayout(vert,0,0,1,1)
         
         self.tablaDeleteRecord = QTableWidget(delete_Record)
+        self.tablaDeleteRecord.setCursor(Qt.CursorShape.PointingHandCursor)
         self.tablaDeleteRecord.setStyleSheet(style.esttabla)
         
         # Agrega la tabla al grid
@@ -799,6 +790,7 @@ class VentanaPrincipal(QMainWindow):
 
         # CREA LA TABLA
         self.tableActivi = QTableWidget(comboActiv)
+        self.tableActivi.setCursor(Qt.CursorShape.PointingHandCursor)
         self.tableActivi.setStyleSheet(style.esttabla)
         
         # PARA TABLA DE PERSTAÑA DISCIPLINA 'ACTUALIZAR'
@@ -843,8 +835,8 @@ class VentanaPrincipal(QMainWindow):
         layout_elementos_pagos.addWidget(idUser)     # EN ESTA LINEA COMO LA SIGUIENTE, AGREGA LOS ALEMENTOS AL LAYOUT HORIZONTAL
         layout_elementos_pagos.addWidget(self.idUser)
     
+        # actualiza comobox ussuario con los DNI
         actualizar_combobox_user(self)
-        # self.idUser.currentData()[0]
         
         idDis = QLabel('Disciplina:',grupo_pagos)
         idDis.setStyleSheet(style.label)
@@ -860,8 +852,10 @@ class VentanaPrincipal(QMainWindow):
         self.label_monto.setStyleSheet(style.label)
         layout_elementos_pagos.addWidget(self.label_monto)
  
+        # actualiza comobox disciplina
         actualizar_combobox_disc(self)
         
+        # Muestra el precio de cada disciplina al elegitr la disciplina
         self.idDis.currentIndexChanged.connect(self.actualizar_precio)
         
         fechaDePago = QLabel('Fecha de pago:',grupo_pagos)
@@ -949,6 +943,7 @@ class VentanaPrincipal(QMainWindow):
         
         # CREA LA TABLA
         self.tablePagos = QTableWidget(grupo_pagos)
+        self.tablePagos.setCursor(Qt.CursorShape.PointingHandCursor)
         self.tablePagos.setStyleSheet(style.esttabla)
         
         self.tablePagos.clicked.connect(self.establecer_datos)
@@ -1172,6 +1167,7 @@ class VentanaPrincipal(QMainWindow):
         
         # CREA LA TABLA DENTRO DEL COMBOBOX
         self.tablaVIEW = QTableWidget(comboView)
+        self.tablaVIEW.setCursor(Qt.CursorShape.PointingHandCursor)
         self.tablaVIEW.setStyleSheet(style.esttabla)
         
         # AGREGAR AL "GRID" LA TABLA
@@ -1329,6 +1325,7 @@ class VentanaPrincipal(QMainWindow):
         
         # CREA LA TABLA
         self.tablaEmp = QTableWidget(grupo_empleados)
+        self.tablaEmp.setCursor(Qt.CursorShape.PointingHandCursor)
         self.tablaEmp.setStyleSheet(style.esttabla)
         
         # AGREDA LA TABLA A LA GRILLA
@@ -1520,6 +1517,7 @@ class VentanaPrincipal(QMainWindow):
         
         # CREA LA TABLA
         self.tablaHoras = QTableWidget(grupo_horas)
+        self.tablaHoras.setCursor(Qt.CursorShape.PointingHandCursor)
         self.tablaHoras.setStyleSheet(style.esttabla)
         self.tablaHoras.clicked.connect(self.autocompleto_de_datos_horas)
         
@@ -1714,6 +1712,7 @@ class VentanaPrincipal(QMainWindow):
         
         # CREA UNA TABLA QUE VA A ESTAR DENTRO DEL QGROUPBOX
         self.tablaGastos = QTableWidget(grupo_resumen)
+        self.tablaGastos.setCursor(Qt.CursorShape.PointingHandCursor)
         self.tablaGastos.setStyleSheet(style.esttabla)
         self.tablaGastos.clicked.connect(self.selecionarTabla)
         
@@ -1764,23 +1763,33 @@ class VentanaPrincipal(QMainWindow):
     # FUNCIONES PARA VINCULAR EL QTabWidget
     def record(self):
         self.tab.setCurrentIndex(0)
-    
+        self.tab.setDisabled(False)
+
     def update(self):
         self.tab.setCurrentIndex(1)
-    
+        self.tab.setDisabled(False)
+
     def deleteRecord(self):
         self.tab.setCurrentIndex(2)
+        self.tab.setDisabled(False)
     
     def activity(self):
         self.tab.setCurrentIndex(3)
+        self.tab.setDisabled(False)
     
-    def pagos(self,label_monto):
+    def pagos(self):
         self.tab.setCurrentIndex(4)
-        actualizar_combobox_user(self)
+        self.tab.setDisabled(False)
+
+        # actualiza comobox usuario por DNI
+        actualizar_combobox_user(self) 
+
+        # actualiza comobox disciplina
         actualizar_combobox_disc(self)    
             
     def balances(self):
         self.tab.setCurrentIndex(5)
+        self.tab.setDisabled(False)
         
         # FUNCION QUE VINCULA LA VENTANA DE ASISTENCIA
     def assistance(self):
@@ -1789,13 +1798,16 @@ class VentanaPrincipal(QMainWindow):
         
     def empleados(self):
         self.tab.setCurrentIndex(6)
+        self.tab.setDisabled(False)
     
     def horas(self):
         self.tab.setCurrentIndex(7)
+        self.tab.setDisabled(False)
         completar_nombre_empleado(self)
     
     def registro_de_ingYegreso(self):
         self.tab.setCurrentIndex(8)
+        self.tab.setDisabled(False)
     
     def actualizar_precio(self):
         index = self.idDis.currentIndex()
