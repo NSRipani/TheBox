@@ -198,6 +198,7 @@ class VentanaPrincipal(QMainWindow):
         pestania_actividad = QWidget()
         pestania_actividad.setStyleSheet("background-color: #f48c06;")
         pestania_pagos = QWidget()
+        pestania_pagos.isEnabled()
         pestania_pagos.setStyleSheet("background-color: #f48c06;")
         pestania_view = QWidget()
         pestania_view.setStyleSheet("background-color: #f48c06;")
@@ -705,7 +706,7 @@ class VentanaPrincipal(QMainWindow):
         disciplina4.setFixedWidth(120)
         self.input_disciplina4 = QLineEdit(comboActiv)
         self.input_disciplina4.setStyleSheet(style.estilo_lineedit)
-        self.input_disciplina4.setFixedWidth(280)
+        self.input_disciplina4.setFixedWidth(200)
         self.input_disciplina4.setStyleSheet(style.estilo_lineedit)
         layout_H8.addWidget(disciplina4)        # EN ESTA LINEA COMO LA SIGUIENTE, AGREGA LOS ALEMENTOS AL LAYOUT HORIZONTAL
         layout_H8.addWidget(self.input_disciplina4)
@@ -843,7 +844,7 @@ class VentanaPrincipal(QMainWindow):
         layout_elementos_pagos.addWidget(self.idUser)
     
         actualizar_combobox_user(self)
-        self.idUser.currentData()[0]
+        # self.idUser.currentData()[0]
         
         idDis = QLabel('Disciplina:',grupo_pagos)
         idDis.setStyleSheet(style.label)
@@ -855,16 +856,13 @@ class VentanaPrincipal(QMainWindow):
         layout_elementos_pagos.addWidget(idDis)     # EN ESTA LINEA COMO LA SIGUIENTE, AGREGA LOS ALEMENTOS AL LAYOUT HORIZONTAL
         layout_elementos_pagos.addWidget(self.idDis)
         
+        self.label_monto = QLabel()
+        self.label_monto.setStyleSheet(style.label)
+        layout_elementos_pagos.addWidget(self.label_monto)
+ 
         actualizar_combobox_disc(self)
-        self.idDis.currentData()[0]
         
-        label_monto = QLabel(grupo_pagos)
-        label_monto.setStyleSheet(style.label)
-        layout_elementos_pagos.addWidget(label_monto)
-        
-        precio = self.idDis.currentData()[2]
-        label_monto.setText(str(f" ${precio}"))
-        
+        self.idDis.currentIndexChanged.connect(self.actualizar_precio)
         
         fechaDePago = QLabel('Fecha de pago:',grupo_pagos)
         fechaDePago.setStyleSheet(style.label)
@@ -994,7 +992,6 @@ class VentanaPrincipal(QMainWindow):
         self.view_nomb.setStyleSheet(style.estilo_lineedit)
         elementos.addWidget(view_nomb)     # EN ESTA LINEA COMO LA SIGUIENTE, AGREGA LOS ALEMENTOS AL LAYOUT HORIZONTAL
         elementos.addWidget(self.view_nomb)
-        # layout_H14.addSpacing(10)
         
         #  Conexión a la base de datos MySQL
         conn = conectar_base_de_datos()
@@ -1204,16 +1201,6 @@ class VentanaPrincipal(QMainWindow):
         layout_emp.setAlignment(Qt.AlignmentFlag.AlignLeft)
         layout_emp1 = QHBoxLayout()
         layout_emp1.setAlignment(Qt.AlignmentFlag.AlignLeft)
-        
-        # id_emp = QLabel('ID:',grupo_empleados)
-        # id_emp.setStyleSheet(style.label)
-        # id_emp.setFixedWidth(40)
-        # self.id_emp = QLineEdit(grupo_empleados)
-        # self.id_emp.setStyleSheet(style.estilo_lineedit)
-        # self.id_emp.setEnabled(False)
-        # self.id_emp.setFixedWidth(50)
-        # layout_emp.addWidget(id_emp)        # EN ESTA LINEA COMO LA SIGUIENTE, AGREGA LOS ALEMENTOS AL LAYOUT HORIZONTAL
-        # layout_emp.addWidget(self.id_emp)
         
         nombre_emp = QLabel('Nombre:',grupo_empleados)
         nombre_emp.setStyleSheet(style.label)
@@ -1761,7 +1748,7 @@ class VentanaPrincipal(QMainWindow):
             button_Elim.setEnabled(False)
         else:
             button_Elim.setEnabled(True)
-    
+        
     def acciones(self):
         # BARRA DE ESTADO INFERIOR
         self.exit_action = QAction('&Cerrar sesion', self)
@@ -1787,12 +1774,11 @@ class VentanaPrincipal(QMainWindow):
     def activity(self):
         self.tab.setCurrentIndex(3)
     
-    def pagos(self):
+    def pagos(self,label_monto):
         self.tab.setCurrentIndex(4)
         actualizar_combobox_user(self)
-        actualizar_combobox_disc(self)
-        
-
+        actualizar_combobox_disc(self)    
+            
     def balances(self):
         self.tab.setCurrentIndex(5)
         
@@ -1810,7 +1796,15 @@ class VentanaPrincipal(QMainWindow):
     
     def registro_de_ingYegreso(self):
         self.tab.setCurrentIndex(8)
-               
+    
+    def actualizar_precio(self):
+        index = self.idDis.currentIndex()
+        if index >= 0:
+            precio = self.idDis.currentData()[2]
+            self.label_monto.setText(str(f" ${precio}"))
+            self.label_monto.adjustSize()
+            print(precio)
+
     def guardar(self):
         nombre1 = self.input_nombre1.text().capitalize().title()
         apellido1 = self.input_apellido1.text().capitalize().title()
@@ -2831,7 +2825,7 @@ class VentanaPrincipal(QMainWindow):
         
         self.idUser.setCurrentText(str(id_user))
         self.idDis.setCurrentText(id_discipl)
-        self.input_tipoDePago.setCurrentText(str(tipoPago))
+        self.input_tipoDePago.setCurrentText(tipoPago)
         self.input_fechaDePago.setDate(fecha)
     
     def actualizarPagos(self):
@@ -2900,10 +2894,11 @@ class VentanaPrincipal(QMainWindow):
                     self.input_fechaDePago.setDate(QDate.currentDate())
                 else:
                     mensaje_ingreso_datos("Registro de alumnos","Registo no eliminado")
+                
+                self.tablePagos.clearSelection()  # Deseleccionar la fila eliminada
                     
                 cursor.close()
                 db.close()
-                self.tablePagos.clearSelection()  # Deseleccionar la fila eliminada
                 
             except Error as ex:
                 errorConsulta("Registro de alumnos",f"Error en la consulta: {str(ex)}")
