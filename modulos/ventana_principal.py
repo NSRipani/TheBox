@@ -21,6 +21,9 @@ from PyQt6.QtCore import *
 from modulos.mensajes import mensaje_ingreso_datos, errorConsulta, inicio, aviso_descargaExitosa, aviso_Advertencia_De_excel, resultado_empleado, aviso_resultado, mensaje_horas_empleados, aviso_resultado_asistencias
 from modulos.style_item import itemColor_TOTAL, itemColor_RESULTADO
 from utilidades.completar_combobox import actualizar_combobox_user, actualizar_combobox_disc,completar_nombre_empleado
+
+from validaciones.usuario import registroUSER,limpiasElementosUser,limpiar_campos,actualizarUSER,limpiasElementosUseraActualizar
+
 # Módulo de Registro de Asistencia
 from modulos.asistencia import Asistencia
 
@@ -1823,56 +1826,32 @@ class VentanaPrincipal(QMainWindow):
         dni = self.input_dni.text().replace(".","")
         sexo = self.input_sex.currentText()
         edad = self.input_age.text()
-        celu = self.input_celular.text().replace(".", "")
-        fecha = self.input_date.date().toPyDate()
+        celu = self.input_celular.text().replace(".", "")        
         
-        
-        patron = re.compile(r'^[a-zA-ZáéíóúÁÉÍÓÚüÜ\'\s]+$') 
-        if not isinstance(nombre1, str) or nombre1.isspace() or not patron.match(nombre1): #'match' -> verificar si la cadena coincide con este patrón.
-            mensaje_ingreso_datos("Registro de alumnos","El 'nombre' debe contener:\n\n- Letras y/o espacios entre nombres(si tiene mas de dos).")
-            return
-
-        if not isinstance(apellido1, str) or apellido1.isspace() or not patron.match(apellido1):
-            mensaje_ingreso_datos("Registro de alumnos","El 'apellido' debe contener:\n\n- Letras y/o espacios entre nombres(si tiene mas de dos).")
-            return
-        
-        patron2 = re.compile(r'^[0-9]+$')
-        if not dni.isdigit() or not len(dni) == 8 or not patron2.match(dni):
-            mensaje_ingreso_datos("Registro de empleado","El 'DNI' debe ser:\n\n- Numérico y contener 8 números enteros")
-            return
-        dni = int(dni)    
-        
-        if not (isinstance(sexo, str) and patron.match(sexo)):
-            mensaje_ingreso_datos("Registro de alumnos","Debe elegir una sexo")
-            return
-        if not edad.isdigit() or not len(edad) == 2 or not patron2.match(edad):
-            mensaje_ingreso_datos("Registro de alumnos","La 'edad' debe ser:\n\n- Valores numéricos.\n- Contener 2 dígitos.\n- No contener puntos(.)")
-            return
-        edad = int(edad)
-        
-        if not (celu.isdigit() and len(celu) == 10 and patron2.match(celu)):
-            mensaje_ingreso_datos("Registro de alumnos","El 'celular' debe ser:\n\n- Valores numéricos.\n- Contener 10 dígitos.\n- No contener puntos(.)")
-            return
+        registroUSER(nombre1,apellido1, dni, sexo, edad, celu)
         
         cargar = inicio("Registro de alumnos","¿Desea guardar alumno?")
         if cargar == QMessageBox.StandardButton.Yes: 
             try:   
                 db = conectar_base_de_datos()
                 cursor = db.cursor()
-                query = "INSERT INTO usuario (nombre, apellido, dni, sexo, edad, celular, fecha) VALUES (%s, %s, %s, %s, %s, %s, %s)"
-                values = (nombre1, apellido1, dni, sexo, edad, celu, fecha)
+                        
+                query = "INSERT INTO usuario (nombre, apellido, dni, sexo, edad, celular) VALUES (%s, %s, %s, %s, %s, %s)"
+                values = (nombre1, apellido1, dni, sexo, edad, celu)#, fecha
                 cursor.execute(query, values)
+                
+                # Obtine el ID del Usuario
+                obetener_id_usuario = cursor.lastrowid
+                fecha = self.input_date.date().toPyDate()
+                
+                # Insertar la fecha en la tabla fecha_registro_usuario
+                cursor.execute("INSERT INTO fecha_registro_usuario (id_usuario, fecha_registro) VALUES (%s, %s)", (obetener_id_usuario, fecha))
                 db.commit()
                                 
-                if cursor:
+                if cursor.rowcount > 0:
                     mensaje_ingreso_datos("Registro de alumnos","Registro cargado")
                     
-                    self.input_nombre1.clear()
-                    self.input_apellido1.clear()
-                    self.input_dni.clear()
-                    self.input_sex.setCurrentIndex(0)
-                    self.input_age.clear()
-                    self.input_celular.clear()
+                    limpiasElementosUser(self,QDate)
                 else:
                     mensaje_ingreso_datos("Registro de alumnos","Registro no cargado")
 
@@ -1901,14 +1880,14 @@ class VentanaPrincipal(QMainWindow):
             try:
                 db = conectar_base_de_datos()
                 cursor = db.cursor()
-                cursor.execute("SELECT * FROM usuario WHERE nombre LIKE '%{}%'".format(nombre))
+                cursor.execute("SELECT u.*, f.fecha_registro FROM usuario u LEFT JOIN fecha_registro_usuario f ON u.id_usuario = f.id_usuario WHERE u.nombre LIKE '%{}%'".format(nombre))
                 results = cursor.fetchall()
                 
                 if len(results) > 0:
                     aviso_resultado("Registro de alumnos",f"Se encontraron {len(results)} coincidencias.")
                     self.input_nombre1.clear()
                     
-                    headers = [description[0].upper() for description in cursor.description]
+                    headers = [description[0].upper().replace("_"," ") for description in cursor.description]
                     
                     self.tablaRecord.setRowCount(len(results))
                     self.tablaRecord.setColumnCount(len(results[0]))
@@ -1955,10 +1934,10 @@ class VentanaPrincipal(QMainWindow):
         try:
             db = conectar_base_de_datos()
             cursor = db.cursor()
-            cursor.execute("SELECT * FROM usuario ORDER BY nombre ASC")
+            cursor.execute("SELECT u.*, f.fecha_registro FROM usuario u LEFT JOIN fecha_registro_usuario f ON u.id_usuario = f.id_usuario  ORDER BY nombre ASC")
             resultados = cursor.fetchall()
                     
-            if resultados:
+            if len(resultados) > 0:
                 
                 headers = [description[0].replace("_"," ").upper() for description in cursor.description]
                 
@@ -2101,7 +2080,7 @@ class VentanaPrincipal(QMainWindow):
         try:
             db = conectar_base_de_datos()
             cursor = db.cursor()
-            cursor.execute("SELECT * FROM usuario")
+            cursor.execute("SELECT u.*, f.fecha_registro FROM usuario u LEFT JOIN fecha_registro_usuario f ON u.id_usuario = f.id_usuario  ORDER BY nombre ASC")
             resultados = cursor.fetchall()
 
             if len(resultados) > 0:
@@ -2172,10 +2151,11 @@ class VentanaPrincipal(QMainWindow):
             try:
                 db = conectar_base_de_datos()
                 cursor = db.cursor()
-                cursor.execute("SELECT * FROM usuario WHERE nombre LIKE '%{}%'".format(nombre_seleccionado))
+                cursor.execute("SELECT u.*, f.fecha_registro FROM usuario u LEFT JOIN fecha_registro_usuario f ON u.id_usuario = f.id_usuario WHERE u.nombre LIKE '%{}%'".format(nombre_seleccionado))
+
                 results = cursor.fetchall()
                 
-                if results:
+                if len(results) > 0:
                     aviso_resultado("Registro de alumnos",f"Se encontraron {len(results)} coincidencias.")
 
                     self.input_nombre2.clear()
@@ -2221,27 +2201,29 @@ class VentanaPrincipal(QMainWindow):
                 print("Error executing the query", ex) 
         else:
             print("Registro no encontrado")
-                    
-    def limpiar(self):
-        # Guardar temporalmente el valor del QComboBox
-        valor_sexo = self.input_sex2.currentText()
+    
+    def limpiar(self,):
+        limpiar_campos(self)            
         
-        # self.id2.clear()
-        self.input_nombre2.clear()
-        self.input_apellido2.clear()
-        self.input_age2.clear()
-        self.input_dni2.clear()
-        self.input_celular2.clear()
+    #     # Guardar temporalmente el valor del QComboBox
+    #     valor_sexo = self.input_sex2.currentText()
         
-        self.input_apellido2.setEnabled(False)
-        self.input_dni2.setEnabled(False)
-        self.input_sex2.setEnabled(False)
-        self.input_age2.setEnabled(False)
-        self.input_date2.setEnabled(False)
-        self.input_celular2.setEnabled(False)  
+    #     # self.id2.clear()
+    #     self.input_nombre2.clear()
+    #     self.input_apellido2.clear()
+    #     self.input_age2.clear()
+    #     self.input_dni2.clear()
+    #     self.input_celular2.clear()
         
-        # Restaurar el valor guardado del QComboBox
-        self.input_sex2.setCurrentText(valor_sexo)
+    #     self.input_apellido2.setEnabled(False)
+    #     self.input_dni2.setEnabled(False)
+    #     self.input_sex2.setEnabled(False)
+    #     self.input_age2.setEnabled(False)
+    #     self.input_date2.setEnabled(False)
+    #     self.input_celular2.setEnabled(False)  
+        
+    #     # Restaurar el valor guardado del QComboBox
+    #     self.input_sex2.setCurrentText(valor_sexo)
     
     def seleccionYautoCompletado(self):
         row = self.tablaUpdateRecord.currentRow()
@@ -2289,27 +2271,28 @@ class VentanaPrincipal(QMainWindow):
         celu2 = self.input_celular2.text()
         fecha = self.input_date2.date().toPyDate()
         
-        patron_Letras = re.compile(r'^[a-zA-ZáéíóúÁÉÍÓÚüÜ\'\s]+$') 
-        if not isinstance(nombre2, str) or nombre2.isspace() or not patron_Letras.match(nombre2):
-            mensaje_ingreso_datos("Registro de alumnos","El 'nombre' solo debe contener letras y/o espacios")
-            return
+        actualizarUSER(nombre2 , apellido2, dni2, sexo2, edad2, celu2)
+        # patron_Letras = re.compile(r'^[a-zA-ZáéíóúÁÉÍÓÚüÜ\'\s]+$') 
+        # if not isinstance(nombre2, str) or nombre2.isspace() or not patron_Letras.match(nombre2):
+        #     mensaje_ingreso_datos("Registro de alumnos","El 'nombre' solo debe contener letras y/o espacios")
+        #     return
 
-        if not isinstance(apellido2, str) or apellido2.isspace() or not patron_Letras.match(apellido2):
-            mensaje_ingreso_datos("Registro de alumnos","El 'apellido' solo debe contener letras y/o espacios")
-            return
+        # if not isinstance(apellido2, str) or apellido2.isspace() or not patron_Letras.match(apellido2):
+        #     mensaje_ingreso_datos("Registro de alumnos","El 'apellido' solo debe contener letras y/o espacios")
+        #     return
         
-        patronNum = re.compile(r'^[0-9]+$')
-        if not (dni2.isnumeric() and len(dni2) == 8 and patronNum.match(dni2)):
-            mensaje_ingreso_datos("Registro de alumnos","El 'DNI' debe ser:\n- Valores numéricos.\n- Contener 8 dígitos.\n- No contener puntos(.)")
-            return
+        # patronNum = re.compile(r'^[0-9]+$')
+        # if not (dni2.isnumeric() and len(dni2) == 8 and patronNum.match(dni2)):
+        #     mensaje_ingreso_datos("Registro de alumnos","El 'DNI' debe ser:\n- Valores numéricos.\n- Contener 8 dígitos.\n- No contener puntos(.)")
+        #     return
 
-        if not (edad2.isnumeric() and len(edad2) == 2 and patronNum.match(edad2)):
-            mensaje_ingreso_datos("Registro de alumnos","El 'edad' debe ser:\n- Valores numéricos.\n- Contener 2 dígitos.\n- No contener puntos(.)")
-            return
+        # if not (edad2.isnumeric() and len(edad2) == 2 and patronNum.match(edad2)):
+        #     mensaje_ingreso_datos("Registro de alumnos","El 'edad' debe ser:\n- Valores numéricos.\n- Contener 2 dígitos.\n- No contener puntos(.)")
+        #     return
         
-        if not (celu2.isnumeric() and patronNum.match(celu2)):
-            mensaje_ingreso_datos("Registro de alumnos","El 'celular' debe ser: \n- Valores numéricos. \n- Contener 10 dígitos.\n- No contener puntos(.)")
-            return
+        # if not (celu2.isnumeric() and patronNum.match(celu2)):
+        #     mensaje_ingreso_datos("Registro de alumnos","El 'celular' debe ser: \n- Valores numéricos. \n- Contener 10 dígitos.\n- No contener puntos(.)")
+        #     return
         
         responder_actv = inicio("Busqueda de Alumnos","¿Seguro que desea buscar?")
         if responder_actv == QMessageBox.StandardButton.Yes:
@@ -2317,19 +2300,26 @@ class VentanaPrincipal(QMainWindow):
                 db = conectar_base_de_datos()
                 cursor = db.cursor()
                 query = "UPDATE usuario SET nombre=%s, apellido=%s, dni=%s, sexo=%s, edad=%s, celular=%s, fecha=%s WHERE id_usuario=%s ORDER BY nombre ASC"
-                values = (nombre2, apellido2, dni2, sexo2, edad2, celu2, fecha, id_reg)
+                values = (nombre2, apellido2, dni2, sexo2, edad2, celu2, id_reg)#fecha, 
                 cursor.execute(query, values)
+                
+                # Obtine el ID del Usuario
+                obetener_id_usuario2 = cursor.lastrowid
+                fecha = self.input_date.date().toPyDate()
+                
+                # Insertar la fecha en la tabla fecha_registro_usuario
+                cursor.execute("UPDATE fecha_registro_usuario SET fecha_registro=%s WHERE id_usuario='{}'".format(obetener_id_usuario2), (fecha))
                 db.commit()
                 
                 if cursor:
                     mensaje_ingreso_datos("Registro de alumnos","Registro actualizado")
-
-                    self.input_nombre2.clear()
-                    self.input_apellido2.clear()
-                    self.input_dni2.clear()
-                    self.input_sex2.setCurrentIndex(0)
-                    self.input_age2.clear()
-                    self.input_celular2.clear()
+                    limpiasElementosUseraActualizar(self,QDate)
+                    # self.input_nombre2.clear()
+                    # self.input_apellido2.clear()
+                    # self.input_dni2.clear()
+                    # self.input_sex2.setCurrentIndex(0)
+                    # self.input_age2.clear()
+                    # self.input_celular2.clear()
                 
                     self.ver()
                 else:
