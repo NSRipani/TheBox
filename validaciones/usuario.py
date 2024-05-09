@@ -74,10 +74,16 @@ def actualizarUSER(nombre2 , apellido2, dni2, sexo2, edad2, celu2):
     if not (dni2.isnumeric() and len(dni2) == 8 and patronNum.match(dni2)):
         mensaje_ingreso_datos("Registro de alumnos","El 'DNI' debe ser:\n- Valores numéricos.\n- Contener 8 dígitos.\n- No contener puntos(.)")
         return
+    dni2 = int(dni2)    
 
+    if not (isinstance(sexo2, str) and patron_Letras.match(sexo2)):
+        mensaje_ingreso_datos("Registro de alumnos","Debe elegir una sexo")
+        return
+    
     if not (edad2.isnumeric() and len(edad2) == 2 and patronNum.match(edad2)):
         mensaje_ingreso_datos("Registro de alumnos","El 'edad' debe ser:\n- Valores numéricos.\n- Contener 2 dígitos.\n- No contener puntos(.)")
         return
+    edad2 = int(edad2)
     
     if not (celu2.isnumeric() and patronNum.match(celu2)):
         mensaje_ingreso_datos("Registro de alumnos","El 'celular' debe ser: \n- Valores numéricos. \n- Contener 10 dígitos.\n- No contener puntos(.)")

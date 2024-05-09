@@ -2272,55 +2272,25 @@ class VentanaPrincipal(QMainWindow):
         fecha = self.input_date2.date().toPyDate()
         
         actualizarUSER(nombre2 , apellido2, dni2, sexo2, edad2, celu2)
-        # patron_Letras = re.compile(r'^[a-zA-ZáéíóúÁÉÍÓÚüÜ\'\s]+$') 
-        # if not isinstance(nombre2, str) or nombre2.isspace() or not patron_Letras.match(nombre2):
-        #     mensaje_ingreso_datos("Registro de alumnos","El 'nombre' solo debe contener letras y/o espacios")
-        #     return
-
-        # if not isinstance(apellido2, str) or apellido2.isspace() or not patron_Letras.match(apellido2):
-        #     mensaje_ingreso_datos("Registro de alumnos","El 'apellido' solo debe contener letras y/o espacios")
-        #     return
-        
-        # patronNum = re.compile(r'^[0-9]+$')
-        # if not (dni2.isnumeric() and len(dni2) == 8 and patronNum.match(dni2)):
-        #     mensaje_ingreso_datos("Registro de alumnos","El 'DNI' debe ser:\n- Valores numéricos.\n- Contener 8 dígitos.\n- No contener puntos(.)")
-        #     return
-
-        # if not (edad2.isnumeric() and len(edad2) == 2 and patronNum.match(edad2)):
-        #     mensaje_ingreso_datos("Registro de alumnos","El 'edad' debe ser:\n- Valores numéricos.\n- Contener 2 dígitos.\n- No contener puntos(.)")
-        #     return
-        
-        # if not (celu2.isnumeric() and patronNum.match(celu2)):
-        #     mensaje_ingreso_datos("Registro de alumnos","El 'celular' debe ser: \n- Valores numéricos. \n- Contener 10 dígitos.\n- No contener puntos(.)")
-        #     return
         
         responder_actv = inicio("Busqueda de Alumnos","¿Seguro que desea buscar?")
         if responder_actv == QMessageBox.StandardButton.Yes:
             try:
                 db = conectar_base_de_datos()
                 cursor = db.cursor()
-                query = "UPDATE usuario SET nombre=%s, apellido=%s, dni=%s, sexo=%s, edad=%s, celular=%s, fecha=%s WHERE id_usuario=%s ORDER BY nombre ASC"
+                query = "UPDATE usuario SET nombre=%s, apellido=%s, dni=%s, sexo=%s, edad=%s, celular=%s WHERE id_usuario=%s ORDER BY nombre ASC"
                 values = (nombre2, apellido2, dni2, sexo2, edad2, celu2, id_reg)#fecha, 
                 cursor.execute(query, values)
-                
-                # Obtine el ID del Usuario
-                obetener_id_usuario2 = cursor.lastrowid
-                fecha = self.input_date.date().toPyDate()
-                
+            
                 # Insertar la fecha en la tabla fecha_registro_usuario
-                cursor.execute("UPDATE fecha_registro_usuario SET fecha_registro=%s WHERE id_usuario='{}'".format(obetener_id_usuario2), (fecha))
+                query_fecha = "UPDATE fecha_registro_usuario SET fecha_registro=%s WHERE id_usuario=%s"
+                values_fecha = (fecha, id_reg)
+                cursor.execute(query_fecha, values_fecha)
                 db.commit()
                 
-                if cursor:
+                if cursor.rowcount > 0:
                     mensaje_ingreso_datos("Registro de alumnos","Registro actualizado")
                     limpiasElementosUseraActualizar(self,QDate)
-                    # self.input_nombre2.clear()
-                    # self.input_apellido2.clear()
-                    # self.input_dni2.clear()
-                    # self.input_sex2.setCurrentIndex(0)
-                    # self.input_age2.clear()
-                    # self.input_celular2.clear()
-                
                     self.ver()
                 else:
                     mensaje_ingreso_datos("Registro de alumnos","Registro no actualizado")
@@ -2483,70 +2453,66 @@ class VentanaPrincipal(QMainWindow):
             print("nose guardo")
         
     def mostrarACTIC(self):
-        tabla = inicio("Registro de disciplina","¿Desea mostrar la tabla?")
-        if tabla == QMessageBox.StandardButton.Yes:
-            try:
-                db = conectar_base_de_datos()
-                cursor = db.cursor()
-                cursor.execute("SELECT * FROM disciplina ORDER BY id_disciplina")
-                resultados = cursor.fetchall()
+        try:
+            db = conectar_base_de_datos()
+            cursor = db.cursor()
+            cursor.execute("SELECT * FROM disciplina ORDER BY id_disciplina")
+            resultados = cursor.fetchall()
 
-                if len(resultados) > 0:
-                    # Coloca los nomnbres de la cabecera en mayuscula
-                    header = [description[0].replace("_"," ").upper() for description in cursor.description]
-                    
-                    self.tableActivi.setRowCount(len(resultados))
-                    self.tableActivi.setColumnCount(len(resultados[0]))
-                    self.tableActivi.setHorizontalHeaderLabels(header)
-                    
-                    titulos = self.tableActivi.horizontalHeader()
-                    titulos.setSectionResizeMode(QHeaderView.ResizeMode.Stretch) # Se estira en toda el area del QTableWiget
-                    
-                    encavezado_vertical = self.tableActivi.verticalHeader()
-                    encavezado_vertical.setVisible(False)
-                    
-                    self.tableActivi.setSelectionBehavior(QTableWidget.SelectionBehavior.SelectRows) # selecciona la fila
-                    self.tableActivi.setEditTriggers(QAbstractItemView.EditTrigger.NoEditTriggers) # Tabla no editable manualmente
-                    self.tableActivi.setAutoScroll(True)
-                    
-                    for i, row in enumerate(resultados):
-                        for j, val in enumerate(row):
-                            item = QTableWidgetItem(str(val))
-                            if j in [0, 2]:  # Ajustar alineación para ciertas columnas
-                                item.setTextAlignment(Qt.AlignmentFlag.AlignCenter)   
-                            self.tableActivi.setItem(i, j, item)
-                            
-                    # # Calcular la cantidad total de registros
-                    # total_registrosACT = sum(1 for row in resultados if row[1])
+            if len(resultados) > 0:
+                # Coloca los nomnbres de la cabecera en mayuscula
+                header = [description[0].replace("_"," ").upper() for description in cursor.description]
+                
+                self.tableActivi.setRowCount(len(resultados))
+                self.tableActivi.setColumnCount(len(resultados[0]))
+                self.tableActivi.setHorizontalHeaderLabels(header)
+                
+                titulos = self.tableActivi.horizontalHeader()
+                titulos.setSectionResizeMode(QHeaderView.ResizeMode.Stretch) # Se estira en toda el area del QTableWiget
+                
+                encavezado_vertical = self.tableActivi.verticalHeader()
+                encavezado_vertical.setVisible(False)
+                
+                self.tableActivi.setSelectionBehavior(QTableWidget.SelectionBehavior.SelectRows) # selecciona la fila
+                self.tableActivi.setEditTriggers(QAbstractItemView.EditTrigger.NoEditTriggers) # Tabla no editable manualmente
+                self.tableActivi.setAutoScroll(True)
+                
+                for i, row in enumerate(resultados):
+                    for j, val in enumerate(row):
+                        item = QTableWidgetItem(str(val))
+                        if j in [0, 2]:  # Ajustar alineación para ciertas columnas
+                            item.setTextAlignment(Qt.AlignmentFlag.AlignCenter)   
+                        self.tableActivi.setItem(i, j, item)
+                        
+                # # Calcular la cantidad total de registros
+                # total_registrosACT = sum(1 for row in resultados if row[1])
 
-                    # # Crear una nueva fila en la tabla para mostrar la cantidad total de días de asistencia
-                    # row_count = self.tableActivi.rowCount()
-                    # self.tableActivi.insertRow(row_count) # Agregar la nueva fila al final de la tabla
+                # # Crear una nueva fila en la tabla para mostrar la cantidad total de días de asistencia
+                # row_count = self.tableActivi.rowCount()
+                # self.tableActivi.insertRow(row_count) # Agregar la nueva fila al final de la tabla
 
-                    # # Mostrar la etiqueta "Total" en la primera celda de la fila de total
-                    # item_label2 = QTableWidgetItem("TOTAL:")
-                    # item_label2.setFont(itemColor_TOTAL(item_label2))   # Funcion para estilos de item
-                    # item_label2.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
-                    # self.tableActivi.setItem(row_count, 0, item_label2)
+                # # Mostrar la etiqueta "Total" en la primera celda de la fila de total
+                # item_label2 = QTableWidgetItem("TOTAL:")
+                # item_label2.setFont(itemColor_TOTAL(item_label2))   # Funcion para estilos de item
+                # item_label2.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
+                # self.tableActivi.setItem(row_count, 0, item_label2)
+                
+                # # Agregar la información de la cantidad total de días de asistencia en la nueva fila
+                # item_registro = QTableWidgetItem(str(total_registrosACT))
+                # item_registro.setFont(itemColor_RESULTADO(item_registro))  # Funcion para estilos de item
+                # item_registro.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
+                # self.tableActivi.setItem(row_count, 1, item_registro)  # Agregar en la primera columna o en la que desees
+            else:
+                mensaje_ingreso_datos("Registro de alumnos","Tabla vacia")
                     
-                    # # Agregar la información de la cantidad total de días de asistencia en la nueva fila
-                    # item_registro = QTableWidgetItem(str(total_registrosACT))
-                    # item_registro.setFont(itemColor_RESULTADO(item_registro))  # Funcion para estilos de item
-                    # item_registro.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
-                    # self.tableActivi.setItem(row_count, 1, item_registro)  # Agregar en la primera columna o en la que desees
-                else:
-                    mensaje_ingreso_datos("Registro de alumnos","Tabla vacia")
-                       
-                cursor.close()  
-                db.close()
-                self.tableActivi.clearSelection()  # Deseleccionar la fila eliminada
-            
-            except Error as ex:
-                errorConsulta("Registro de alumnos",f"Error en la consulta: {str(ex)}")
-                print("Error executing the query", ex)
-        else:
-            print("nose no se mostro")
-    
+            cursor.close()  
+            db.close()
+            self.tableActivi.clearSelection()  # Deseleccionar la fila eliminada
+        
+        except Error as ex:
+            errorConsulta("Registro de alumnos",f"Error en la consulta: {str(ex)}")
+            print("Error executing the query", ex)
+        
     def seleccionDeDatos(self):
         row = self.tableActivi.currentRow()
         
