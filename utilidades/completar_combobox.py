@@ -33,13 +33,6 @@ def actualizar_combobox_disc(self):
     cursor.close()
     conn.close()
     
-    # self.idDis.currentTextChanged.connect(self.actualizar_precio)
-
-    # def actualizar_precio(self):
-    #     datos = self.idDis.currentData()
-    #     if datos:
-    #         precio = datos[2]
-    #         self.label_monto.setText(str(f" ${precio}"))
 
 # Funcion para completar el comobobox en la pestaña 'PAGO'
 def completar_nombre_empleado(self):

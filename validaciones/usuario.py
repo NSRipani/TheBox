@@ -1,5 +1,8 @@
-from modulos.mensajes import mensaje_ingreso_datos
+from modulos.mensajes import mensaje_ingreso_datos,aviso_descargaExitosa,aviso_Advertencia_De_excel
 import re
+
+
+# from openpyxl import Workbook
 
 def registroUSER(nombre1 , apellido1, dni, sexo, edad, celu):
     patron = re.compile(r'^[a-zA-ZáéíóúÁÉÍÓÚüÜ\'\s]+$') 
@@ -60,6 +63,38 @@ def limpiar_campos(self):
     # Restaurar el valor guardado del QComboBox
     self.input_sex2.setCurrentText(valor_sexo)
     
+def autoCompletadoACTULIZAR(self,QDate):
+    row = self.tablaUpdateRecord.currentRow()
+    
+    nombre2 = self.tablaUpdateRecord.item(row, 1).text()
+    apellido2 = self.tablaUpdateRecord.item(row, 2).text()
+    dni2 = self.tablaUpdateRecord.item(row, 3).text().replace(".", "")  # Eliminar cualquier punto en el DNI
+    dni2 = int(dni2)  # Convertir a entero
+    sexo2 = self.tablaUpdateRecord.item(row, 4).text()
+    edad2 = self.tablaUpdateRecord.item(row, 5).text().replace(".", "")
+    edad2 = int(edad2)
+    celular2 = self.tablaUpdateRecord.item(row, 6).text()
+    celular2 = int(celular2)
+    fecha2 = self.tablaUpdateRecord.item(row, 7).text()
+    fecha2 = QDate.fromString(fecha2, "dd-MM-yyyy")
+    
+    self.input_apellido2.setEnabled(True)
+    self.input_dni2.setEnabled(True)
+    self.input_sex2.setEnabled(True)
+    self.input_age2.setEnabled(True)
+    self.input_date2.setEnabled(True)
+    self.input_celular2.setEnabled(True) 
+    
+    self.input_nombre2.setText(nombre2)  
+    self.input_apellido2.setText(apellido2)
+    self.input_dni2.setText(str(dni2))  # Convertir a texto antes de asignar al QLineEdit
+    self.input_sex2.setCurrentText(sexo2)
+    self.input_age2.setText(str(edad2))  # Convertir a texto antes de asignar al QLineEdit
+    self.input_celular2.setText(str(celular2))  # Convertir a texto antes de asignar al QLineEdit
+    self.input_date2.setDate(fecha2)
+
+    self.tablaUpdateRecord.clearSelection()  # Deseleccionar la fila eliminada
+    
 def actualizarUSER(nombre2 , apellido2, dni2, sexo2, edad2, celu2):
     patron_Letras = re.compile(r'^[a-zA-ZáéíóúÁÉÍÓÚüÜ\'\s]+$') 
     if not isinstance(nombre2, str) or nombre2.isspace() or not patron_Letras.match(nombre2):
@@ -97,3 +132,4 @@ def limpiasElementosUseraActualizar(self,QDate):
     self.input_age2.clear()
     self.input_celular2.clear()
     self.input_date2.setDate(QDate.currentDate())
+    

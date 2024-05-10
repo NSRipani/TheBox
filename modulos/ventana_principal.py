@@ -22,7 +22,10 @@ from modulos.mensajes import mensaje_ingreso_datos, errorConsulta, inicio, aviso
 from modulos.style_item import itemColor_TOTAL, itemColor_RESULTADO
 from utilidades.completar_combobox import actualizar_combobox_user, actualizar_combobox_disc,completar_nombre_empleado
 
-from validaciones.usuario import registroUSER,limpiasElementosUser,limpiar_campos,actualizarUSER,limpiasElementosUseraActualizar
+# Validaciones y demas funciones 
+from validaciones.usuario import registroUSER, limpiasElementosUser, limpiar_campos,actualizarUSER, limpiasElementosUseraActualizar, autoCompletadoACTULIZAR
+from validaciones.archivo_Excel import tabla_registroUSUARIO, tabla_registroDISCIPLINA
+from validaciones.disciplina import guardarACTIVIDAD,completar_CAMPOS_ACTIVIDAD
 
 # Módulo de Registro de Asistencia
 from modulos.asistencia import Asistencia
@@ -564,11 +567,25 @@ class VentanaPrincipal(QMainWindow):
         button_Actualizar.clicked.connect(self.actualizar)
         button_Buscar1.clicked.connect(self.buscar)
         button_Limpiar.clicked.connect(self.limpiar)
-            
+        
+        layout_fecha_horizonal_contenedor = QHBoxLayout()
+        
+        layout_fecha = QHBoxLayout()
+        layout_fecha.setAlignment(Qt.AlignmentFlag.AlignRight)
+        button_fecha = QPushButton('ACTUALIZAR FECHA',update_customer_details)
+        button_fecha.setFixedWidth(250)
+        button_fecha.setCursor(Qt.CursorShape.PointingHandCursor)
+        button_fecha.setStyleSheet(style.estilo_boton)
+        layout_fecha.addWidget(button_fecha)
+        layout_fecha_horizonal_contenedor.addLayout(layout_ele3)
+        layout_fecha_horizonal_contenedor.addLayout(layout_fecha)
+        
+        button_fecha.clicked.connect(self.actualizar_fecha)
+        
         # Agregar los layouts horizontales al layout vertical
         layout_V2.addLayout(layout_ele1)
         layout_V2.addLayout(layout_ele2)
-        layout_V2.addLayout(layout_ele3)
+        layout_V2.addLayout(layout_fecha_horizonal_contenedor)
         
         # Crear un QGridLayout para organizar los elementos en la QGroupBox
         grid2 = QGridLayout(update_customer_details)
@@ -1550,17 +1567,7 @@ class VentanaPrincipal(QMainWindow):
         # LAYOUT HORIZONTAL PARA LOS ELEMENTOS
         layout_libro = QHBoxLayout()
         layout_libro.setAlignment(Qt.AlignmentFlag.AlignLeft)
-        
-        # idConcepto = QLabel('ID:',grupo_resumen)
-        # idConcepto.setStyleSheet(style.label)
-        # idConcepto.setFixedWidth(80)
-        # self.idConcepto = QLineEdit(grupo_resumen)
-        # self.idConcepto.setStyleSheet(style.estilo_lineedit)
-        # self.idConcepto.setEnabled(False)
-        # self.idConcepto.setFixedWidth(50)
-        # layout_libro.addWidget(idConcepto)  # EN ESTA LINEA COMO LA SIGUIENTE, AGREGA LOS ALEMENTOS AL LAYOUT HORIZONTAL
-        # layout_libro.addWidget(self.idConcepto)
-        
+      
         fecha_gastos = QLabel('Fecha:',grupo_resumen)
         fecha_gastos.setStyleSheet(style.label)
         fecha_gastos.setFixedWidth(80)
@@ -1965,7 +1972,7 @@ class VentanaPrincipal(QMainWindow):
                             fecha = QDate.fromString(str(val), "yyyy-MM-dd")  # Convertir la fecha a objeto QDate
                             item.setText(fecha.toString("dd-MM-yyyy"))  # Establecer el formato de visualización
                         
-                        if j in [3, 5, 6, 7]:  # Ajustar alineación para ciertas columnas
+                        if j in [0, 3, 5, 6, 7]:  # Ajustar alineación para ciertas columnas
                             item.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
                         self.tablaRecord.setItem(i, j, item)
                         
@@ -1999,82 +2006,8 @@ class VentanaPrincipal(QMainWindow):
             errorConsulta("Registro de alumnos",f"Error en la consulta: {str(ex)}")
             
     def tabla_registro(self):
-        if self.tablaRecord.rowCount() == 0:
-            mensaje_ingreso_datos("Descarga de archivo","Primero debe mostrar una tabla antes de descargarla en un archivo Excel.")
-            return
-        
-        workbook = Workbook()
-        sheet = workbook.active
+        tabla_registroUSUARIO(self,Workbook,Font,PatternFill,Border,Side,numbers,QFileDialog,os)
 
-        # Obtener encabezados de la tabla y guardarlos en el archivo Excel
-        for col in range(self.tablaRecord.columnCount()):
-            header_item = self.tablaRecord.horizontalHeaderItem(col)
-            if header_item is not None:
-                header_cell = sheet.cell(row=1, column=col + 1)
-                header_cell.value = header_item.text()
-                # Establecer estilo personalizado a las celdas de encabezado
-                header_cell.font = Font(name='Arial', bold=True)  # Cambiar el tipo de fuente aquí
-                header_cell.fill = PatternFill(start_color="FFA500", end_color="FFA500", fill_type="solid")
-                header_cell.border = Border(top=Side(style="thin"), bottom=Side(style="thin"), left=Side(style="thin"), right=Side(style="thin"))
-        
-        # Obtener datos de la tabla y guardarlos en el archivo Excel
-        for row in range(self.tablaRecord.rowCount()):
-            for col in range(self.tablaRecord.columnCount()):
-                item = self.tablaRecord.item(row, col)
-                if item is not None:
-                    cell = sheet.cell(row=row+2, column=col+1)
-                    cell.value = item.text()
-
-                    # Establecer estilo personalizado a las celdas
-                    cell.font = Font(name="Arial", bold=True)
-                    cell.fill = PatternFill(start_color="FFFFFF", end_color="FFFFFF", fill_type="solid")
-                    cell.border = Border(top=Side(style="thin"), bottom=Side(style="thin"), left=Side(style="thin"), right=Side(style="thin"))
-   
-                    # Agregar formato de número y/o fecha a la celda si es necesario
-                    if col in [0,1,2,3,4,6,7,8]:
-                        cell.number_format = numbers.FORMAT_TEXT
-                    elif col == 5:
-                        cell.number_format = "0"
-                        
-         # Autoajustar el ancho de las columnas
-        for col in sheet.columns:
-            max_length = 0
-            column = col[0].column_letter  # obtiene el nombre de la columna
-            for cell in col:
-                try:  # Necessary to avoid error on empty cells
-                    if len(str(cell.value)) > max_length:
-                        max_length = len(cell.value)
-                except:
-                    pass
-            adjusted_width = (max_length + 2) * 1.2
-            sheet.column_dimensions[column].width = adjusted_width
-            
-        # Calcular la última fila de datos en la hoja de cálculo
-        ultima_fila = self.tablaRecord.rowCount()
-
-        # Construir la fórmula de autosuma
-        formula_autosuma = f"=COUNTA(B2:B{ultima_fila})"
-
-        # Asignar la fórmula de autosuma a la celda específica
-        autosuma_cell = sheet.cell(row=ultima_fila+1, column=2)
-        autosuma_cell.value = formula_autosuma
-
-        # Aplicar un formato específico a la celda
-        autosuma_cell.number_format = "0"
-
-        file_path, _ = QFileDialog.getSaveFileName(self, "Guardar archivo Excel", "", "Archivos Excel (*.xlsx)")
-
-        if file_path:
-            if os.path.exists(file_path):
-                file_name, file_extension = os.path.splitext(file_path)
-                file_path = f"{file_name}_nuevo{file_extension}"
-
-            try:
-                workbook.save(file_path)
-                aviso_descargaExitosa("Descarga exitosa","La tabla se ha descargado en un archivo Excel con éxito.")
-            except Exception as e:
-                aviso_Advertencia_De_excel("Advertencia", f"No se pudo guardar el archivo: {str(e)}.\nEL archivo que deseas reemplazar esta en uso, de2ebes cerrar el archivo y luego guardarlo. El nombre puede ser parecido pero no igual.")
-            
     # Pestaña de ACTUALIZAR REGISTRO ---------------------------------------
     def ver(self):
         try:
@@ -2109,7 +2042,7 @@ class VentanaPrincipal(QMainWindow):
                             fecha = QDate.fromString(str(val), "yyyy-MM-dd")  # Convertir la fecha a objeto QDate
                             item.setText(fecha.toString("dd-MM-yyyy"))  # Establecer el formato de visualización
                         
-                        if j in [3, 4, 5, 6, 7]:  # Ajustar alineación para ciertas columnas
+                        if j in [0, 3, 4, 5, 6, 7]:  # Ajustar alineación para ciertas columnas
                             item.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
                         self.tablaUpdateRecord.setItem(i, j, item)
             else:
@@ -2152,7 +2085,6 @@ class VentanaPrincipal(QMainWindow):
                 db = conectar_base_de_datos()
                 cursor = db.cursor()
                 cursor.execute("SELECT u.*, f.fecha_registro FROM usuario u LEFT JOIN fecha_registro_usuario f ON u.id_usuario = f.id_usuario WHERE u.nombre LIKE '%{}%'".format(nombre_seleccionado))
-
                 results = cursor.fetchall()
                 
                 if len(results) > 0:
@@ -2203,59 +2135,10 @@ class VentanaPrincipal(QMainWindow):
             print("Registro no encontrado")
     
     def limpiar(self,):
-        limpiar_campos(self)            
-        
-    #     # Guardar temporalmente el valor del QComboBox
-    #     valor_sexo = self.input_sex2.currentText()
-        
-    #     # self.id2.clear()
-    #     self.input_nombre2.clear()
-    #     self.input_apellido2.clear()
-    #     self.input_age2.clear()
-    #     self.input_dni2.clear()
-    #     self.input_celular2.clear()
-        
-    #     self.input_apellido2.setEnabled(False)
-    #     self.input_dni2.setEnabled(False)
-    #     self.input_sex2.setEnabled(False)
-    #     self.input_age2.setEnabled(False)
-    #     self.input_date2.setEnabled(False)
-    #     self.input_celular2.setEnabled(False)  
-        
-    #     # Restaurar el valor guardado del QComboBox
-    #     self.input_sex2.setCurrentText(valor_sexo)
+        limpiar_campos(self)
     
     def seleccionYautoCompletado(self):
-        row = self.tablaUpdateRecord.currentRow()
-        
-        nombre2 = self.tablaUpdateRecord.item(row, 1).text()
-        apellido2 = self.tablaUpdateRecord.item(row, 2).text()
-        dni2 = self.tablaUpdateRecord.item(row, 3).text().replace(".", "")  # Eliminar cualquier punto en el DNI
-        dni2 = int(dni2)  # Convertir a entero
-        sexo2 = self.tablaUpdateRecord.item(row, 4).text()
-        edad2 = self.tablaUpdateRecord.item(row, 5).text().replace(".", "")
-        edad2 = int(edad2)
-        celular2 = self.tablaUpdateRecord.item(row, 6).text()
-        celular2 = int(celular2)
-        fecha2 = self.tablaUpdateRecord.item(row, 7).text()
-        fecha2 = QDate.fromString(fecha2, "dd-MM-yyyy")
-        
-        self.input_apellido2.setEnabled(True)
-        self.input_dni2.setEnabled(True)
-        self.input_sex2.setEnabled(True)
-        self.input_age2.setEnabled(True)
-        self.input_date2.setEnabled(True)
-        self.input_celular2.setEnabled(True) 
-        
-        self.input_nombre2.setText(nombre2)  
-        self.input_apellido2.setText(apellido2)
-        self.input_dni2.setText(str(dni2))  # Convertir a texto antes de asignar al QLineEdit
-        self.input_sex2.setCurrentText(sexo2)
-        self.input_age2.setText(str(edad2))  # Convertir a texto antes de asignar al QLineEdit
-        self.input_celular2.setText(str(celular2))  # Convertir a texto antes de asignar al QLineEdit
-        self.input_date2.setDate(fecha2)
-
-        self.tablaUpdateRecord.clearSelection()  # Deseleccionar la fila eliminada
+        autoCompletadoACTULIZAR(self,QDate)
         
     def actualizar(self):
         if not self.tablaUpdateRecord.currentItem():
@@ -2269,25 +2152,20 @@ class VentanaPrincipal(QMainWindow):
         sexo2 = self.input_sex2.currentText()
         edad2 = self.input_age2.text()
         celu2 = self.input_celular2.text()
-        fecha = self.input_date2.date().toPyDate()
         
         actualizarUSER(nombre2 , apellido2, dni2, sexo2, edad2, celu2)
         
-        responder_actv = inicio("Busqueda de Alumnos","¿Seguro que desea buscar?")
+        responder_actv = inicio("Registro de Alumnos","¿Seguro que desea actualizar?")
         if responder_actv == QMessageBox.StandardButton.Yes:
             try:
                 db = conectar_base_de_datos()
-                cursor = db.cursor()
+                cursor = db.cursor()                
                 query = "UPDATE usuario SET nombre=%s, apellido=%s, dni=%s, sexo=%s, edad=%s, celular=%s WHERE id_usuario=%s ORDER BY nombre ASC"
-                values = (nombre2, apellido2, dni2, sexo2, edad2, celu2, id_reg)#fecha, 
+                values = (nombre2, apellido2, dni2, sexo2, edad2, celu2, id_reg) 
                 cursor.execute(query, values)
-            
-                # Insertar la fecha en la tabla fecha_registro_usuario
-                query_fecha = "UPDATE fecha_registro_usuario SET fecha_registro=%s WHERE id_usuario=%s"
-                values_fecha = (fecha, id_reg)
-                cursor.execute(query_fecha, values_fecha)
+                usuario = cursor.lastrowid
                 db.commit()
-                
+
                 if cursor.rowcount > 0:
                     mensaje_ingreso_datos("Registro de alumnos","Registro actualizado")
                     limpiasElementosUseraActualizar(self,QDate)
@@ -2300,6 +2178,37 @@ class VentanaPrincipal(QMainWindow):
                 
                 self.tablaUpdateRecord.clearSelection()  # Deseleccionar la fila eliminada
                 
+            except Error as ex:
+                errorConsulta("Registro de alumnos",f"Error en la consulta: {str(ex)}")
+                print("Error al ejecutar la consulta", ex)      
+        else:
+            print("No se actualiza registro")
+    
+    def actualizar_fecha(self):
+        if not self.tablaUpdateRecord.currentItem():
+            mensaje_ingreso_datos("Registro de alumnos","Por favor seleccione un registro para actualizar")
+            return
+        id_usuario_fecha = int(self.tablaUpdateRecord.item(self.tablaUpdateRecord.currentRow(), 0).text())
+        fecha = self.input_date2.date().toPyDate()
+        
+        actual_fecha = inicio("Registro de Alumnos","¿Desea actualizar la fecha de Registro?")
+        if actual_fecha == QMessageBox.StandardButton.Yes:
+            try:
+                db = conectar_base_de_datos()
+                cursor = db.cursor()
+                cursor.execute("UPDATE fecha_registro_usuario SET fecha_registro=%s WHERE id_usuario=%s", (fecha,id_usuario_fecha))
+                db.commit()
+                if cursor.rowcount > 0:
+                    mensaje_ingreso_datos("Registro de alumnos","Registro actualizado")
+                    limpiasElementosUseraActualizar(self,QDate)
+
+                    self.ver()
+                else:
+                    mensaje_ingreso_datos("Registro de alumnos","Registro no actualizado")
+                cursor.close()
+                db.close()
+                
+                self.tablaUpdateRecord.clearSelection()  # Deseleccionar la fila eliminada
             except Error as ex:
                 errorConsulta("Registro de alumnos",f"Error en la consulta: {str(ex)}")
                 print("Error al ejecutar la consulta", ex)      
@@ -2326,7 +2235,7 @@ class VentanaPrincipal(QMainWindow):
             try:
                 db = conectar_base_de_datos()
                 cursor = db.cursor()
-                cursor.execute("SELECT * FROM usuario WHERE nombre LIKE '%{}%'".format(nombre_seleccionado3))
+                cursor.execute("SELECT u.*, f.fecha_registro FROM usuario u LEFT JOIN fecha_registro_usuario f ON u.id_usuario = f.id_usuario WHERE u.nombre LIKE '%{}%'".format(nombre_seleccionado3))
                 results = cursor.fetchall()
                 
                 if len(results) > 0:
@@ -2359,7 +2268,7 @@ class VentanaPrincipal(QMainWindow):
                                 fecha = QDate.fromString(str(val), "yyyy-MM-dd")  # Convertir la fecha a objeto QDate
                                 item.setText(fecha.toString("dd-MM-yyyy"))  # Establecer el formato de visualización
                             
-                            if j in [3, 5, 6, 7]:  # Ajustar alineación para ciertas columnas
+                            if j in [0, 3, 5, 6, 7]:  # Ajustar alineación para ciertas columnas
                                 item.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
                             self.tablaDeleteRecord.setItem(i, j, item)
                 else:
@@ -2418,17 +2327,7 @@ class VentanaPrincipal(QMainWindow):
         actividad = self.input_disciplina4.text().capitalize().title()
         precio = self.input_precio.text().replace(".","")
         
-        patron2 = re.compile(r'^[0-9]+$')
-            
-        patronA = re.compile(r'^[a-zA-ZáéíóúÁÉÍÓÚüÜ\'\s]+$') 
-        if not isinstance(actividad, str) or actividad.isspace() or not patronA.match(actividad):
-            mensaje_ingreso_datos("Registro de alumnos","Debe elegir una disciplina")
-            return
-        
-        if not (precio.isdigit() and patron2.match(precio)):
-            mensaje_ingreso_datos("Registro de alumnos","El precio debe ser número entero. Sin coma ','.")
-        if precio: 
-            precio = int(precio)
+        guardarACTIVIDAD(actividad,precio)
 
         guardar = inicio("Registro de alumnos","¿Desea guardar alumno?")
         if guardar == QMessageBox.StandardButton.Yes: 
@@ -2514,18 +2413,7 @@ class VentanaPrincipal(QMainWindow):
             print("Error executing the query", ex)
         
     def seleccionDeDatos(self):
-        row = self.tableActivi.currentRow()
-        
-        id_dis = self.tableActivi.item(row,0).text()
-        id_dis = int(id_dis)
-        disc6 = self.tableActivi.item(row, 1).text()
-        pesos = self.tableActivi.item(row, 2).text()
-        pesos = int(pesos)  # Convertir a entero
-        
-        self.input_disciplina4.setText(disc6)
-        self.input_precio.setText(str(pesos))  # Convertir a texto antes de asignar al QLineEdit 
-        
-        self.tableActivi.clearSelection()  # Deseleccionar la fila eliminada
+        completar_CAMPOS_ACTIVIDAD(self)
         
     def actualizarACTIV(self):
         if not self.tableActivi.currentItem():
@@ -2536,18 +2424,7 @@ class VentanaPrincipal(QMainWindow):
         actividad = self.input_disciplina4.text().capitalize().title()
         precio = self.input_precio.text().replace(".","")
         
-        patronB = re.compile(r'^[a-zA-ZáéíóúÁÉÍÓÚüÜ\'\s]+$') 
-        patronC = re.compile(r'^[0-9]+$')
-        
-        if not isinstance(actividad, str) or actividad.isspace() or not patronB.match(actividad):
-            mensaje_ingreso_datos("Registro de alumnos","Debe elegir una disciplina")
-            return
-        
-        if not (precio.isdigit() and patronC.match(precio)):
-            mensaje_ingreso_datos("Registro de alumnos","El precio debe ser número entero. Sin coma ','.")
-            return
-        if precio: 
-            precio = int(precio)      
+        guardarACTIVIDAD(actividad,precio)
         
         actualizar = inicio("Registro de alumnos","¿Desea actualizar alumno?")
         if actualizar == QMessageBox.StandardButton.Yes:
@@ -2626,83 +2503,7 @@ class VentanaPrincipal(QMainWindow):
             print("No se elimino registro")
             
     def planilla_disciplina(self):
-        if self.tableActivi.rowCount() == 0:
-            mensaje_ingreso_datos("Descarga de archivo","Primero debe mostrar una tabla antes de descargarla en un archivo Excel.")
-            return
-        
-        workbook = Workbook()
-        sheet = workbook.active
-
-        # Obtener encabezados de la tabla y guardarlos en el archivo Excel
-        for col in range(self.tableActivi.columnCount()):
-            header_item = self.tableActivi.horizontalHeaderItem(col)
-            if header_item is not None:
-                header_cell = sheet.cell(row=1, column=col + 1)
-                header_cell.value = header_item.text()
-                # Establecer estilo personalizado a las celdas de encabezado
-                header_cell.font = Font(name='Arial', bold=True)  # Cambiar el tipo de fuente aquí
-                header_cell.fill = PatternFill(start_color="FFA500", end_color="FFA500", fill_type="solid")
-                header_cell.border = Border(top=Side(style="thin"), bottom=Side(style="thin"), left=Side(style="thin"), right=Side(style="thin"))
-        
-        # Obtener datos de la tabla y guardarlos en el archivo Excel
-        for row in range(self.tableActivi.rowCount()):
-            for col in range(self.tableActivi.columnCount()):
-                item = self.tableActivi.item(row, col)
-                if item is not None:
-                    cell = sheet.cell(row=row+2, column=col+1)
-                    cell.value = item.text()
-
-                    # Establecer estilo personalizado a las celdas
-                    cell.font = Font(name="Arial", bold=True)
-                    cell.fill = PatternFill(start_color="FFFFFF", end_color="FFFFFF", fill_type="solid")
-                    cell.border = Border(top=Side(style="thin"), bottom=Side(style="thin"), left=Side(style="thin"), right=Side(style="thin"))
-   
-                    # Agregar formato de número y/o fecha a la celda si es necesario
-                    if col == 0:
-                        cell.number_format = numbers.FORMAT_NUMBER
-                    elif col == 1:
-                        cell.number_format = numbers.FORMAT_TEXT
-                    elif col == 2:
-                        cell.number_format = numbers.FORMAT_NUMBER_00
-                        
-         # Autoajustar el ancho de las columnas
-        for col in sheet.columns:
-            max_length = 0
-            column = col[0].column_letter  # obtiene el nombre de la columna
-            for cell in col:
-                try:  # Necessary to avoid error on empty cells
-                    if len(str(cell.value)) > max_length:
-                        max_length = len(cell.value)
-                except:
-                    pass
-            adjusted_width = (max_length + 2) * 1.2
-            sheet.column_dimensions[column].width = adjusted_width
-            
-        # Calcular la última fila de datos en la hoja de cálculo
-        ultima_fila = self.tableActivi.rowCount()
-
-        # Construir la fórmula de autosuma
-        formula_autosuma = f"=COUNTA(B2:B{ultima_fila})"
-
-        # Asignar la fórmula de autosuma a la celda específica
-        autosuma_cell = sheet.cell(row=ultima_fila+1, column=2)
-        autosuma_cell.value = formula_autosuma
-
-        # Aplicar un formato específico a la celda
-        autosuma_cell.number_format = "0"
-        
-        file_path, _ = QFileDialog.getSaveFileName(self, "Guardar archivo Excel", "", "Archivos Excel (*.xlsx)")
-
-        if file_path:
-            if os.path.exists(file_path):
-                file_name, file_extension = os.path.splitext(file_path)
-                file_path = f"{file_name}_nuevo{file_extension}"
-
-            try:
-                workbook.save(file_path)
-                aviso_descargaExitosa("Descarga exitosa","La tabla se ha descargado en un archivo Excel con éxito.")
-            except Exception as e:
-                aviso_Advertencia_De_excel("Advertencia", f"No se pudo guardar el archivo: {str(e)}.\nEL archivo que deseas reemplazar esta en uso, de2ebes cerrar el archivo y luego guardarlo. El nombre puede ser parecido pero no igual.")
+        tabla_registroDISCIPLINA(self,Workbook,Font,PatternFill,Border,Side,numbers,QFileDialog)
     
     # ----------- PESTAÑA PAGOS -----------------
     def guardarPagos(self):
