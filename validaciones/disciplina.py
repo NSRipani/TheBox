@@ -26,3 +26,28 @@ def completar_CAMPOS_ACTIVIDAD(self):
     self.input_precio.setText(str(pesos))  # Convertir a texto antes de asignar al QLineEdit 
     
     self.tableActivi.clearSelection()  # Deseleccionar la fila eliminada
+    
+def tabla_DISCIPLINA(self, resultados, cursor, QHeaderView, QTableWidget, QAbstractItemView, QTableWidgetItem, Qt):
+    # Coloca los nomnbres de la cabecera en mayuscula
+    header = [description[0].replace("_"," ").upper() for description in cursor.description]
+    
+    self.tableActivi.setRowCount(len(resultados))
+    self.tableActivi.setColumnCount(len(resultados[0]))
+    self.tableActivi.setHorizontalHeaderLabels(header)
+    
+    titulos = self.tableActivi.horizontalHeader()
+    titulos.setSectionResizeMode(QHeaderView.ResizeMode.Stretch) # Se estira en toda el area del QTableWiget
+    
+    encavezado_vertical = self.tableActivi.verticalHeader()
+    encavezado_vertical.setVisible(False)
+    
+    self.tableActivi.setSelectionBehavior(QTableWidget.SelectionBehavior.SelectRows) # selecciona la fila
+    self.tableActivi.setEditTriggers(QAbstractItemView.EditTrigger.NoEditTriggers) # Tabla no editable manualmente
+    self.tableActivi.setAutoScroll(True)
+    
+    for i, row in enumerate(resultados):
+        for j, val in enumerate(row):
+            item = QTableWidgetItem(str(val))
+            if j in [0, 2]:  # Ajustar alineación para ciertas columnas
+                item.setTextAlignment(Qt.AlignmentFlag.AlignCenter)   
+            self.tableActivi.setItem(i, j, item)

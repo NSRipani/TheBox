@@ -2,7 +2,7 @@
 from datetime import date, timedelta, datetime
 
 # Librerías de PyQt6
-from PyQt6.QtWidgets import QCompleter,QFrame,QHBoxLayout,QSpacerItem,QSizePolicy, QMainWindow, QWidget, QVBoxLayout, QPushButton, QLineEdit, QLabel, QMessageBox
+from PyQt6.QtWidgets import QCompleter,QDateEdit,QFrame,QHBoxLayout,QSpacerItem,QSizePolicy, QMainWindow, QWidget, QVBoxLayout, QPushButton, QLineEdit, QLabel, QMessageBox
 from PyQt6.QtCore import Qt, QTimer
 from PyQt6.QtGui import QPixmap, QFont,QIcon, QPalette, QBrush
 
@@ -15,6 +15,7 @@ from qss import style
 
 # Modulo de para las cajas de mensajes
 from modulos.mensajes import mensaje_ingreso_datos
+from conexion_DB.dataBase import conectar_base_de_datos
 
 
 class Asistencia(QMainWindow):
@@ -84,26 +85,19 @@ class Asistencia(QMainWindow):
         
         label_numero_documento = QLabel("Número de documento:")
         label_numero_documento.setStyleSheet(style.label_documento)
-        lV.addWidget(label_numero_documento)
-
         self.numero_documento = QLineEdit()
         self.numero_documento.setStyleSheet(style.estilo_lineedit)
         self.numero_documento.setMaxLength(8)
         self.numero_documento.textChanged.connect(self.set_focus)
+        lV.addWidget(label_numero_documento)
         lV.addWidget(self.numero_documento)
         
-         # Conexión a la base de datos MySQL
-        conn = mysql.connector.connect(
-            host = "localhost",
-            port = "3306",
-            user = "root",
-            password = "root",
-            database = "thebox_bd"
-        )
+        # Conexión a la base de datos MySQL
+        conn = conectar_base_de_datos()
         cursor = conn.cursor()
 
         # Consulta para obtener los datos de una columna específica
-        cursor.execute("SELECT dni FROM registro_usuario")
+        cursor.execute("SELECT dni FROM usuario")
         data = cursor.fetchall()
         suggestions = [str(item[0]) for item in data]
 
@@ -111,7 +105,8 @@ class Asistencia(QMainWindow):
         completer.setFilterMode(Qt.MatchFlag.MatchStartsWith)
         completer.popup().setFont(QFont("Segoe UI", 18))
         self.numero_documento.setCompleter(completer)
-
+        
+        cursor.close()
         conn.close()
 
         button_registrar_asistencia = QPushButton("Registrar asistencia")
@@ -183,30 +178,32 @@ class Asistencia(QMainWindow):
     def registrar_asistencia(self):
            
         dni = self.numero_documento.text()
-        fecha_hoy = date.today().strftime("%Y-%m-%d")
+        fecha_hoy = date.today()
         
         if not dni.isalnum() or len(dni) != 8:
             mensaje_ingreso_datos("Registro de asistecia","El número de documento debe contener 8 dígitos numéricos.")
             return
+        dni = int(dni)
         
         # Conexión a la base de datos MySQL
         try:
-            conn = mysql.connector.connect(
-                host="localhost",
-                port="3306",
-                user="root",
-                password="root",
-                database="thebox_bd"
-            )
+            conn = conectar_base_de_datos()
             cursor = conn.cursor()
             
+            cursor.execute("SELECT id_usuario FROM usuario WHERE dni=%s")
+            datos = cursor.fetchall()
+            usuario = datos[0]
+            
+            cursor.execute("SELECT id_disciplina FROM disciplina")
+            datos2 = cursor.fetchall()
+            disciplina = datos2[0]
+            
             # Insertar el número de DNI y la fecha actual en la tabla correspondiente
-            query = "INSERT INTO asistencia (dni, asistencia) VALUES (%s, %s)"
-            cursor.execute(query, (dni, fecha_hoy))
+            cursor.execute("INSERT INTO asistencia, id_usuario, id_disciplina (asistencia) VALUES (%s,%s,%s)", (fecha_hoy,usuario,disciplina))
             conn.commit()
             
             # Consulta para verificar si existe un registro con el DNI y la fecha de hoy
-            consulta_asistencia = f"SELECT ru.nombre, ru.apellido FROM registro_usuario AS ru INNER JOIN asistencia AS a ON a.dni = ru.dni WHERE ru.dni={dni} AND a.asistencia = '{fecha_hoy}' LIMIT 1"
+            consulta_asistencia = f"SELECT u.nombre, u.apellido FROM usuario AS u INNER JOIN asistencia AS a ON a.dni = u.dni WHERE u.dni={dni} AND a.asistencia = '{fecha_hoy}'"
             cursor.execute(consulta_asistencia)
             resultado_asistencia = cursor.fetchall()
         
@@ -216,7 +213,7 @@ class Asistencia(QMainWindow):
                 self.label_texto1.setStyleSheet("background-color: #DAD7CD; color: #000")
             
             
-            query = f"SELECT fecha FROM registro_usuario WHERE dni = {dni} ORDER BY fecha DESC LIMIT 1"
+            query = f"SELECT fecha_registro FROM fecha_registro_usuario WHERE id_usuario = {usuario}"
             cursor.execute(query)
             fecha_registro = cursor.fetchone()[0]
 
@@ -259,119 +256,5 @@ class Asistencia(QMainWindow):
         except Error as e:
             QMessageBox.critical(self, "Error", f"Error al registrar la asistencia: {str(e)}")
         finally:
+            cursor.close()
             conn.close()
-
-    # def registrar_asistencia(self):
-           
-    #     dni = self.numero_documento.text()
-    #     fecha_hoy = date.today().strftime("%Y-%m-%d")
-        
-    #     if not dni.isalnum() or len(dni) != 8:
-    #         mensaje_ingreso_datos("Registro de asistecia","El número de documento debe contener 8 dígitos numéricos.")
-    #         return
-        
-    #     # if not dni.isalnum():
-    #     #     mensaje_ingreso_datos("Registro de asistecia","El número de documento debe contener 8 dígitos numéricos.")
-    #     #     return
-    #     # try:
-    #     #     dni = int(dni)
-    #     # except ValueError:
-    #     #     mensaje_ingreso_datos("Registro de asistecia","El número de documento debe contener 8 dígitos numéricos.")
-
-
-    #     # Conexión a la base de datos MySQL
-    #     try:
-    #         conn = mysql.connector.connect(
-    #             host="localhost",
-    #             port="3306",
-    #             user="root",
-    #             password="root",
-    #             database="thebox_bd"
-    #         )
-    #         cursor = conn.cursor()
-            
-    #         # Insertar el número de DNI y la fecha actual en la tabla correspondiente
-    #         query = "INSERT INTO asistencia (dni, asistencia) VALUES (%s, %s)"
-    #         cursor.execute(query, (dni, fecha_hoy))
-    #         conn.commit()
-            
-    #         # Consulta para verificar si existe un registro con el DNI y la fecha de hoy
-    #         consulta_asistencia = f"SELECT ru.nombre, ru.apellido FROM registro_usuario AS ru INNER JOIN asistencia AS a ON a.dni = ru.dni WHERE ru.dni={dni} AND a.asistencia = '{fecha_hoy}' LIMIT 1"
-    #         cursor.execute(consulta_asistencia)
-    #         resultado_asistencia = cursor.fetchall()
-        
-    #         for resultado_asistencia in resultado_asistencia:
-    #             nombre , apellido = resultado_asistencia
-    #             self.label_texto1.setText(f"¡En hora buena {nombre} {apellido}! Su asistencia fue registrada.")
-    #             self.label_texto1.setStyleSheet("background-color: #DAD7CD; color: #000")
-            
-            
-    #         query = f"SELECT fecha FROM registro_usuario WHERE dni = {dni} ORDER BY fecha DESC LIMIT 1"
-    #         cursor.execute(query)
-    #         fecha_registro = cursor.fetchone()[0]
-
-    #         if cursor.rowcount > 0:
-    #             fecha_registro = datetime.strptime(str(fecha_registro), "%Y-%m-%d").date()
-    #             fecha_registro_text = fecha_registro.strftime("%d-%m-%Y")
-                
-    #             dias_restantes = (fecha_registro + timedelta(days=30)) - date.today()
-            
-    #             texto_cuota = f"Último pago: {fecha_registro_text}. Próximo pago en {dias_restantes.days} días."
-    #             texto_vencido2 = f"Cuota vencida hace {abs(dias_restantes.days)} días. Debe abonar."
-                
-    #             print(dias_restantes.days)
-    #             if 30 >= dias_restantes.days > 14:
-    #                 self.label_texto2.setText(texto_cuota)
-    #                 self.label_texto2.setStyleSheet("background-color: #7FFF00; color: #000;")
-    #                 self.timer.start(6000)
-    #                 print(f"Número de días transcurridos para 15 días: {dias_restantes.days}")
-    #             elif 14 >= dias_restantes.days > 4:
-    #                 self.label_texto2.setText(texto_cuota)
-    #                 self.label_texto2.setStyleSheet("background-color: #FFFF00;color: #000;")
-    #                 self.timer.start(6000)
-    #                 print(f"Número de días transcurridos para 25 días: {dias_restantes.days}")
-    #             elif 4 >= dias_restantes.days >= 0:
-    #                 self.label_texto2.setText(texto_cuota)
-    #                 self.label_texto2.setStyleSheet("background-color: #FF8000; color: #000;")
-    #                 self.timer.start(6000)
-    #                 print(f"Número de días transcurridos para 25 días: {dias_restantes.days}")
-    #             elif dias_restantes.days > 0:
-    #                 self.label_texto2.setText(texto_vencido2)
-    #                 self.label_texto2.setStyleSheet("background-color: #FF0000; color: #fff;")
-    #                 self.timer.start(6000)
-    #             else:
-    #                 print("Se han superado los 30 días desde el último pago.")
-
-    #             self.numero_documento.clear()
-    #             # QMessageBox.information(self, "Éxito", "¡Asistencia registrada exitosamente!")
-    #         else:
-    #             print("No se encontraron registros para el DNI especificado.")
-                
-    #     except Error as e:
-    #         QMessageBox.critical(self, "Error", f"Error al registrar la asistencia: {str(e)}")
-    #     finally:
-    #         conn.close()
-   
-        # conn = mysql.connector.connect(
-        #     host="localhost",
-        #     port="3306",
-        #     user="root",
-        #     password="root",
-        #     database="thebox_bd"
-        # )
-        # cursor = conn.cursor()
-
-        # cursor.execute("SELECT fecha FROM registro_usuario")
-        # fecha_inicio = cursor.fetchone()[0]
-        
-        # fecha_final = fecha_inicio + timedelta(days=30)
-
-        # while fecha_final <= date.today():
-        #     diferencia = self.diferencia_de_dias(fecha_inicio, fecha_final)
-
-        #     cursor.execute("INSERT INTO fechas (diferencia_dias) VALUES (%s)", (diferencia,))
-            
-        #     fecha_inicio = fecha_final
-        #     fecha_final += timedelta(days=30)
-
-        # conn.commit()

@@ -133,3 +133,31 @@ def limpiasElementosUseraActualizar(self,QDate):
     self.input_celular2.clear()
     self.input_date2.setDate(QDate.currentDate())
     
+def tabla_registroUSER(self, cursor, resultados, QHeaderView, QTableWidget, QAbstractItemView, QTableWidgetItem, QDate, Qt):
+    headers = [description[0].upper().replace("_"," ") for description in cursor.description]
+    
+    self.tablaRecord.setRowCount(len(resultados))
+    self.tablaRecord.setColumnCount(len(resultados[0]))
+    self.tablaRecord.setHorizontalHeaderLabels(headers)
+    
+    # Establecer la propiedad de "stretch" en el encabezado horizontal
+    header = self.tablaRecord.horizontalHeader()
+    header.setSectionResizeMode(QHeaderView.ResizeMode.Stretch)
+    
+    # Obtener la instancia del encabezado vertical
+    vertical_header = self.tablaRecord.verticalHeader()
+    vertical_header.setVisible(False)
+
+    self.tablaRecord.setSelectionBehavior(QTableWidget.SelectionBehavior.SelectRows)
+    self.tablaRecord.setEditTriggers(QAbstractItemView.EditTrigger.NoEditTriggers)
+    
+    for i, row in enumerate(resultados):
+        for j, val in enumerate(row):
+            item = QTableWidgetItem(str(val))
+            # Indices de las columnas que contienen fechas
+            if j == 7:  
+                fecha = QDate.fromString(str(val), "yyyy-MM-dd")  # Convertir la fecha a objeto QDate
+                item.setText(fecha.toString("dd-MM-yyyy"))  # Establecer el formato de visualización
+            if j in [0, 3, 5, 6, 7]:  # Ajustar alineación para ciertas columnas
+                item.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
+            self.tablaRecord.setItem(i, j, item)

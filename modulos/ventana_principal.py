@@ -23,9 +23,11 @@ from modulos.style_item import itemColor_TOTAL, itemColor_RESULTADO
 from utilidades.completar_combobox import actualizar_combobox_user, actualizar_combobox_disc,completar_nombre_empleado
 
 # Validaciones y demas funciones 
-from validaciones.usuario import registroUSER, limpiasElementosUser, limpiar_campos,actualizarUSER, limpiasElementosUseraActualizar, autoCompletadoACTULIZAR
-from validaciones.archivo_Excel import tabla_registroUSUARIO, tabla_registroDISCIPLINA
-from validaciones.disciplina import guardarACTIVIDAD,completar_CAMPOS_ACTIVIDAD
+from validaciones.usuario import registroUSER, limpiasElementosUser, limpiar_campos,actualizarUSER, limpiasElementosUseraActualizar, autoCompletadoACTULIZAR,tabla_registroUSER
+from validaciones.updateYdelete_usuario import tabla_updateUSER,tabla_eliminarUSER
+from validaciones.archivo_Excel import tabla_registroUSUARIO, tabla_registroDISCIPLINA,horas_Excel,tabla_libroDiario_CONTABILIDAD
+from validaciones.disciplina import guardarACTIVIDAD,completar_CAMPOS_ACTIVIDAD, tabla_DISCIPLINA
+from validaciones.pagos import tabla_pagos
 
 # Módulo de Registro de Asistencia
 from modulos.asistencia import Asistencia
@@ -1398,7 +1400,7 @@ class VentanaPrincipal(QMainWindow):
         layout_horas.addWidget(self.id_horas_empleado)
 
         completar_nombre_empleado(self)
-        self.id_horas_empleado.currentData()[0]
+        # self.id_horas_empleado.currentData()[0]
         
         horas_tra = QLabel('Horas diarias:',grupo_horas)
         horas_tra.setStyleSheet(style.label)
@@ -1888,42 +1890,15 @@ class VentanaPrincipal(QMainWindow):
                 db = conectar_base_de_datos()
                 cursor = db.cursor()
                 cursor.execute("SELECT u.*, f.fecha_registro FROM usuario u LEFT JOIN fecha_registro_usuario f ON u.id_usuario = f.id_usuario WHERE u.nombre LIKE '%{}%'".format(nombre))
-                results = cursor.fetchall()
+                resultados = cursor.fetchall()
                 
-                if len(results) > 0:
-                    aviso_resultado("Registro de alumnos",f"Se encontraron {len(results)} coincidencias.")
+                if len(resultados) > 0:
+                    aviso_resultado("Registro de alumnos",f"Se encontraron {len(resultados)} coincidencias.")
                     self.input_nombre1.clear()
-                    
-                    headers = [description[0].upper().replace("_"," ") for description in cursor.description]
-                    
-                    self.tablaRecord.setRowCount(len(results))
-                    self.tablaRecord.setColumnCount(len(results[0]))
-                    self.tablaRecord.setHorizontalHeaderLabels(headers)
-                    
-                    # Establecer la propiedad de "stretch" en el encabezado horizontal
-                    header = self.tablaRecord.horizontalHeader()
-                    header.setSectionResizeMode(QHeaderView.ResizeMode.Stretch)
-                    
-                    # Obtener la instancia del encabezado vertical
-                    vertical_header = self.tablaRecord.verticalHeader()
-                    vertical_header.setVisible(False)
-
-                    self.tablaRecord.setSelectionBehavior(QTableWidget.SelectionBehavior.SelectRows)
-                    self.tablaRecord.setEditTriggers(QAbstractItemView.EditTrigger.NoEditTriggers)
-                    
-                    for i, row in enumerate(results):
-                        for j, val in enumerate(row):
-                            item = QTableWidgetItem(str(val))
-                            # Indices de las columnas que contienen fechas
-                            if j == 7:  
-                                fecha = QDate.fromString(str(val), "yyyy-MM-dd")  # Convertir la fecha a objeto QDate
-                                item.setText(fecha.toString("dd-MM-yyyy"))  # Establecer el formato de visualización
-                            if j in [3, 5, 6, 7]:  # Ajustar alineación para ciertas columnas
-                                item.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
-                            self.tablaRecord.setItem(i, j, item)
+                    tabla_registroUSER(self, cursor, resultados, QHeaderView, QTableWidget, QAbstractItemView, QTableWidgetItem, QDate, Qt)
                     
                 else:
-                    aviso_resultado("Registro de alumnos",f"Se encontraron {len(results)} coincidencias.")
+                    aviso_resultado("Registro de alumnos",f"Se encontraron {len(resultados)} coincidencias.")
                     
                 # cierre de la BD
                 db.close()
@@ -1945,36 +1920,7 @@ class VentanaPrincipal(QMainWindow):
             resultados = cursor.fetchall()
                     
             if len(resultados) > 0:
-                
-                headers = [description[0].replace("_"," ").upper() for description in cursor.description]
-                
-                self.tablaRecord.setRowCount(len(resultados))
-                self.tablaRecord.setColumnCount(len(resultados[0]))
-                self.tablaRecord.setHorizontalHeaderLabels(headers)
-                
-                # Establecer la propiedad de "stretch" en el encabezado horizontal
-                header = self.tablaRecord.horizontalHeader()
-                header.setSectionResizeMode(QHeaderView.ResizeMode.Stretch)
-                
-                # Obtener la instancia del encabezado vertical
-                vertical_header = self.tablaRecord.verticalHeader()
-                vertical_header.setVisible(False)
-                
-                self.tablaRecord.setSelectionBehavior(QTableWidget.SelectionBehavior.SelectRows)
-                self.tablaRecord.setEditTriggers(QAbstractItemView.EditTrigger.NoEditTriggers)
-                
-                for i, row in enumerate(resultados):
-                    for j, val in enumerate(row):
-                        item = QTableWidgetItem(str(val))
-                        
-                        # Indices de las columnas que contienen fechas
-                        if j == 7:  
-                            fecha = QDate.fromString(str(val), "yyyy-MM-dd")  # Convertir la fecha a objeto QDate
-                            item.setText(fecha.toString("dd-MM-yyyy"))  # Establecer el formato de visualización
-                        
-                        if j in [0, 3, 5, 6, 7]:  # Ajustar alineación para ciertas columnas
-                            item.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
-                        self.tablaRecord.setItem(i, j, item)
+                tabla_registroUSER(self, cursor, resultados, QHeaderView, QTableWidget, QAbstractItemView, QTableWidgetItem, QDate, Qt)
                         
                 # Calcular la cantidad total de registros
                 total_registros = sum(1 for row in resultados if row[1])
@@ -2017,34 +1963,8 @@ class VentanaPrincipal(QMainWindow):
             resultados = cursor.fetchall()
 
             if len(resultados) > 0:
-                headers = [description[0].replace("_"," ").upper() for description in cursor.description]
+                tabla_updateUSER(self, cursor, resultados, QHeaderView, QTableWidget, QAbstractItemView, QTableWidgetItem, QDate, Qt)
                 
-                self.tablaUpdateRecord.setRowCount(len(resultados))
-                self.tablaUpdateRecord.setColumnCount(len(resultados[0]))
-                self.tablaUpdateRecord.setHorizontalHeaderLabels(headers)
-                
-                # Establecer la propiedad de "stretch" en el encabezado horizontal
-                header = self.tablaUpdateRecord.horizontalHeader()
-                header.setSectionResizeMode(QHeaderView.ResizeMode.Stretch)
-                
-                # Obtener la instancia del encabezado vertical
-                vertical_header = self.tablaUpdateRecord.verticalHeader()
-                vertical_header.setVisible(False)
-                
-                self.tablaUpdateRecord.setSelectionBehavior(QTableWidget.SelectionBehavior.SelectRows)
-                self.tablaUpdateRecord.setEditTriggers(QAbstractItemView.EditTrigger.NoEditTriggers)
-                
-                for i, row in enumerate(resultados):
-                    for j, val in enumerate(row):
-                        item = QTableWidgetItem(str(val))
-                        # Indices de las columnas que contienen fechas
-                        if j == 7:  
-                            fecha = QDate.fromString(str(val), "yyyy-MM-dd")  # Convertir la fecha a objeto QDate
-                            item.setText(fecha.toString("dd-MM-yyyy"))  # Establecer el formato de visualización
-                        
-                        if j in [0, 3, 4, 5, 6, 7]:  # Ajustar alineación para ciertas columnas
-                            item.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
-                        self.tablaUpdateRecord.setItem(i, j, item)
             else:
                 mensaje_ingreso_datos("Registro de alumnos","Tabla no mostrada")
                     
@@ -2085,43 +2005,16 @@ class VentanaPrincipal(QMainWindow):
                 db = conectar_base_de_datos()
                 cursor = db.cursor()
                 cursor.execute("SELECT u.*, f.fecha_registro FROM usuario u LEFT JOIN fecha_registro_usuario f ON u.id_usuario = f.id_usuario WHERE u.nombre LIKE '%{}%'".format(nombre_seleccionado))
-                results = cursor.fetchall()
+                resultados = cursor.fetchall()
                 
-                if len(results) > 0:
-                    aviso_resultado("Registro de alumnos",f"Se encontraron {len(results)} coincidencias.")
+                if len(resultados) > 0:
+                    aviso_resultado("Registro de alumnos",f"Se encontraron {len(resultados)} coincidencias.")
 
                     self.input_nombre2.clear()
+                    tabla_updateUSER(self, cursor, resultados, QHeaderView, QTableWidget, QAbstractItemView, QTableWidgetItem, QDate, Qt)
                     
-                    headers = [description[0].replace("_"," ").upper() for description in cursor.description]
-                    
-                    self.tablaUpdateRecord.setRowCount(len(results))
-                    self.tablaUpdateRecord.setColumnCount(len(results[0]))
-                    self.tablaUpdateRecord.setHorizontalHeaderLabels(headers)
-                    
-                    # Establecer la propiedad de "stretch" en el encabezado horizontal
-                    header = self.tablaUpdateRecord.horizontalHeader()
-                    header.setSectionResizeMode(QHeaderView.ResizeMode.Stretch)
-                    
-                    # Obtener la instancia del encabezado vertical
-                    vertical_header = self.tablaUpdateRecord.verticalHeader()
-                    vertical_header.setVisible(False)
-                    
-                    self.tablaUpdateRecord.setSelectionBehavior(QTableWidget.SelectionBehavior.SelectRows)
-                    self.tablaUpdateRecord.setEditTriggers(QAbstractItemView.EditTrigger.NoEditTriggers)
-                    
-                    for i, row in enumerate(results):
-                        for j, val in enumerate(row):
-                            item = QTableWidgetItem(str(val))
-                            # Indices de las columnas que contienen fechas
-                            if j == 7:  
-                                fecha = QDate.fromString(str(val), "yyyy-MM-dd")  # Convertir la fecha a objeto QDate
-                                item.setText(fecha.toString("dd-MM-yyyy"))  # Establecer el formato de visualización
-                            
-                            if j in [3, 5, 6, 7]:  # Ajustar alineación para ciertas columnas
-                                item.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
-                            self.tablaUpdateRecord.setItem(i, j, item)
                 else:
-                    aviso_resultado("Registro de alumnos",f"Se encontraron {len(results)} coincidencias.")
+                    aviso_resultado("Registro de alumnos",f"Se encontraron {len(resultados)} coincidencias.")
                     
                 cursor.close()
                 db.close()
@@ -2163,7 +2056,7 @@ class VentanaPrincipal(QMainWindow):
                 query = "UPDATE usuario SET nombre=%s, apellido=%s, dni=%s, sexo=%s, edad=%s, celular=%s WHERE id_usuario=%s ORDER BY nombre ASC"
                 values = (nombre2, apellido2, dni2, sexo2, edad2, celu2, id_reg) 
                 cursor.execute(query, values)
-                usuario = cursor.lastrowid
+                # usuario = cursor.lastrowid
                 db.commit()
 
                 if cursor.rowcount > 0:
@@ -2215,7 +2108,7 @@ class VentanaPrincipal(QMainWindow):
         else:
             print("No se actualiza registro")
             
-    # Pestaña de ELIMINAR
+    # Pestaña de ELIMINAR ---------------------------------
     def buscar_para_eliminar(self):
         self.tablaDeleteRecord.setEnabled(False)
         if not self.nombre_buscar3.text():
@@ -2236,43 +2129,17 @@ class VentanaPrincipal(QMainWindow):
                 db = conectar_base_de_datos()
                 cursor = db.cursor()
                 cursor.execute("SELECT u.*, f.fecha_registro FROM usuario u LEFT JOIN fecha_registro_usuario f ON u.id_usuario = f.id_usuario WHERE u.nombre LIKE '%{}%'".format(nombre_seleccionado3))
-                results = cursor.fetchall()
+                resultados = cursor.fetchall()
                 
-                if len(results) > 0:
-                    aviso_resultado("Registro de alumnos",f"Se encontraron {len(results)} coincidencias.")
+                if len(resultados) > 0:
+                    aviso_resultado("Registro de alumnos",f"Se encontraron {len(resultados)} coincidencias.")
                     
                     self.nombre_buscar3.clear()
                     
-                    headers = [description[0].replace("_"," ").upper() for description in cursor.description]
+                    tabla_eliminarUSER(self, cursor, resultados, QHeaderView, QTableWidget, QAbstractItemView, QTableWidgetItem, QDate, Qt)
                     
-                    self.tablaDeleteRecord.setRowCount(len(results))
-                    self.tablaDeleteRecord.setColumnCount(len(results[0]))
-                    self.tablaDeleteRecord.setHorizontalHeaderLabels(headers)
-                    
-                    # Establecer la propiedad de "stretch" en el encabezado horizontal
-                    header = self.tablaDeleteRecord.horizontalHeader()
-                    header.setSectionResizeMode(QHeaderView.ResizeMode.Stretch)
-                    
-                    # Obtener la instancia del encabezado vertical
-                    vertical_header = self.tablaDeleteRecord.verticalHeader()
-                    vertical_header.setVisible(False)
-                    
-                    self.tablaDeleteRecord.setSelectionBehavior(QTableWidget.SelectionBehavior.SelectRows)
-                    self.tablaDeleteRecord.setEditTriggers(QAbstractItemView.EditTrigger.NoEditTriggers)
-                    
-                    for i, row in enumerate(results):
-                        for j, val in enumerate(row):
-                            item = QTableWidgetItem(str(val))
-                            # Indices de las columnas que contienen fechas
-                            if j == 7:  
-                                fecha = QDate.fromString(str(val), "yyyy-MM-dd")  # Convertir la fecha a objeto QDate
-                                item.setText(fecha.toString("dd-MM-yyyy"))  # Establecer el formato de visualización
-                            
-                            if j in [0, 3, 5, 6, 7]:  # Ajustar alineación para ciertas columnas
-                                item.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
-                            self.tablaDeleteRecord.setItem(i, j, item)
                 else:
-                    aviso_resultado("Registro de alumnos",f"Se encontraron {len(results)} coincidencias.")
+                    aviso_resultado("Registro de alumnos",f"Se encontraron {len(resultados)} coincidencias.")
                 
                 cursor.close()
                 db.close()
@@ -2359,29 +2226,7 @@ class VentanaPrincipal(QMainWindow):
             resultados = cursor.fetchall()
 
             if len(resultados) > 0:
-                # Coloca los nomnbres de la cabecera en mayuscula
-                header = [description[0].replace("_"," ").upper() for description in cursor.description]
-                
-                self.tableActivi.setRowCount(len(resultados))
-                self.tableActivi.setColumnCount(len(resultados[0]))
-                self.tableActivi.setHorizontalHeaderLabels(header)
-                
-                titulos = self.tableActivi.horizontalHeader()
-                titulos.setSectionResizeMode(QHeaderView.ResizeMode.Stretch) # Se estira en toda el area del QTableWiget
-                
-                encavezado_vertical = self.tableActivi.verticalHeader()
-                encavezado_vertical.setVisible(False)
-                
-                self.tableActivi.setSelectionBehavior(QTableWidget.SelectionBehavior.SelectRows) # selecciona la fila
-                self.tableActivi.setEditTriggers(QAbstractItemView.EditTrigger.NoEditTriggers) # Tabla no editable manualmente
-                self.tableActivi.setAutoScroll(True)
-                
-                for i, row in enumerate(resultados):
-                    for j, val in enumerate(row):
-                        item = QTableWidgetItem(str(val))
-                        if j in [0, 2]:  # Ajustar alineación para ciertas columnas
-                            item.setTextAlignment(Qt.AlignmentFlag.AlignCenter)   
-                        self.tableActivi.setItem(i, j, item)
+                tabla_DISCIPLINA(self, resultados, cursor, QHeaderView, QTableWidget, QAbstractItemView, QTableWidgetItem, Qt)
                         
                 # # Calcular la cantidad total de registros
                 # total_registrosACT = sum(1 for row in resultados if row[1])
@@ -2548,31 +2393,8 @@ class VentanaPrincipal(QMainWindow):
             result = cursor.fetchall()
             
             if len(result) > 0:
-                # Coloca los nomnbres de la cabecera en mayuscula
-                header = [description[0].replace("_"," ").upper() for description in cursor.description]
+                tabla_pagos(self, cursor, result, QHeaderView, QTableWidget, QAbstractItemView, QTableWidgetItem, QDate, Qt)
                 
-                self.tablePagos.setRowCount(len(result))
-                self.tablePagos.setColumnCount(len(result[0]))
-                self.tablePagos.setHorizontalHeaderLabels(header)
-                
-                titulos = self.tablePagos.horizontalHeader()
-                titulos.setSectionResizeMode(QHeaderView.ResizeMode.Stretch) # Se estira en toda el area del QTableWiget
-                
-                encavezado_vertical = self.tablePagos.verticalHeader()
-                encavezado_vertical.setVisible(False)
-                
-                self.tablePagos.setSelectionBehavior(QTableWidget.SelectionBehavior.SelectRows) # selecciona la fila
-                self.tablePagos.setEditTriggers(QAbstractItemView.EditTrigger.NoEditTriggers) # Tabla no editable manualmente
-                
-                for i, row in enumerate(result):
-                    for j, val in enumerate(row):
-                        item = QTableWidgetItem(str(val))
-                        if j == 4: 
-                            fecha = QDate.fromString(str(val), "yyyy-MM-dd")  # Convertir la fecha a objeto QDate
-                            item.setText(fecha.toString("dd-MM-yyyy"))  # Establecer el formato de visualización
-                        if j in [0, 1, 3, 4]:  # Ajustar alineación para ciertas columnas
-                            item.setTextAlignment(Qt.AlignmentFlag.AlignCenter)   
-                        self.tablePagos.setItem(i, j, item)
             else:
                 mensaje_ingreso_datos("Registro de pagos","Tabla vacia")   
             cursor.close()
@@ -3855,7 +3677,7 @@ class VentanaPrincipal(QMainWindow):
         
         id_ref = self.tablaHoras.item(self.tablaHoras.currentRow(), 0).text()
         id_ref = int(id_ref)
-        idemp = self.id_horas_empleado.currentData()[0]#self.id_horas_empleado.currentText()
+        idemp = self.id_horas_empleado.currentData()[0]
         horas_h = self.horas_tra.text()
         fecha_h = self.fecha_tra.date().toPyDate()
             
@@ -4090,81 +3912,7 @@ class VentanaPrincipal(QMainWindow):
             errorConsulta("Registro de empleado",f"Error en la consulta: {str(ex)}")
     
     def excel_horas(self):
-        if self.tablaHoras.rowCount() == 0:
-            mensaje_ingreso_datos("Descarga de archivo","Primero debe mostrar una tabla antes de descargarla en un archivo Excel.")
-            return
-        # crear un libro 
-        workbook = Workbook()
-        sheet = workbook.active
-
-        # Obtener encabezados de la tabla y guardarlos en el archivo Excel
-        for col in range(self.tablaHoras.columnCount()):
-            header_item = self.tablaHoras.horizontalHeaderItem(col)
-            if header_item is not None:
-                header_cell = sheet.cell(row=1, column=col + 1)
-                header_cell.value = header_item.text()
-                # Establecer estilo personalizado a las celdas de encabezado
-                header_cell.font = Font(name='Arial', bold=True)  # Cambiar el tipo de fuente aquí
-                header_cell.fill = PatternFill(start_color="FFA500", end_color="FFA500", fill_type="solid")
-                header_cell.border = Border(top=Side(style="thin"), bottom=Side(style="thin"), left=Side(style="thin"), right=Side(style="thin"))
-        
-        # Obtener datos de la tabla y guardarlos en el archivo Excel
-        for row in range(self.tablaHoras.rowCount()):
-            for col in range(self.tablaHoras.columnCount()):
-                item = self.tablaHoras.item(row, col)
-                if item is not None:
-                    cell = sheet.cell(row=row+2, column=col+1)
-                    cell.value = item.text()
-
-                    # Establecer estilo personalizado a las celdas
-                    cell.font = Font(name="Arial", bold=True)
-                    cell.fill = PatternFill(start_color="FFFFFF", end_color="FFFFFF", fill_type="solid")
-                    cell.border = Border(top=Side(style="thin"), bottom=Side(style="thin"), left=Side(style="thin"), right=Side(style="thin"))
-                
-                # Agregar formato de número y/o fecha a la celda si es necesario
-                if col in [0,1,5,6]:
-                    cell.number_format = numbers.FORMAT_NUMBER
-                elif col == 7:
-                    cell.number_format = numbers.FORMAT_TEXT
-        
-        # Autoajustar el ancho de las columnas
-        for col in sheet.columns:
-            max_length = 0
-            column = col[0].column_letter  # obtiene el nombre de la columna
-            for cell in col:
-                try:  # Necessary to avoid error on empty cells
-                    if len(str(cell.value)) > max_length:
-                        max_length = len(cell.value)
-                except:
-                    pass
-            adjusted_width = (max_length + 2) * 1.2
-            sheet.column_dimensions[column].width = adjusted_width
-        
-        # Calcular la última fila de datos en la hoja de cálculo
-        ultima_fila = self.tablaHoras.rowCount()
-
-        # Construir la fórmula de autosuma
-        formula_autosuma = f"=SUM(G2:G{ultima_fila})"
-
-        # Asignar la fórmula de autosuma a la celda específica
-        autosuma_cell = sheet.cell(row=ultima_fila+1, column=7)
-        autosuma_cell.value = formula_autosuma
-
-        # Aplicar un formato específico a la celda
-        autosuma_cell.number_format = numbers.FORMAT_NUMBER
-        
-        file_path, _ = QFileDialog.getSaveFileName(self, "Guardar archivo Excel", "", "Archivos Excel (*.xlsx)")
-
-        if file_path:
-            if os.path.exists(file_path):
-                file_name, file_extension = os.path.splitext(file_path)
-                file_path = f"{file_name}_nuevo{file_extension}"
-
-            try:
-                workbook.save(file_path)
-                aviso_descargaExitosa("Descarga exitosa","La tabla se ha descargado en un archivo Excel con éxito.")
-            except Exception as e:
-                aviso_Advertencia_De_excel("Advertencia", f"No se pudo guardar el archivo: {str(e)}.\nEL archivo que deseas reemplazar esta en uso, de2ebes cerrar el archivo y luego guardarlo. El nombre puede ser parecido pero no igual.")
+        horas_Excel(self,Workbook,Font,PatternFill,Border,Side,numbers,QFileDialog)
 
     # -------------- LIBRO DIARIO -----------------------------
     def registrar_datos(self):
@@ -4452,82 +4200,4 @@ class VentanaPrincipal(QMainWindow):
             self.tablaGastos.removeRow(0) 
     
     def tabla_resumen(self):
-        if self.tablaGastos.rowCount() == 0:
-            mensaje_ingreso_datos("Descarga de archivo","Primero debe mostrar una tabla antes de descargarla en un archivo Excel.")
-            return
-        
-        workbook = Workbook()
-        sheet = workbook.active
-
-        # Obtener encabezados de la tabla y guardarlos en el archivo Excel
-        for col in range(self.tablaGastos.columnCount()):
-            header_item = self.tablaGastos.horizontalHeaderItem(col)
-            if header_item is not None:
-                header_cell = sheet.cell(row=1, column=col + 1)
-                header_cell.value = header_item.text()
-                # Establecer estilo personalizado a las celdas de encabezado
-                header_cell.font = Font(name='Arial', bold=True)  # Cambiar el tipo de fuente aquí
-                header_cell.fill = PatternFill(start_color="FFA500", end_color="FFA500", fill_type="solid")
-                header_cell.border = Border(top=Side(style="thin"), bottom=Side(style="thin"), left=Side(style="thin"), right=Side(style="thin"))
-        
-        # Obtener datos de la tabla y guardarlos en el archivo Excel
-        for row in range(self.tablaGastos.rowCount()):
-            for col in range(self.tablaGastos.columnCount()):
-                item = self.tablaGastos.item(row, col)
-                if item is not None:
-                    cell = sheet.cell(row=row+2, column=col+1)
-                    cell.value = item.text()
-
-                    # Establecer estilo personalizado a las celdas
-                    cell.font = Font(name="Arial", bold=True)
-                    cell.fill = PatternFill(start_color="FFFFFF", end_color="FFFFFF", fill_type="solid")
-                    cell.border = Border(top=Side(style="thin"), bottom=Side(style="thin"), left=Side(style="thin"), right=Side(style="thin"))
-
-                    # Agregar formato de número y/o fecha a la celda si es necesario
-                    if col in [0,1,2,3]:
-                        cell.number_format = numbers.FORMAT_TEXT
-                    elif col in [4,5]:
-                        cell.number_format = numbers.FORMAT_NUMBER
-                        
-         # Autoajustar el ancho de las columnas
-        for col in sheet.columns:
-            max_length = 0
-            column = col[0].column_letter  # obtiene el nombre de la columna
-            for cell in col:
-                try:  # Necessary to avoid error on empty cells
-                    if len(str(cell.value)) > max_length:
-                        max_length = len(cell.value)
-                except:
-                    pass
-            adjusted_width = (max_length + 2) * 1.2
-            sheet.column_dimensions[column].width = adjusted_width
-        
-        # Calcular la última fila de datos en la hoja de cálculo
-        ultima_fila = self.tablaGastos.rowCount()
-
-        # Construir la fórmula de autosuma
-        formula_autosuma = f"=SUM(E2:E{ultima_fila})"
-        formula_autosuma2 = f"=SUM(F2:F{ultima_fila})"
-
-        # Asignar la fórmula de autosuma a la celda específica
-        autosuma_cell = sheet.cell(row=ultima_fila+1, column=5)
-        autosuma_cell2 = sheet.cell(row=ultima_fila+1, column=6)
-        autosuma_cell.value = formula_autosuma
-        autosuma_cell2.value = formula_autosuma2
-
-        # Aplicar un formato específico a la celda
-        autosuma_cell.number_format = numbers.FORMAT_NUMBER
-        autosuma_cell2.number_format = numbers.FORMAT_NUMBER
-
-        file_path, _ = QFileDialog.getSaveFileName(self, "Guardar archivo Excel", "", "Archivos Excel (*.xlsx)")
-
-        if file_path:
-            if os.path.exists(file_path):
-                file_name, file_extension = os.path.splitext(file_path)
-                file_path = f"{file_name}_nuevo{file_extension}"
-
-            try:
-                workbook.save(file_path)
-                aviso_descargaExitosa("Descarga exitosa","La tabla se ha descargado en un archivo Excel con éxito.")
-            except Exception as e:
-                aviso_Advertencia_De_excel("Advertencia", f"No se pudo guardar el archivo: {str(e)}.\nEL archivo que deseas reemplazar esta en uso, de2ebes cerrar el archivo y luego guardarlo. El nombre puede ser parecido pero no igual.")
+        tabla_libroDiario_CONTABILIDAD(self,Workbook,Font,PatternFill,Border,Side,numbers,QFileDialog)
