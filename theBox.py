@@ -15,6 +15,7 @@ from modulos.registro_administrador import RegistroUser
 from modulos.eliminar_administrador import DeleteUser
 from modulos.ventana_principal import VentanaPrincipal
 from modulos.mensajes import mensaje_ingreso_datos, errorConsulta, inicio
+from conexion_DB.dataBase import conectar_base_de_datos
 
 # Módulo de Estilos
 from qss import style
@@ -166,13 +167,7 @@ class Login(QWidget):
         consulta = inicio("Abrir ventana principal","¿Desea abrir la venta principal?")
         if consulta == QMessageBox.StandardButton.Yes:    
             try:
-                db = mysql.connector.connect(
-                    host="localhost",
-                    port="3306",
-                    user="root",
-                    password="root",
-                    database="thebox_bd"
-                )
+                db = conectar_base_de_datos()
                 cursor = db.cursor()
                 
                 query = f"SELECT * FROM profesor WHERE dni = '{dni}' AND contraseña = '{contraseña}'"

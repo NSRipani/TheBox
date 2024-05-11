@@ -192,28 +192,33 @@ class Asistencia(QMainWindow):
             
             cursor.execute("SELECT id_usuario FROM usuario WHERE dni=%s")
             datos = cursor.fetchall()
-            usuario = datos[0]
+            if len(datos) > 0:
+                usuario = datos[0]
+            print(datos)
             
             cursor.execute("SELECT id_disciplina FROM disciplina")
             datos2 = cursor.fetchall()
-            disciplina = datos2[0]
+            if len(datos) > 0:
+                disciplina = datos2[0]
+            print(disciplina)
             
             # Insertar el número de DNI y la fecha actual en la tabla correspondiente
-            cursor.execute("INSERT INTO asistencia, id_usuario, id_disciplina (asistencia) VALUES (%s,%s,%s)", (fecha_hoy,usuario,disciplina))
+            cursor.execute("INSERT INTO asistencia (asistencia, id_usuario, id_disciplina) VALUES (%s,%s,%s)", (fecha_hoy,usuario,disciplina))
             conn.commit()
             
             # Consulta para verificar si existe un registro con el DNI y la fecha de hoy
             consulta_asistencia = f"SELECT u.nombre, u.apellido FROM usuario AS u INNER JOIN asistencia AS a ON a.dni = u.dni WHERE u.dni={dni} AND a.asistencia = '{fecha_hoy}'"
             cursor.execute(consulta_asistencia)
             resultado_asistencia = cursor.fetchall()
-        
+            
+
             for resultado_asistencia in resultado_asistencia:
                 nombre , apellido = resultado_asistencia
                 self.label_texto1.setText(f"¡En hora buena {nombre} {apellido}! Su asistencia fue registrada.")
                 self.label_texto1.setStyleSheet("background-color: #DAD7CD; color: #000")
             
             
-            query = f"SELECT fecha_registro FROM fecha_registro_usuario WHERE id_usuario = {usuario}"
+            query = f"SELECT fecha_registro FROM fecha_registro_usuario WHERE id_usuario = '{usuario}'"
             cursor.execute(query)
             fecha_registro = cursor.fetchone()[0]
 
