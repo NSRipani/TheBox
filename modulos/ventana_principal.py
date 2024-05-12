@@ -2356,7 +2356,8 @@ class VentanaPrincipal(QMainWindow):
         id_activ = self.idDis.currentData()[0]
         tipo = self.input_tipoDePago.currentText()
         date = self.input_fechaDePago.date().toPyDate()
-        
+        monto = self.idDis.currentData()[2]
+        print(monto)
         patronB = re.compile(r'^[a-zA-ZáéíóúÁÉÍÓÚüÜ\'\s]+$') 
         if not isinstance(tipo, str) or not patronB.match(tipo):
             mensaje_ingreso_datos("Registro de pago","Debe elegir un tipo de pago")
@@ -2367,7 +2368,7 @@ class VentanaPrincipal(QMainWindow):
             try:
                 db = conectar_base_de_datos()
                 cursor = db.cursor()
-                cursor.execute("INSERT INTO pago (id_usuario, id_disciplina, modalidad, fecha) VALUE (%s, %s, %s, %s)", (id_alumno, id_activ, tipo, date))
+                cursor.execute("INSERT INTO pago (id_usuario, id_disciplina, modalidad, fecha, precio) VALUE (%s, %s, %s, %s, %s)", (id_alumno, id_activ, tipo, date, monto))
                 db.commit()
                 if cursor:
                     mensaje_ingreso_datos("Registro de pagos","Registro cargado")
@@ -2389,7 +2390,7 @@ class VentanaPrincipal(QMainWindow):
         try:
             db = conectar_base_de_datos()
             cursor = db.cursor()
-            cursor.execute("SELECT p.id_pago, p.id_usuario, c.nombre, p.modalidad, p.fecha FROM pago as p INNER JOIN disciplina as c on p.id_disciplina = c.id_disciplina ORDER BY p.fecha;")
+            cursor.execute("SELECT p.id_pago, p.id_usuario, c.nombre, p.modalidad, p.fecha, p.precio FROM pago as p INNER JOIN disciplina as c on p.id_disciplina = c.id_disciplina ORDER BY p.fecha;")
             result = cursor.fetchall()
             
             if len(result) > 0:
@@ -2429,6 +2430,7 @@ class VentanaPrincipal(QMainWindow):
         id_activ = self.idDis.currentData()[0]
         tipo = self.input_tipoDePago.currentText()
         date = self.input_fechaDePago.date().toPyDate()
+        monto = self.idUser.currentData()[2]
         
         patronB = re.compile(r'^[a-zA-ZáéíóúÁÉÍÓÚüÜ\'\s]+$') 
         if not isinstance(tipo, str) or not patronB.match(tipo):
@@ -2440,7 +2442,7 @@ class VentanaPrincipal(QMainWindow):
             try:
                 db = conectar_base_de_datos()
                 cursor = db.cursor()
-                cursor.execute("UPDATE pago SET id_usuario=%s, id_disciplina=%s, modalidad=%s, fecha=%s WHERE id_pago=%s",(id_alumno, id_activ, tipo, date, idpago))
+                cursor.execute("UPDATE pago SET id_usuario=%s, id_disciplina=%s, modalidad=%s, fecha=%s precio=%s WHERE id_pago=%s,",(id_alumno, id_activ, tipo, date, idpago, monto))
                 db.commit()
            
                 if cursor:

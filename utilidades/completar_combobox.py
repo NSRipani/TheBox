@@ -32,7 +32,6 @@ def actualizar_combobox_disc(self):
         self.idDis.addItem(str(resultado[1]).capitalize().title(), resultado)
     cursor.close()
     conn.close()
-    
 
 # Funcion para completar el comobobox en la pestaña 'PAGO'
 def completar_nombre_empleado(self):
