@@ -27,6 +27,14 @@ def completar_CAMPOS_ACTIVIDAD(self):
     
     self.tableActivi.clearSelection()  # Deseleccionar la fila eliminada
     
+def clear_tabla_disciplina(self):
+    # Obtener el número de filas de la tabla
+    num_filas = self.tableActivi.rowCount()
+
+    # Eliminar todas las filas de la tabla
+    for i in range(num_filas):
+        self.tableActivi.removeRow(0) 
+    
 def tabla_DISCIPLINA(self, resultados, cursor, QHeaderView, QTableWidget, QAbstractItemView, QTableWidgetItem, Qt):
     # Coloca los nomnbres de la cabecera en mayuscula
     header = [description[0].replace("_"," ").upper() for description in cursor.description]

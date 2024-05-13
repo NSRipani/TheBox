@@ -1,3 +1,19 @@
+def seleccionDeTablaPAGOS(self,QDate):
+    fila = self.tablePagos.currentRow()
+    
+    id_user = self.tablePagos.item(fila,1).text()
+    id_user = int(id_user)
+    id_discipl = self.tablePagos.item(fila,2).text()
+    tipoPago = self.tablePagos.item(fila,3).text()
+    fecha = self.tablePagos.item(fila,4).text()
+    fecha = QDate.fromString(fecha,"dd-MM-yyyy")
+    
+    self.idUser.setCurrentText(str(id_user))
+    self.idDis.setCurrentText(id_discipl)
+    self.input_tipoDePago.setCurrentText(tipoPago)
+    self.input_fechaDePago.setDate(fecha)
+
+
 def tabla_pagos(self, cursor, result, QHeaderView, QTableWidget, QAbstractItemView, QTableWidgetItem, QDate, Qt):
     # Coloca los nomnbres de la cabecera en mayuscula
     header = [description[0].replace("_"," ").upper() for description in cursor.description]

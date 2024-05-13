@@ -186,6 +186,14 @@ message_box_estilos_eliminar_profesor = """
     }"""
 
 # VENTANA PRINCIPAL
+checkbox = """
+    QCheckBox {
+        font-size: 20px;
+        width: 20px;
+        height: 20px;
+        color: black;
+        background-color: transparent;
+    }"""
 estilo_statusbar = """
     QStatusBar{
         background-color: #7f7f7f; 

@@ -43,14 +43,16 @@ def limpiasElementosUser(self,QDate):
     self.input_date.setDate(QDate.currentDate())
     
 def limpiar_campos(self):
-    # Guardar temporalmente el valor del QComboBox
-    valor_sexo = self.input_sex2.currentIndex(0)
+    if not self.tablaUpdateRecord.currentItem():
+        mensaje_ingreso_datos("Registro de alumnos","Los campos deben esta completados para limparlos")
+        return
     
     # self.id2.clear()
     self.input_nombre2.clear()
     self.input_apellido2.clear()
-    self.input_age2.clear()
     self.input_dni2.clear()
+    self.input_sex2.setCurrentIndex(0)
+    self.input_age2.clear()
     self.input_celular2.clear()
     
     self.input_apellido2.setEnabled(False)
@@ -58,10 +60,7 @@ def limpiar_campos(self):
     self.input_sex2.setEnabled(False)
     self.input_age2.setEnabled(False)
     self.input_date2.setEnabled(False)
-    self.input_celular2.setEnabled(False)  
-    
-    # Restaurar el valor guardado del QComboBox
-    self.input_sex2.setCurrentText(valor_sexo)
+    self.input_celular2.setEnabled(False)
     
 def autoCompletadoACTULIZAR(self,QDate):
     row = self.tablaUpdateRecord.currentRow()
@@ -94,6 +93,30 @@ def autoCompletadoACTULIZAR(self,QDate):
     self.input_date2.setDate(fecha2)
 
     self.tablaUpdateRecord.clearSelection()  # Deseleccionar la fila eliminada
+
+def limpiar_tablaRecord(self):  
+    # Obtener el número de filas de la tabla
+    filas = self.tablaRecord.rowCount()
+
+    # Eliminar todas las filas de la tabla
+    for i in range(filas):
+        self.tablaRecord.removeRow(0)  # Eliminar la fila en la posición 0
+        
+def limpiar_tablaUpdate(self):
+    # Obtener el número de filas de la tabla
+    filas = self.tablaUpdateRecord.rowCount()
+
+    # Eliminar todas las filas de la tabla
+    for i in range(filas):
+        self.tablaUpdateRecord.removeRow(0)  # Eliminar la fila en la posición 0
+        
+    self.tablaUpdateRecord.setEnabled(False)
+    self.input_apellido2.setEnabled(False)
+    self.input_dni2.setEnabled(False)
+    self.input_sex2.setEnabled(False)
+    self.input_age2.setEnabled(False)
+    self.input_date2.setEnabled(False)
+    self.input_celular2.setEnabled(False)
     
 def actualizarUSER(nombre2 , apellido2, dni2, sexo2, edad2, celu2):
     patron_Letras = re.compile(r'^[a-zA-ZáéíóúÁÉÍÓÚüÜ\'\s]+$') 

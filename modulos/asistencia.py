@@ -192,43 +192,50 @@ class Asistencia(QMainWindow):
             conn = conectar_base_de_datos()
             cursor = conn.cursor()
             
-            cursor.execute(f"SELECT id_usuario FROM usuario WHERE dni = '{dni}'")
-            result = cursor.fetchone()
+            cursor.execute(f"SELECT id_usuario, id_disciplina FROM pago WHERE verificado = 1 AND id_usuario = '{dni}'")
+            result = cursor.fetchall()
             id_usuario = result[0]
-            print(id_usuario)       
+            print(id_usuario)          
            
-            # cursor.execute(f"SELECT p.id_disciplina FROM pago AS p WHERE p.id_usuario = {dni} LIMIT 1")
-            cursor.execute(f"SELECT id_disciplina FROM pago WHERE id_usuario = '{id_usuario}'")
-            result1 = cursor.fetchall()
-            id_disciplina = result1[0]
-            print(id_disciplina)       
+            # # cursor.execute(f"SELECT p.id_disciplina FROM pago AS p WHERE p.id_usuario = {dni} LIMIT 1")
+            # cursor.execute(f"SELECT id_disciplina FROM pago WHERE id_usuario = '{id_usuario}'")
+            # result1 = cursor.fetchall()
+            # id_disciplina = result1[0]
+            # print(id_disciplina)       
             
-            # Insertar el número de DNI y la fecha actual en la tabla correspondiente
-            cursor.execute("INSERT INTO asistencia (asistencia, id_usuario, id_disciplina) VALUES (%s,%s,%s)", (fecha_hoy,id_usuario,id_disciplina))
-            conn.commit()
+            # # Insertar el número de DNI y la fecha actual en la tabla correspondiente
+            # cursor.execute("INSERT INTO asistencia (asistencia, id_usuario, id_disciplina) VALUES (%s,%s,%s)", (fecha_hoy,id_usuario,id_disciplina))
+            # conn.commit()
             
             # Consultar el nombre y apellido del usuario
-            cursor.execute(f"SELECT u.nombre, u.apellido FROM usuario AS u WHERE u.dni='{dni}'")
-            result = cursor.fetchall()
-            if result:
-                nombre, apellido = result
+            cursor.execute(f"SELECT nombre, apellido, fecha_registro FROM usuario WHERE dni='{dni}'")
+            result = cursor.fetchone()
+            if len(result) > 0:
+                nombre = result[0]
+                apellido = result[1]
                 self.label_texto1.setText(f"¡En hora buena {nombre} {apellido}! Su asistencia fue registrada.")
                 self.label_texto1.setStyleSheet("background-color: #DAD7CD; color: #000")
+                
+                fecha_registro = result[2]
+                print(f"{fecha_registro}\n")
             
-            cursor.execute(f"SELECT fecha_registro FROM fecha_registro_usuario WHERE id_usuario = {id_usuario}")
-            fecha_registro = cursor.fetchall()
-            print(fecha_registro)
-            if cursor.rowcount > 0:
-                fecha_registro = datetime.strptime(str(fecha_registro), "%Y-%m-%d").date()
+            # if cursor.rowcount > 0:
+            
+                fecha_registro_tabla = datetime.strptime(str(fecha_registro), "%Y-%m-%d").date()
+                print(f"Fecha registro(table): {fecha_registro_tabla}\n")
+                
                 fecha_registro_text = fecha_registro.strftime("%d-%m-%Y")
                 
-                dias_restantes = (fecha_registro + timedelta(days=30)) - date.today()
-            
-                texto_cuota = f"Último pago: {fecha_registro_text}. Próximo pago en {dias_restantes.days} días."
-                texto_vencido2 = f"Cuota vencida hace {abs(dias_restantes.days)} días. Debe abonar."
+                dias_restantes = (fecha_registro_tabla + timedelta(days=30)) - date.today()
+                dias = dias_restantes.__abs__()
+                print(f"Dias a la Fecha registro(table): {dias.days}\n")
                 
-                print(dias_restantes.days)
-                if 30 >= dias_restantes.days > 14:
+                texto_cuota = f"Último pago: {fecha_registro_text}. Próximo pago en {dias_restantes.days} días."
+                texto_vencido2 = f"Cuota vencida hace {abs(dias.days)} días. Debe abonar."
+                
+                print(f"{abs(dias_restantes.days)}\n")
+                
+                if 30 >= dias.days > 14:
                     self.label_texto2.setText(texto_cuota)
                     self.label_texto2.setStyleSheet("background-color: #7FFF00; color: #000;")
                     self.timer.start(6000)

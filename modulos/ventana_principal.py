@@ -13,8 +13,8 @@ import mysql.connector
 from mysql.connector import Error
 
 # Librerías de PyQt6
-from PyQt6.QtWidgets import QLabel, QFileDialog, QCompleter, QAbstractScrollArea, QFormLayout, QHeaderView, QGridLayout, QHBoxLayout, QDateEdit, QMessageBox, QTableWidget, QAbstractItemView, QTableWidgetItem, QPushButton, QLineEdit, QStatusBar, QWidget , QVBoxLayout, QGroupBox, QMainWindow, QFrame, QTabWidget, QComboBox
-from PyQt6.QtGui import QIcon, QKeySequence, QAction, QPixmap
+from PyQt6.QtWidgets import QLabel, QCheckBox, QFileDialog, QCompleter, QAbstractScrollArea, QFormLayout, QHeaderView, QGridLayout, QHBoxLayout, QDateEdit, QMessageBox, QTableWidget, QAbstractItemView, QTableWidgetItem, QPushButton, QLineEdit, QStatusBar, QWidget , QVBoxLayout, QGroupBox, QMainWindow, QFrame, QTabWidget, QComboBox
+from PyQt6.QtGui import QIcon, QKeySequence, QAction, QPixmap,QFont
 from PyQt6.QtCore import *
 
 # Módulo de para las cajas de mensajes
@@ -23,11 +23,11 @@ from modulos.style_item import itemColor_TOTAL, itemColor_RESULTADO
 from utilidades.completar_combobox import actualizar_combobox_user, actualizar_combobox_disc,completar_nombre_empleado
 
 # Validaciones y demas funciones 
-from validaciones.usuario import registroUSER, limpiasElementosUser, limpiar_campos,actualizarUSER, limpiasElementosUseraActualizar, autoCompletadoACTULIZAR,tabla_registroUSER
-from validaciones.updateYdelete_usuario import tabla_updateUSER,tabla_eliminarUSER
-from validaciones.archivo_Excel import tabla_registroUSUARIO, tabla_registroDISCIPLINA,horas_Excel,tabla_libroDiario_CONTABILIDAD
-from validaciones.disciplina import guardarACTIVIDAD,completar_CAMPOS_ACTIVIDAD, tabla_DISCIPLINA
-from validaciones.pagos import tabla_pagos
+from validaciones.usuario import registroUSER, limpiasElementosUser, limpiar_campos, actualizarUSER, limpiasElementosUseraActualizar, autoCompletadoACTULIZAR,limpiar_tablaRecord, limpiar_tablaUpdate, tabla_registroUSER
+from validaciones.updateYdelete_usuario import tabla_updateUSER, tabla_eliminarUSER
+from validaciones.archivo_Excel import tabla_registroUSUARIO, tabla_registroDISCIPLINA, horas_Excel, tabla_libroDiario_CONTABILIDAD
+from validaciones.disciplina import guardarACTIVIDAD, completar_CAMPOS_ACTIVIDAD, clear_tabla_disciplina, tabla_DISCIPLINA
+from validaciones.pagos import seleccionDeTablaPAGOS, tabla_pagos
 
 # Módulo de Registro de Asistencia
 from modulos.asistencia import Asistencia
@@ -570,24 +570,10 @@ class VentanaPrincipal(QMainWindow):
         button_Buscar1.clicked.connect(self.buscar)
         button_Limpiar.clicked.connect(self.limpiar)
         
-        layout_fecha_horizonal_contenedor = QHBoxLayout()
-        
-        layout_fecha = QHBoxLayout()
-        layout_fecha.setAlignment(Qt.AlignmentFlag.AlignRight)
-        button_fecha = QPushButton('ACTUALIZAR FECHA',update_customer_details)
-        button_fecha.setFixedWidth(250)
-        button_fecha.setCursor(Qt.CursorShape.PointingHandCursor)
-        button_fecha.setStyleSheet(style.estilo_boton)
-        layout_fecha.addWidget(button_fecha)
-        layout_fecha_horizonal_contenedor.addLayout(layout_ele3)
-        layout_fecha_horizonal_contenedor.addLayout(layout_fecha)
-        
-        button_fecha.clicked.connect(self.actualizar_fecha)
-        
         # Agregar los layouts horizontales al layout vertical
         layout_V2.addLayout(layout_ele1)
         layout_V2.addLayout(layout_ele2)
-        layout_V2.addLayout(layout_fecha_horizonal_contenedor)
+        layout_V2.addLayout(layout_ele3)
         
         # Crear un QGridLayout para organizar los elementos en la QGroupBox
         grid2 = QGridLayout(update_customer_details)
@@ -877,6 +863,7 @@ class VentanaPrincipal(QMainWindow):
         # actualiza comobox disciplina
         actualizar_combobox_disc(self)
         
+        
         # Muestra el precio de cada disciplina al elegitr la disciplina
         self.idDis.currentIndexChanged.connect(self.actualizar_precio)
         
@@ -929,6 +916,18 @@ class VentanaPrincipal(QMainWindow):
         eli_pagos.setStyleSheet(style.estilo_boton)
         layoutBoton2.addWidget(act_pagos)
         layoutBoton2.addWidget(eli_pagos)
+        
+        self.verificado = QCheckBox(grupo_pagos)
+        self.verificado.setStyleSheet(style.checkbox)
+        self.verificado.setText("Verificado")
+        self.verificado.setChecked(False)
+        self.verificado.setIconSize(QSize(20, 20))
+        self.verificado.setMinimumSize(QSize(140, 24))
+        self.verificado.setMaximumSize(QSize(140, 24))
+        self.verificado.setFixedWidth(150)
+        self.verificado.setFont(QFont("Segoe UI", 15))
+        self.verificado.setLayoutDirection(Qt.LayoutDirection.RightToLeft)
+        layout_elementos_pagos3.addWidget(self.verificado)
         
         layout_panilla = QHBoxLayout() 
         layout_panilla.setAlignment(Qt.AlignmentFlag.AlignRight)
@@ -1836,6 +1835,7 @@ class VentanaPrincipal(QMainWindow):
         sexo = self.input_sex.currentText()
         edad = self.input_age.text()
         celu = self.input_celular.text().replace(".", "")        
+        fecha = self.input_date.date().toPyDate()
         
         registroUSER(nombre1,apellido1, dni, sexo, edad, celu)
         
@@ -1845,17 +1845,17 @@ class VentanaPrincipal(QMainWindow):
                 db = conectar_base_de_datos()
                 cursor = db.cursor()
                         
-                query = "INSERT INTO usuario (nombre, apellido, dni, sexo, edad, celular) VALUES (%s, %s, %s, %s, %s, %s)"
-                values = (nombre1, apellido1, dni, sexo, edad, celu)#, fecha
+                query = "INSERT INTO usuario (nombre, apellido, dni, sexo, edad, celular, fecha_registro) VALUES (%s, %s, %s, %s, %s, %s, %s)"
+                values = (nombre1, apellido1, dni, sexo, edad, celu, fecha)#, fecha
                 cursor.execute(query, values)
-                
-                # Obtine el ID del Usuario
-                obetener_id_usuario = cursor.lastrowid
-                fecha = self.input_date.date().toPyDate()
-                
-                # Insertar la fecha en la tabla fecha_registro_usuario
-                cursor.execute("INSERT INTO fecha_registro_usuario (id_usuario, fecha_registro) VALUES (%s, %s)", (obetener_id_usuario, fecha))
                 db.commit()
+                # # Obtine el ID del Usuario
+                # obetener_id_usuario = cursor.lastrowid
+                # fecha = self.input_date.date().toPyDate()
+                
+                # # Insertar la fecha en la tabla fecha_registro_usuario
+                # cursor.execute("INSERT INTO fecha_registro_usuario (id_usuario, fecha_registro) VALUES (%s, %s)", (obetener_id_usuario, fecha))
+                # db.commit()
                                 
                 if cursor.rowcount > 0:
                     mensaje_ingreso_datos("Registro de alumnos","Registro cargado")
@@ -1889,7 +1889,8 @@ class VentanaPrincipal(QMainWindow):
             try:
                 db = conectar_base_de_datos()
                 cursor = db.cursor()
-                cursor.execute("SELECT u.*, f.fecha_registro FROM usuario u LEFT JOIN fecha_registro_usuario f ON u.id_usuario = f.id_usuario WHERE u.nombre LIKE '%{}%'".format(nombre))
+                cursor.execute(f"SELECT * FROM usuario WHERE nombre LIKE '%{nombre}%'")
+                # cursor.execute("SELECT u.*, f.fecha_registro FROM usuario u LEFT JOIN fecha_registro_usuario f ON u.id_usuario = f.id_usuario WHERE u.nombre LIKE '%{}%'".format(nombre))
                 resultados = cursor.fetchall()
                 
                 if len(resultados) > 0:
@@ -1916,7 +1917,8 @@ class VentanaPrincipal(QMainWindow):
         try:
             db = conectar_base_de_datos()
             cursor = db.cursor()
-            cursor.execute("SELECT u.*, f.fecha_registro FROM usuario u LEFT JOIN fecha_registro_usuario f ON u.id_usuario = f.id_usuario  ORDER BY nombre ASC")
+            cursor.execute("SELECT * FROM usuario ORDER BY nombre ASC")
+            # cursor.execute("SELECT u.*, f.fecha_registro FROM usuario u LEFT JOIN fecha_registro_usuario f ON u.id_usuario = f.id_usuario  ORDER BY nombre ASC")
             resultados = cursor.fetchall()
                     
             if len(resultados) > 0:
@@ -1951,15 +1953,20 @@ class VentanaPrincipal(QMainWindow):
         except Error as ex:
             errorConsulta("Registro de alumnos",f"Error en la consulta: {str(ex)}")
             
+    def claer_tabla(self):
+        limpiar_tablaRecord(self)
+               
     def tabla_registro(self):
         tabla_registroUSUARIO(self,Workbook,Font,PatternFill,Border,Side,numbers,QFileDialog,os)
 
     # Pestaña de ACTUALIZAR REGISTRO ---------------------------------------
     def ver(self):
+        self.tablaUpdateRecord.setEnabled(True)
         try:
             db = conectar_base_de_datos()
             cursor = db.cursor()
-            cursor.execute("SELECT u.*, f.fecha_registro FROM usuario u LEFT JOIN fecha_registro_usuario f ON u.id_usuario = f.id_usuario  ORDER BY nombre ASC")
+            cursor.execute("SELECT * FROM usuario ORDER BY nombre ASC")
+            # cursor.execute("SELECT u.*, f.fecha_registro FROM usuario u LEFT JOIN fecha_registro_usuario f ON u.id_usuario = f.id_usuario  ORDER BY nombre ASC")
             resultados = cursor.fetchall()
 
             if len(resultados) > 0:
@@ -1976,14 +1983,6 @@ class VentanaPrincipal(QMainWindow):
         except Error as ex:
             errorConsulta("Registro de alumnos",f"Error en la consulta: {str(ex)}")
             print("Error executing the query", ex) 
-        
-    def claer_tabla(self):
-        # Obtener el número de filas de la tabla
-        filas = self.tablaRecord.rowCount()
-
-        # Eliminar todas las filas de la tabla
-        for i in range(filas):
-            self.tablaRecord.removeRow(0)  # Eliminar la fila en la posición 0
      
     def buscar(self):
         self.tablaUpdateRecord.setEnabled(False)
@@ -2004,7 +2003,8 @@ class VentanaPrincipal(QMainWindow):
             try:
                 db = conectar_base_de_datos()
                 cursor = db.cursor()
-                cursor.execute("SELECT u.*, f.fecha_registro FROM usuario u LEFT JOIN fecha_registro_usuario f ON u.id_usuario = f.id_usuario WHERE u.nombre LIKE '%{}%'".format(nombre_seleccionado))
+                cursor.execute("SELECT * FROM usuario ORDER BY nombre ASC")
+                # cursor.execute("SELECT u.*, f.fecha_registro FROM usuario u LEFT JOIN fecha_registro_usuario f ON u.id_usuario = f.id_usuario WHERE u.nombre LIKE '%{}%'".format(nombre_seleccionado))
                 resultados = cursor.fetchall()
                 
                 if len(resultados) > 0:
@@ -2045,6 +2045,7 @@ class VentanaPrincipal(QMainWindow):
         sexo2 = self.input_sex2.currentText()
         edad2 = self.input_age2.text()
         celu2 = self.input_celular2.text()
+        fecha = self.input_date2.date().toPyDate()
         
         actualizarUSER(nombre2 , apellido2, dni2, sexo2, edad2, celu2)
         
@@ -2053,8 +2054,8 @@ class VentanaPrincipal(QMainWindow):
             try:
                 db = conectar_base_de_datos()
                 cursor = db.cursor()                
-                query = "UPDATE usuario SET nombre=%s, apellido=%s, dni=%s, sexo=%s, edad=%s, celular=%s WHERE id_usuario=%s ORDER BY nombre ASC"
-                values = (nombre2, apellido2, dni2, sexo2, edad2, celu2, id_reg) 
+                query = "UPDATE usuario SET nombre=%s, apellido=%s, dni=%s, sexo=%s, edad=%s, celular=%s, fecha_registro=%s WHERE id_usuario=%s ORDER BY nombre ASC"
+                values = (nombre2, apellido2, dni2, sexo2, edad2, celu2, fecha, id_reg) 
                 cursor.execute(query, values)
                 # usuario = cursor.lastrowid
                 db.commit()
@@ -2062,7 +2063,7 @@ class VentanaPrincipal(QMainWindow):
                 if cursor.rowcount > 0:
                     mensaje_ingreso_datos("Registro de alumnos","Registro actualizado")
                     limpiasElementosUseraActualizar(self,QDate)
-                    self.ver()
+                    limpiar_tablaUpdate(self)
                 else:
                     mensaje_ingreso_datos("Registro de alumnos","Registro no actualizado")
                                         
@@ -2071,37 +2072,6 @@ class VentanaPrincipal(QMainWindow):
                 
                 self.tablaUpdateRecord.clearSelection()  # Deseleccionar la fila eliminada
                 
-            except Error as ex:
-                errorConsulta("Registro de alumnos",f"Error en la consulta: {str(ex)}")
-                print("Error al ejecutar la consulta", ex)      
-        else:
-            print("No se actualiza registro")
-    
-    def actualizar_fecha(self):
-        if not self.tablaUpdateRecord.currentItem():
-            mensaje_ingreso_datos("Registro de alumnos","Por favor seleccione un registro para actualizar")
-            return
-        id_usuario_fecha = int(self.tablaUpdateRecord.item(self.tablaUpdateRecord.currentRow(), 0).text())
-        fecha = self.input_date2.date().toPyDate()
-        
-        actual_fecha = inicio("Registro de Alumnos","¿Desea actualizar la fecha de Registro?")
-        if actual_fecha == QMessageBox.StandardButton.Yes:
-            try:
-                db = conectar_base_de_datos()
-                cursor = db.cursor()
-                cursor.execute("UPDATE fecha_registro_usuario SET fecha_registro=%s WHERE id_usuario=%s", (fecha,id_usuario_fecha))
-                db.commit()
-                if cursor.rowcount > 0:
-                    mensaje_ingreso_datos("Registro de alumnos","Registro actualizado")
-                    limpiasElementosUseraActualizar(self,QDate)
-
-                    self.ver()
-                else:
-                    mensaje_ingreso_datos("Registro de alumnos","Registro no actualizado")
-                cursor.close()
-                db.close()
-                
-                self.tablaUpdateRecord.clearSelection()  # Deseleccionar la fila eliminada
             except Error as ex:
                 errorConsulta("Registro de alumnos",f"Error en la consulta: {str(ex)}")
                 print("Error al ejecutar la consulta", ex)      
@@ -2128,7 +2098,7 @@ class VentanaPrincipal(QMainWindow):
             try:
                 db = conectar_base_de_datos()
                 cursor = db.cursor()
-                cursor.execute("SELECT u.*, f.fecha_registro FROM usuario u LEFT JOIN fecha_registro_usuario f ON u.id_usuario = f.id_usuario WHERE u.nombre LIKE '%{}%'".format(nombre_seleccionado3))
+                cursor.execute(f"SELECT * FROM usuario WHERE nombre LIKE '%{nombre_seleccionado3}%'")
                 resultados = cursor.fetchall()
                 
                 if len(resultados) > 0:
@@ -2227,25 +2197,6 @@ class VentanaPrincipal(QMainWindow):
 
             if len(resultados) > 0:
                 tabla_DISCIPLINA(self, resultados, cursor, QHeaderView, QTableWidget, QAbstractItemView, QTableWidgetItem, Qt)
-                        
-                # # Calcular la cantidad total de registros
-                # total_registrosACT = sum(1 for row in resultados if row[1])
-
-                # # Crear una nueva fila en la tabla para mostrar la cantidad total de días de asistencia
-                # row_count = self.tableActivi.rowCount()
-                # self.tableActivi.insertRow(row_count) # Agregar la nueva fila al final de la tabla
-
-                # # Mostrar la etiqueta "Total" en la primera celda de la fila de total
-                # item_label2 = QTableWidgetItem("TOTAL:")
-                # item_label2.setFont(itemColor_TOTAL(item_label2))   # Funcion para estilos de item
-                # item_label2.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
-                # self.tableActivi.setItem(row_count, 0, item_label2)
-                
-                # # Agregar la información de la cantidad total de días de asistencia en la nueva fila
-                # item_registro = QTableWidgetItem(str(total_registrosACT))
-                # item_registro.setFont(itemColor_RESULTADO(item_registro))  # Funcion para estilos de item
-                # item_registro.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
-                # self.tableActivi.setItem(row_count, 1, item_registro)  # Agregar en la primera columna o en la que desees
             else:
                 mensaje_ingreso_datos("Registro de alumnos","Tabla vacia")
                     
@@ -2299,12 +2250,7 @@ class VentanaPrincipal(QMainWindow):
             print("nose se actualizo")
             
     def limpiar_tabla_disciplina(self):
-        # Obtener el número de filas de la tabla
-        num_filas = self.tableActivi.rowCount()
-
-        # Eliminar todas las filas de la tabla
-        for i in range(num_filas):
-            self.tableActivi.removeRow(0)  
+        clear_tabla_disciplina(self)
     
     def limp(self):
         self.input_disciplina4.clear()
@@ -2357,7 +2303,8 @@ class VentanaPrincipal(QMainWindow):
         tipo = self.input_tipoDePago.currentText()
         date = self.input_fechaDePago.date().toPyDate()
         monto = self.idDis.currentData()[2]
-        print(monto)
+        verificado = self.verificado.isChecked()
+
         patronB = re.compile(r'^[a-zA-ZáéíóúÁÉÍÓÚüÜ\'\s]+$') 
         if not isinstance(tipo, str) or not patronB.match(tipo):
             mensaje_ingreso_datos("Registro de pago","Debe elegir un tipo de pago")
@@ -2368,7 +2315,7 @@ class VentanaPrincipal(QMainWindow):
             try:
                 db = conectar_base_de_datos()
                 cursor = db.cursor()
-                cursor.execute("INSERT INTO pago (id_usuario, id_disciplina, modalidad, fecha, precio) VALUE (%s, %s, %s, %s, %s)", (id_alumno, id_activ, tipo, date, monto))
+                cursor.execute("INSERT INTO pago (id_usuario, id_disciplina, modalidad, fecha, precio, verificado) VALUE (%s, %s, %s, %s, %s, %s)", (id_alumno, id_activ, tipo, date, monto, verificado))
                 db.commit()
                 if cursor:
                     mensaje_ingreso_datos("Registro de pagos","Registro cargado")
@@ -2376,6 +2323,7 @@ class VentanaPrincipal(QMainWindow):
                     self.idDis.setCurrentIndex(0)
                     self.input_tipoDePago.setCurrentIndex(0)
                     self.input_fechaDePago.setDate(QDate.currentDate())
+                    self.verificado.setChecked(False)
                 else:
                     mensaje_ingreso_datos("Registro de pagos","Registro no cargado")
                     
@@ -2406,19 +2354,7 @@ class VentanaPrincipal(QMainWindow):
             errorConsulta("Registro de pagos",f"Error en la cosulta: {str(ex)}")
         
     def establecer_datos(self):
-        fila = self.tablePagos.currentRow()
-        
-        id_user = self.tablePagos.item(fila,1).text()
-        id_user = int(id_user)
-        id_discipl = self.tablePagos.item(fila,2).text()
-        tipoPago = self.tablePagos.item(fila,3).text()
-        fecha = self.tablePagos.item(fila,4).text()
-        fecha = QDate.fromString(fecha,"dd-MM-yyyy")
-        
-        self.idUser.setCurrentText(str(id_user))
-        self.idDis.setCurrentText(id_discipl)
-        self.input_tipoDePago.setCurrentText(tipoPago)
-        self.input_fechaDePago.setDate(fecha)
+        seleccionDeTablaPAGOS(self,QDate)
     
     def actualizarPagos(self):
         if not self.tablePagos.currentItem():
@@ -2430,7 +2366,6 @@ class VentanaPrincipal(QMainWindow):
         id_activ = self.idDis.currentData()[0]
         tipo = self.input_tipoDePago.currentText()
         date = self.input_fechaDePago.date().toPyDate()
-        monto = self.idUser.currentData()[2]
         
         patronB = re.compile(r'^[a-zA-ZáéíóúÁÉÍÓÚüÜ\'\s]+$') 
         if not isinstance(tipo, str) or not patronB.match(tipo):
@@ -2442,7 +2377,7 @@ class VentanaPrincipal(QMainWindow):
             try:
                 db = conectar_base_de_datos()
                 cursor = db.cursor()
-                cursor.execute("UPDATE pago SET id_usuario=%s, id_disciplina=%s, modalidad=%s, fecha=%s precio=%s WHERE id_pago=%s,",(id_alumno, id_activ, tipo, date, idpago, monto))
+                cursor.execute(f"UPDATE pago SET id_usuario='{id_alumno}', id_disciplina='{id_activ}', modalidad='{tipo}', fecha='{date}' WHERE id_pago='{idpago}'")
                 db.commit()
            
                 if cursor:
@@ -2475,7 +2410,7 @@ class VentanaPrincipal(QMainWindow):
             try:
                 db = conectar_base_de_datos()
                 cursor = db.cursor()
-                cursor.execute(f"DELETE FROM pago WHERE id_pago = {itemPagos}")    
+                cursor.execute(f"DELETE FROM pago WHERE id_pago = '{itemPagos}'")    
                 db.commit()
                 
                 if cursor:
