@@ -862,7 +862,7 @@ class VentanaPrincipal(QMainWindow):
  
         # actualiza comobox disciplina
         actualizar_combobox_disc(self)
-        
+        print(self.idDis.currentText())
         
         # Muestra el precio de cada disciplina al elegitr la disciplina
         self.idDis.currentIndexChanged.connect(self.actualizar_precio)
@@ -1793,7 +1793,7 @@ class VentanaPrincipal(QMainWindow):
         self.tab.setDisabled(False)
 
         # actualiza comobox usuario por DNI
-        actualizar_combobox_user(self) 
+        actualizar_combobox_user(self)
 
         # actualiza comobox disciplina
         actualizar_combobox_disc(self)    
@@ -1846,16 +1846,9 @@ class VentanaPrincipal(QMainWindow):
                 cursor = db.cursor()
                         
                 query = "INSERT INTO usuario (nombre, apellido, dni, sexo, edad, celular, fecha_registro) VALUES (%s, %s, %s, %s, %s, %s, %s)"
-                values = (nombre1, apellido1, dni, sexo, edad, celu, fecha)#, fecha
+                values = (nombre1, apellido1, dni, sexo, edad, celu, fecha)
                 cursor.execute(query, values)
                 db.commit()
-                # # Obtine el ID del Usuario
-                # obetener_id_usuario = cursor.lastrowid
-                # fecha = self.input_date.date().toPyDate()
-                
-                # # Insertar la fecha en la tabla fecha_registro_usuario
-                # cursor.execute("INSERT INTO fecha_registro_usuario (id_usuario, fecha_registro) VALUES (%s, %s)", (obetener_id_usuario, fecha))
-                # db.commit()
                                 
                 if cursor.rowcount > 0:
                     mensaje_ingreso_datos("Registro de alumnos","Registro cargado")
@@ -1945,7 +1938,7 @@ class VentanaPrincipal(QMainWindow):
                 
                 self.tablaRecord.clearSelection()  # Deseleccionar la fila eliminada
             else:
-                mensaje_ingreso_datos("Registro de alumnos","Tabla no mostrada")
+                mensaje_ingreso_datos("Registro de alumnos","Tabla sin registros")
                 
             cursor.close()
             db.close()
@@ -1973,7 +1966,7 @@ class VentanaPrincipal(QMainWindow):
                 tabla_updateUSER(self, cursor, resultados, QHeaderView, QTableWidget, QAbstractItemView, QTableWidgetItem, QDate, Qt)
                 
             else:
-                mensaje_ingreso_datos("Registro de alumnos","Tabla no mostrada")
+                mensaje_ingreso_datos("Registro de alumnos","Tabla sin registros")
                     
             cursor.close()  
             db.close()
@@ -2173,6 +2166,7 @@ class VentanaPrincipal(QMainWindow):
                 cursor = db.cursor()
                 cursor.execute("INSERT INTO disciplina (nombre,precio) VALUES (%s, %s)", (actividad, precio),)
                 db.commit()
+                                
                 if cursor:      
                     mensaje_ingreso_datos("Registro de alumnos","Registro cargado")
                     self.input_disciplina4.clear()
@@ -2198,7 +2192,7 @@ class VentanaPrincipal(QMainWindow):
             if len(resultados) > 0:
                 tabla_DISCIPLINA(self, resultados, cursor, QHeaderView, QTableWidget, QAbstractItemView, QTableWidgetItem, Qt)
             else:
-                mensaje_ingreso_datos("Registro de alumnos","Tabla vacia")
+                mensaje_ingreso_datos("Registro de alumnos","Tabla sin registros")
                     
             cursor.close()  
             db.close()
@@ -2298,11 +2292,11 @@ class VentanaPrincipal(QMainWindow):
     
     # ----------- PESTAÑA PAGOS -----------------
     def guardarPagos(self):
-        id_alumno = self.idUser.currentData()[0]
-        id_activ = self.idDis.currentData()[0]
+        id_alumno = self.idUser.currentText()
+        id_activ = self.idDis.currentText()
         tipo = self.input_tipoDePago.currentText()
         date = self.input_fechaDePago.date().toPyDate()
-        monto = self.idDis.currentData()[2]
+        monto = self.idDis.currentData()
         verificado = self.verificado.isChecked()
 
         patronB = re.compile(r'^[a-zA-ZáéíóúÁÉÍÓÚüÜ\'\s]+$') 
@@ -2345,7 +2339,7 @@ class VentanaPrincipal(QMainWindow):
                 tabla_pagos(self, cursor, result, QHeaderView, QTableWidget, QAbstractItemView, QTableWidgetItem, QDate, Qt)
                 
             else:
-                mensaje_ingreso_datos("Registro de pagos","Tabla vacia")   
+                mensaje_ingreso_datos("Registro de pagos","Tabla se encuentra vacia")   
             cursor.close()
             db.close()
             self.tablePagos.clearSelection()  # Deseleccionar la fila eliminada
@@ -2362,8 +2356,8 @@ class VentanaPrincipal(QMainWindow):
             return
         
         idpago = int(self.tablePagos.item(self.tablePagos.currentRow(),0).text())
-        id_alumno = self.idUser.currentData()[0]
-        id_activ = self.idDis.currentData()[0]
+        id_alumno = self.idUser.currentText()
+        id_activ = self.idDis.currentText()
         tipo = self.input_tipoDePago.currentText()
         date = self.input_fechaDePago.date().toPyDate()
         
@@ -2386,6 +2380,7 @@ class VentanaPrincipal(QMainWindow):
                     self.idDis.setCurrentIndex(0)
                     self.input_tipoDePago.setCurrentIndex(0)
                     self.input_fechaDePago.setDate(QDate.currentDate())
+                    self.verificado.setChecked(False)
                     self.mostrarPagos()
                 else:
                     mensaje_ingreso_datos("Registro de pagos","Registro no actualizado")

@@ -17,8 +17,7 @@ def registroUSER(nombre1 , apellido1, dni, sexo, edad, celu):
     patron2 = re.compile(r'^[0-9]+$')
     if not dni.isdigit() or not len(dni) == 8 or not patron2.match(dni):
         mensaje_ingreso_datos("Registro de empleado","El 'DNI' debe ser:\n\n- Numérico y contener 8 números enteros")
-        return
-    dni = int(dni)    
+        return   
 
     if not (isinstance(sexo, str) and patron.match(sexo)):
         mensaje_ingreso_datos("Registro de alumnos","Debe elegir una sexo")
@@ -29,7 +28,7 @@ def registroUSER(nombre1 , apellido1, dni, sexo, edad, celu):
         return
     edad = int(edad)
 
-    if not (celu.isdigit() and len(celu) == 10 and patron2.match(celu)):
+    if not (celu.isdigit() and patron2.match(celu)):
         mensaje_ingreso_datos("Registro de alumnos","El 'celular' debe ser:\n\n- Valores numéricos.\n- Contener 10 dígitos.\n- No contener puntos(.)")
         return
     
@@ -68,12 +67,10 @@ def autoCompletadoACTULIZAR(self,QDate):
     nombre2 = self.tablaUpdateRecord.item(row, 1).text()
     apellido2 = self.tablaUpdateRecord.item(row, 2).text()
     dni2 = self.tablaUpdateRecord.item(row, 3).text().replace(".", "")  # Eliminar cualquier punto en el DNI
-    dni2 = int(dni2)  # Convertir a entero
     sexo2 = self.tablaUpdateRecord.item(row, 4).text()
     edad2 = self.tablaUpdateRecord.item(row, 5).text().replace(".", "")
     edad2 = int(edad2)
     celular2 = self.tablaUpdateRecord.item(row, 6).text()
-    celular2 = int(celular2)
     fecha2 = self.tablaUpdateRecord.item(row, 7).text()
     fecha2 = QDate.fromString(fecha2, "dd-MM-yyyy")
     
@@ -86,10 +83,10 @@ def autoCompletadoACTULIZAR(self,QDate):
     
     self.input_nombre2.setText(nombre2)  
     self.input_apellido2.setText(apellido2)
-    self.input_dni2.setText(str(dni2))  # Convertir a texto antes de asignar al QLineEdit
+    self.input_dni2.setText(dni2)  # Convertir a texto antes de asignar al QLineEdit
     self.input_sex2.setCurrentText(sexo2)
     self.input_age2.setText(str(edad2))  # Convertir a texto antes de asignar al QLineEdit
-    self.input_celular2.setText(str(celular2))  # Convertir a texto antes de asignar al QLineEdit
+    self.input_celular2.setText(celular2)  # Convertir a texto antes de asignar al QLineEdit
     self.input_date2.setDate(fecha2)
 
     self.tablaUpdateRecord.clearSelection()  # Deseleccionar la fila eliminada

@@ -182,41 +182,38 @@ class Asistencia(QMainWindow):
         dni = self.numero_documento.text()
         fecha_hoy = date.today()
         
-        if not dni.isalnum() or len(dni) != 8:
+        # patron = re.compile(r'^[0-9]+$')
+        if not dni.isdigit() or len(dni) != 8:
             mensaje_ingreso_datos("Registro de asistecia","El número de documento debe contener 8 dígitos numéricos.")
             return
-        dni = int(dni)
         
         # Conexión a la base de datos MySQL
         try:
             conn = conectar_base_de_datos()
             cursor = conn.cursor()
             
-            cursor.execute(f"SELECT id_usuario, id_disciplina FROM pago WHERE verificado = 1 AND id_usuario = '{dni}'")
-            result = cursor.fetchall()
-            id_usuario = result[0]
-            print(id_usuario)          
-           
-            # # cursor.execute(f"SELECT p.id_disciplina FROM pago AS p WHERE p.id_usuario = {dni} LIMIT 1")
-            # cursor.execute(f"SELECT id_disciplina FROM pago WHERE id_usuario = '{id_usuario}'")
-            # result1 = cursor.fetchall()
-            # id_disciplina = result1[0]
-            # print(id_disciplina)       
+            cursor.execute(f"SELECT u.id_usuario FROM usuario AS u WHERE u.dni = '{dni}'")
+            result = cursor.fetchone()
+            print(result)
             
-            # # Insertar el número de DNI y la fecha actual en la tabla correspondiente
-            # cursor.execute("INSERT INTO asistencia (asistencia, id_usuario, id_disciplina) VALUES (%s,%s,%s)", (fecha_hoy,id_usuario,id_disciplina))
-            # conn.commit()
+            cursor.execute(f"SELECT p.id_disciplina FROM pago AS p WHERE p.id_usuario = '{result}'")
+            id_disciplina = cursor.fetchall()
+            print(id_disciplina)       
+            
+            # Insertar el número de DNI y la fecha actual en la tabla correspondiente
+            cursor.execute("INSERT INTO asistencia (asistencia, id_usuario, id_disciplina) VALUES (%s,%s,%s)", (fecha_hoy,result,id_disciplina))
+            conn.commit()
             
             # Consultar el nombre y apellido del usuario
             cursor.execute(f"SELECT nombre, apellido, fecha_registro FROM usuario WHERE dni='{dni}'")
-            result = cursor.fetchone()
-            if len(result) > 0:
-                nombre = result[0]
-                apellido = result[1]
+            resultUser = cursor.fetchone()
+            if len(resultUser) > 0:
+                nombre = resultUser[0]
+                apellido = resultUser[1]
                 self.label_texto1.setText(f"¡En hora buena {nombre} {apellido}! Su asistencia fue registrada.")
                 self.label_texto1.setStyleSheet("background-color: #DAD7CD; color: #000")
                 
-                fecha_registro = result[2]
+                fecha_registro = resultUser[2]
                 print(f"{fecha_registro}\n")
             
             # if cursor.rowcount > 0:
@@ -224,15 +221,16 @@ class Asistencia(QMainWindow):
                 fecha_registro_tabla = datetime.strptime(str(fecha_registro), "%Y-%m-%d").date()
                 print(f"Fecha registro(table): {fecha_registro_tabla}\n")
                 
-                fecha_registro_text = fecha_registro.strftime("%d-%m-%Y")
+                fecha_registro_text = fecha_registro_tabla.strftime("%d-%m-%Y")
                 
                 dias_restantes = (fecha_registro_tabla + timedelta(days=30)) - date.today()
                 dias = dias_restantes.__abs__()
+                
                 print(f"Dias a la Fecha registro(table): {dias.days}\n")
                 
                 texto_cuota = f"Último pago: {fecha_registro_text}. Próximo pago en {dias_restantes.days} días."
                 texto_vencido2 = f"Cuota vencida hace {abs(dias.days)} días. Debe abonar."
-                
+            
                 print(f"{abs(dias_restantes.days)}\n")
                 
                 if 30 >= dias.days > 14:
