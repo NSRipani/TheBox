@@ -57,3 +57,11 @@ def tabla_eliminarUSER(self, cursor, resultados, QHeaderView, QTableWidget, QAbs
             if j in [0, 3, 5, 6, 7]:  # Ajustar alineación para ciertas columnas
                 item.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
             self.tablaDeleteRecord.setItem(i, j, item)
+            
+def borrarTabla(self):
+    # Obtener el número de filas de la tabla
+    num_filas = self.tablaDeleteRecord.rowCount()
+
+    # Eliminar todas las filas de la tabla
+    for i in range(num_filas):
+        self.tablaDeleteRecord.removeRow(0)  

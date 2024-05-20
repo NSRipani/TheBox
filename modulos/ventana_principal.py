@@ -13,26 +13,34 @@ import mysql.connector
 from mysql.connector import Error
 
 # Librerías de PyQt6
-from PyQt6.QtWidgets import QLabel, QCheckBox, QFileDialog, QCompleter, QAbstractScrollArea, QFormLayout, QHeaderView, QGridLayout, QHBoxLayout, QDateEdit, QMessageBox, QTableWidget, QAbstractItemView, QTableWidgetItem, QPushButton, QLineEdit, QStatusBar, QWidget , QVBoxLayout, QGroupBox, QMainWindow, QFrame, QTabWidget, QComboBox
-from PyQt6.QtGui import QIcon, QKeySequence, QAction, QPixmap,QFont
+from PyQt6.QtWidgets import (QLabel,QFileDialog, QCompleter, QAbstractScrollArea, QHeaderView, QGridLayout, QHBoxLayout, QDateEdit, 
+                             QMessageBox, QTableWidget, QAbstractItemView, QTableWidgetItem, QPushButton, QLineEdit, QStatusBar, QWidget,
+                             QVBoxLayout, QGroupBox, QMainWindow, QFrame, QTabWidget, QComboBox)
+from PyQt6.QtGui import QIcon, QKeySequence, QAction, QPixmap
 from PyQt6.QtCore import *
 
 # Módulo de para las cajas de mensajes
-from modulos.mensajes import mensaje_ingreso_datos, errorConsulta, inicio, aviso_descargaExitosa, aviso_Advertencia_De_excel, resultado_empleado, aviso_resultado, mensaje_horas_empleados, aviso_resultado_asistencias
-from modulos.style_item import itemColor_TOTAL, itemColor_RESULTADO
+from modulos.mensajes import (mensaje_ingreso_datos, errorConsulta, inicio, aviso_descargaExitosa, aviso_Advertencia_De_excel, 
+                              resultado_empleado, aviso_resultado, mensaje_horas_empleados, aviso_resultado_asistencias)
 from utilidades.completar_combobox import actualizar_combobox_user, actualizar_combobox_disc,completar_nombre_empleado
 
 # Validaciones y demas funciones 
-from validaciones.usuario import registroUSER, limpiasElementosUser, limpiar_campos, actualizarUSER, limpiasElementosUseraActualizar, autoCompletadoACTULIZAR,limpiar_tablaRecord, limpiar_tablaUpdate, tabla_registroUSER
-from validaciones.updateYdelete_usuario import tabla_updateUSER, tabla_eliminarUSER
-from validaciones.archivo_Excel import tabla_registroUSUARIO, tabla_registroDISCIPLINA, horas_Excel, tabla_libroDiario_CONTABILIDAD
+from validaciones.usuario import (registroUSER, limpiasElementosUser, limpiar_campos, actualizarUSER, limpiasElementosUseraActualizar, 
+                                  autoCompletadoACTULIZAR,limpiar_tablaRecord, limpiar_tablaUpdate, tabla_registroUSER)
+from validaciones.updateYdelete_usuario import tabla_updateUSER, tabla_eliminarUSER, borrarTabla
+from validaciones.archivo_Excel import (tabla_registroUSUARIO, tabla_registroDISCIPLINA,empleado_EXCEL, horas_Excel, 
+                                        tabla_libroDiario_CONTABILIDAD, pagos_EXCEL)
 from validaciones.disciplina import guardarACTIVIDAD, completar_CAMPOS_ACTIVIDAD, clear_tabla_disciplina, tabla_DISCIPLINA
 from validaciones.pagos import seleccionDeTablaPAGOS, tabla_pagos
+from validaciones.contabilidad import validadciones, tabla_contabilidad, selccionarTabla, limpiarCampos, clear_tabla
+from validaciones.empleado import variables,lim_campos, seleccion_DeTabla, verTabla, clearTabla
+from validaciones.horas import tabla_HorasTotales,tabla_HorasXEmpleado, autoCompletado, tabla_General
 
 # Módulo de Registro de Asistencia
 from modulos.asistencia import Asistencia
 
 # Módulo de Estilos
+from qss.style_item import itemColor_TOTAL, itemColor_RESULTADO
 from qss import style
 
 # conexion
@@ -917,17 +925,17 @@ class VentanaPrincipal(QMainWindow):
         layoutBoton2.addWidget(act_pagos)
         layoutBoton2.addWidget(eli_pagos)
         
-        self.verificado = QCheckBox(grupo_pagos)
-        self.verificado.setStyleSheet(style.checkbox)
-        self.verificado.setText("Verificado")
-        self.verificado.setChecked(False)
-        self.verificado.setIconSize(QSize(20, 20))
-        self.verificado.setMinimumSize(QSize(140, 24))
-        self.verificado.setMaximumSize(QSize(140, 24))
-        self.verificado.setFixedWidth(150)
-        self.verificado.setFont(QFont("Segoe UI", 15))
-        self.verificado.setLayoutDirection(Qt.LayoutDirection.RightToLeft)
-        layout_elementos_pagos3.addWidget(self.verificado)
+        # self.verificado = QCheckBox(grupo_pagos)
+        # self.verificado.setStyleSheet(style.checkbox)
+        # self.verificado.setText("Verificado")
+        # self.verificado.setChecked(False)
+        # self.verificado.setIconSize(QSize(20, 20))
+        # self.verificado.setMinimumSize(QSize(140, 24))
+        # self.verificado.setMaximumSize(QSize(140, 24))
+        # self.verificado.setFixedWidth(150)
+        # self.verificado.setFont(QFont("Segoe UI", 15))
+        # self.verificado.setLayoutDirection(Qt.LayoutDirection.RightToLeft)
+        # layout_elementos_pagos3.addWidget(self.verificado)
         
         layout_panilla = QHBoxLayout() 
         layout_panilla.setAlignment(Qt.AlignmentFlag.AlignRight)
@@ -1455,15 +1463,15 @@ class VentanaPrincipal(QMainWindow):
         # LAYOUT HORIZONTAL PARA BOTONES
         layout_horas_botones1 = QHBoxLayout()
         layout_horas_botones1.setAlignment(Qt.AlignmentFlag.AlignRight)
-        button00 = QPushButton('GUARDAR HORAS', grupo_horas)
+        button00 = QPushButton('GUARDAR', grupo_horas)
         button00.setFixedWidth(200)
         button00.setCursor(Qt.CursorShape.PointingHandCursor)
         button00.setStyleSheet(style.estilo_boton)
-        button_actualizar_horas = QPushButton('ACTUALIZAR HORAS', grupo_horas)
+        button_actualizar_horas = QPushButton('ACTUALIZAR', grupo_horas)
         button_actualizar_horas.setFixedWidth(200)
         button_actualizar_horas.setCursor(Qt.CursorShape.PointingHandCursor)
         button_actualizar_horas.setStyleSheet(style.estilo_boton)
-        button01 = QPushButton('MOSTRAR HORAS', grupo_horas)
+        button01 = QPushButton('MOSTRAR', grupo_horas)
         button01.setFixedWidth(200)
         button01.setCursor(Qt.CursorShape.PointingHandCursor)
         button01.setStyleSheet(style.estilo_boton)
@@ -1476,7 +1484,7 @@ class VentanaPrincipal(QMainWindow):
         # LAYOUT VERTICAL PARA LOS LAYOUT HORIZONTAL
         layout_horas_botones2 = QHBoxLayout()
         layout_horas_botones2.setAlignment(Qt.AlignmentFlag.AlignRight)
-        button_eliminar_horas = QPushButton('ELIMINAR HORAS', grupo_horas)
+        button_eliminar_horas = QPushButton('ELIMINAR', grupo_horas)
         button_eliminar_horas.setFixedWidth(200)
         button_eliminar_horas.setCursor(Qt.CursorShape.PointingHandCursor)
         button_eliminar_horas.setStyleSheet(style.estilo_boton)
@@ -1883,7 +1891,6 @@ class VentanaPrincipal(QMainWindow):
                 db = conectar_base_de_datos()
                 cursor = db.cursor()
                 cursor.execute(f"SELECT * FROM usuario WHERE nombre LIKE '%{nombre}%'")
-                # cursor.execute("SELECT u.*, f.fecha_registro FROM usuario u LEFT JOIN fecha_registro_usuario f ON u.id_usuario = f.id_usuario WHERE u.nombre LIKE '%{}%'".format(nombre))
                 resultados = cursor.fetchall()
                 
                 if len(resultados) > 0:
@@ -1891,6 +1898,7 @@ class VentanaPrincipal(QMainWindow):
                     self.input_nombre1.clear()
                     tabla_registroUSER(self, cursor, resultados, QHeaderView, QTableWidget, QAbstractItemView, QTableWidgetItem, QDate, Qt)
                     
+                    self.tablaRecord.clearSelection()  # Deseleccionar la fila eliminada
                 else:
                     aviso_resultado("Registro de alumnos",f"Se encontraron {len(resultados)} coincidencias.")
                     
@@ -1898,7 +1906,6 @@ class VentanaPrincipal(QMainWindow):
                 db.close()
                 cursor.close()
                 
-                self.tablaRecord.clearSelection()  # Deseleccionar la fila eliminada
                 
             except Error as ex:
                 errorConsulta("Registro de alumnos",f"Error en la consulta: {str(ex)}")
@@ -1911,31 +1918,11 @@ class VentanaPrincipal(QMainWindow):
             db = conectar_base_de_datos()
             cursor = db.cursor()
             cursor.execute("SELECT * FROM usuario ORDER BY nombre ASC")
-            # cursor.execute("SELECT u.*, f.fecha_registro FROM usuario u LEFT JOIN fecha_registro_usuario f ON u.id_usuario = f.id_usuario  ORDER BY nombre ASC")
             resultados = cursor.fetchall()
                     
             if len(resultados) > 0:
                 tabla_registroUSER(self, cursor, resultados, QHeaderView, QTableWidget, QAbstractItemView, QTableWidgetItem, QDate, Qt)
-                        
-                # Calcular la cantidad total de registros
-                total_registros = sum(1 for row in resultados if row[1])
-
-                # Crear una nueva fila en la tabla para mostrar la cantidad total de días de asistencia
-                row_count = self.tablaRecord.rowCount()
-                self.tablaRecord.insertRow(row_count) # Agregar la nueva fila al final de la tabla
-
-                # Mostrar la etiqueta "Total" en la primera celda de la fila de total
-                item_label = QTableWidgetItem("TOTAL:")
-                item_label.setFont(itemColor_TOTAL(item_label)) # Funcion para estilos de item
-                item_label.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
-                self.tablaRecord.setItem(row_count, 0, item_label)
-                
-                # Agregar la información de la cantidad total de días de asistencia en la nueva fila
-                item_registros = QTableWidgetItem(str(total_registros))
-                item_registros.setFont(itemColor_RESULTADO(item_registros)) # Funcion para estilos de item
-                item_registros.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
-                self.tablaRecord.setItem(row_count, 1, item_registros)  # Agregar en la primera columna o en la que desees
-                
+                               
                 self.tablaRecord.clearSelection()  # Deseleccionar la fila eliminada
             else:
                 mensaje_ingreso_datos("Registro de alumnos","Tabla sin registros")
@@ -1959,19 +1946,17 @@ class VentanaPrincipal(QMainWindow):
             db = conectar_base_de_datos()
             cursor = db.cursor()
             cursor.execute("SELECT * FROM usuario ORDER BY nombre ASC")
-            # cursor.execute("SELECT u.*, f.fecha_registro FROM usuario u LEFT JOIN fecha_registro_usuario f ON u.id_usuario = f.id_usuario  ORDER BY nombre ASC")
             resultados = cursor.fetchall()
 
             if len(resultados) > 0:
                 tabla_updateUSER(self, cursor, resultados, QHeaderView, QTableWidget, QAbstractItemView, QTableWidgetItem, QDate, Qt)
                 
+                self.tablaUpdateRecord.clearSelection()  # Deseleccionar la fila eliminada
             else:
                 mensaje_ingreso_datos("Registro de alumnos","Tabla sin registros")
                     
             cursor.close()  
             db.close()
-
-            self.tablaUpdateRecord.clearSelection()  # Deseleccionar la fila eliminada
             
         except Error as ex:
             errorConsulta("Registro de alumnos",f"Error en la consulta: {str(ex)}")
@@ -1997,7 +1982,6 @@ class VentanaPrincipal(QMainWindow):
                 db = conectar_base_de_datos()
                 cursor = db.cursor()
                 cursor.execute("SELECT * FROM usuario ORDER BY nombre ASC")
-                # cursor.execute("SELECT u.*, f.fecha_registro FROM usuario u LEFT JOIN fecha_registro_usuario f ON u.id_usuario = f.id_usuario WHERE u.nombre LIKE '%{}%'".format(nombre_seleccionado))
                 resultados = cursor.fetchall()
                 
                 if len(resultados) > 0:
@@ -2006,13 +1990,12 @@ class VentanaPrincipal(QMainWindow):
                     self.input_nombre2.clear()
                     tabla_updateUSER(self, cursor, resultados, QHeaderView, QTableWidget, QAbstractItemView, QTableWidgetItem, QDate, Qt)
                     
+                    self.tablaUpdateRecord.clearSelection()  # Deseleccionar la fila eliminada
                 else:
                     aviso_resultado("Registro de alumnos",f"Se encontraron {len(resultados)} coincidencias.")
                     
                 cursor.close()
                 db.close()
-                
-                self.tablaUpdateRecord.clearSelection()  # Deseleccionar la fila eliminada
                 
             except Error as ex:
                 errorConsulta("Registro de alumnos",f"Error en la consulta: {str(ex)}")
@@ -2050,21 +2033,19 @@ class VentanaPrincipal(QMainWindow):
                 query = "UPDATE usuario SET nombre=%s, apellido=%s, dni=%s, sexo=%s, edad=%s, celular=%s, fecha_registro=%s WHERE id_usuario=%s ORDER BY nombre ASC"
                 values = (nombre2, apellido2, dni2, sexo2, edad2, celu2, fecha, id_reg) 
                 cursor.execute(query, values)
-                # usuario = cursor.lastrowid
                 db.commit()
 
                 if cursor.rowcount > 0:
                     mensaje_ingreso_datos("Registro de alumnos","Registro actualizado")
                     limpiasElementosUseraActualizar(self,QDate)
                     limpiar_tablaUpdate(self)
+                    self.tablaUpdateRecord.clearSelection()  # Deseleccionar la fila eliminada
                 else:
                     mensaje_ingreso_datos("Registro de alumnos","Registro no actualizado")
                                         
                 cursor.close()
                 db.close()
-                
-                self.tablaUpdateRecord.clearSelection()  # Deseleccionar la fila eliminada
-                
+                                
             except Error as ex:
                 errorConsulta("Registro de alumnos",f"Error en la consulta: {str(ex)}")
                 print("Error al ejecutar la consulta", ex)      
@@ -2098,15 +2079,14 @@ class VentanaPrincipal(QMainWindow):
                     aviso_resultado("Registro de alumnos",f"Se encontraron {len(resultados)} coincidencias.")
                     
                     self.nombre_buscar3.clear()
-                    
                     tabla_eliminarUSER(self, cursor, resultados, QHeaderView, QTableWidget, QAbstractItemView, QTableWidgetItem, QDate, Qt)
                     
+                    self.tablaDeleteRecord.clearSelection()  # Deseleccionar la fila eliminada
                 else:
                     aviso_resultado("Registro de alumnos",f"Se encontraron {len(resultados)} coincidencias.")
                 
                 cursor.close()
                 db.close()
-                self.tablaDeleteRecord.clearSelection()  # Deseleccionar la fila eliminada
                 
             except Error as ex:
                 errorConsulta("Registro de alumnos",f"Error en la consulta: {str(ex)}")
@@ -2145,12 +2125,7 @@ class VentanaPrincipal(QMainWindow):
             print("No se elimina registro")
     
     def limpiar_tabla(self):
-        # Obtener el número de filas de la tabla
-        num_filas = self.tablaDeleteRecord.rowCount()
-
-        # Eliminar todas las filas de la tabla
-        for i in range(num_filas):
-            self.tablaDeleteRecord.removeRow(0)  
+        borrarTabla(self) 
     
     # -------------- PESTAÑA DE DISCIPLINA -----------------
     def guardarACTIV(self):
@@ -2191,12 +2166,12 @@ class VentanaPrincipal(QMainWindow):
 
             if len(resultados) > 0:
                 tabla_DISCIPLINA(self, resultados, cursor, QHeaderView, QTableWidget, QAbstractItemView, QTableWidgetItem, Qt)
+                self.tableActivi.clearSelection()  # Deseleccionar la fila eliminada
             else:
                 mensaje_ingreso_datos("Registro de alumnos","Tabla sin registros")
                     
             cursor.close()  
             db.close()
-            self.tableActivi.clearSelection()  # Deseleccionar la fila eliminada
         
         except Error as ex:
             errorConsulta("Registro de alumnos",f"Error en la consulta: {str(ex)}")
@@ -2228,14 +2203,13 @@ class VentanaPrincipal(QMainWindow):
                     mensaje_ingreso_datos("Registro de alumnos","Registro actualizado")
                     self.input_disciplina4.clear()
                     self.input_precio.clear()
-                  
                     self.mostrarACTIC()
+                    self.tableActivi.clearSelection()  # Deseleccionar la fila
                 else:
                     mensaje_ingreso_datos("Registro de alumnos","Registro no actualizado")
                     
                 cursor.close()
                 db.close()
-                self.tableActivi.clearSelection()  # Deseleccionar la fila
 
             except Error as ex:
                 QMessageBox.warning(self,"Actualización de usuario","Error al actualizar el registro")
@@ -2273,12 +2247,12 @@ class VentanaPrincipal(QMainWindow):
                     self.tableActivi.removeRow(selectedRow)
                     self.input_disciplina4.clear()
                     self.input_precio.clear()
+                    self.tableActivi.clearSelection()  # Deseleccionar la fila eliminada
                 else:
                     mensaje_ingreso_datos("Registro de alumnos","Registo no eliminado")
                     
                 cursor.close()
                 db.commit()
-                self.tableActivi.clearSelection()  # Deseleccionar la fila eliminada
                 
             except Error as ex:
                 errorConsulta("Registro de alumnos",f"Error en la consulta: {str(ex)}")
@@ -2292,12 +2266,11 @@ class VentanaPrincipal(QMainWindow):
     
     # ----------- PESTAÑA PAGOS -----------------
     def guardarPagos(self):
-        id_alumno = self.idUser.currentText()
-        id_activ = self.idDis.currentText()
+        id_alumno = self.idUser.currentData()[0]
+        id_activ = self.idDis.currentData()[0]
         tipo = self.input_tipoDePago.currentText()
         date = self.input_fechaDePago.date().toPyDate()
-        monto = self.idDis.currentData()
-        verificado = self.verificado.isChecked()
+        monto = self.idDis.currentData()[2]
 
         patronB = re.compile(r'^[a-zA-ZáéíóúÁÉÍÓÚüÜ\'\s]+$') 
         if not isinstance(tipo, str) or not patronB.match(tipo):
@@ -2309,7 +2282,8 @@ class VentanaPrincipal(QMainWindow):
             try:
                 db = conectar_base_de_datos()
                 cursor = db.cursor()
-                cursor.execute("INSERT INTO pago (id_usuario, id_disciplina, modalidad, fecha, precio, verificado) VALUE (%s, %s, %s, %s, %s, %s)", (id_alumno, id_activ, tipo, date, monto, verificado))
+                print(id_alumno, id_activ, tipo, date, monto)
+                cursor.execute("INSERT INTO pago (id_usuario, id_disciplina, modalidad, fecha, precio) VALUE (%s, %s, %s, %s, %s)", (id_alumno, id_activ, tipo, date, monto))
                 db.commit()
                 if cursor:
                     mensaje_ingreso_datos("Registro de pagos","Registro cargado")
@@ -2317,7 +2291,6 @@ class VentanaPrincipal(QMainWindow):
                     self.idDis.setCurrentIndex(0)
                     self.input_tipoDePago.setCurrentIndex(0)
                     self.input_fechaDePago.setDate(QDate.currentDate())
-                    self.verificado.setChecked(False)
                 else:
                     mensaje_ingreso_datos("Registro de pagos","Registro no cargado")
                     
@@ -2337,12 +2310,12 @@ class VentanaPrincipal(QMainWindow):
             
             if len(result) > 0:
                 tabla_pagos(self, cursor, result, QHeaderView, QTableWidget, QAbstractItemView, QTableWidgetItem, QDate, Qt)
-                
+                               
+                self.tablePagos.clearSelection()  # Deseleccionar la fila eliminada
             else:
                 mensaje_ingreso_datos("Registro de pagos","Tabla se encuentra vacia")   
             cursor.close()
             db.close()
-            self.tablePagos.clearSelection()  # Deseleccionar la fila eliminada
             
         except Error as ex:
             errorConsulta("Registro de pagos",f"Error en la cosulta: {str(ex)}")
@@ -2356,8 +2329,8 @@ class VentanaPrincipal(QMainWindow):
             return
         
         idpago = int(self.tablePagos.item(self.tablePagos.currentRow(),0).text())
-        id_alumno = self.idUser.currentText()
-        id_activ = self.idDis.currentText()
+        id_alumno = self.idUser.currentData()[0]
+        id_activ = self.idDis.currentData()[0]
         tipo = self.input_tipoDePago.currentText()
         date = self.input_fechaDePago.date().toPyDate()
         
@@ -2380,11 +2353,12 @@ class VentanaPrincipal(QMainWindow):
                     self.idDis.setCurrentIndex(0)
                     self.input_tipoDePago.setCurrentIndex(0)
                     self.input_fechaDePago.setDate(QDate.currentDate())
-                    self.verificado.setChecked(False)
                     self.mostrarPagos()
+                    self.tablePagos.clearSelection()  # Deseleccionar la fila eliminada 
                 else:
                     mensaje_ingreso_datos("Registro de pagos","Registro no actualizado")
-                
+                cursor.close()
+                db.close()
             except Error as ex:
                 errorConsulta("Registro de pagos",f"Error en la cosulta: {str(ex)}")
         else:
@@ -2415,11 +2389,11 @@ class VentanaPrincipal(QMainWindow):
                     self.idDis.setCurrentIndex(0)
                     self.input_tipoDePago.setCurrentIndex(0)
                     self.input_fechaDePago.setDate(QDate.currentDate())
+                
+                    self.tablePagos.clearSelection()  # Deseleccionar la fila eliminada 
                 else:
                     mensaje_ingreso_datos("Registro de alumnos","Registo no eliminado")
-                
-                self.tablePagos.clearSelection()  # Deseleccionar la fila eliminada
-                    
+                                    
                 cursor.close()
                 db.close()
                 
@@ -2431,74 +2405,7 @@ class VentanaPrincipal(QMainWindow):
             print("No se elimino registro")
             
     def planilla_pagos(self):
-        if self.tablePagos.rowCount() == 0:
-            mensaje_ingreso_datos("Descarga de archivo","Primero debe mostrar una tabla antes de descargarla en un archivo Excel.")
-            return
-        
-        formatos_columnas = {
-            "ID PAGOS": numbers.FORMAT_NUMBER,"ID USUARIO": numbers.FORMAT_NUMBER,
-            "NOMBRE":numbers.FORMAT_TEXT,"MODALIDAD": numbers.FORMAT_TEXT, 
-            "PRECIO": numbers.FORMAT_NUMBER,"FECHA":numbers.FORMAT_DATE_DDMMYY
-        }
-        
-        workbook = Workbook()
-        sheet = workbook.active
-
-        # Obtener encabezados de la tabla y guardarlos en el archivo Excel
-        for col in range(self.tablePagos.columnCount()):
-            header_item = self.tablePagos.horizontalHeaderItem(col)
-            if header_item is not None:
-                header_cell = sheet.cell(row=1, column=col + 1)
-                header_cell.value = header_item.text()
-                # Establecer estilo personalizado a las celdas de encabezado
-                header_cell.font = Font(name='Arial', bold=True)  # Cambiar el tipo de fuente aquí
-                header_cell.fill = PatternFill(start_color="FFA500", end_color="FFA500", fill_type="solid")
-                header_cell.border = Border(top=Side(style="thin"), bottom=Side(style="thin"), left=Side(style="thin"), right=Side(style="thin"))
-        
-        # Obtener datos de la tabla y guardarlos en el archivo Excel
-        for row in range(self.tablePagos.rowCount()):
-            for col in range(self.tablePagos.columnCount()):
-                item = self.tablePagos.item(row, col)
-                if item is not None:
-                    cell = sheet.cell(row=row+2, column=col+1)
-                    cell.value = item.text()
-
-                    # Establecer estilo personalizado a las celdas
-                    cell.font = Font(name="Arial", bold=True)
-                    cell.fill = PatternFill(start_color="FFFFFF", end_color="FFFFFF", fill_type="solid")
-                    cell.border = Border(top=Side(style="thin"), bottom=Side(style="thin"), left=Side(style="thin"), right=Side(style="thin"))
-
-                    # Aplicar formato a las celdas de acuerdo al nombre de la columna
-                    nombre_columna = self.tablePagos.horizontalHeaderItem(col).text()
-                    if nombre_columna in formatos_columnas:
-                        formato = formatos_columnas[nombre_columna]
-                        cell.number_format = formato
-                        
-        # Autoajustar el ancho de las columnas
-        for col in sheet.columns:
-            max_length = 0
-            column = col[0].column_letter  # obtiene el nombre de la columna
-            for cell in col:
-                try:  # Evitar errores en celdas vacías
-                    if len(str(cell.value)) > max_length:
-                        max_length = len(cell.value)
-                except:
-                    pass
-            adjusted_width = (max_length + 2) * 1.2
-            sheet.column_dimensions[column].width = adjusted_width
-        
-        file_path, _ = QFileDialog.getSaveFileName(self, "Guardar archivo Excel", "", "Archivos Excel (*.xlsx)")
-
-        if file_path:
-            if os.path.exists(file_path):
-                file_name, file_extension = os.path.splitext(file_path)
-                file_path = f"{file_name}_nuevo{file_extension}"
-
-            try:
-                workbook.save(file_path)
-                aviso_descargaExitosa("Descarga exitosa","La tabla se ha descargado en un archivo Excel con éxito.")
-            except Exception as e:
-                aviso_Advertencia_De_excel("Advertencia", f"No se pudo guardar el archivo: {str(e)}.\nEL archivo que deseas reemplazar esta en uso, de2ebes cerrar el archivo y luego guardarlo. El nombre puede ser parecido pero no igual.")
+        pagos_EXCEL(self,Workbook,Font,PatternFill,Border,Side,numbers,QFileDialog)
             
     # ----------- PESTAÑA BALANCE -----------------
     def consultar(self):
@@ -2846,7 +2753,7 @@ class VentanaPrincipal(QMainWindow):
             if results:
                 aviso_resultado("Registro de alumnos",f"Se encontraron {len(results)} coincidencias.")
                 
-                self.view_disciplina.setCurrentIndex(0)  #clear()
+                self.view_disciplina.setCurrentIndex(0)
                 self.view_fechaDePago.setDate(QDate.currentDate())
                 self.view_al2.setDate(QDate.currentDate())
                 self.view_nomb.clear()
@@ -3175,52 +3082,25 @@ class VentanaPrincipal(QMainWindow):
     def guardar_empleado(self):
         nom_emp = self.nombre_emp.text().capitalize().title()
         apell_emp = self.apellido_emp.text().capitalize().title()
-        sex_emp = self.sexo_emp.currentText() #.text().capitalize().title()
+        sex_emp = self.sexo_emp.currentText()
         dni_emp = self.dni_emp.text()
         cel = self.celular_emp.text()
         fecha = self.fecha.date().toPyDate()
         
-        patron_alpha = re.compile(r'^[a-zA-ZáéíóúÁÉÍÓÚüÜ\'\s]+$') 
-        if not isinstance(nom_emp, str) or nom_emp.isspace() or not patron_alpha.match(nom_emp):
-            mensaje_ingreso_datos("Registro de empleado","El nombre debe contener: \n- Letras y/o espacios entre nombres(si tiene mas de dos).")
-            return
-        
-        if not isinstance(apell_emp, str) or apell_emp.isspace() or not patron_alpha.match(apell_emp):
-            mensaje_ingreso_datos("Registro de empleado","El apellido debe contener: \n- Letras y/o espacios entre nombres(si tiene mas de dos).")
-            return  
-        
-        if not (isinstance(sex_emp, str) and sex_emp.strip() and patron_alpha.match(sex_emp)):
-            mensaje_ingreso_datos("Registro de empleado","Debe elegir el sexo.")
-            return   
-        
-        patron_mun = re.compile(r'^[0-9]+$')
-        if not (dni_emp.isnumeric() and len(dni_emp) == 8 and patron_mun.match(dni_emp)):
-            mensaje_ingreso_datos("Registro de empleado","El DNI debe ser numérico y contener 8 números enteros")
-            return
-        dni_emp = int(dni_emp)
-            
-        if not (cel.isnumeric() and len(cel) == 10 and patron_mun.match(cel)):
-            mensaje_ingreso_datos("Registro de empleado","El celular debe ser numérico y contener 10 números enteros")
-            return
+        variables(re,nom_emp,apell_emp,sex_emp,dni_emp,cel)
         
         empleado = inicio("Registro de empleado","¿Desea guardar los datos?")
         if empleado == QMessageBox.StandardButton.Yes:
             try:
                 db = conectar_base_de_datos()
                 cursor = db.cursor()
-                query = "INSERT INTO registro_empleado (nombre, apellido, sexo, dni, celular, fecha) VALUES (%s,%s,%s,%s,%s,%s)"
-                values = (nom_emp,apell_emp,sex_emp,dni_emp,cel,fecha)
-                cursor.execute(query,values)
+                cursor.execute("INSERT INTO registro_empleado (nombre, apellido, sexo, dni, celular, fecha) VALUES (%s,%s,%s,%s,%s,%s)",
+                               (nom_emp,apell_emp,sex_emp,dni_emp,cel,fecha))
                 db.commit()
                 
                 if cursor:
                     mensaje_ingreso_datos("Registro de empleado","Registro cargado")
-                    self.nombre_emp.clear()
-                    self.apellido_emp.clear()
-                    self.sexo_emp.setCurrentIndex(0)
-                    self.dni_emp.clear()
-                    self.celular_emp.clear()
-                    self.fecha.setDate(QDate.currentDate())
+                    lim_campos(self,QDate)
                 else:
                     mensaje_ingreso_datos("Registro de empleado","Registro no cargado")
                     
@@ -3233,24 +3113,7 @@ class VentanaPrincipal(QMainWindow):
             print("no se guardo")
             
     def autocompleto_de_datos_empleado(self):
-        fila = self.tablaEmp.currentRow()
-        
-        nom_emp = self.tablaEmp.item(fila,1).text()
-        apell_emp = self.tablaEmp.item(fila,2).text()
-        sex_emp = self.tablaEmp.item(fila,3).text()
-        dni_emp = self.tablaEmp.item(fila,4).text()
-        cel = self.tablaEmp.item(fila,5).text()
-        fecha = self.tablaEmp.item(fila,6).text()
-        fecha = QDate.fromString(fecha,"dd-MM-yyyy")
-        
-        self.nombre_emp.setText(nom_emp)
-        self.apellido_emp.setText(apell_emp)
-        self.sexo_emp.setCurrentText(sex_emp)
-        self.dni_emp.setText(dni_emp)
-        self.celular_emp.setText(cel)
-        self.fecha.setDate(fecha)
-
-        self.tablaEmp.clearSelection() # Deselecciona la fila
+        seleccion_DeTabla(self,QDate)
     
     def actualizar_empleado(self):
         # Verificar si se ha seleccionado una fila
@@ -3266,47 +3129,20 @@ class VentanaPrincipal(QMainWindow):
         cel = self.celular_emp.text()
         fecha = self.fecha.date().toPyDate()
 
-        patron_alpha = re.compile(r'^[a-zA-ZáéíóúÁÉÍÓÚüÜ\'\s]+$') 
-        if not isinstance(nom_emp, str) or nom_emp.isspace() or not patron_alpha.match(nom_emp):
-            mensaje_ingreso_datos("Registro de empleado","El nombre debe contener: \n- Letras y/o espacios entre nombres(si tiene mas de dos).")
-            return
-        
-        if not isinstance(apell_emp, str) or apell_emp.isspace() or not patron_alpha.match(apell_emp):
-            mensaje_ingreso_datos("Registro de empleado","El apellido debe contener: \n- Letras y/o espacios entre nombres(si tiene mas de dos).")
-            return  
-        
-        if not (isinstance(sex_emp, str) and sex_emp.strip() and patron_alpha.match(sex_emp)):
-            mensaje_ingreso_datos("Registro de empleado","Debe elegir el sexo.")
-            return   
-        
-        patron_mun = re.compile(r'^[0-9]+$')
-        if not (dni_emp.isnumeric() and len(dni_emp) == 8 and patron_mun.match(dni_emp)):
-            mensaje_ingreso_datos("Registro de empleado","El DNI debe ser numérico y contener 8 números enteros")
-            return
-        dni_emp = int(dni_emp)
-            
-        if not (cel.isnumeric() and len(cel) == 10 and patron_mun.match(cel)):
-            mensaje_ingreso_datos("Registro de empleado","El celular debe ser numérico y contener 10 números enteros")
-            return
-        
+        variables(re,nom_emp,apell_emp,sex_emp,dni_emp,cel)
+                
         empleado_Actualizar = inicio("Busqueda de empleado","¿Seguro que desea actulizar?")
         if empleado_Actualizar == QMessageBox.StandardButton.Yes:   
             try:
                 db = conectar_base_de_datos()
                 cursor = db.cursor()
-                query = "UPDATE registro_empleado SET nombre = %s, apellido = %s, sexo = %s, dni = %s, celular = %s, fecha = %s WHERE id_empleado = %s"
-                values = (nom_emp,apell_emp,sex_emp,dni_emp,cel,fecha,id_empl)
-                cursor.execute(query, values)
+                cursor.execute("UPDATE registro_empleado SET nombre = %s, apellido = %s, sexo = %s, dni = %s, celular = %s, fecha = %s"
+                               "WHERE id_empleado = %s", (nom_emp,apell_emp,sex_emp,dni_emp,cel,fecha,id_empl))
                 db.commit() 
                 
                 if cursor:
                     mensaje_ingreso_datos("Registro de empleado","Registro actualizado")
-                    self.nombre_emp.clear()
-                    self.apellido_emp.clear()
-                    self.sexo_emp.setCurrentIndex(0)
-                    self.dni_emp.clear()
-                    self.celular_emp.clear()
-                    self.fecha.setDate(QDate.currentDate())
+                    lim_campos(self,QDate)
                 else:
                     mensaje_ingreso_datos("Registro de empleado","Registro no actualizado")
                     
@@ -3329,38 +3165,7 @@ class VentanaPrincipal(QMainWindow):
             busqueda = cursor.fetchall()
             if len(busqueda) > 0:
                 resultado_empleado("Registro de empleado",f"Se encontraron {len(busqueda)} coincidencias.")
-            
-                headers = [description[0].replace('_', ' ').upper() for description in cursor.description]
-                
-                self.tablaEmp.setRowCount(len(busqueda))
-                self.tablaEmp.setColumnCount(len(busqueda[0]))
-                self.tablaEmp.setHorizontalHeaderLabels(headers)
-                
-                # Establecer la propiedad de "stretch" en el encabezado horizontal
-                header = self.tablaEmp.horizontalHeader()
-                header.setSectionResizeMode(QHeaderView.ResizeMode.Stretch)
-                header.setAutoScroll(True)
-                
-                titulosV = self.tablaEmp.verticalHeader()
-                titulosV.setVisible(False)
-                
-                # Ajustar el tamaño de las filas para que se ajusten al contenido
-                self.tablaEmp.verticalHeader().setSectionResizeMode(QHeaderView.ResizeMode.ResizeToContents)
-                self.tablaEmp.setSelectionBehavior(QTableWidget.SelectionBehavior.SelectRows)
-                self.tablaEmp.setEditTriggers(QAbstractItemView.EditTrigger.NoEditTriggers)
-                    
-                for i, row in enumerate(busqueda):
-                    for j, val in enumerate(row):
-                        item = QTableWidgetItem(str(val))
-                        
-                        # Indices de las columnas que contienen fechas
-                        if j == 6:  
-                            fecha = QDate.fromString(str(val), "yyyy-MM-dd")  # Convertir la fecha a objeto QDate
-                            item.setText(fecha.toString("dd-MM-yyyy"))  # Establecer el formato de visualización
-                        
-                        if j in [0,4,5,6]:  # Ajustar alineación para ciertas columnas
-                            item.setTextAlignment(Qt.AlignmentFlag.AlignCenter)   
-                        self.tablaEmp.setItem(i, j, item)
+                verTabla(self,cursor,busqueda,QHeaderView,QTableWidget,QAbstractItemView,QTableWidgetItem,QDate,Qt)
             else:
                 resultado_empleado("Registro de empleado",f"Se encontraron {len(busqueda)} coincidencias.")
                 
@@ -3371,20 +3176,10 @@ class VentanaPrincipal(QMainWindow):
             print("Error executing the query", ex)
     
     def limpiar_tabla_empleados(self):
-        # Obtener el número de filas de la tabla
-        num_filas = self.tablaEmp.rowCount()
-
-        # Eliminar todas las filas de la tabla
-        for i in range(num_filas):
-            self.tablaEmp.removeRow(0) 
+        clearTabla(self) 
     
     def limpiar_camp(self):
-        self.nombre_emp.clear()
-        self.apellido_emp.clear()
-        self.sexo_emp.setCurrentIndex(0)
-        self.dni_emp.clear()
-        self.celular_emp.clear()
-        self.fecha.setDate(QDate.currentDate())
+        lim_campos(self,QDate)
 
     def eliminar_empleado(self):
         # Primero corroborar la seleccion de la fila
@@ -3406,13 +3201,8 @@ class VentanaPrincipal(QMainWindow):
                 if cursor:
                     mensaje_ingreso_datos("Registro de empleado","Registro eliminado")
                     self.tablaEmp.removeRow(selectedRow)
-
-                    self.nombre_emp.clear()
-                    self.apellido_emp.clear()
-                    self.sexo_emp.clear()
-                    self.dni_emp.clear()
-                    self.celular_emp.clear()
-                    self.fecha.setDate(QDate.currentDate())
+                    lim_campos(self,QDate)
+                    self.tablaEmp.clearSelection() # Deselecciona la fila
                 else:
                     mensaje_ingreso_datos("Registro de empleado","Registro no eliminado")  
                                 
@@ -3421,63 +3211,12 @@ class VentanaPrincipal(QMainWindow):
                 print("Error executing the query", ex)
             cursor.close()
             db.close()
-            self.tablaEmp.clearSelection() # Deselecciona la fila
             
         else:
             print("No se elimino registro")
             
     def planilla_excel(self):
-        if self.tablaEmp.rowCount() == 0:
-            mensaje_ingreso_datos("Descarga de archivo","Primero debe mostrar una tabla antes de descargarla en un archivo Excel.")
-            return
-                
-        workbook = Workbook()
-        sheet = workbook.active
-
-        # Obtener encabezados de la tabla y guardarlos en el archivo Excel
-        for col in range(self.tablaEmp.columnCount()):
-            header_item = self.tablaEmp.horizontalHeaderItem(col)
-            if header_item is not None:
-                header_cell = sheet.cell(row=1, column=col + 1)
-                header_cell.value = header_item.text()
-                # Establecer estilo personalizado a las celdas de encabezado
-                header_cell.font = Font(name='Arial', bold=True)  # Cambiar el tipo de fuente aquí
-                header_cell.fill = PatternFill(start_color="FFA500", end_color="FFA500", fill_type="solid")
-                header_cell.border = Border(top=Side(style="thin"), bottom=Side(style="thin"), left=Side(style="thin"), right=Side(style="thin"))
-        
-        # Obtener datos de la tabla y guardarlos en el archivo Excel
-        for row in range(self.tablaEmp.rowCount()):
-            for col in range(self.tablaEmp.columnCount()):
-                item = self.tablaEmp.item(row, col)
-                if item is not None:
-                    cell = sheet.cell(row=row+2, column=col+1)
-                    cell.value = item.text()
-
-                    # Establecer estilo personalizado a las celdas
-                    cell.font = Font(name="Arial", bold=True)
-                    cell.fill = PatternFill(start_color="FFFFFF", end_color="FFFFFF", fill_type="solid")
-                    cell.border = Border(top=Side(style="thin"), bottom=Side(style="thin"), left=Side(style="thin"), right=Side(style="thin"))
-
-                    # Aplicar formato a las celdas de acuerdo al nombre de la columna
-                    if cell in [1,2,3,4,5,6]:
-                        cell.number.format = numbers.FORMAT_TEXT
-                        
-        # Ajustar automáticamente el ancho de las columnas al contenido y encabezados
-        for col in sheet.columns:
-            sheet.column_dimensions[col[0].column_letter].best_fit = True
-
-        file_path, _ = QFileDialog.getSaveFileName(self, "Guardar archivo Excel", "", "Archivos Excel (*.xlsx)")
-
-        if file_path:
-            if os.path.exists(file_path):
-                file_name, file_extension = os.path.splitext(file_path)
-                file_path = f"{file_name}_nuevo{file_extension}"
-
-            try:
-                workbook.save(file_path)
-                aviso_descargaExitosa("Descarga exitosa","La tabla se ha descargado en un archivo Excel con éxito.")
-            except Exception as e:
-                aviso_Advertencia_De_excel("Advertencia", f"No se pudo guardar el archivo: {str(e)}.\nEL archivo que deseas reemplazar esta en uso, de2ebes cerrar el archivo y luego guardarlo. El nombre puede ser parecido pero no igual.")
+        empleado_EXCEL(self,Workbook,Font,PatternFill,Border,Side,numbers,QFileDialog)
             
     # ----------------------- REGISTRO HORAS EMPLEADOS -------------------------------------
     def guardar_horas(self):
@@ -3523,53 +3262,7 @@ class VentanaPrincipal(QMainWindow):
             busqueda = cursor.fetchall()
             if len(busqueda) > 0:
                 resultado_empleado("Registro de empleado",f"Se encontraron {len(busqueda)} coincidencias.")
-            
-                headers = [description[0].replace('_', ' ').upper() for description in cursor.description]
-                
-                self.tablaHoras.setRowCount(len(busqueda))
-                self.tablaHoras.setColumnCount(len(busqueda[0]))
-                self.tablaHoras.setHorizontalHeaderLabels(headers)
-                
-                # Establecer la propiedad de "stretch" en el encabezado horizontal
-                header = self.tablaHoras.horizontalHeader()
-                header.setSectionResizeMode(QHeaderView.ResizeMode.Stretch)
-                header.setAutoScroll(True)
-                
-                vert_header = self.tablaHoras.verticalHeader()
-                vert_header.setVisible(False)
-                
-                # Ajustar el tamaño de las filas para que se ajusten al contenido
-                self.tablaHoras.verticalHeader().setSectionResizeMode(QHeaderView.ResizeMode.ResizeToContents)
-                self.tablaHoras.setSelectionBehavior(QTableWidget.SelectionBehavior.SelectRows)
-                self.tablaHoras.setEditTriggers(QAbstractItemView.EditTrigger.NoEditTriggers)
-                    
-                self.tablaHoras.setRowCount(len(busqueda) + 1)   
-                
-                for i, row in enumerate(busqueda):
-                    for j, val in enumerate(row):
-                        item = QTableWidgetItem(str(val))
-                        
-                        # Indices de las columnas que contienen fechas
-                        if j == 4:  
-                            fecha = QDate.fromString(str(val), "yyyy-MM-dd")  # Convertir la fecha a objeto QDate
-                            item.setText(fecha.toString("dd-MM-yyyy"))  # Establecer el formato de visualización
-                        
-                        if j in [0,1,3,4]:  # Ajustar alineación para ciertas columnas
-                            item.setTextAlignment(Qt.AlignmentFlag.AlignCenter)   
-                        self.tablaHoras.setItem(i, j, item)
-                
-                # Calcular y mostrar la suma de las horas diarias en la fila adicional
-                total_horas = sum(int(row[3]) for row in busqueda)
-                motrar_total_horas2 = QTableWidgetItem('TOTAL:')
-                motrar_total_horas2.setFont(itemColor_TOTAL(motrar_total_horas2))  # Funcion para estilos de item
-                motrar_total_horas2.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
-                self.tablaHoras.setItem(len(busqueda), 2, motrar_total_horas2)
-                
-                suma_horas2 = QTableWidgetItem(str(total_horas))
-                suma_horas2.setFont(itemColor_RESULTADO(suma_horas2))  # Funcion para estilos de item
-                suma_horas2.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
-                self.tablaHoras.setItem(len(busqueda), 3, suma_horas2)
-                
+                tabla_General(self,cursor,busqueda,QHeaderView,QTableWidget,QAbstractItemView,QTableWidgetItem,Qt,QDate)                
             else:
                 resultado_empleado("Registro de empleado",f"Se encontraron {len(busqueda)} coincidencias.")
                 
@@ -3580,26 +3273,7 @@ class VentanaPrincipal(QMainWindow):
             print("Error executing the query", ex)
     
     def autocompleto_de_datos_horas(self):
-        fila = self.tablaHoras.currentRow()
-        if fila == -1:  # Verifica si no se ha seleccionado ninguna fila
-            return
-
-        # Verifica si la fila seleccionada es la última fila de la tabla
-        if fila == self.tablaHoras.rowCount() - 1:
-            mensaje_ingreso_datos("Registro de Ingresos-Egresos","La última fila no debe ser precionada")
-            return
-        
-        emple = self.tablaHoras.item(fila,2).text()
-        horas_h = self.tablaHoras.item(fila,3).text()
-        fecha_h = self.tablaHoras.item(fila, 4).text()
-        fecha_h = QDate.fromString(fecha_h, "dd-MM-yyyy")
-
-        # Autocompletar los QLineEdits y la fecha
-        self.id_horas_empleado.setCurrentText(emple)
-        self.horas_tra.setText(horas_h)
-        self.fecha_tra.setDate(fecha_h)
-
-        self.tablaEmp.clearSelection() # Deselecciona la fila
+        autoCompletado(self,QDate,mensaje_ingreso_datos)
         
     def actualizar_horas(self):
         # Verificar si se ha seleccionado una fila
@@ -3716,52 +3390,7 @@ class VentanaPrincipal(QMainWindow):
                 resultado_empleado("Calculo de horas diarias",f"Se encontraron {len(busqueda)} coincidencias.")
                 
                 self.periodo.setDate(QDate.currentDate())
-                
-                headers = [description[0].replace('_', ' ').upper() for description in cursor.description]
-                
-                self.tablaHoras.setRowCount(len(busqueda))
-                self.tablaHoras.setColumnCount(len(busqueda[0]))
-                self.tablaHoras.setHorizontalHeaderLabels(headers)
-                
-                # Establecer la propiedad de "stretch" en el encabezado horizontal
-                header = self.tablaHoras.horizontalHeader()
-                header.setSectionResizeMode(QHeaderView.ResizeMode.Stretch)
-                header.setAutoScroll(True)
-                
-                encabezados_very = self.tablaHoras.verticalHeader()
-                encabezados_very.setVisible(False)
-                
-                # Ajustar el tamaño de las filas para que se ajusten al contenido
-                self.tablaHoras.verticalHeader().setSectionResizeMode(QHeaderView.ResizeMode.ResizeToContents)
-                self.tablaHoras.setSelectionBehavior(QTableWidget.SelectionBehavior.SelectRows)
-                self.tablaHoras.setEditTriggers(QAbstractItemView.EditTrigger.NoEditTriggers)
-                    
-                self.tablaHoras.setRowCount(len(busqueda) + 1)
-                for i, row in enumerate(busqueda):
-                    for j, val in enumerate(row):
-                        item = QTableWidgetItem(str(val))
-                        
-                        #Indices de las columnas que contienen fechas
-                        if j == 4:  
-                            fecha = QDate.fromString(str(val), "yyyy-MM-dd")  # Convertir la fecha a objeto QDate
-                            item.setText(fecha.toString("dd-MM-yyyy"))  # Establecer el formato de visualización
-                        
-                        if j in [0,1,3,4]:  # Ajustar alineación para ciertas columnas
-                            item.setTextAlignment(Qt.AlignmentFlag.AlignCenter)   
-                        self.tablaHoras.setItem(i, j, item)
-                   
-                # Calcular y mostrar la suma de las horas diarias en la fila adicional
-                total_horas = sum(int(row[3]) for row in busqueda)
-                total_horas_empleados = QTableWidgetItem('TOTAL:')
-                total_horas_empleados.setFont(itemColor_TOTAL(total_horas_empleados))  # Funcion para estilos de item
-                total_horas_empleados.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
-                self.tablaHoras.setItem(len(busqueda), 2, total_horas_empleados)
-                
-                item_seuma_horas = QTableWidgetItem(str(total_horas))
-                item_seuma_horas.setFont(itemColor_RESULTADO(item_seuma_horas))  # Funcion para estilos de item
-                item_seuma_horas.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
-                self.tablaHoras.setItem(len(busqueda), 3, item_seuma_horas)
-            
+                tabla_HorasXEmpleado(self,cursor,busqueda,QHeaderView,QTableWidget,QAbstractItemView,QTableWidgetItem,Qt,QDate)            
             else:    
                 resultado_empleado("Calculo de horas diarias",f"Se encontraron {len(busqueda)} coincidencias.")
                  
@@ -3791,50 +3420,8 @@ class VentanaPrincipal(QMainWindow):
                 resultado_empleado("Calculo de horas diarias",f"Se encontraron {len(busqueda)} coincidencias.")
                 
                 self.periodo.setDate(QDate.currentDate())
+                tabla_HorasTotales(self,cursor,busqueda,QHeaderView,QTableWidget,QAbstractItemView,QTableWidgetItem,Qt,QDate)
                 
-                headers = [description[0].replace('_', ' ').upper() for description in cursor.description]
-                
-                self.tablaHoras.setRowCount(len(busqueda))
-                self.tablaHoras.setColumnCount(len(busqueda[0]))
-                self.tablaHoras.setHorizontalHeaderLabels(headers)
-                
-                # Establecer la propiedad de "stretch" en el encabezado horizontal
-                header = self.tablaHoras.horizontalHeader()
-                header.setSectionResizeMode(QHeaderView.ResizeMode.Stretch)
-                
-                encabezados_very = self.tablaHoras.verticalHeader()
-                encabezados_very.setVisible(False)
-                
-                # Ajustar el tamaño de las filas para que se ajusten al contenido
-                self.tablaHoras.verticalHeader().setSectionResizeMode(QHeaderView.ResizeMode.ResizeToContents)
-                self.tablaHoras.setSelectionBehavior(QTableWidget.SelectionBehavior.SelectRows)
-                self.tablaHoras.setEditTriggers(QAbstractItemView.EditTrigger.NoEditTriggers)
-                
-                self.tablaHoras.setRowCount(len(busqueda) + 1)   
-                for i, row in enumerate(busqueda):
-                    for j, val in enumerate(row):
-                        item = QTableWidgetItem(str(val))
-                        
-                        #Indices de las columnas que contienen fechas
-                        if j == 4:  
-                            fecha = QDate.fromString(str(val), "yyyy-MM-dd")  # Convertir la fecha a objeto QDate
-                            item.setText(fecha.toString("dd-MM-yyyy"))  # Establecer el formato de visualización
-                        
-                        if j in [0,1,3,4]:  # Ajustar alineación para ciertas columnas
-                            item.setTextAlignment(Qt.AlignmentFlag.AlignCenter)   
-                        self.tablaHoras.setItem(i, j, item)
-                        
-                    # Calcular y mostrar la suma de las horas diarias en la fila adicional
-                    total_horas = sum(int(row[3]) for row in busqueda)
-                    item_total_horas2 = QTableWidgetItem('TOTAL:')
-                    item_total_horas2.setFont(itemColor_TOTAL(item_total_horas2))  # Funcion para estilos de item
-                    item_total_horas2.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
-                    self.tablaHoras.setItem(len(busqueda), 2, item_total_horas2)
-                    
-                    item_suma_horas2 = QTableWidgetItem(str(total_horas))
-                    item_suma_horas2.setFont(itemColor_RESULTADO(item_suma_horas2))  # Funcion para estilos de item
-                    item_suma_horas2.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
-                    self.tablaHoras.setItem(len(busqueda), 3, item_suma_horas2)
             else:
                 resultado_empleado("Calculo de horas diarias",f"Se encontraron {len(busqueda)} coincidencias.")
    
@@ -3848,52 +3435,26 @@ class VentanaPrincipal(QMainWindow):
 
     # -------------- LIBRO DIARIO -----------------------------
     def registrar_datos(self):
-        origen = self.fecha_gastos.date().toPyDate()
-        descripcion_debe = self.concepto_debe.text().capitalize().title()
-        descripcion_haber = self.concepto_haber.text().capitalize().title()
-        
-        if not origen:
-            mensaje_ingreso_datos("Registro de Ingresos-Egresos","Debe establcer un rango de inicio y fin de fechas.")
-            return
-
-        if not descripcion_debe.isalpha() and descripcion_debe != '':
-            mensaje_ingreso_datos("Registro de Ingresos-Egresos","El concepto en el 'Debe' debe ser solo texto o puede estar vacio.")
-            return
-        
-        if not descripcion_haber.isalpha() and descripcion_haber != '':
-            mensaje_ingreso_datos("Registro de Ingresos-Egresos","El concepto en el 'Haber' debe ser solo texto o puede estar vacio.")
-            return
-        
+        date = self.fecha_gastos.date().toPyDate()
+        descripcion = self.concepto_debe.text().capitalize().title()
+        descripcion_h = self.concepto_haber.text().capitalize().title()
         deber = self.debe.text()
         haberes = self.haber.text()
         
-        patron_mun = re.compile(r'^[0-9]+$')
-        if not (deber.isnumeric() and patron_mun.match(deber)):
-            mensaje_ingreso_datos("Registro de Ingresos-Egresos","El debe debe ser numérico")
-            return
+        validadciones(re,mensaje_ingreso_datos,date,descripcion,descripcion_h,deber,haberes)
         
-        if not (haberes.isnumeric() and patron_mun.match(haberes)):
-            mensaje_ingreso_datos("Registro de Ingresos-Egresos","El haber debe ser numérico")
-            return
-
         ingYegreso = inicio("Registro de Ingresos-Egresos","¿Desea guardar los datos?")
         if ingYegreso == QMessageBox.StandardButton.Yes: 
             try:
                 db = conectar_base_de_datos()
                 cursor = db.cursor()
-                query = "INSERT INTO contabilidad (fecha, concepto_debe, concepto_haber, debe, haber) VALUES (%s, %s, %s, %s, %s)"
-                values = (origen, descripcion_debe,descripcion_haber, deber, haberes)
-                cursor.execute(query, values)
+                cursor.execute("INSERT INTO contabilidad (fecha, concepto_debe, concepto_haber, debe, haber) VALUES (%s, %s, %s, %s, %s)", 
+                               (date, descripcion,descripcion_h, deber, haberes))
                 db.commit()
                 
                 if cursor:
                     mensaje_ingreso_datos("Registro de Ingresos-Egresos","Datos cargados correctamente")
-                    
-                    self.fecha_gastos.setDate(QDate.currentDate())
-                    self.concepto_debe.clear()
-                    self.concepto_haber.clear()
-                    self.debe.clear()
-                    self.haber.clear()
+                    limpiarCampos(self,QDate)
                 else:
                     mensaje_ingreso_datos("Registro de Ingresos-Egresos","Datos no cargados correctamente")
                     
@@ -3906,34 +3467,7 @@ class VentanaPrincipal(QMainWindow):
             print("No se guarda registro")
             
     def selecionarTabla(self):
-        rows = self.tablaGastos.currentRow()
-        
-        if rows == -1:  # Verifica si no se ha seleccionado ninguna fila
-            return
-
-        # Verifica si la fila seleccionada es la última fila de la tabla
-        if rows == self.tablaGastos.rowCount() - 1:
-            mensaje_ingreso_datos("Registro de Ingresos-Egresos","La última fila no debe ser precionada")
-            return
-        
-        # id_concepto = int(self.tablaGastos.item(rows,0).text())
-        fecha1 = self.tablaGastos.item(rows,1).text()
-        fecha1 = QDate.fromString(fecha1,"dd-MM-yyyy")
-        conceptoDebe = self.tablaGastos.item(rows,2).text()
-        conceptoHaber = self.tablaGastos.item(rows,3).text()
-        debe_valor = self.tablaGastos.item(rows,4).text()
-        debe_valor = int(debe_valor)
-        haber_valor = self.tablaGastos.item(rows,5).text()
-        haber_valor = int(haber_valor)
-        
-        # self.idConcepto.setText(str(id_concepto))
-        self.fecha_gastos.setDate(fecha1)
-        self.concepto_debe.setText(conceptoDebe)
-        self.concepto_haber.setText(conceptoHaber)
-        self.debe.setText(str(debe_valor))
-        self.haber.setText(str(haber_valor))
-        
-        self.tablaGastos.clearSelection() # Deselecciona la fila
+        selccionarTabla(self,mensaje_ingreso_datos,QDate)
         
     def actualizar_datos(self):
         if not self.tablaGastos.currentItem():
@@ -3941,45 +3475,24 @@ class VentanaPrincipal(QMainWindow):
             return
         
         id_concepto = int(self.tablaGastos.item(self.tablaGastos.currentRow(),0).text())
-        inicio = self.fecha_gastos.date().toPyDate()
+        date = self.fecha_gastos.date().toPyDate()
         descripcion = self.concepto_debe.text().capitalize().title()
         descripcion_h = self.concepto_haber.text().capitalize().title()
         deber = self.debe.text()
         haberes = self.haber.text()
         
-        if not inicio:
-            mensaje_ingreso_datos("Registro de Ingresos-Egresos","Debe establcer un rango de inicio y fin de fechas.")
-            return
+        validadciones(self,re,mensaje_ingreso_datos,date,descripcion,descripcion_h,deber,haberes)
         
-        if not descripcion.isalpha() and descripcion != '':
-            mensaje_ingreso_datos("Registro de Ingresos-Egresos","El concepto en el 'Debe' debe ser solo texto o puede estar vacio.")
-            return
-        
-        if not descripcion_h.isalpha() and descripcion_h != '':
-            mensaje_ingreso_datos("Registro de Ingresos-Egresos","El concepto en el 'Haber' debe ser")
-                
-        patron_mun = re.compile(r'^[0-9]+$')
-        if not (deber.isnumeric() and patron_mun.match(deber)):
-            mensaje_ingreso_datos("Registro de Ingresos-Egresos","El debe debe ser numérico")
-            return
-        
-        if not (haberes.isnumeric() and patron_mun.match(haberes)):
-            mensaje_ingreso_datos("Registro de Ingresos-Egresos","El haber debe ser numérico")
-            return
-
         try:
             db = conectar_base_de_datos()
             cursor = db.cursor()
-            query = f"UPDATE contabilidad SET fecha = '{inicio}', concepto_debe = '{descripcion}', concepto_haber = '{descripcion_h}', debe = '{deber}', haber = '{haberes}' WHERE id_concepto = '{id_concepto}'"
+            query = f"UPDATE contabilidad SET fecha = '{date}', concepto_debe = '{descripcion}', concepto_haber = '{descripcion_h}', debe = '{deber}', haber = '{haberes}' WHERE id_concepto = '{id_concepto}'"
             cursor.execute(query)
             db.commit()
             if cursor:
                 mensaje_ingreso_datos("Registro de Ingresos-Egresos","Datos cargados correctamente")
-                self.fecha_gastos.setDate(QDate.currentDate())
-                self.concepto_debe.clear()
-                self.concepto_haber.clear()
-                self.debe.clear()
-                self.haber.clear()
+                
+                limpiarCampos(self,QDate)
             else:
                 mensaje_ingreso_datos("Registro de Ingresos-Egresos","Datos no cargados correctamente")
             cursor.close()
@@ -4006,70 +3519,13 @@ class VentanaPrincipal(QMainWindow):
             try:
                 db = conectar_base_de_datos()
                 cursor = db.cursor()
-                query = f"SELECT * FROM contabilidad WHERE fecha BETWEEN '{principio}' AND '{final}'"
-                cursor.execute(query)
+                cursor.execute(f"SELECT * FROM contabilidad WHERE fecha BETWEEN '{principio}' AND '{final}'")
                 busqueda = cursor.fetchall()
                 if len(busqueda) > 0:
                     self.fecha_periodo.setDate(QDate.currentDate())
                     resultado_empleado("Calculo de horas diarias",f"Se encontraron {len(busqueda)} coincidencias.")
                     
-                    headers = [description[0].replace('_', ' ').upper() for description in cursor.description]
-                    
-                    self.tablaGastos.setRowCount(len(busqueda))
-                    self.tablaGastos.setColumnCount(len(busqueda[0]))
-                    self.tablaGastos.setHorizontalHeaderLabels(headers)
-                    
-                    # Establecer la propiedad de "stretch" en el encabezado horizontal
-                    header = self.tablaGastos.horizontalHeader()
-                    header.setSectionResizeMode(QHeaderView.ResizeMode.Stretch)
-                    header.setAutoScroll(True)
-                    
-                    vertical = self.tablaGastos.verticalHeader()
-                    vertical.setVisible(False)
-                    
-                    # Ajustar el tamaño de las filas para que se ajusten al contenido
-                    self.tablaGastos.verticalHeader().setSectionResizeMode(QHeaderView.ResizeMode.ResizeToContents)
-                    self.tablaGastos.setSelectionBehavior(QTableWidget.SelectionBehavior.SelectRows)
-                    self.tablaGastos.setEditTriggers(QAbstractItemView.EditTrigger.NoEditTriggers)
-                    
-                    self.tablaGastos.setRowCount(len(busqueda) + 1)
-                    
-                    for i, row in enumerate(busqueda):
-                        for j, val in enumerate(row):
-                            if val is None:
-                                val = ''
-                            item = QTableWidgetItem(str(val))
-                            
-                            #Indices de las columnas que contienen fechas
-                            if j == 1:  
-                                fecha = QDate.fromString(str(val), "yyyy-MM-dd")  # Convertir la fecha a objeto QDate
-                                item.setText(fecha.toString("dd-MM-yyyy"))  # Establecer el formato de visualización
-                            if j == 3:
-                                item.setTextAlignment(Qt.AlignmentFlag.AlignRight)   
-                            if j == 1:  # Ajustar alineación para ciertas columnas
-                                item.setTextAlignment(Qt.AlignmentFlag.AlignCenter) 
-                            if j in [4, 5]:
-                                item.setTextAlignment(Qt.AlignmentFlag.AlignRight) 
-                            self.tablaGastos.setItem(i, j, item)
-                            
-                        # Calcular y mostrar la suma de las horas diarias en la fila adicional
-                        total_debe = sum(int(row[4]) for row in busqueda)
-                        item_total_horas = QTableWidgetItem('TOTAL:')
-                        item_total_horas.setFont(itemColor_TOTAL(item_total_horas))  # Funcion para estilos de item
-                        item_total_horas.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
-                        self.tablaGastos.setItem(len(busqueda), 3, item_total_horas)
-                        
-                        item_suma_horas1 = QTableWidgetItem(str(total_debe))
-                        item_suma_horas1.setFont(itemColor_RESULTADO(item_suma_horas1))  # Funcion para estilos de item
-                        item_suma_horas1.setTextAlignment(Qt.AlignmentFlag.AlignRight)
-                        self.tablaGastos.setItem(len(busqueda), 4, item_suma_horas1)
-                        
-                        total_haber = sum(int(row[5]) for row in busqueda)
-                        item_suma_horas2 = QTableWidgetItem(str(total_haber))
-                        item_suma_horas2.setFont(itemColor_RESULTADO(item_suma_horas2))  # Funcion para estilos de item
-                        item_suma_horas2.setTextAlignment(Qt.AlignmentFlag.AlignRight)
-                        self.tablaGastos.setItem(len(busqueda), 5, item_suma_horas2)
-                        
+                    tabla_contabilidad(self,cursor,busqueda,QHeaderView,QTableWidget,QAbstractItemView,QTableWidgetItem,QDate,Qt)
                 else:
                     resultado_empleado("Calculo de horas diarias",f"Se encontraron {len(busqueda)} coincidencias.")
                 
@@ -4094,8 +3550,7 @@ class VentanaPrincipal(QMainWindow):
             try:
                 db = conectar_base_de_datos()
                 cursor = db.cursor()
-                query = f"DELETE FROM contabilidad WHERE id_concepto = {idconcepto}"
-                cursor.execute(query)
+                cursor.execute(f"DELETE FROM contabilidad WHERE id_concepto = {idconcepto}")
                 db.commit()  # Confirmar los cambios en la base de datos
                 
                 if cursor.rowcount > 0:
@@ -4106,12 +3561,7 @@ class VentanaPrincipal(QMainWindow):
                     if self.tablaGastos.rowCount() == 1:
                         self.tablaGastos.setRowCount(0)  # Eliminar el registro de las sumatorias
 
-                    self.fecha_gastos.setDate(QDate.currentDate())
-                    self.concepto_debe.clear()
-                    self.concepto_haber.clear()
-                    self.debe.clear()
-                    self.haber.clear()
-                    
+                    limpiarCampos(self,QDate)                    
                 else:
                     mensaje_ingreso_datos("Registro de Ingresos-Egresos","Registro no eliminado")
                             
@@ -4124,12 +3574,7 @@ class VentanaPrincipal(QMainWindow):
             print("no se elimino")
     
     def limp_tabla(self):
-        # Obtener el número de filas de la tabla
-        filas = self.tablaGastos.rowCount()
-
-        # Eliminar todas las filas de la tabla
-        for i in range(filas):
-            self.tablaGastos.removeRow(0) 
+        clear_tabla(self)
     
     def tabla_resumen(self):
         tabla_libroDiario_CONTABILIDAD(self,Workbook,Font,PatternFill,Border,Side,numbers,QFileDialog)

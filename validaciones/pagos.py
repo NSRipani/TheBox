@@ -1,15 +1,20 @@
+from qss.style_item import itemColor_RESULTADO, itemColor_TOTAL
+
 def seleccionDeTablaPAGOS(self,QDate):
     fila = self.tablePagos.currentRow()
     
     id_user = self.tablePagos.item(fila,1).text()
     id_user = int(id_user)
-    id_discipl = self.tablePagos.item(fila,2).text()
+    name_discipl = self.tablePagos.item(fila,2).text()
     tipoPago = self.tablePagos.item(fila,3).text()
     fecha = self.tablePagos.item(fila,4).text()
     fecha = QDate.fromString(fecha,"dd-MM-yyyy")
     
+    disciplinas =  [self.idDis.itemText(i).lower() for i in range(self.idDis.count())]
+    id_disciplina = disciplinas.index(name_discipl.lower())
+    
     self.idUser.setCurrentText(str(id_user))
-    self.idDis.setCurrentText(id_discipl)
+    self.idDis.setCurrentIndex(id_disciplina)
     self.input_tipoDePago.setCurrentText(tipoPago)
     self.input_fechaDePago.setDate(fecha)
 
@@ -39,4 +44,20 @@ def tabla_pagos(self, cursor, result, QHeaderView, QTableWidget, QAbstractItemVi
                 item.setText(fecha.toString("dd-MM-yyyy"))  # Establecer el formato de visualización
             if j in [0, 1, 3, 4]:  # Ajustar alineación para ciertas columnas
                 item.setTextAlignment(Qt.AlignmentFlag.AlignCenter)   
-            self.tablePagos.setItem(i, j, item)
+            self.tablePagos.setItem(i, j, item)   
+            
+    total_pagos = sum(int(row[5]) for row in result)
+            
+    # Agregar una fila al final de la tabla para mostrar la suma total
+    total_row = self.tablePagos.rowCount()
+    self.tablePagos.insertRow(total_row)
+    
+    motrar_total = QTableWidgetItem('TOTAL:')
+    motrar_total.setFont(itemColor_TOTAL(motrar_total))  # Funcion para estilos de item
+    motrar_total.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
+    self.tablePagos.setItem(len(result), 4, motrar_total)
+    
+    suma_pagos = QTableWidgetItem(str(total_pagos))
+    suma_pagos.setFont(itemColor_RESULTADO(suma_pagos))  # Funcion para estilos de item
+    suma_pagos.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
+    self.tablePagos.setItem(len(result), 5, suma_pagos)       

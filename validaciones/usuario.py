@@ -1,7 +1,6 @@
-from modulos.mensajes import mensaje_ingreso_datos,aviso_descargaExitosa,aviso_Advertencia_De_excel
+from modulos.mensajes import mensaje_ingreso_datos
 import re
-
-
+from qss.style_item import itemColor_RESULTADO, itemColor_TOTAL
 # from openpyxl import Workbook
 
 def registroUSER(nombre1 , apellido1, dni, sexo, edad, celu):
@@ -181,3 +180,22 @@ def tabla_registroUSER(self, cursor, resultados, QHeaderView, QTableWidget, QAbs
             if j in [0, 3, 5, 6, 7]:  # Ajustar alineación para ciertas columnas
                 item.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
             self.tablaRecord.setItem(i, j, item)
+    
+    # Calcular la cantidad total de registros
+    total_registros = sum(1 for row in resultados if row[1])
+
+    # Crear una nueva fila en la tabla para mostrar la cantidad total de días de asistencia
+    row_count = self.tablaRecord.rowCount()
+    self.tablaRecord.insertRow(row_count) # Agregar la nueva fila al final de la tabla
+
+    # Mostrar la etiqueta "Total" en la primera celda de la fila de total
+    item_label = QTableWidgetItem("TOTAL:")
+    item_label.setFont(itemColor_TOTAL(item_label)) # Funcion para estilos de item
+    item_label.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
+    self.tablaRecord.setItem(row_count, 0, item_label)
+    
+    # Agregar la información de la cantidad total de días de asistencia en la nueva fila
+    item_registros = QTableWidgetItem(str(total_registros))
+    item_registros.setFont(itemColor_RESULTADO(item_registros)) # Funcion para estilos de item
+    item_registros.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
+    self.tablaRecord.setItem(row_count, 1, item_registros)  # Agregar en la primera columna o en la que desees
