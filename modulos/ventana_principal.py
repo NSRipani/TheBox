@@ -38,7 +38,7 @@ from validaciones.horas import tabla_HorasTotales,tabla_HorasXEmpleado, autoComp
 
 # Módulo de Registro de Asistencia
 from modulos.asistencia import Asistencia
-
+from modulos.reg_empleado import Empleado
 # Módulo de Estilos
 from qss.style_item import itemColor_TOTAL, itemColor_RESULTADO
 from qss import style
@@ -1014,7 +1014,7 @@ class VentanaPrincipal(QMainWindow):
         self.view_nomb = QLineEdit(comboView)
         self.view_nomb.setFixedWidth(200)
         self.view_nomb.setStyleSheet(style.estilo_lineedit)
-        elementos.addWidget(view_nomb)     # EN ESTA LINEA COMO LA SIGUIENTE, AGREGA LOS ALEMENTOS AL LAYOUT HORIZONTAL
+        elementos.addWidget(view_nomb)     
         elementos.addWidget(self.view_nomb)
         
         #  Conexión a la base de datos MySQL
@@ -1040,7 +1040,7 @@ class VentanaPrincipal(QMainWindow):
         self.view_apellido = QLineEdit(comboView)
         self.view_apellido.setStyleSheet(style.estilo_lineedit)
         self.view_apellido.setFixedWidth(200)
-        elementos.addWidget(view_apellido)     # EN ESTA LINEA COMO LA SIGUIENTE, AGREGA LOS ALEMENTOS AL LAYOUT HORIZONTAL
+        elementos.addWidget(view_apellido)     
         elementos.addWidget(self.view_apellido)
         # layout_H14.addSpacing(10)
                 
@@ -1052,9 +1052,9 @@ class VentanaPrincipal(QMainWindow):
         self.view_disciplina.addItems(lista)
         self.view_disciplina.setStyleSheet(style.estilo_combo)
         self.view_disciplina.setFixedWidth(200)
-        elementos.addWidget(view_disciplina)       # EN ESTA LINEA COMO LA SIGUIENTE, AGREGA LOS ALEMENTOS AL LAYOUT HORIZONTAL
+        elementos.addWidget(view_disciplina)       
         elementos.addWidget(self.view_disciplina)
-        # layout_H14.addSpacing(370)      # AGREGA ESPACIO ENTRE ELEMENTOS
+        # layout_H14.addSpacing(370)      
                 
         view_fechaDePago = QLabel("Fecha de pago:", comboView)
         view_fechaDePago.setStyleSheet(style.label)
@@ -1067,7 +1067,7 @@ class VentanaPrincipal(QMainWindow):
         self.view_fechaDePago.setDate(QDate.currentDate())
         self.view_fechaDePago.setDisplayFormat("dd/MM/yyyy")
         self.view_fechaDePago.setCalendarPopup(True)
-        elementos2.addWidget(view_fechaDePago)      # EN ESTA LINEA COMO LA SIGUIENTE, AGREGA LOS ALEMENTOS AL LAYOUT HORIZONTAL
+        elementos2.addWidget(view_fechaDePago)      
         elementos2.addWidget(self.view_fechaDePago)
         elementos2.addSpacing(5)
         
@@ -1082,7 +1082,7 @@ class VentanaPrincipal(QMainWindow):
         self.view_al2.setDate(QDate.currentDate())
         self.view_al2.setDisplayFormat("dd/MM/yyyy")
         self.view_al2.setCalendarPopup(True)
-        elementos2.addWidget(view_al2)      # EN ESTA LINEA COMO LA SIGUIENTE, AGREGA LOS ALEMENTOS AL LAYOUT HORIZONTAL
+        elementos2.addWidget(view_al2)      
         elementos2.addWidget(self.view_al2)
         elementos2.setContentsMargins(0,0,50,0)     # AGREGA MARGEN ENTRE ELEMENTOS
         
@@ -1097,7 +1097,7 @@ class VentanaPrincipal(QMainWindow):
         self.view_asistencia.setDate(QDate.currentDate())
         self.view_asistencia.setDisplayFormat("dd/MM/yyyy")
         self.view_asistencia.setCalendarPopup(True)
-        elementos3.addWidget(view_asistencia)       # EN ESTA LINEA COMO LA SIGUIENTE, AGREGA LOS ALEMENTOS AL LAYOUT HORIZONTAL
+        elementos3.addWidget(view_asistencia)       
         elementos3.addWidget(self.view_asistencia)
 
         view_al = QLabel("Al:", comboView)
@@ -1112,9 +1112,9 @@ class VentanaPrincipal(QMainWindow):
         self.view_al.setDisplayFormat("dd/MM/yyyy")
         self.view_al.setCalendarPopup(True)
         elementos3.addSpacing(5)
-        elementos3.addWidget(view_al)       # EN ESTA LINEA COMO LA SIGUIENTE, AGREGA LOS ALEMENTOS AL LAYOUT HORIZONTAL
+        elementos3.addWidget(view_al)       
         elementos3.addWidget(self.view_al)
-        elementos3.addSpacing(10)       # AGREGA ESPACIO ENTRE ELEMENTOS
+        elementos3.addSpacing(10)       
         
         layout_H18 = QHBoxLayout() 
         layout_H18.setAlignment(Qt.AlignmentFlag.AlignRight)
@@ -1233,7 +1233,7 @@ class VentanaPrincipal(QMainWindow):
         self.nombre_emp = QLineEdit(grupo_empleados)
         self.nombre_emp.setStyleSheet(style.estilo_lineedit)
         self.nombre_emp.setFixedWidth(200)  
-        layout_emp.addWidget(nombre_emp)        # EN ESTA LINEA COMO LA SIGUIENTE, AGREGA LOS ALEMENTOS AL LAYOUT HORIZONTAL
+        layout_emp.addWidget(nombre_emp)        
         layout_emp.addWidget(self.nombre_emp)
         
         apellido_emp = QLabel('Apellido:',grupo_empleados)
@@ -1242,7 +1242,7 @@ class VentanaPrincipal(QMainWindow):
         self.apellido_emp = QLineEdit(grupo_empleados)
         self.apellido_emp.setStyleSheet(style.estilo_lineedit)
         self.apellido_emp.setFixedWidth(200)
-        layout_emp.addWidget(apellido_emp)      # EN ESTA LINEA COMO LA SIGUIENTE, AGREGA LOS ALEMENTOS AL LAYOUT HORIZONTAL
+        layout_emp.addWidget(apellido_emp)      
         layout_emp.addWidget(self.apellido_emp)
         
         sexo_emp = QLabel('Sexo:',grupo_empleados)
@@ -1252,7 +1252,7 @@ class VentanaPrincipal(QMainWindow):
         self.sexo_emp.setStyleSheet(style.estilo_combo)
         self.sexo_emp.setFixedWidth(200)
         self.sexo_emp.addItems(["- Elige un sexo","Hombre","Mujer"])
-        layout_emp.addWidget(sexo_emp)      # EN ESTA LINEA COMO LA SIGUIENTE, AGREGA LOS ALEMENTOS AL LAYOUT HORIZONTAL
+        layout_emp.addWidget(sexo_emp)      
         layout_emp.addWidget(self.sexo_emp)
         
         dni_emp = QLabel('DNI:',grupo_empleados)
@@ -1263,7 +1263,7 @@ class VentanaPrincipal(QMainWindow):
         self.dni_emp.setFixedWidth(200)
         self.dni_emp.setMaxLength(8)
         self.dni_emp.setPlaceholderText("Sin puntos")
-        layout_emp1.addWidget(dni_emp)       # EN ESTA LINEA COMO LA SIGUIENTE, AGREGA LOS ALEMENTOS AL LAYOUT HORIZONTAL
+        layout_emp1.addWidget(dni_emp)       
         layout_emp1.addWidget(self.dni_emp)
         
         celular_emp = QLabel('N° Celular:',grupo_empleados)
@@ -1274,7 +1274,7 @@ class VentanaPrincipal(QMainWindow):
         self.celular_emp.setFixedWidth(200)
         self.celular_emp.setMaxLength(10)
         self.celular_emp.setPlaceholderText("Ej: 3425123456")
-        layout_emp1.addWidget(celular_emp)       # EN ESTA LINEA COMO LA SIGUIENTE, AGREGA LOS ALEMENTOS AL LAYOUT HORIZONTAL
+        layout_emp1.addWidget(celular_emp)       
         layout_emp1.addWidget(self.celular_emp)
         
         fecha = QLabel("Fecha:", grupo_empleados)
@@ -1288,7 +1288,7 @@ class VentanaPrincipal(QMainWindow):
         self.fecha.setDate(QDate.currentDate())
         self.fecha.setDisplayFormat("dd/MM/yyyy")
         self.fecha.setCalendarPopup(True)
-        layout_emp1.addWidget(fecha)        # EN ESTA LINEA COMO LA SIGUIENTE, AGREGA LOS ALEMENTOS AL LAYOUT HORIZONTAL
+        layout_emp1.addWidget(fecha)       
         layout_emp1.addWidget(self.fecha)
         
         # LAYOUT HORIZONTAL PARA BOTONES
@@ -1334,7 +1334,7 @@ class VentanaPrincipal(QMainWindow):
         excel_empleado.setFixedWidth(200)
         excel_empleado.setCursor(Qt.CursorShape.PointingHandCursor)
         excel_empleado.setStyleSheet(style.boton_excel)
-        emp5.addWidget(excel_empleado)
+        # emp5.addWidget(excel_empleado)
                 
         primer = QHBoxLayout()
         primer.addLayout(layout_emp)
@@ -1357,14 +1357,32 @@ class VentanaPrincipal(QMainWindow):
         self.tablaEmp.setCursor(Qt.CursorShape.PointingHandCursor)
         self.tablaEmp.setStyleSheet(style.esttabla)
         
-        # AGREDA LA TABLA A LA GRILLA
-        grid_emp.addWidget(self.tablaEmp,1,0,1,5)
-                
+        self.empleado = QPushButton('CARGAR EMPLEADO', grupo_empleados)
+        self.empleado.setStyleSheet(style.estilo_boton)
+        self.empleado.setCursor(Qt.CursorShape.PointingHandCursor)
+        self.empleado.clicked.connect(self.emp)
+        
+        # AGREDA LA TABLA y BOTON A LA GRILLA 
+        h = QHBoxLayout()
+        
+        v = QVBoxLayout()
+        v.setAlignment(Qt.AlignmentFlag.AlignTop)
+        v.addSpacing(20)
+        v.addWidget(self.empleado)
+        v.addSpacing(10)
+        v.addWidget(excel_empleado)
+        
+        h.addWidget(self.tablaEmp)
+        h.addSpacing(25)
+        h.addLayout(v)
+        h.addSpacing(25)
+        grid_emp.addLayout(h,1,0,1,5)
+        
         # CONECTA LAS SEÑALES A LAS FUNCIONES
         guardar_empleado.clicked.connect(self.guardar_empleado)
         mostrar_empleado.clicked.connect(self.mostrar_empleado)
         limpiar_camp.clicked.connect(self.limpiar_camp)
-        limpiarTABLA.clicked.connect(self.limpiar_tabla_empleados)
+        # limpiarTABLA.clicked.connect(self.limpiar_tabla_empleados)
         actualizar_empleado.clicked.connect(self.actualizar_empleado)
         eliminar_empleado.clicked.connect(self.eliminar_empleado)
         excel_empleado.clicked.connect(self.planilla_excel)
@@ -1382,7 +1400,7 @@ class VentanaPrincipal(QMainWindow):
         #-----------------------------------------------------------------
         # PESTAÑA REGISTRAR DIA DE TRABAJO DE LOS EMPLEADOS
         
-        # SE CREA ComboBox 'RECORD EMPLEADOS'
+        # SE CREA ComboBox 'RECORD DIA DE TRABAJO'
         grupo_horas = QGroupBox("Detalle de dias de tabajo de empleados", pestania_horas)
         grupo_horas.setStyleSheet(style.estilo_grupo)
         # Colocar el ComboBox a la grilla
@@ -1564,7 +1582,7 @@ class VentanaPrincipal(QMainWindow):
         #-----------------------------------------------------------------
         # PESTAÑA REGISTRAR GASTOS
         
-        # SE CREA ComboBox 'RECORD EMPLEADOS'
+        # SE CREA ComboBox 'REGISTRAR GASTOS'
         grupo_resumen = QGroupBox("Detalle de ingresos-egresos mensuales", pestania_resumen)
         grupo_resumen.setStyleSheet(style.estilo_grupo)
         # Colocar el ComboBox a la grilla
@@ -1779,6 +1797,10 @@ class VentanaPrincipal(QMainWindow):
         file_menu = menubar.addMenu('&Archivo')
         file_menu.addAction(self.exit_action)
     
+    def emp(self):
+        self.cargaEmple = Empleado()
+        self.cargaEmple.show()
+        
     # FUNCIONES PARA VINCULAR EL QTabWidget
     def record(self):
         self.tab.setCurrentIndex(0)
@@ -3080,140 +3102,144 @@ class VentanaPrincipal(QMainWindow):
             
     # ----------------------- EMPLEADOS -------------------------------------
     def guardar_empleado(self):
-        nom_emp = self.nombre_emp.text().capitalize().title()
-        apell_emp = self.apellido_emp.text().capitalize().title()
-        sex_emp = self.sexo_emp.currentText()
-        dni_emp = self.dni_emp.text()
-        cel = self.celular_emp.text()
-        fecha = self.fecha.date().toPyDate()
+        pass
+        # nom_emp = self.nombre_emp.text().capitalize().title()
+        # apell_emp = self.apellido_emp.text().capitalize().title()
+        # sex_emp = self.sexo_emp.currentText()
+        # dni_emp = self.dni_emp.text()
+        # cel = self.celular_emp.text()
+        # fecha = self.fecha.date().toPyDate()
         
-        variables(re,nom_emp,apell_emp,sex_emp,dni_emp,cel)
+        # variables(re,nom_emp,apell_emp,sex_emp,dni_emp,cel)
         
-        empleado = inicio("Registro de empleado","¿Desea guardar los datos?")
-        if empleado == QMessageBox.StandardButton.Yes:
-            try:
-                db = conectar_base_de_datos()
-                cursor = db.cursor()
-                cursor.execute("INSERT INTO registro_empleado (nombre, apellido, sexo, dni, celular, fecha) VALUES (%s,%s,%s,%s,%s,%s)",
-                               (nom_emp,apell_emp,sex_emp,dni_emp,cel,fecha))
-                db.commit()
+        # empleado = inicio("Registro de empleado","¿Desea guardar los datos?")
+        # if empleado == QMessageBox.StandardButton.Yes:
+        #     try:
+        #         db = conectar_base_de_datos()
+        #         cursor = db.cursor()
+        #         cursor.execute("INSERT INTO registro_empleado (nombre, apellido, sexo, dni, celular, fecha) VALUES (%s,%s,%s,%s,%s,%s)",
+        #                        (nom_emp,apell_emp,sex_emp,dni_emp,cel,fecha))
+        #         db.commit()
                 
-                if cursor:
-                    mensaje_ingreso_datos("Registro de empleado","Registro cargado")
-                    lim_campos(self,QDate)
-                else:
-                    mensaje_ingreso_datos("Registro de empleado","Registro no cargado")
+        #         if cursor:
+        #             mensaje_ingreso_datos("Registro de empleado","Registro cargado")
+        #             lim_campos(self,QDate)
+        #         else:
+        #             mensaje_ingreso_datos("Registro de empleado","Registro no cargado")
                     
-                cursor.close()
-                db.close()
-            except Error as ex:
-                errorConsulta("Registro de alumnos",f"Error en la consulta: {str(ex)}")
-                print("Error executing the query", ex)
-        else:
-            print("no se guardo")
+        #         cursor.close()
+        #         db.close()
+        #     except Error as ex:
+        #         errorConsulta("Registro de alumnos",f"Error en la consulta: {str(ex)}")
+        #         print("Error executing the query", ex)
+        # else:
+        #     print("no se guardo")
             
     def autocompleto_de_datos_empleado(self):
-        seleccion_DeTabla(self,QDate)
+        pass# seleccion_DeTabla(self,QDate)
     
     def actualizar_empleado(self):
-        # Verificar si se ha seleccionado una fila
-        if not self.tablaEmp.currentItem():
-            mensaje_ingreso_datos("Registro de empleado","Debe seleccionar el empleado te la tabla para actualizar")
-            return
+        pass
+        # # Verificar si se ha seleccionado una fila
+        # if not self.tablaEmp.currentItem():
+        #     mensaje_ingreso_datos("Registro de empleado","Debe seleccionar el empleado te la tabla para actualizar")
+        #     return
         
-        id_empl = int(self.tablaEmp.item(self.tablaEmp.currentRow(), 0).text())
-        nom_emp = self.nombre_emp.text().capitalize().title()
-        apell_emp = self.apellido_emp.text().capitalize().title()
-        sex_emp = self.sexo_emp.currentText()
-        dni_emp = self.dni_emp.text()
-        cel = self.celular_emp.text()
-        fecha = self.fecha.date().toPyDate()
+        # id_empl = int(self.tablaEmp.item(self.tablaEmp.currentRow(), 0).text())
+        # nom_emp = self.nombre_emp.text().capitalize().title()
+        # apell_emp = self.apellido_emp.text().capitalize().title()
+        # sex_emp = self.sexo_emp.currentText()
+        # dni_emp = self.dni_emp.text()
+        # cel = self.celular_emp.text()
+        # fecha = self.fecha.date().toPyDate()
 
-        variables(re,nom_emp,apell_emp,sex_emp,dni_emp,cel)
+        # variables(re,nom_emp,apell_emp,sex_emp,dni_emp,cel)
                 
-        empleado_Actualizar = inicio("Busqueda de empleado","¿Seguro que desea actulizar?")
-        if empleado_Actualizar == QMessageBox.StandardButton.Yes:   
-            try:
-                db = conectar_base_de_datos()
-                cursor = db.cursor()
-                cursor.execute("UPDATE registro_empleado SET nombre = %s, apellido = %s, sexo = %s, dni = %s, celular = %s, fecha = %s"
-                               "WHERE id_empleado = %s", (nom_emp,apell_emp,sex_emp,dni_emp,cel,fecha,id_empl))
-                db.commit() 
+        # empleado_Actualizar = inicio("Busqueda de empleado","¿Seguro que desea actulizar?")
+        # if empleado_Actualizar == QMessageBox.StandardButton.Yes:   
+        #     try:
+        #         db = conectar_base_de_datos()
+        #         cursor = db.cursor()
+        #         cursor.execute("UPDATE registro_empleado SET nombre = %s, apellido = %s, sexo = %s, dni = %s, celular = %s, fecha = %s"
+        #                        "WHERE id_empleado = %s", (nom_emp,apell_emp,sex_emp,dni_emp,cel,fecha,id_empl))
+        #         db.commit() 
                 
-                if cursor:
-                    mensaje_ingreso_datos("Registro de empleado","Registro actualizado")
-                    lim_campos(self,QDate)
-                else:
-                    mensaje_ingreso_datos("Registro de empleado","Registro no actualizado")
+        #         if cursor:
+        #             mensaje_ingreso_datos("Registro de empleado","Registro actualizado")
+        #             lim_campos(self,QDate)
+        #         else:
+        #             mensaje_ingreso_datos("Registro de empleado","Registro no actualizado")
                     
-                cursor.close()
-                db.close() 
+        #         cursor.close()
+        #         db.close() 
                 
-                self.tablaEmp.clearSelection() # Deselecciona la fila
+        #         self.tablaEmp.clearSelection() # Deselecciona la fila
                 
-            except Error as ex:
-                errorConsulta("Registro de empleado",f"Error en la consulta: {str(ex)}")
-                print("Error executing the query", ex)
-        else:
-            print("No se actualiza registro")
+        #     except Error as ex:
+        #         errorConsulta("Registro de empleado",f"Error en la consulta: {str(ex)}")
+        #         print("Error executing the query", ex)
+        # else:
+        #     print("No se actualiza registro")
     
     def mostrar_empleado(self):  
-        try:
-            db = conectar_base_de_datos()
-            cursor = db.cursor()
-            cursor.execute(f"SELECT * FROM registro_empleado ORDER BY id_empleado")
-            busqueda = cursor.fetchall()
-            if len(busqueda) > 0:
-                resultado_empleado("Registro de empleado",f"Se encontraron {len(busqueda)} coincidencias.")
-                verTabla(self,cursor,busqueda,QHeaderView,QTableWidget,QAbstractItemView,QTableWidgetItem,QDate,Qt)
-            else:
-                resultado_empleado("Registro de empleado",f"Se encontraron {len(busqueda)} coincidencias.")
+        pass
+        # try:
+        #     db = conectar_base_de_datos()
+        #     cursor = db.cursor()
+        #     cursor.execute(f"SELECT * FROM registro_empleado ORDER BY id_empleado")
+        #     busqueda = cursor.fetchall()
+        #     if len(busqueda) > 0:
+        #         resultado_empleado("Registro de empleado",f"Se encontraron {len(busqueda)} coincidencias.")
+        #         verTabla(self,cursor,busqueda,QHeaderView,QTableWidget,QAbstractItemView,QTableWidgetItem,QDate,Qt)
+        #     else:
+        #         resultado_empleado("Registro de empleado",f"Se encontraron {len(busqueda)} coincidencias.")
                 
-            cursor.close()
-            db.close()
-        except Error as ex:
-            errorConsulta("Registro de empleado",f"Error en la consulta: {str(ex)}")
-            print("Error executing the query", ex)
+        #     cursor.close()
+        #     db.close()
+        # except Error as ex:
+        #     errorConsulta("Registro de empleado",f"Error en la consulta: {str(ex)}")
+        #     print("Error executing the query", ex)
     
-    def limpiar_tabla_empleados(self):
-        clearTabla(self) 
+    # def limpiar_tabla_empleados(self):
+    #     clearTabla(self) 
     
     def limpiar_camp(self):
         lim_campos(self,QDate)
 
     def eliminar_empleado(self):
-        # Primero corroborar la seleccion de la fila
-        if not self.tablaEmp.currentItem():
-            mensaje_ingreso_datos("Registro de empleado","Debe buscar el empleado a eliminar")
-            return
+        pass
+        # # Primero corroborar la seleccion de la fila
+        # if not self.tablaEmp.currentItem():
+        #     mensaje_ingreso_datos("Registro de empleado","Debe buscar el empleado a eliminar")
+        #     return
         
-        # Selecciona la fila acutal
-        selectedRow = self.tablaEmp.currentItem().row()
-        id_emple = int(self.tablaEmp.item(selectedRow, 0).text())
+        # # Selecciona la fila acutal
+        # selectedRow = self.tablaEmp.currentItem().row()
+        # id_emple = int(self.tablaEmp.item(selectedRow, 0).text())
         
-        empleado_eliminar = inicio("Registro de empleado","¿Desea eliminar el empleado?")
-        if empleado_eliminar == QMessageBox.StandardButton.Yes:
-            try:
-                db = conectar_base_de_datos()
-                cursor = db.cursor()
-                cursor.execute(f"DELETE FROM registro_empleado WHERE id_empleado = {id_emple}")
-                db.commit()
-                if cursor:
-                    mensaje_ingreso_datos("Registro de empleado","Registro eliminado")
-                    self.tablaEmp.removeRow(selectedRow)
-                    lim_campos(self,QDate)
-                    self.tablaEmp.clearSelection() # Deselecciona la fila
-                else:
-                    mensaje_ingreso_datos("Registro de empleado","Registro no eliminado")  
+        # empleado_eliminar = inicio("Registro de empleado","¿Desea eliminar el empleado?")
+        # if empleado_eliminar == QMessageBox.StandardButton.Yes:
+        #     try:
+        #         db = conectar_base_de_datos()
+        #         cursor = db.cursor()
+        #         cursor.execute(f"DELETE FROM registro_empleado WHERE id_empleado = {id_emple}")
+        #         db.commit()
+        #         if cursor:
+        #             mensaje_ingreso_datos("Registro de empleado","Registro eliminado")
+        #             self.tablaEmp.removeRow(selectedRow)
+        #             lim_campos(self,QDate)
+        #             self.tablaEmp.clearSelection() # Deselecciona la fila
+        #         else:
+        #             mensaje_ingreso_datos("Registro de empleado","Registro no eliminado")  
                                 
-            except Error as ex:
-                errorConsulta("Registro de empleado",f"Error en la consulta: {str(ex)}")
-                print("Error executing the query", ex)
-            cursor.close()
-            db.close()
+        #     except Error as ex:
+        #         errorConsulta("Registro de empleado",f"Error en la consulta: {str(ex)}")
+        #         print("Error executing the query", ex)
+        #     cursor.close()
+        #     db.close()
             
-        else:
-            print("No se elimino registro")
+        # else:
+        #     print("No se elimino registro")
             
     def planilla_excel(self):
         empleado_EXCEL(self,Workbook,Font,PatternFill,Border,Side,numbers,QFileDialog)

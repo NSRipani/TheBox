@@ -27,7 +27,7 @@ def variables(re,nom_emp,apell_emp,sex_emp,dni_emp,cel):
 def lim_campos(self,QDate):
     self.nombre_emp.clear()
     self.apellido_emp.clear()
-    self.sexo_emp.setCurrentIndex(0)
+    self.sexo_emp.clear()
     self.dni_emp.clear()
     self.celular_emp.clear()
     self.fecha.setDate(QDate.currentDate())
@@ -45,7 +45,7 @@ def seleccion_DeTabla(self,QDate):
     
     self.nombre_emp.setText(nom_emp)
     self.apellido_emp.setText(apell_emp)
-    self.sexo_emp.setCurrentText(sex_emp)
+    self.sexo_emp.setText(sex_emp)
     self.dni_emp.setText(dni_emp)
     self.celular_emp.setText(cel)
     self.fecha.setDate(fecha)
