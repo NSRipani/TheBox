@@ -187,6 +187,11 @@ message_box_estilos_eliminar_profesor = """
     }"""
 
 # VENTANA PRINCIPAL
+fondo2 = """
+    QWidget{
+        background-color: QLinearGradient(x1: 0, y1: 0, x2: 1, y2: 1, stop: 0 #ffffff, stop: 0.45 #fcb045,stop: 0.66 #ff9500, stop: 1 #000000);
+    }"""
+
 checkbox = """
     QCheckBox {
         font-size: 20px;
@@ -508,7 +513,22 @@ estilo_boton = """
     QPushButton:pressed {
         background-color: #be4e0c;
     }"""
-
+boton_excel_icon = """
+    QPushButton {
+        background-color: #34b625;
+        color: white;
+        border: 2px solid black;
+        border-radius: 5px;
+        padding: 5px 10px;
+        font-weight: bold;
+        font-size: 16px;
+    }
+    QPushButton:hover {
+        background-color: #6ca15f;
+    }
+    QPushButton:pressed {
+        background-color: #0d730d;
+    }"""
 boton_excel = """
     QPushButton {
         background-color: #008000;

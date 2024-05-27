@@ -28,17 +28,18 @@ from utilidades.completar_combobox import actualizar_combobox_user, actualizar_c
 from validaciones.usuario import (registroUSER, limpiasElementosUser, limpiar_campos, actualizarUSER, limpiasElementosUseraActualizar, 
                                   autoCompletadoACTULIZAR,limpiar_tablaRecord, limpiar_tablaUpdate, tabla_registroUSER)
 from validaciones.updateYdelete_usuario import tabla_updateUSER, tabla_eliminarUSER, borrarTabla
-from validaciones.archivo_Excel import (tabla_registroUSUARIO, tabla_registroDISCIPLINA,empleado_EXCEL, horas_Excel, 
+from validaciones.archivo_Excel import (tabla_registroUSUARIO, tabla_registroDISCIPLINA, horas_Excel, 
                                         tabla_libroDiario_CONTABILIDAD, pagos_EXCEL)
 from validaciones.disciplina import guardarACTIVIDAD, completar_CAMPOS_ACTIVIDAD, clear_tabla_disciplina, tabla_DISCIPLINA
 from validaciones.pagos import seleccionDeTablaPAGOS, tabla_pagos
 from validaciones.contabilidad import validadciones, tabla_contabilidad, selccionarTabla, limpiarCampos, clear_tabla
-from validaciones.empleado import variables,lim_campos, seleccion_DeTabla, verTabla, clearTabla
-from validaciones.horas import tabla_HorasTotales,tabla_HorasXEmpleado, autoCompletado, tabla_General
+from validaciones.horas import tabla_HorasTotales,tabla_HorasXEmpleado, autoCompletado, tabla_General, clearTabla
 
 # Módulo de Registro de Asistencia
 from modulos.asistencia import Asistencia
 from modulos.reg_empleado import Empleado
+from modulos.carga_cuenta import CuentaContable
+
 # Módulo de Estilos
 from qss.style_item import itemColor_TOTAL, itemColor_RESULTADO
 from qss import style
@@ -150,14 +151,14 @@ class VentanaPrincipal(QMainWindow):
         empleados_button.setIconSize(QSize(25,25))
         empleados_button.clicked.connect(self.empleados)
         
-        horas = QPushButton(" HORAS", self)
-        horas.setCursor(Qt.CursorShape.PointingHandCursor)
-        horas.setStyleSheet(style.estilo)
-        horas.setFixedSize(200, 55)
-        icon7 = QIcon("img/hora.png")
-        horas.setIcon(icon7)
-        horas.setIconSize(QSize(25,25))
-        horas.clicked.connect(self.horas)
+        # horas = QPushButton(" HORAS", self)
+        # horas.setCursor(Qt.CursorShape.PointingHandCursor)
+        # horas.setStyleSheet(style.estilo)
+        # horas.setFixedSize(200, 55)
+        # icon7 = QIcon("img/hora.png")
+        # horas.setIcon(icon7)
+        # horas.setIconSize(QSize(25,25))
+        # horas.clicked.connect(self.horas)
         
         gastos_button = QPushButton(" CONTABILIDAD", self)
         gastos_button.setCursor(Qt.CursorShape.PointingHandCursor)
@@ -191,8 +192,8 @@ class VentanaPrincipal(QMainWindow):
         frame_layout.addWidget(self.asistencia_button)
         frame_layout.setSpacing(15)
         frame_layout.addWidget(empleados_button)
-        frame_layout.setSpacing(15)
-        frame_layout.addWidget(horas)
+        # frame_layout.setSpacing(15)
+        # frame_layout.addWidget(horas)
         frame_layout.setSpacing(15)
         frame_layout.addWidget(gastos_button)
         
@@ -220,8 +221,8 @@ class VentanaPrincipal(QMainWindow):
         pestania_view.setStyleSheet("background-color: #f48c06;")
         pestania_empleados = QWidget()
         pestania_empleados.setStyleSheet("background-color: #f48c06;")
-        pestania_horas = QWidget()
-        pestania_horas.setStyleSheet("background-color: #f48c06;")
+        # pestania_horas = QWidget()
+        # pestania_horas.setStyleSheet("background-color: #f48c06;")
         pestania_resumen = QWidget()
         pestania_resumen.setStyleSheet("background-color: #f48c06;")
         
@@ -233,7 +234,7 @@ class VentanaPrincipal(QMainWindow):
         self.tab.addTab(pestania_pagos, 'PAGOS')
         self.tab.addTab(pestania_view, 'BALANCE')
         self.tab.addTab(pestania_empleados, 'EMPLEADOS')
-        self.tab.addTab(pestania_horas, 'HORAS')
+        # self.tab.addTab(pestania_horas, 'HORAS')
         self.tab.addTab(pestania_resumen, 'CONTABILIDAD')
    
         # ----------------------------------------------------
@@ -1227,113 +1228,109 @@ class VentanaPrincipal(QMainWindow):
         layout_emp1 = QHBoxLayout()
         layout_emp1.setAlignment(Qt.AlignmentFlag.AlignLeft)
         
-        nombre_emp = QLabel('Nombre:',grupo_empleados)
-        nombre_emp.setStyleSheet(style.label)
-        nombre_emp.setFixedWidth(80)
-        self.nombre_emp = QLineEdit(grupo_empleados)
-        self.nombre_emp.setStyleSheet(style.estilo_lineedit)
-        self.nombre_emp.setFixedWidth(200)  
-        layout_emp.addWidget(nombre_emp)        
-        layout_emp.addWidget(self.nombre_emp)
+        id_horas_empleado = QLabel('Nombre:',grupo_empleados)
+        id_horas_empleado.setStyleSheet(style.label)
+        id_horas_empleado.setFixedWidth(80)
+        self.id_horas_empleado = QComboBox(grupo_empleados)
+        self.id_horas_empleado.setStyleSheet(style.estilo_combo)
+        self.id_horas_empleado.setFixedWidth(200)
+        layout_emp.addWidget(id_horas_empleado)        
+        layout_emp.addWidget(self.id_horas_empleado)
         
-        apellido_emp = QLabel('Apellido:',grupo_empleados)
-        apellido_emp.setStyleSheet(style.label)
-        apellido_emp.setFixedWidth(100)
-        self.apellido_emp = QLineEdit(grupo_empleados)
-        self.apellido_emp.setStyleSheet(style.estilo_lineedit)
-        self.apellido_emp.setFixedWidth(200)
-        layout_emp.addWidget(apellido_emp)      
-        layout_emp.addWidget(self.apellido_emp)
+        completar_nombre_empleado(self)
+        # self.id_horas_empleado.currentData()[0]
         
-        sexo_emp = QLabel('Sexo:',grupo_empleados)
-        sexo_emp.setStyleSheet(style.label)
-        sexo_emp.setFixedWidth(60)
-        self.sexo_emp = QComboBox(grupo_empleados)
-        self.sexo_emp.setStyleSheet(style.estilo_combo)
-        self.sexo_emp.setFixedWidth(200)
-        self.sexo_emp.addItems(["- Elige un sexo","Hombre","Mujer"])
-        layout_emp.addWidget(sexo_emp)      
-        layout_emp.addWidget(self.sexo_emp)
+        horas_tra = QLabel('Horas diarias:',grupo_empleados)
+        horas_tra.setStyleSheet(style.label)
+        horas_tra.setFixedWidth(120)
+        self.horas_tra = QLineEdit(grupo_empleados)
+        self.horas_tra.setStyleSheet(style.estilo_lineedit)
+        self.horas_tra.setFixedWidth(200)
+        layout_emp.addWidget(horas_tra)      
+        layout_emp.addWidget(self.horas_tra)
         
-        dni_emp = QLabel('DNI:',grupo_empleados)
-        dni_emp.setStyleSheet(style.label)
-        dni_emp.setFixedWidth(80)
-        self.dni_emp = QLineEdit(grupo_empleados)
-        self.dni_emp.setStyleSheet(style.estilo_lineedit)
-        self.dni_emp.setFixedWidth(200)
-        self.dni_emp.setMaxLength(8)
-        self.dni_emp.setPlaceholderText("Sin puntos")
-        layout_emp1.addWidget(dni_emp)       
-        layout_emp1.addWidget(self.dni_emp)
+        fecha_tra = QLabel('Fecha:',grupo_empleados)
+        fecha_tra.setStyleSheet(style.label)
+        fecha_tra.setFixedWidth(60)
+        self.fecha_tra = QDateEdit(grupo_empleados)
+        self.fecha_tra.setLocale(QLocale("es-AR"))
+        self.fecha_tra.setStyleSheet(style.estilo_fecha)
+        self.fecha_tra.setCursor(Qt.CursorShape.PointingHandCursor)
+        self.fecha_tra.setFixedWidth(200)
+        self.fecha_tra.setDate(QDate.currentDate())
+        self.fecha_tra.setDisplayFormat("dd/MM/yyyy")
+        self.fecha_tra.setCalendarPopup(True)
+        layout_emp.addWidget(fecha_tra)      
+        layout_emp.addWidget(self.fecha_tra)
         
-        celular_emp = QLabel('N° Celular:',grupo_empleados)
-        celular_emp.setStyleSheet(style.label)
-        celular_emp.setFixedWidth(100)
-        self.celular_emp = QLineEdit(grupo_empleados)
-        self.celular_emp.setStyleSheet(style.estilo_lineedit)
-        self.celular_emp.setFixedWidth(200)
-        self.celular_emp.setMaxLength(10)
-        self.celular_emp.setPlaceholderText("Ej: 3425123456")
-        layout_emp1.addWidget(celular_emp)       
-        layout_emp1.addWidget(self.celular_emp)
+        periodo = QLabel("Período:", grupo_empleados)
+        periodo.setStyleSheet(style.label)
+        periodo.setFixedWidth(80)
+        self.periodo = QDateEdit(grupo_empleados)
+        self.periodo.setStyleSheet(style.estilo_fecha)
+        self.periodo.setLocale(QLocale("es-AR"))
+        self.periodo.setCursor(Qt.CursorShape.PointingHandCursor)
+        self.periodo.setFixedWidth(200)
+        self.periodo.setDate(QDate.currentDate())
+        self.periodo.setDisplayFormat("dd/MM/yyyy")
+        self.periodo.setCalendarPopup(True)
+        layout_emp1.addWidget(periodo)       
+        layout_emp1.addWidget(self.periodo)
         
-        fecha = QLabel("Fecha:", grupo_empleados)
-        fecha.setStyleSheet(style.label)
-        fecha.setFixedWidth(60)
-        self.fecha = QDateEdit(grupo_empleados)
-        self.fecha.setStyleSheet(style.estilo_fecha)
-        self.fecha.setLocale(QLocale("es-AR"))
-        self.fecha.setCursor(Qt.CursorShape.PointingHandCursor)
-        self.fecha.setFixedWidth(200)
-        self.fecha.setDate(QDate.currentDate())
-        self.fecha.setDisplayFormat("dd/MM/yyyy")
-        self.fecha.setCalendarPopup(True)
-        layout_emp1.addWidget(fecha)       
-        layout_emp1.addWidget(self.fecha)
+        fin_tra = QLabel('Al:',grupo_empleados)
+        fin_tra.setStyleSheet(style.label)
+        fin_tra.setFixedWidth(50)
+        self.fin_tra = QDateEdit(grupo_empleados)
+        self.fin_tra.setLocale(QLocale("es-AR"))
+        self.fin_tra.setStyleSheet(style.estilo_fecha)
+        self.fin_tra.setCursor(Qt.CursorShape.PointingHandCursor)
+        self.fin_tra.setFixedWidth(200)
+        self.fin_tra.setDate(QDate.currentDate())
+        self.fin_tra.setDisplayFormat("dd/MM/yyyy")
+        self.fin_tra.setCalendarPopup(True)
+        layout_emp1.addWidget(fin_tra)       
+        layout_emp1.addWidget(self.fin_tra)
         
         # LAYOUT HORIZONTAL PARA BOTONES
         emp3 = QHBoxLayout()
         emp3.setAlignment(Qt.AlignmentFlag.AlignRight)
-        guardar_empleado = QPushButton('GUARDAR', grupo_empleados)
-        guardar_empleado.setFixedWidth(200)
-        guardar_empleado.setCursor(Qt.CursorShape.PointingHandCursor)
-        guardar_empleado.setStyleSheet(style.estilo_boton)
-        mostrar_empleado = QPushButton('MOSTRAR TABLA', grupo_empleados)
-        mostrar_empleado.setFixedWidth(200)
-        mostrar_empleado.setCursor(Qt.CursorShape.PointingHandCursor)
-        mostrar_empleado.setStyleSheet(style.estilo_boton)
-        actualizar_empleado = QPushButton('ACTUALIZAR', grupo_empleados)
-        actualizar_empleado.setCursor(Qt.CursorShape.PointingHandCursor)
-        actualizar_empleado.setFixedWidth(200)
-        actualizar_empleado.setStyleSheet(style.estilo_boton)
-        emp3.addWidget(guardar_empleado)
-        emp3.addWidget(mostrar_empleado)
-        emp3.addWidget(actualizar_empleado)
+        guardar_hora = QPushButton('GUARDAR', grupo_empleados)
+        guardar_hora.setFixedWidth(200)
+        guardar_hora.setCursor(Qt.CursorShape.PointingHandCursor)
+        guardar_hora.setStyleSheet(style.estilo_boton)
+        guardar_hora.clicked.connect(self.guardar_horas)
+        
+        button02 = QPushButton('PERIODO DE HORAS', grupo_empleados)
+        button02.setFixedWidth(200)
+        button02.setCursor(Qt.CursorShape.PointingHandCursor)
+        button02.setStyleSheet(style.estilo_boton)
+        button02.clicked.connect(self.horas_empleado_totales)
+        
+        emp3.addWidget(guardar_hora)
+        emp3.addWidget(button02)
         
         emp4 =  QHBoxLayout()
         emp4.setAlignment(Qt.AlignmentFlag.AlignRight)
-        eliminar_empleado = QPushButton('ELIMINAR', grupo_empleados)
-        eliminar_empleado.setFixedWidth(200)
-        eliminar_empleado.setCursor(Qt.CursorShape.PointingHandCursor)
-        eliminar_empleado.setStyleSheet(style.estilo_boton)
-        limpiarTABLA = QPushButton('LIMPIAR TABLA', grupo_empleados)
-        limpiarTABLA.setFixedWidth(200)
-        limpiarTABLA.setCursor(Qt.CursorShape.PointingHandCursor)
-        limpiarTABLA.setStyleSheet(style.estilo_boton)
-        limpiar_camp = QPushButton('LIMPIAR CAMPOS', grupo_empleados)
-        limpiar_camp.setFixedWidth(200)
-        limpiar_camp.setCursor(Qt.CursorShape.PointingHandCursor)
-        limpiar_camp.setStyleSheet(style.estilo_boton)
-        emp4.addWidget(eliminar_empleado)
-        emp4.addWidget(limpiarTABLA)
-        emp4.addWidget(limpiar_camp)
+        actualizar_hoas = QPushButton('ACTUALIZAR', grupo_empleados)
+        actualizar_hoas.setCursor(Qt.CursorShape.PointingHandCursor)
+        actualizar_hoas.setFixedWidth(200)
+        actualizar_hoas.setStyleSheet(style.estilo_boton)
+        actualizar_hoas.clicked.connect(self.actualizar_horas)
         
-        emp5 = QHBoxLayout()
-        emp5.setAlignment(Qt.AlignmentFlag.AlignRight)
-        excel_empleado = QPushButton('DESCARGAR PLANILLA', grupo_empleados)
-        excel_empleado.setFixedWidth(200)
-        excel_empleado.setCursor(Qt.CursorShape.PointingHandCursor)
-        excel_empleado.setStyleSheet(style.boton_excel)
+        eliminar_horas = QPushButton('ELIMINAR', grupo_empleados)
+        eliminar_horas.setFixedWidth(200)
+        eliminar_horas.setCursor(Qt.CursorShape.PointingHandCursor)
+        eliminar_horas.setStyleSheet(style.estilo_boton)
+        eliminar_horas.clicked.connect(self.eliminar_horas)
+        
+        # 
+        emp4.addWidget(actualizar_hoas)
+        emp4.addWidget(eliminar_horas)
+        # emp4.addWidget(limpiar_camp)
+        
+        # emp5 = QHBoxLayout()
+        # emp5.setAlignment(Qt.AlignmentFlag.AlignRight)
+        
         # emp5.addWidget(excel_empleado)
                 
         primer = QHBoxLayout()
@@ -1342,25 +1339,50 @@ class VentanaPrincipal(QMainWindow):
         segundo = QHBoxLayout()
         segundo.addLayout(layout_emp1)
         segundo.addLayout(emp4)
-        tercero = QHBoxLayout()
-        tercero.addLayout(emp5)
+        # tercero = QHBoxLayout()
+        # tercero.addLayout(emp5)
         
         # AGREDA LAYOUT HORIZONTALES AL LAYOUT VERTICAL
         vertical_v.addLayout(primer)
         vertical_v.addLayout(segundo)
-        vertical_v.addLayout(tercero)
+        # vertical_v.addLayout(tercero)
         
         grid_emp.addLayout(vertical_v,0,0,1,5)
         
         # CREA LA TABLA
-        self.tablaEmp = QTableWidget(grupo_empleados)
-        self.tablaEmp.setCursor(Qt.CursorShape.PointingHandCursor)
-        self.tablaEmp.setStyleSheet(style.esttabla)
+        self.tablaHoras = QTableWidget(grupo_empleados)
+        self.tablaHoras.setCursor(Qt.CursorShape.PointingHandCursor)
+        self.tablaHoras.setStyleSheet(style.esttabla)
+        self.tablaHoras.clicked.connect(self.autocompleto_de_datos_horas)
         
-        self.empleado = QPushButton('CARGAR EMPLEADO', grupo_empleados)
+        self.empleado = QPushButton('EMPLEADO', grupo_empleados)
         self.empleado.setStyleSheet(style.estilo_boton)
         self.empleado.setCursor(Qt.CursorShape.PointingHandCursor)
         self.empleado.clicked.connect(self.emp)
+        
+        limpiarTABLA = QPushButton('LIMPIAR TABLA', grupo_empleados)
+        limpiarTABLA.setFixedWidth(200)
+        limpiarTABLA.setCursor(Qt.CursorShape.PointingHandCursor)
+        limpiarTABLA.setStyleSheet(style.estilo_boton)
+        limpiarTABLA.clicked.connect(self.limpiar_tabla_horas)
+        
+        limpiar_camp = QPushButton('LIMPIAR CAMPOS', grupo_empleados)
+        limpiar_camp.setFixedWidth(200)
+        limpiar_camp.setCursor(Qt.CursorShape.PointingHandCursor)
+        limpiar_camp.setStyleSheet(style.estilo_boton)
+        limpiar_camp.clicked.connect(self.limpiar_campos_horas)
+        
+        button_horas_por_empleado = QPushButton('HORAS POR EMPLEADO', grupo_empleados)
+        button_horas_por_empleado.setFixedWidth(200)
+        button_horas_por_empleado.setCursor(Qt.CursorShape.PointingHandCursor)
+        button_horas_por_empleado.setStyleSheet(style.estilo_boton)
+        button_horas_por_empleado.clicked.connect(self.horas_empleado)
+        
+        execel_horas = QPushButton('DESCARGAR PLANILLA', grupo_empleados)
+        execel_horas.setFixedWidth(200)
+        execel_horas.setCursor(Qt.CursorShape.PointingHandCursor)
+        execel_horas.setStyleSheet(style.boton_excel)
+        execel_horas.clicked.connect(self.excel_horas)
         
         # AGREDA LA TABLA y BOTON A LA GRILLA 
         h = QHBoxLayout()
@@ -1370,24 +1392,23 @@ class VentanaPrincipal(QMainWindow):
         v.addSpacing(20)
         v.addWidget(self.empleado)
         v.addSpacing(10)
-        v.addWidget(excel_empleado)
+        v.addWidget(limpiarTABLA)
+        v.addSpacing(10)
+        v.addWidget(limpiar_camp)
+        v.addSpacing(10)
+        v.addWidget(button_horas_por_empleado)
+        v.addSpacing(10)
+        v.addWidget(execel_horas)
         
-        h.addWidget(self.tablaEmp)
+        h.addWidget(self.tablaHoras)
         h.addSpacing(25)
         h.addLayout(v)
         h.addSpacing(25)
         grid_emp.addLayout(h,1,0,1,5)
         
         # CONECTA LAS SEÑALES A LAS FUNCIONES
-        guardar_empleado.clicked.connect(self.guardar_empleado)
-        mostrar_empleado.clicked.connect(self.mostrar_empleado)
-        limpiar_camp.clicked.connect(self.limpiar_camp)
-        # limpiarTABLA.clicked.connect(self.limpiar_tabla_empleados)
-        actualizar_empleado.clicked.connect(self.actualizar_empleado)
-        eliminar_empleado.clicked.connect(self.eliminar_empleado)
-        excel_empleado.clicked.connect(self.planilla_excel)
+        # limpiar_camp.clicked.connect(self.limpiar_camp)
         
-        self.tablaEmp.clicked.connect(self.autocompleto_de_datos_empleado)
         
         # Establecer el diseño del QGroupBox
         grupo_empleados.setLayout(grid_emp)
@@ -1398,186 +1419,7 @@ class VentanaPrincipal(QMainWindow):
         pestania_empleados.setLayout(tab_emp_layout)
         
         #-----------------------------------------------------------------
-        # PESTAÑA REGISTRAR DIA DE TRABAJO DE LOS EMPLEADOS
         
-        # SE CREA ComboBox 'RECORD DIA DE TRABAJO'
-        grupo_horas = QGroupBox("Detalle de dias de tabajo de empleados", pestania_horas)
-        grupo_horas.setStyleSheet(style.estilo_grupo)
-        # Colocar el ComboBox a la grilla
-        grid_horas = QGridLayout(grupo_horas)
-        
-        # CONTENEDOR DE LOS LAYOUT HORIZONTALES
-        layout_horasV = QVBoxLayout()
- 
-        # Crear un diseño para elementos '''LABEL y QLineEdit''' al diseño del QGroupBoxel QGroupBox
-        layout_horas = QHBoxLayout()
-        layout_horas.setAlignment(Qt.AlignmentFlag.AlignLeft)
-        layout_horas2 = QHBoxLayout()
-        layout_horas2.setAlignment(Qt.AlignmentFlag.AlignLeft)
-                      
-        id_horas_empleado = QLabel('Nombre:',grupo_horas)
-        id_horas_empleado.setStyleSheet(style.label)
-        id_horas_empleado.setFixedWidth(100)
-        self.id_horas_empleado = QComboBox(grupo_horas)
-        self.id_horas_empleado.setStyleSheet(style.estilo_combo)
-        self.id_horas_empleado.setFixedWidth(200)
-        layout_horas.addWidget(id_horas_empleado)        # EN ESTA LINEA COMO LA SIGUIENTE, AGREGA LOS ALEMENTOS AL LAYOUT HORIZONTAL
-        layout_horas.addWidget(self.id_horas_empleado)
-
-        completar_nombre_empleado(self)
-        # self.id_horas_empleado.currentData()[0]
-        
-        horas_tra = QLabel('Horas diarias:',grupo_horas)
-        horas_tra.setStyleSheet(style.label)
-        horas_tra.setFixedWidth(120)
-        self.horas_tra = QLineEdit(grupo_horas)
-        self.horas_tra.setStyleSheet(style.estilo_lineedit)
-        self.horas_tra.setFixedWidth(60)
-        layout_horas.addWidget(horas_tra)        # EN ESTA LINEA COMO LA SIGUIENTE, AGREGA LOS ALEMENTOS AL LAYOUT HORIZONTAL
-        layout_horas.addWidget(self.horas_tra)
-        
-        fecha_tra = QLabel("Fecha:", grupo_horas)
-        fecha_tra.setStyleSheet(style.label)
-        fecha_tra.setFixedWidth(60)
-        self.fecha_tra = QDateEdit(grupo_horas)
-        self.fecha_tra.setLocale(QLocale("es-AR"))
-        self.fecha_tra.setStyleSheet(style.estilo_fecha)
-        self.fecha_tra.setCursor(Qt.CursorShape.PointingHandCursor)
-        self.fecha_tra.setFixedWidth(150)
-        self.fecha_tra.setDate(QDate.currentDate())
-        self.fecha_tra.setDisplayFormat("dd/MM/yyyy")
-        self.fecha_tra.setCalendarPopup(True)
-        layout_horas.addWidget(fecha_tra)        # EN ESTA LINEA COMO LA SIGUIENTE, AGREGA LOS ALEMENTOS AL LAYOUT HORIZONTAL
-        layout_horas.addWidget(self.fecha_tra)
-        
-        periodo = QLabel("Período:", grupo_horas)
-        periodo.setStyleSheet(style.label)
-        periodo.setFixedWidth(100)
-        self.periodo = QDateEdit(grupo_horas)
-        self.periodo.setStyleSheet(style.estilo_fecha)
-        self.periodo.setLocale(QLocale("es-AR"))
-        self.periodo.setCursor(Qt.CursorShape.PointingHandCursor)
-        self.periodo.setFixedWidth(150)
-        self.periodo.setDate(QDate.currentDate())
-        self.periodo.setDisplayFormat("dd/MM/yyyy")
-        self.periodo.setCalendarPopup(True)
-        layout_horas2.addWidget(periodo)      # EN ESTA LINEA COMO LA SIGUIENTE, AGREGA LOS ALEMENTOS AL LAYOUT HORIZONTAL
-        layout_horas2.addWidget(self.periodo)
-        
-        fin_tra = QLabel("Al:", grupo_horas)
-        fin_tra.setStyleSheet(style.label)
-        fin_tra.setFixedWidth(30)
-        self.fin_tra = QDateEdit(grupo_horas)
-        self.fin_tra.setLocale(QLocale("es-AR"))
-        self.fin_tra.setStyleSheet(style.estilo_fecha)
-        self.fin_tra.setCursor(Qt.CursorShape.PointingHandCursor)
-        self.fin_tra.setFixedWidth(150)
-        self.fin_tra.setDate(QDate.currentDate())
-        self.fin_tra.setDisplayFormat("dd/MM/yyyy")
-        self.fin_tra.setCalendarPopup(True)
-        layout_horas2.addWidget(fin_tra)      # EN ESTA LINEA COMO LA SIGUIENTE, AGREGA LOS ALEMENTOS AL LAYOUT HORIZONTAL
-        layout_horas2.addWidget(self.fin_tra)
-        
-        # LAYOUT HORIZONTAL PARA BOTONES
-        layout_horas_botones1 = QHBoxLayout()
-        layout_horas_botones1.setAlignment(Qt.AlignmentFlag.AlignRight)
-        button00 = QPushButton('GUARDAR', grupo_horas)
-        button00.setFixedWidth(200)
-        button00.setCursor(Qt.CursorShape.PointingHandCursor)
-        button00.setStyleSheet(style.estilo_boton)
-        button_actualizar_horas = QPushButton('ACTUALIZAR', grupo_horas)
-        button_actualizar_horas.setFixedWidth(200)
-        button_actualizar_horas.setCursor(Qt.CursorShape.PointingHandCursor)
-        button_actualizar_horas.setStyleSheet(style.estilo_boton)
-        button01 = QPushButton('MOSTRAR', grupo_horas)
-        button01.setFixedWidth(200)
-        button01.setCursor(Qt.CursorShape.PointingHandCursor)
-        button01.setStyleSheet(style.estilo_boton)
-        
-        # AGREGA A LOS "LAYOUT"
-        layout_horas_botones1.addWidget(button00)
-        layout_horas_botones1.addWidget(button_actualizar_horas)
-        layout_horas_botones1.addWidget(button01)
-        
-        # LAYOUT VERTICAL PARA LOS LAYOUT HORIZONTAL
-        layout_horas_botones2 = QHBoxLayout()
-        layout_horas_botones2.setAlignment(Qt.AlignmentFlag.AlignRight)
-        button_eliminar_horas = QPushButton('ELIMINAR', grupo_horas)
-        button_eliminar_horas.setFixedWidth(200)
-        button_eliminar_horas.setCursor(Qt.CursorShape.PointingHandCursor)
-        button_eliminar_horas.setStyleSheet(style.estilo_boton)
-        button_horas_por_empleado = QPushButton('HORAS POR EMPLEADO', grupo_horas)
-        button_horas_por_empleado.setFixedWidth(200)
-        button_horas_por_empleado.setCursor(Qt.CursorShape.PointingHandCursor)
-        button_horas_por_empleado.setStyleSheet(style.estilo_boton)
-        button02 = QPushButton('HORAS TOTALES', grupo_horas)
-        button02.setFixedWidth(200)
-        button02.setCursor(Qt.CursorShape.PointingHandCursor)
-        button02.setStyleSheet(style.estilo_boton)
-        
-        # AGREGA A LOS "LAYOUT"
-        layout_horas_botones2.addWidget(button_eliminar_horas)
-        layout_horas_botones2.addWidget(button_horas_por_empleado)
-        layout_horas_botones2.addWidget(button02)
-        
-        layout_horas_botones3 = QHBoxLayout()
-        layout_horas_botones3.setAlignment(Qt.AlignmentFlag.AlignRight)
-        button03 = QPushButton('LIMPIAR CAMPOS', grupo_horas)
-        button03.setFixedWidth(200)
-        button03.setCursor(Qt.CursorShape.PointingHandCursor)
-        button03.setStyleSheet(style.estilo_boton)
-        execel_horas = QPushButton('DESCARGAR PLANILLA', grupo_horas)
-        execel_horas.setFixedWidth(200)
-        execel_horas.setCursor(Qt.CursorShape.PointingHandCursor)
-        execel_horas.setStyleSheet(style.boton_excel)
-        
-        # AGREGA A LOS "LAYOUT"
-        layout_horas_botones3.addWidget(button03)
-        layout_horas_botones3.addWidget(execel_horas)
-        
-        layout_horas_contenedor1 = QHBoxLayout()
-        layout_horas_contenedor1.addLayout(layout_horas)
-        layout_horas_contenedor1.addLayout(layout_horas_botones1)
-        layout_horas_contenedor2 = QHBoxLayout()
-        layout_horas_contenedor2.addLayout(layout_horas2)
-        layout_horas_contenedor2.addLayout(layout_horas_botones2)
-        layout_horas_contenedor3 = QHBoxLayout()
-        layout_horas_contenedor3.addLayout(layout_horas_botones3)
-        
-        # AGREDA LAYOUT HORIZONTALES AL LAYOUT VERTICAL
-        layout_horasV.addLayout(layout_horas_contenedor1)
-        layout_horasV.addLayout(layout_horas_contenedor2)
-        layout_horasV.addLayout(layout_horas_contenedor3)
-        
-        # CONECTA LAS SEÑALES A LAS FUNCIONES
-        button00.clicked.connect(self.guardar_horas)
-        button01.clicked.connect(self.mostrar_horas)
-        button02.clicked.connect(self.horas_empleado_totales)
-        button03.clicked.connect(self.limpiar_campos_hosas)
-        button_actualizar_horas.clicked.connect(self.actualizar_horas)
-        button_eliminar_horas.clicked.connect(self.eliminar_horas)
-        button_horas_por_empleado.clicked.connect(self.horas_empleado)
-        execel_horas.clicked.connect(self.excel_horas)
-        
-        # AGREDA EL LAYOUT VERTICAL A LA GRILLA
-        grid_horas.addLayout(layout_horasV,0,0,1,5)
-        
-        # CREA LA TABLA
-        self.tablaHoras = QTableWidget(grupo_horas)
-        self.tablaHoras.setCursor(Qt.CursorShape.PointingHandCursor)
-        self.tablaHoras.setStyleSheet(style.esttabla)
-        self.tablaHoras.clicked.connect(self.autocompleto_de_datos_horas)
-        
-        # AGREDA LA TABLA A LA GRILLA
-        grid_horas.addWidget(self.tablaHoras,1,0,1,5)
-
-        # Establecer el diseño del QGroupBox
-        grupo_horas.setLayout(grid_horas)
-        
-        # Agregar el QGroupBox a la primera pestaña (tab1)
-        tab_emp_layout = QVBoxLayout()
-        tab_emp_layout.addWidget(grupo_horas)
-        pestania_horas.setLayout(tab_emp_layout)
         
         #-----------------------------------------------------------------
         # PESTAÑA REGISTRAR GASTOS
@@ -1713,13 +1555,13 @@ class VentanaPrincipal(QMainWindow):
         boton_limpiarTabla = QPushButton('LIMPIAR TABLA', grupo_resumen)
         boton_limpiarTabla.setFixedWidth(200)
         boton_limpiarTabla.setCursor(Qt.CursorShape.PointingHandCursor)
-        boton_limpiarTabla.setStyleSheet(style.estilo_boton)
-        excel_resumen = QPushButton('DESCARGAR PLANILLA', grupo_resumen)
-        excel_resumen.setFixedWidth(200)
-        excel_resumen.setCursor(Qt.CursorShape.PointingHandCursor)
-        excel_resumen.setStyleSheet(style.boton_excel)
+        # boton_limpiarTabla.setStyleSheet(style.estilo_boton)
+        # excel_resumen = QPushButton('DESCARGAR PLANILLA', grupo_resumen)
+        # excel_resumen.setFixedWidth(200)
+        # excel_resumen.setCursor(Qt.CursorShape.PointingHandCursor)
+        # excel_resumen.setStyleSheet(style.boton_excel)
         botones_resumen3.addWidget(boton_limpiarTabla)
-        botones_resumen3.addWidget(excel_resumen)
+        # botones_resumen3.addWidget(excel_resumen)
         
         h1 = QHBoxLayout()
         h1.addLayout(layout_libro)
@@ -1742,7 +1584,6 @@ class VentanaPrincipal(QMainWindow):
         boton_limpiarTabla.clicked.connect(self.limp_tabla)
         button_eliminar.clicked.connect(self.eliminar_datos)
         buttonPERIODO.clicked.connect(self.visualizacion_datos)
-        excel_resumen.clicked.connect(self.tabla_resumen)  
         
         # AGREDA LOS LAYOUT VERTICAL A LA GRILLA
         grid_resumen.addLayout(vertical,0,0,1,5)
@@ -1753,8 +1594,40 @@ class VentanaPrincipal(QMainWindow):
         self.tablaGastos.setStyleSheet(style.esttabla)
         self.tablaGastos.clicked.connect(self.selecionarTabla)
         
+        cuenta = QPushButton('CARGAR CUENTA', grupo_resumen)
+        cuenta.setFixedWidth(200)
+        cuenta.setCursor(Qt.CursorShape.PointingHandCursor)
+        cuenta.setStyleSheet(style.estilo_boton)
+        cuenta.clicked.connect(self.cargar_cuenta)
+        
+        excel_resumen = QPushButton('DESCARGAR PLANILLA', grupo_resumen)
+        excel_resumen.setFixedWidth(200)
+        excel_resumen.setCursor(Qt.CursorShape.PointingHandCursor)
+        excel_resumen.setStyleSheet(style.boton_excel)
+        excel_resumen.clicked.connect(self.tabla_resumen)  
+        
+        # AGREDA LA TABLA y BOTON A LA GRILLA 
+        hori2 = QHBoxLayout()
+        
+        costado = QVBoxLayout()
+        costado.setAlignment(Qt.AlignmentFlag.AlignTop)
+        # v2.addSpacing(20)
+        # v2.addWidget(self.empleado)
+        # v2.addSpacing(10)
+        # v2.addWidget(limpiarTABLA)
+        costado.addSpacing(10)
+        costado.addWidget(cuenta)
+        costado.addSpacing(10)
+        costado.addWidget(excel_resumen)
+        
+        hori2.addWidget(self.tablaGastos)
+        hori2.addSpacing(25)
+        hori2.addLayout(costado)
+        hori2.addSpacing(25)
+        grid_resumen.addLayout(hori2,1,0,1,5)
+        
         # ESTABLECE LA TABLA EN A LA GRILLA
-        grid_resumen.addWidget(self.tablaGastos,1,0,1,5)
+        # grid_resumen.addWidget(self.tablaGastos,1,0,1,5)
     
         # Establecer el diseño del QGroupBox
         grupo_resumen.setLayout(grid_resumen)
@@ -1797,9 +1670,7 @@ class VentanaPrincipal(QMainWindow):
         file_menu = menubar.addMenu('&Archivo')
         file_menu.addAction(self.exit_action)
     
-    def emp(self):
-        self.cargaEmple = Empleado()
-        self.cargaEmple.show()
+    
         
     # FUNCIONES PARA VINCULAR EL QTabWidget
     def record(self):
@@ -1840,15 +1711,23 @@ class VentanaPrincipal(QMainWindow):
     def empleados(self):
         self.tab.setCurrentIndex(6)
         self.tab.setDisabled(False)
-    
-    def horas(self):
-        self.tab.setCurrentIndex(7)
-        self.tab.setDisabled(False)
         completar_nombre_empleado(self)
     
     def registro_de_ingYegreso(self):
-        self.tab.setCurrentIndex(8)
+        self.tab.setCurrentIndex(7)
         self.tab.setDisabled(False)
+    
+    # def registro_de_ingYegreso(self):
+    #     self.tab.setCurrentIndex(8)
+    #     self.tab.setDisabled(False)
+    
+    def emp(self):
+        self.cargaEmple = Empleado()
+        self.cargaEmple.show()
+        
+    def cargar_cuenta(self):
+        self.tipo_cuenta = CuentaContable()
+        self.tipo_cuenta.show()
     
     def actualizar_precio(self):
         index = self.idDis.currentIndex()
@@ -3100,151 +2979,7 @@ class VentanaPrincipal(QMainWindow):
             except Exception as e:
                 aviso_Advertencia_De_excel("Advertencia", f"No se pudo guardar el archivo: {str(e)}.\nEL archivo que deseas reemplazar esta en uso, de2ebes cerrar el archivo y luego guardarlo. El nombre puede ser parecido pero no igual.")
             
-    # ----------------------- EMPLEADOS -------------------------------------
-    def guardar_empleado(self):
-        pass
-        # nom_emp = self.nombre_emp.text().capitalize().title()
-        # apell_emp = self.apellido_emp.text().capitalize().title()
-        # sex_emp = self.sexo_emp.currentText()
-        # dni_emp = self.dni_emp.text()
-        # cel = self.celular_emp.text()
-        # fecha = self.fecha.date().toPyDate()
-        
-        # variables(re,nom_emp,apell_emp,sex_emp,dni_emp,cel)
-        
-        # empleado = inicio("Registro de empleado","¿Desea guardar los datos?")
-        # if empleado == QMessageBox.StandardButton.Yes:
-        #     try:
-        #         db = conectar_base_de_datos()
-        #         cursor = db.cursor()
-        #         cursor.execute("INSERT INTO registro_empleado (nombre, apellido, sexo, dni, celular, fecha) VALUES (%s,%s,%s,%s,%s,%s)",
-        #                        (nom_emp,apell_emp,sex_emp,dni_emp,cel,fecha))
-        #         db.commit()
-                
-        #         if cursor:
-        #             mensaje_ingreso_datos("Registro de empleado","Registro cargado")
-        #             lim_campos(self,QDate)
-        #         else:
-        #             mensaje_ingreso_datos("Registro de empleado","Registro no cargado")
-                    
-        #         cursor.close()
-        #         db.close()
-        #     except Error as ex:
-        #         errorConsulta("Registro de alumnos",f"Error en la consulta: {str(ex)}")
-        #         print("Error executing the query", ex)
-        # else:
-        #     print("no se guardo")
-            
-    def autocompleto_de_datos_empleado(self):
-        pass# seleccion_DeTabla(self,QDate)
-    
-    def actualizar_empleado(self):
-        pass
-        # # Verificar si se ha seleccionado una fila
-        # if not self.tablaEmp.currentItem():
-        #     mensaje_ingreso_datos("Registro de empleado","Debe seleccionar el empleado te la tabla para actualizar")
-        #     return
-        
-        # id_empl = int(self.tablaEmp.item(self.tablaEmp.currentRow(), 0).text())
-        # nom_emp = self.nombre_emp.text().capitalize().title()
-        # apell_emp = self.apellido_emp.text().capitalize().title()
-        # sex_emp = self.sexo_emp.currentText()
-        # dni_emp = self.dni_emp.text()
-        # cel = self.celular_emp.text()
-        # fecha = self.fecha.date().toPyDate()
-
-        # variables(re,nom_emp,apell_emp,sex_emp,dni_emp,cel)
-                
-        # empleado_Actualizar = inicio("Busqueda de empleado","¿Seguro que desea actulizar?")
-        # if empleado_Actualizar == QMessageBox.StandardButton.Yes:   
-        #     try:
-        #         db = conectar_base_de_datos()
-        #         cursor = db.cursor()
-        #         cursor.execute("UPDATE registro_empleado SET nombre = %s, apellido = %s, sexo = %s, dni = %s, celular = %s, fecha = %s"
-        #                        "WHERE id_empleado = %s", (nom_emp,apell_emp,sex_emp,dni_emp,cel,fecha,id_empl))
-        #         db.commit() 
-                
-        #         if cursor:
-        #             mensaje_ingreso_datos("Registro de empleado","Registro actualizado")
-        #             lim_campos(self,QDate)
-        #         else:
-        #             mensaje_ingreso_datos("Registro de empleado","Registro no actualizado")
-                    
-        #         cursor.close()
-        #         db.close() 
-                
-        #         self.tablaEmp.clearSelection() # Deselecciona la fila
-                
-        #     except Error as ex:
-        #         errorConsulta("Registro de empleado",f"Error en la consulta: {str(ex)}")
-        #         print("Error executing the query", ex)
-        # else:
-        #     print("No se actualiza registro")
-    
-    def mostrar_empleado(self):  
-        pass
-        # try:
-        #     db = conectar_base_de_datos()
-        #     cursor = db.cursor()
-        #     cursor.execute(f"SELECT * FROM registro_empleado ORDER BY id_empleado")
-        #     busqueda = cursor.fetchall()
-        #     if len(busqueda) > 0:
-        #         resultado_empleado("Registro de empleado",f"Se encontraron {len(busqueda)} coincidencias.")
-        #         verTabla(self,cursor,busqueda,QHeaderView,QTableWidget,QAbstractItemView,QTableWidgetItem,QDate,Qt)
-        #     else:
-        #         resultado_empleado("Registro de empleado",f"Se encontraron {len(busqueda)} coincidencias.")
-                
-        #     cursor.close()
-        #     db.close()
-        # except Error as ex:
-        #     errorConsulta("Registro de empleado",f"Error en la consulta: {str(ex)}")
-        #     print("Error executing the query", ex)
-    
-    # def limpiar_tabla_empleados(self):
-    #     clearTabla(self) 
-    
-    def limpiar_camp(self):
-        lim_campos(self,QDate)
-
-    def eliminar_empleado(self):
-        pass
-        # # Primero corroborar la seleccion de la fila
-        # if not self.tablaEmp.currentItem():
-        #     mensaje_ingreso_datos("Registro de empleado","Debe buscar el empleado a eliminar")
-        #     return
-        
-        # # Selecciona la fila acutal
-        # selectedRow = self.tablaEmp.currentItem().row()
-        # id_emple = int(self.tablaEmp.item(selectedRow, 0).text())
-        
-        # empleado_eliminar = inicio("Registro de empleado","¿Desea eliminar el empleado?")
-        # if empleado_eliminar == QMessageBox.StandardButton.Yes:
-        #     try:
-        #         db = conectar_base_de_datos()
-        #         cursor = db.cursor()
-        #         cursor.execute(f"DELETE FROM registro_empleado WHERE id_empleado = {id_emple}")
-        #         db.commit()
-        #         if cursor:
-        #             mensaje_ingreso_datos("Registro de empleado","Registro eliminado")
-        #             self.tablaEmp.removeRow(selectedRow)
-        #             lim_campos(self,QDate)
-        #             self.tablaEmp.clearSelection() # Deselecciona la fila
-        #         else:
-        #             mensaje_ingreso_datos("Registro de empleado","Registro no eliminado")  
-                                
-        #     except Error as ex:
-        #         errorConsulta("Registro de empleado",f"Error en la consulta: {str(ex)}")
-        #         print("Error executing the query", ex)
-        #     cursor.close()
-        #     db.close()
-            
-        # else:
-        #     print("No se elimino registro")
-            
-    def planilla_excel(self):
-        empleado_EXCEL(self,Workbook,Font,PatternFill,Border,Side,numbers,QFileDialog)
-            
-    # ----------------------- REGISTRO HORAS EMPLEADOS -------------------------------------
+    # ----------------------- EMPLEADOS Y HORAS -------------------------------------
     def guardar_horas(self):
         id_hora_emp = self.id_horas_empleado.currentData()[0]
         horas_horas = self.horas_tra.text()
@@ -3279,28 +3014,28 @@ class VentanaPrincipal(QMainWindow):
                 print("Error executing the query", ex)
         else:
             print("no se guardo")
-    
-    def mostrar_horas(self):  
-        try:
-            db = conectar_base_de_datos()
-            cursor = db.cursor()
-            cursor.execute("SELECT h.id_hora, h.id_empleado, e.nombre, h.horas_diaria, h.fecha FROM hora as h INNER JOIN registro_empleado as e on h.id_empleado = e.id_empleado ORDER BY id_empleado, fecha")
-            busqueda = cursor.fetchall()
-            if len(busqueda) > 0:
-                resultado_empleado("Registro de empleado",f"Se encontraron {len(busqueda)} coincidencias.")
-                tabla_General(self,cursor,busqueda,QHeaderView,QTableWidget,QAbstractItemView,QTableWidgetItem,Qt,QDate)                
-            else:
-                resultado_empleado("Registro de empleado",f"Se encontraron {len(busqueda)} coincidencias.")
+            
+    # def mostrar_horas(self):  
+    #     try:
+    #         db = conectar_base_de_datos()
+    #         cursor = db.cursor()
+    #         cursor.execute("SELECT h.id_hora, h.id_empleado, e.nombre, h.horas_diaria, h.fecha FROM hora as h INNER JOIN registro_empleado as e on h.id_empleado = e.id_empleado ORDER BY id_empleado, fecha")
+    #         busqueda = cursor.fetchall()
+    #         if len(busqueda) > 0:
+    #             resultado_empleado("Registro de empleado",f"Se encontraron {len(busqueda)} coincidencias.")
+    #             tabla_General(self,cursor,busqueda,QHeaderView,QTableWidget,QAbstractItemView,QTableWidgetItem,Qt,QDate)                
+    #         else:
+    #             resultado_empleado("Registro de empleado",f"Se encontraron {len(busqueda)} coincidencias.")
                 
-            cursor.close()
-            db.close()
-        except Error as ex:
-            errorConsulta("Registro de empleado",f"Error en la consulta: {str(ex)}")
-            print("Error executing the query", ex)
-    
+    #         cursor.close()
+    #         db.close()
+    #     except Error as ex:
+    #         errorConsulta("Registro de empleado",f"Error en la consulta: {str(ex)}")
+    #         print("Error executing the query", ex)
+            
     def autocompleto_de_datos_horas(self):
         autoCompletado(self,QDate,mensaje_ingreso_datos)
-        
+    
     def actualizar_horas(self):
         # Verificar si se ha seleccionado una fila
         if not self.tablaHoras.currentItem():
@@ -3346,11 +3081,7 @@ class VentanaPrincipal(QMainWindow):
                 print("Error executing the query", ex)
         else:
             print("No se actualiza registro")
-      
-    def limpiar_campos_hosas(self):
-        self.horas_tra.clear()
-        self.fecha_tra.setDate(QDate.currentDate())
-      
+            
     def eliminar_horas(self):
         # Primero corroborar la seleccion de la fila
         if not self.tablaHoras.currentItem():
@@ -3392,7 +3123,14 @@ class VentanaPrincipal(QMainWindow):
             db.close() 
         else:
             print("No se elimino registro")
-
+    
+    def limpiar_tabla_horas(self):
+        clearTabla(self) 
+    
+    def limpiar_campos_horas(self):
+        self.horas_tra.clear()
+        self.fecha_tra.setDate(QDate.currentDate())
+        
     def horas_empleado(self):   
         idNombre = self.id_horas_empleado.currentData()[0]
             
@@ -3409,7 +3147,7 @@ class VentanaPrincipal(QMainWindow):
         try:
             db = conectar_base_de_datos()
             cursor = db.cursor()
-            cursor.execute(f"SELECT h.id_hora, h.id_empleado, e.nombre, h.horas_diaria, h.fecha FROM hora AS h INNER JOIN registro_empleado AS e ON h.id_empleado = '{idNombre}' AND e.id_empleado = '{idNombre}' AND h.fecha BETWEEN '{principio}' AND '{final}' ORDER BY e.nombre, h.fecha")
+            cursor.execute(f"SELECT h.id_empleado, e.nombre, e.apellido, h.horas_diaria, h.fecha FROM hora AS h INNER JOIN registro_empleado AS e ON h.id_empleado = '{idNombre}' AND e.id_empleado = '{idNombre}' AND h.fecha BETWEEN '{principio}' AND '{final}' ORDER BY e.nombre, h.fecha")
             busqueda = cursor.fetchall()
                         
             if len(busqueda) > 0:
@@ -3425,7 +3163,7 @@ class VentanaPrincipal(QMainWindow):
         except Error as ex:
             errorConsulta("Registro de empleado",f"Error en la consulta: {str(ex)}")
             print("Error executing the query", ex)
-    
+        
     def horas_empleado_totales(self):
         principio = self.periodo.date().toString("yyyy-MM-dd")
         if not self.periodo.date().toString("yyyy-MM-dd"):
@@ -3439,7 +3177,7 @@ class VentanaPrincipal(QMainWindow):
         try:
             db = conectar_base_de_datos()
             cursor = db.cursor()
-            cursor.execute(f"SELECT h.id_hora, h.id_empleado, e.nombre, h.horas_diaria, h.fecha FROM hora AS h INNER JOIN registro_empleado AS e ON h.id_empleado = e.id_empleado AND h.fecha BETWEEN '{principio}' AND '{final}' ORDER BY e.nombre, h.fecha")
+            cursor.execute(f"SELECT h.id_empleado, e.nombre, e.apellido, h.horas_diaria, h.fecha FROM hora AS h INNER JOIN registro_empleado AS e ON h.id_empleado = e.id_empleado AND h.fecha BETWEEN '{principio}' AND '{final}' ORDER BY e.nombre, h.fecha")
             busqueda = cursor.fetchall()
                         
             if len(busqueda) > 0:
@@ -3455,10 +3193,10 @@ class VentanaPrincipal(QMainWindow):
             db.close()
         except Error as ex:
             errorConsulta("Registro de empleado",f"Error en la consulta: {str(ex)}")
-    
+            
     def excel_horas(self):
         horas_Excel(self,Workbook,Font,PatternFill,Border,Side,numbers,QFileDialog)
-
+        
     # -------------- LIBRO DIARIO -----------------------------
     def registrar_datos(self):
         date = self.fecha_gastos.date().toPyDate()
@@ -3601,6 +3339,7 @@ class VentanaPrincipal(QMainWindow):
     
     def limp_tabla(self):
         clear_tabla(self)
+    
     
     def tabla_resumen(self):
         tabla_libroDiario_CONTABILIDAD(self,Workbook,Font,PatternFill,Border,Side,numbers,QFileDialog)

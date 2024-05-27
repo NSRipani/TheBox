@@ -123,3 +123,32 @@ def tabla_contabilidad(self,cursor,busqueda,QHeaderView,QTableWidget,QAbstractIt
         item_suma_horas2.setFont(itemColor_RESULTADO(item_suma_horas2))  # Funcion para estilos de item
         item_suma_horas2.setTextAlignment(Qt.AlignmentFlag.AlignRight)
         self.tablaGastos.setItem(len(busqueda), 5, item_suma_horas2)
+        
+def cuentas(self,cursor,busqueda,QHeaderView,QTableWidget,QAbstractItemView,QTableWidgetItem,QDate,Qt):
+    headers = [description[0].replace('_', ' ').upper() for description in cursor.description]
+    
+    self.tablacuenta.setRowCount(len(busqueda))
+    self.tablacuenta.setColumnCount(len(busqueda[0]))
+    self.tablacuenta.setHorizontalHeaderLabels(headers)
+    
+    # Establecer la propiedad de "stretch" en el encabezado horizontal
+    header = self.tablacuenta.horizontalHeader()
+    header.setSectionResizeMode(QHeaderView.ResizeMode.Stretch)
+    header.setAutoScroll(True)
+    
+    vertical = self.tablacuenta.verticalHeader()
+    vertical.setVisible(False)
+    
+    # Ajustar el tamaño de las filas para que se ajusten al contenido
+    self.tablacuenta.verticalHeader().setSectionResizeMode(QHeaderView.ResizeMode.ResizeToContents)
+    self.tablacuenta.setSelectionBehavior(QTableWidget.SelectionBehavior.SelectRows)
+    self.tablacuenta.setEditTriggers(QAbstractItemView.EditTrigger.NoEditTriggers)
+    
+    for i, row in enumerate(busqueda):
+        for j, val in enumerate(row):
+            item = QTableWidgetItem(str(val))
+            
+            #Indices de las columnas que contienen fechas
+            if j == 0:  
+                item.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
+            self.tablacuenta.setItem(i, j, item)

@@ -268,7 +268,7 @@ def empleado_EXCEL(self,Workbook,Font,PatternFill,Border,Side,numbers,QFileDialo
                 cell.border = Border(top=Side(style="thin"), bottom=Side(style="thin"), left=Side(style="thin"), right=Side(style="thin"))
 
                 # Aplicar formato a las celdas de acuerdo al nombre de la columna
-                if cell in [1,2,3,4,5,6]:
+                if cell in [1,2,3,4,5,6,7]:
                     cell.number.format = numbers.FORMAT_TEXT
                     
     # Ajustar automáticamente el ancho de las columnas al contenido y encabezados

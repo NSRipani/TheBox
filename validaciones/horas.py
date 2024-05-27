@@ -47,6 +47,14 @@ def tabla_General(self,cursor,busqueda,QHeaderView,QTableWidget,QAbstractItemVie
     suma_horas2.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
     self.tablaHoras.setItem(len(busqueda), 3, suma_horas2)
                 
+def clearTabla(self):
+    # Obtener el número de filas de la tabla
+    num_filas = self.tablaHoras.rowCount()
+
+    # Eliminar todas las filas de la tabla
+    for i in range(num_filas):
+        self.tablaHoras.removeRow(0)
+    
 def autoCompletado(self,QDate,mensaje_ingreso_datos):
     fila = self.tablaHoras.currentRow()
     if fila == -1:  # Verifica si no se ha seleccionado ninguna fila
@@ -67,7 +75,7 @@ def autoCompletado(self,QDate,mensaje_ingreso_datos):
     self.horas_tra.setText(horas_h)
     self.fecha_tra.setDate(fecha_h)
 
-    self.tablaEmp.clearSelection() # Deselecciona la fila
+    self.tablaHoras.clearSelection() # Deselecciona la fila
 
 def tabla_HorasXEmpleado(self,cursor,busqueda,QHeaderView,QTableWidget,QAbstractItemView,QTableWidgetItem,Qt,QDate):
     headers = [description[0].replace('_', ' ').upper() for description in cursor.description]
@@ -99,7 +107,7 @@ def tabla_HorasXEmpleado(self,cursor,busqueda,QHeaderView,QTableWidget,QAbstract
                 fecha = QDate.fromString(str(val), "yyyy-MM-dd")  # Convertir la fecha a objeto QDate
                 item.setText(fecha.toString("dd-MM-yyyy"))  # Establecer el formato de visualización
             
-            if j in [0,1,3,4]:  # Ajustar alineación para ciertas columnas
+            if j in [0,3,4]:  # Ajustar alineación para ciertas columnas
                 item.setTextAlignment(Qt.AlignmentFlag.AlignCenter)   
             self.tablaHoras.setItem(i, j, item)
         
@@ -144,7 +152,7 @@ def tabla_HorasTotales(self,cursor,busqueda,QHeaderView,QTableWidget,QAbstractIt
                 fecha = QDate.fromString(str(val), "yyyy-MM-dd")  # Convertir la fecha a objeto QDate
                 item.setText(fecha.toString("dd-MM-yyyy"))  # Establecer el formato de visualización
             
-            if j in [0,1,3,4]:  # Ajustar alineación para ciertas columnas
+            if j in [0,3,4]:  # Ajustar alineación para ciertas columnas
                 item.setTextAlignment(Qt.AlignmentFlag.AlignCenter)   
             self.tablaHoras.setItem(i, j, item)
             
