@@ -254,6 +254,7 @@ estilo_grupo = """
         border: 1px solid black;
         border-radius: 5px;
         font: 20px;
+        font-weight: bold;
         margin-top: 1ex;
         font-family: "Segoe UI";
         background-color: #ffb268;
@@ -273,6 +274,14 @@ label = """
         font-size: 20px;
         font-family: "Segoe UI";
     }"""
+
+label_contable = """
+QLabel{
+    background-color: transparent;
+    font-size: 20px;
+    font-family: "Segoe UI";
+    font-weight: bold;
+}"""
 
 estilo_lineedit = """
     QLineEdit{
@@ -629,7 +638,7 @@ label_documento = """
         color: black;
         text-align: left;
     }"""
-
+    
 estilo_lineedit = """
     QLineEdit{
         background-color: white;

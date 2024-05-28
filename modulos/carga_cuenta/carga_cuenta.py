@@ -8,8 +8,8 @@ from openpyxl.styles import Font, PatternFill, Border, Side, numbers
 
 # Librerías de PyQt6
 from PyQt6.QtWidgets import (QLabel,QFormLayout,QFileDialog, QCompleter, QAbstractScrollArea, QHeaderView, QGridLayout, QHBoxLayout, QDateEdit, 
-                             QMessageBox, QTableWidget, QAbstractItemView, QTableWidgetItem, QPushButton, QLineEdit, QStatusBar, QWidget,
-                             QVBoxLayout, QGroupBox, QMainWindow, QFrame, QTabWidget, QComboBox)
+                             QMessageBox, QTableWidget, QAbstractItemView, QTableWidgetItem, QPushButton, QLineEdit, QSpacerItem, QWidget,
+                             QVBoxLayout, QGroupBox, QSizePolicy, QFrame, QTabWidget, QComboBox)
 from PyQt6.QtGui import QIcon, QKeySequence, QAction, QPixmap,QGuiApplication
 from PyQt6.QtCore import *
 
@@ -37,31 +37,41 @@ class CuentaContable(QWidget):
         self.setStyleSheet(style.fondo2)
         
         # Crear el QGroupBox
-        group_box = QGroupBox("CARGAR CUENTA CONTABLE")
+        group_box = QGroupBox("DETALLE DE CUENTA CONTABLE")
         group_box.setStyleSheet(style.estilo_grupo)
 
+        contenedor_formularios = QHBoxLayout()
+        
+        titulo_cuenta = QLabel("CARGAR CUENTA CONTABLE")
+        titulo_cuenta.setStyleSheet(style.label_contable)
+        
         # Crear el layout del formulario
-        form_layout = QFormLayout()
+        form_layout_cuenta = QFormLayout()
+        form_layout_tipoCuenta = QFormLayout()
         
         # Ajustar alineación y espaciado
-        form_layout.setLabelAlignment(Qt.AlignmentFlag.AlignRight)
-        form_layout.setFormAlignment(Qt.AlignmentFlag.AlignCenter)
-        form_layout.setSpacing(10)
-        form_layout.setContentsMargins(10, 10, 10, 10)
-
+        form_layout_cuenta.setLabelAlignment(Qt.AlignmentFlag.AlignRight)
+        form_layout_cuenta.setFormAlignment(Qt.AlignmentFlag.AlignCenter)
+        form_layout_cuenta.setSpacing(10)
+        form_layout_cuenta.setContentsMargins(10, 10, 10, 10)
+        
+        form_layout_tipoCuenta.setLabelAlignment(Qt.AlignmentFlag.AlignRight)
+        form_layout_tipoCuenta.setFormAlignment(Qt.AlignmentFlag.AlignCenter)
+        form_layout_tipoCuenta.setSpacing(10)
+        form_layout_tipoCuenta.setContentsMargins(10, 10, 10, 10)
+        
         # Crear widgets de etiquetas y entradas
         self.nombre = QLineEdit()
         self.nombre.setStyleSheet(style.estilo_lineedit)
-        self.tipo = QLineEdit()
-        self.tipo.setStyleSheet(style.estilo_lineedit)
 
-        n = QLabel("Nombre:")
-        n.setStyleSheet(style.label)
+        n_cuneta = QLabel("Nombre:")
+        n_cuneta.setStyleSheet(style.label)
         
         # Añadir widgets al formulario
-        form_layout.addRow(n, self.nombre)
-
-        # Crear los botones
+        form_layout_cuenta.addRow(titulo_cuenta)
+        form_layout_cuenta.addRow(n_cuneta, self.nombre)
+        
+        # Crear los botones al formulaio 'Cuenta'
         guardar_button = QPushButton("Guardar")
         guardar_button.setStyleSheet(style.estilo_boton)
         guardar_button.setCursor(Qt.CursorShape.PointingHandCursor)
@@ -81,19 +91,77 @@ class CuentaContable(QWidget):
         botones_layout.addWidget(mostrar_button)
         botones_layout.addWidget(actualizar_button)
         botones_layout.addWidget(eliminar_button)
-        # botones_layout.addWidget(excel_empleado)
+        
+        layuot = QVBoxLayout()
+        spacer4 = QSpacerItem(10, 80, QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Fixed)# Expanding, QSizePolicy.Policy.Expanding)
+        layuot.addItem(spacer4)
+        
+        # Añadir los botones al formulario
+        form_layout_cuenta.addRow(layuot)
+        form_layout_cuenta.addRow(botones_layout)
+        
+        # Crear un QFrame para ser usado como divisor
+        divisor = QFrame()
+        divisor.setFrameShape(QFrame.Shape.VLine)  # Línea vertical
+        divisor.setFrameShadow(QFrame.Shadow.Sunken)
+        
+        titulo_tipocuenta = QLabel("TIPO DE CUENTA")
+        titulo_tipocuenta.setStyleSheet(style.label_contable)
+        
+        n_tipo = QLabel("Nombre:")
+        n_tipo.setStyleSheet(style.label)
+        t_cuenta = QLabel("Tipo de cuenta: ")
+        t_cuenta.setStyleSheet(style.label)
+        descripcion = QLabel("Descripción: ")
+        descripcion.setStyleSheet(style.label)
+        
+        self.n_tipo = QLineEdit()
+        self.n_tipo.setStyleSheet(style.estilo_lineedit)
+        self.t_cuenta = QLineEdit()
+        self.t_cuenta.setPlaceholderText("Activos, Pasivos, Patrimonio, Ingresos o Egreso")
+        self.t_cuenta.setStyleSheet(style.estilo_lineedit)
+        self.descripcion = QLineEdit()
+        self.descripcion.setStyleSheet(style.estilo_lineedit)
+        
+        # Añadir widgets al formulario
+        form_layout_tipoCuenta.addRow(titulo_tipocuenta)
+        form_layout_tipoCuenta.addRow(n_tipo, self.n_tipo)
+        form_layout_tipoCuenta.addRow(t_cuenta, self.t_cuenta)
+        form_layout_tipoCuenta.addRow(descripcion, self.descripcion)
+        
+        # Crear los botones al formulaio 'Tipo de Cuenta'
+        guardar_button2 = QPushButton("Guardar")
+        guardar_button2.setStyleSheet(style.estilo_boton)
+        guardar_button2.setCursor(Qt.CursorShape.PointingHandCursor)
+        mostrar_button2 = QPushButton("Mostrar")
+        mostrar_button2.setStyleSheet(style.estilo_boton)
+        mostrar_button2.setCursor(Qt.CursorShape.PointingHandCursor)
+        actualizar_button2 = QPushButton("Actualizar")
+        actualizar_button2.setStyleSheet(style.estilo_boton)
+        actualizar_button2.setCursor(Qt.CursorShape.PointingHandCursor)
+        eliminar_button2 = QPushButton("Eliminar")
+        eliminar_button2.setStyleSheet(style.estilo_boton)
+        eliminar_button2.setCursor(Qt.CursorShape.PointingHandCursor)
+        
+        # Crear un layout horizontal para los botones
+        botones_layout2 = QHBoxLayout()
+        botones_layout2.addWidget(guardar_button2)
+        botones_layout2.addWidget(mostrar_button2)
+        botones_layout2.addWidget(actualizar_button2)
+        botones_layout2.addWidget(eliminar_button2)
+        
+        # Añadir los botones al formulario
+        form_layout_tipoCuenta.addRow(botones_layout2)
+        
+        contenedor_formularios.addLayout(form_layout_cuenta)
+        contenedor_formularios.addWidget(divisor)
+        contenedor_formularios.addLayout(form_layout_tipoCuenta)
 
         # Señales
         guardar_button.clicked.connect(self.guardar_empleado)
         mostrar_button.clicked.connect(self.mostrar_empleado)
-        # limpiarTABLA.clicked.connect(self.limpiar_tabla_empleados)
         actualizar_button.clicked.connect(self.actualizar_empleado)
         eliminar_button.clicked.connect(self.eliminar_empleado)
-        # excel_empleado.clicked.connect(self.planilla_excel)
-        
-
-        # Añadir los botones al formulario
-        form_layout.addRow(botones_layout)
         
         # Crear la tabla
         self.tablacuenta = QTableWidget()
@@ -102,7 +170,7 @@ class CuentaContable(QWidget):
         
         # Crear un layout vertical para el QGroupBox
         vbox = QVBoxLayout()
-        vbox.addLayout(form_layout)
+        vbox.addLayout(contenedor_formularios)
         vbox.addWidget(self.tablacuenta)
 
         # Configurar el QGroupBox con el layout
@@ -127,8 +195,7 @@ class CuentaContable(QWidget):
         y = (screen_geometry.height() - self.height()) // 2
         self.move(x, y)
         
-    def guardar_empleado(self):
-                
+    def guardar_empleado(self):       
         nom_emp = self.nombre.text().capitalize().title()
         if not isinstance(nom_emp, str) or not nom_emp.isalpha():
             mensaje_ingreso_datos("Registro de cuenta","La cuenta debe contener: \n- Letras y/o espacios entre cuentas.")

@@ -37,8 +37,8 @@ from validaciones.horas import tabla_HorasTotales,tabla_HorasXEmpleado, autoComp
 
 # Módulo de Registro de Asistencia
 from modulos.asistencia import Asistencia
-from modulos.reg_empleado import Empleado
-from modulos.carga_cuenta import CuentaContable
+from modulos.carga_empleado.reg_empleado import Empleado
+from modulos.carga_cuenta.carga_cuenta import CuentaContable
 
 # Módulo de Estilos
 from qss.style_item import itemColor_TOTAL, itemColor_RESULTADO
@@ -240,7 +240,7 @@ class VentanaPrincipal(QMainWindow):
         # ----------------------------------------------------
         # PESTAÑA REGISTRAR
         # SE CREA ComboBox 'RECORD'
-        customer_details = QGroupBox("Detalle del usuario", pestania_record)
+        customer_details = QGroupBox("DETALLE DEL ALUMNO", pestania_record)
         customer_details.setStyleSheet(style.estilo_grupo)
         
         #Colocar el ComboBox a la grilla
@@ -429,7 +429,7 @@ class VentanaPrincipal(QMainWindow):
         #-----------------------------------------------------------------
         # CREAR LA PESTAÑA 'ACTUALIZAR REGISTRO'
         # CREA UN GROUPBOX 
-        update_customer_details = QGroupBox("Detalle del usuario", pestania_updateRecord)
+        update_customer_details = QGroupBox("DETALLE DEL ALUMNO", pestania_updateRecord)
         update_customer_details.setStyleSheet(style.estilo_grupo)
         
         # CONTENEDOR DE LOS LAYOUT HORIZONTALES
@@ -609,7 +609,7 @@ class VentanaPrincipal(QMainWindow):
         #-----------------------------------------------------------------
         # PESTAÑA ELIMINAR
         # CREA EL GRUPOBOX
-        delete_Record = QGroupBox("Eliminacion de registro", pestania_deleteRecord)
+        delete_Record = QGroupBox("ELIMINACION DE ALUMNO", pestania_deleteRecord)
         delete_Record.setStyleSheet(style.estilo_grupo)
         
         # ESTABLECE EL COMBOBOX A LA GRILLA
@@ -697,7 +697,7 @@ class VentanaPrincipal(QMainWindow):
         #-----------------------------------------------------------------
         # PESTAÑA DE DISCIPLINA
         # CREA EL COMBOBOX
-        comboActiv = QGroupBox("Detalle de disciplina", pestania_actividad)
+        comboActiv = QGroupBox("DETALLE DEL DISCIPLINA", pestania_actividad)
         comboActiv.setStyleSheet(style.estilo_grupo)
         
         # ESTABLECE EL COMBOBOX A LA GRILLA
@@ -827,7 +827,7 @@ class VentanaPrincipal(QMainWindow):
         #-----------------------------------------------------------------
         # PESTAÑA DE PAGOS
         # CREA EL GrupoBOX
-        grupo_pagos = QGroupBox("Detalle de pagos", pestania_pagos)
+        grupo_pagos = QGroupBox("DETALLE DEL PAGO", pestania_pagos)
         grupo_pagos.setStyleSheet(style.estilo_grupo)
         
         # ESTABLECE EL COMBOBOX A LA GRILLA
@@ -992,7 +992,7 @@ class VentanaPrincipal(QMainWindow):
         #-----------------------------------------------------------------
         # PESTAÑA DE BALANCES
         # CREA COMBOBOX 
-        comboView = QGroupBox("Detalle de balances", pestania_view)
+        comboView = QGroupBox("DETALLE DEL BALANCES", pestania_view)
         comboView.setStyleSheet(style.estilo_grupo)
         
         # ESTABLECE EL COMBOBOX A LA GRILLA
@@ -1213,7 +1213,7 @@ class VentanaPrincipal(QMainWindow):
     
         #-----------------------------------------------------------------
         # PESTAÑA REGISTRAR DE LOS EMPLEADOS
-        grupo_empleados = QGroupBox("Detalle de empleados", pestania_empleados)
+        grupo_empleados = QGroupBox("DETALLE DEL EMPLEADO", pestania_empleados)
         grupo_empleados.setStyleSheet(style.estilo_grupo)
         
         # Colocar el ComboBox a la grilla
@@ -1425,7 +1425,7 @@ class VentanaPrincipal(QMainWindow):
         # PESTAÑA REGISTRAR GASTOS
         
         # SE CREA ComboBox 'REGISTRAR GASTOS'
-        grupo_resumen = QGroupBox("Detalle de ingresos-egresos mensuales", pestania_resumen)
+        grupo_resumen = QGroupBox("DETALLE CONTABLE", pestania_resumen)
         grupo_resumen.setStyleSheet(style.estilo_grupo)
         # Colocar el ComboBox a la grilla
         grid_resumen = QGridLayout(grupo_resumen)
