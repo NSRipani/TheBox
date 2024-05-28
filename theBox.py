@@ -150,7 +150,7 @@ class Login(QWidget):
         dni = self.user_input.text()
         contraseña = self.password_input.text()
         
-        if not dni.isalnum():
+        if not dni.W:
             mensaje_ingreso_datos("Inicio de sesion","El DNI debe ser numérico")
             return
 
