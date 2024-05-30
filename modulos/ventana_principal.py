@@ -1552,15 +1552,13 @@ class VentanaPrincipal(QMainWindow):
         # CREA UN LAYOUT HORIZONTAL
         botones_resumen3 = QHBoxLayout()
         botones_resumen3.setAlignment(Qt.AlignmentFlag.AlignRight)
-        boton_limpiarTabla = QPushButton('LIMPIAR TABLA', grupo_resumen)
-        boton_limpiarTabla.setFixedWidth(200)
-        boton_limpiarTabla.setCursor(Qt.CursorShape.PointingHandCursor)
+        
         # boton_limpiarTabla.setStyleSheet(style.estilo_boton)
         # excel_resumen = QPushButton('DESCARGAR PLANILLA', grupo_resumen)
         # excel_resumen.setFixedWidth(200)
         # excel_resumen.setCursor(Qt.CursorShape.PointingHandCursor)
         # excel_resumen.setStyleSheet(style.boton_excel)
-        botones_resumen3.addWidget(boton_limpiarTabla)
+        # botones_resumen3.addWidget(boton_limpiarTabla)
         # botones_resumen3.addWidget(excel_resumen)
         
         h1 = QHBoxLayout()
@@ -1581,7 +1579,6 @@ class VentanaPrincipal(QMainWindow):
         # CONECCION A LAS FUNCIONES
         buttonREG.clicked.connect(self.registrar_datos)
         buttonACT.clicked.connect(self.actualizar_datos)
-        boton_limpiarTabla.clicked.connect(self.limp_tabla)
         button_eliminar.clicked.connect(self.eliminar_datos)
         buttonPERIODO.clicked.connect(self.visualizacion_datos)
         
@@ -1600,6 +1597,12 @@ class VentanaPrincipal(QMainWindow):
         cuenta.setStyleSheet(style.estilo_boton)
         cuenta.clicked.connect(self.cargar_cuenta)
         
+        boton_limpiarTabla = QPushButton('LIMPIAR TABLA', grupo_resumen)
+        boton_limpiarTabla.setFixedWidth(200)
+        boton_limpiarTabla.setStyleSheet(style.estilo_boton)
+        boton_limpiarTabla.setCursor(Qt.CursorShape.PointingHandCursor)
+        boton_limpiarTabla.clicked.connect(self.limp_tabla)
+        
         excel_resumen = QPushButton('DESCARGAR PLANILLA', grupo_resumen)
         excel_resumen.setFixedWidth(200)
         excel_resumen.setCursor(Qt.CursorShape.PointingHandCursor)
@@ -1617,6 +1620,8 @@ class VentanaPrincipal(QMainWindow):
         # v2.addWidget(limpiarTABLA)
         costado.addSpacing(10)
         costado.addWidget(cuenta)
+        costado.addSpacing(10)
+        costado.addWidget(boton_limpiarTabla)
         costado.addSpacing(10)
         costado.addWidget(excel_resumen)
         
@@ -2206,7 +2211,7 @@ class VentanaPrincipal(QMainWindow):
         try:
             db = conectar_base_de_datos()
             cursor = db.cursor()
-            cursor.execute("SELECT p.id_pago, p.id_usuario, c.nombre, p.modalidad, p.fecha, p.precio FROM pago as p INNER JOIN disciplina as c on p.id_disciplina = c.id_disciplina ORDER BY p.fecha;")
+            cursor.execute("SELECT p.id_pago, p.id_usuario, c.nombre AS DISCIPLINA, p.modalidad, p.fecha, p.precio FROM pago as p INNER JOIN disciplina as c on p.id_disciplina = c.id_disciplina ORDER BY p.fecha;")
             result = cursor.fetchall()
             
             if len(result) > 0:
@@ -2317,7 +2322,7 @@ class VentanaPrincipal(QMainWindow):
             mensaje_ingreso_datos("Registro de alumnos","El nombre debe contener: \n- Letras y/o espacios entre nombres(si tiene mas de dos).")
             return
 
-        apellido1 = self.view_apellido.text()
+        # apellido1 = self.view_apellido.text()
 
         if not self.view_fechaDePago.date().toString("yyyy-MM-dd"):
             mensaje_ingreso_datos("Registro de alumnos","Debe ingresar una fecha de inicio de pago.")
@@ -2331,27 +2336,24 @@ class VentanaPrincipal(QMainWindow):
             return
          
         try:
-            db = mysql.connector.connect(
-                host="localhost",
-                port="3306",
-                user="root",
-                password="root",
-                database="thebox_bd"
-            )
+            db = conectar_base_de_datos()
             cursor = db.cursor()
-            query = f"SELECT ru.nombre, ru.apellido, ru.dni, ru.sexo, ru.edad, ru.celular, ru.fecha, d.disciplina, d.precio, d.fecha_pago, d.modalidad, d.estado FROM usuario u JOIN disciplina d ON ru.dni = d.dni WHERE ru.nombre = '{nombre}' AND d.fecha_pago BETWEEN '{fecha_inicio}' AND '{fecha_fin}' ORDER BY d.fecha_pago ASC"
+            # f"SELECT u.nombre, u.apellido, u.dni, u.sexo, u.edad, u.celular, u.fecha_registro, p.id_disciplina, p.precio, p.fecha, p.modalidad FROM usuario u JOIN pagos p ON u.id_usuario = p.id_usuario WHERE u.nombre = '{nombre}' AND p.fecha BETWEEN '{fecha_inicio}' AND '{fecha_fin}' ORDER BY p.fecha ASC";
+            # query = f"SELECT u.nombre, u.apellido, u.dni, u.sexo, u.edad, u.celular, u.fecha_registro, d.nombre AS DISCIPLINA, p.precio, p.fecha, p.modalidad FROM usuario u JOIN pago p ON u.id_usuario = p.id_usuario JOIN disciplina d ON p.id_disciplina = d.id_disciplina WHERE u.nombre = '{nombre}' AND p.fecha BETWEEN '{fecha_inicio}' AND '{fecha_fin}' ORDER BY p.fecha ASC"
+            query = f"SELECT u.nombre, u.apellido, u.dni, u.sexo, u.edad, u.celular, u.fecha_registro, d.nombre AS DISCIPLINA, p.precio, p.fecha, p.modalidad FROM usuario u JOIN pago p ON u.id_usuario = p.id_usuario JOIN disciplina d ON p.id_disciplina = d.id_disciplina WHERE u.nombre = '{nombre}' AND p.fecha BETWEEN {fecha_inicio} AND {fecha_fin} ORDER BY p.fecha ASC"
+            # query = fSELECT u.nombre, u.apellido, u.dni, u.sexo, u.edad, u.celular, u.fecha_registro, p.id_disciplina, p.precio, p.fecha, p.modalidad FROM usuario u JOIN pago p ON u.id_usuario = p.did_usuarioni WHERE u.nombre = '{nombre}' AND p.fecha BETWEEN '{fecha_inicio}' AND '{fecha_fin}' ORDER BY p.fecha ASC"
 
-            if apellido1:
-                patron_nom2 = re.compile(r'^[a-zA-ZáéíóúÁÉÍÓÚüÜ\'\s]+$') 
-                if not isinstance(apellido1, str) or apellido1.isspace() or not patron_nom2.match(apellido1): 
-                    mensaje_ingreso_datos("Registro de alumnos","El apellido debe contener: \n- Letras y/o espacios entre nombres(si tiene mas de dos).")
-                    return 
-                query += f" AND ru.apellido = '{apellido1}'"
+            # if apellido1:
+            #     patron_nom2 = re.compile(r'^[a-zA-ZáéíóúÁÉÍÓÚüÜ\'\s]+$') 
+            #     if not isinstance(apellido1, str) or apellido1.isspace() or not patron_nom2.match(apellido1): 
+            #         mensaje_ingreso_datos("Registro de alumnos","El apellido debe contener: \n- Letras y/o espacios entre nombres(si tiene mas de dos).")
+            #         return 
+            #     query += f" AND ru.apellido = '{apellido1}'"
             
             cursor.execute(query)
             results = cursor.fetchall()
             
-            if results:
+            if len(results) > 0:
                 aviso_resultado("Registro de alumnos",f"Se encontraron {len(results)} coincidencias.")
                 
                 self.view_fechaDePago.setDate(QDate.currentDate())
@@ -2427,15 +2429,10 @@ class VentanaPrincipal(QMainWindow):
             return
         
         try:
-            db = mysql.connector.connect(
-                host="localhost",
-                port="3306",
-                user="root",
-                password="root",
-                database="thebox_bd"
-            )
+            db = conectar_base_de_datos()
             cursor = db.cursor()
-            query = f"SELECT ru.nombre, ru.apellido, ru.dni, ru.sexo, ru.edad, d.disciplina, ru.celular, ru.fecha, d.precio, d.fecha_pago, d.modalidad, d.estado FROM usuario ru JOIN disciplina d ON ru.dni = d.dni WHERE d.fecha_pago BETWEEN '{fecha_inicio}' AND '{fecha_fin}' ORDER BY d.fecha_pago ASC "
+            query = f"SELECT u.nombre, u.apellido, u.dni, u.sexo, u.edad, u.celular, u.fecha_registro, d.nombre AS DISCIPLINA, p.precio, p.fecha, p.modalidad FROM usuario u JOIN pago p ON u.id_usuario = p.id_usuario JOIN disciplina d ON p.id_disciplina = d.id_disciplina WHERE p.fecha BETWEEN '{fecha_inicio}' AND '{fecha_fin}' ORDER BY p.fecha ASC"
+            # f"SELECT ru.nombre, ru.apellido, ru.dni, ru.sexo, ru.edad, d.disciplina, ru.celular, ru.fecha, d.precio, d.fecha_pago, d.modalidad, d.estado FROM usuario ru JOIN disciplina d ON ru.dni = d.dni WHERE d.fecha_pago BETWEEN '{fecha_inicio}' AND '{fecha_fin}' ORDER BY d.fecha_pago ASC "
             cursor.execute(query)
             results = cursor.fetchall()
             
