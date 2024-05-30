@@ -34,6 +34,7 @@ from validaciones.disciplina import guardarACTIVIDAD, completar_CAMPOS_ACTIVIDAD
 from validaciones.pagos import seleccionDeTablaPAGOS, tabla_pagos
 from validaciones.contabilidad import validadciones, tabla_contabilidad, selccionarTabla, limpiarCampos, clear_tabla
 from validaciones.horas import tabla_HorasTotales,tabla_HorasXEmpleado, autoCompletado, tabla_General, clearTabla
+from validaciones.consultas import consulta1, consulta2, limpiar
 
 # Módulo de Registro de Asistencia
 from modulos.asistencia import Asistencia
@@ -2338,10 +2339,7 @@ class VentanaPrincipal(QMainWindow):
         try:
             db = conectar_base_de_datos()
             cursor = db.cursor()
-            # f"SELECT u.nombre, u.apellido, u.dni, u.sexo, u.edad, u.celular, u.fecha_registro, p.id_disciplina, p.precio, p.fecha, p.modalidad FROM usuario u JOIN pagos p ON u.id_usuario = p.id_usuario WHERE u.nombre = '{nombre}' AND p.fecha BETWEEN '{fecha_inicio}' AND '{fecha_fin}' ORDER BY p.fecha ASC";
-            # query = f"SELECT u.nombre, u.apellido, u.dni, u.sexo, u.edad, u.celular, u.fecha_registro, d.nombre AS DISCIPLINA, p.precio, p.fecha, p.modalidad FROM usuario u JOIN pago p ON u.id_usuario = p.id_usuario JOIN disciplina d ON p.id_disciplina = d.id_disciplina WHERE u.nombre = '{nombre}' AND p.fecha BETWEEN '{fecha_inicio}' AND '{fecha_fin}' ORDER BY p.fecha ASC"
-            query = f"SELECT u.nombre, u.apellido, u.dni, u.sexo, u.edad, u.celular, u.fecha_registro, d.nombre AS DISCIPLINA, p.precio, p.fecha, p.modalidad FROM usuario u JOIN pago p ON u.id_usuario = p.id_usuario JOIN disciplina d ON p.id_disciplina = d.id_disciplina WHERE u.nombre = '{nombre}' AND p.fecha BETWEEN {fecha_inicio} AND {fecha_fin} ORDER BY p.fecha ASC"
-            # query = fSELECT u.nombre, u.apellido, u.dni, u.sexo, u.edad, u.celular, u.fecha_registro, p.id_disciplina, p.precio, p.fecha, p.modalidad FROM usuario u JOIN pago p ON u.id_usuario = p.did_usuarioni WHERE u.nombre = '{nombre}' AND p.fecha BETWEEN '{fecha_inicio}' AND '{fecha_fin}' ORDER BY p.fecha ASC"
+            query = f"SELECT u.nombre, u.apellido, u.dni, u.sexo, u.edad, u.celular, u.fecha_registro, d.nombre AS DISCIPLINA, p.precio, p.fecha, p.modalidad FROM usuario u JOIN pago p ON u.dni = p.id_usuario JOIN disciplina d ON p.id_disciplina = d.id_disciplina WHERE u.nombre = '{nombre}' AND p.fecha BETWEEN '{fecha_inicio}' AND '{fecha_fin}' ORDER BY p.fecha ASC" # JOIN disciplina d ON p.id_disciplina = d.id_disciplina
 
             # if apellido1:
             #     patron_nom2 = re.compile(r'^[a-zA-ZáéíóúÁÉÍÓÚüÜ\'\s]+$') 
@@ -2353,7 +2351,7 @@ class VentanaPrincipal(QMainWindow):
             cursor.execute(query)
             results = cursor.fetchall()
             
-            if len(results) > 0:
+            if results:
                 aviso_resultado("Registro de alumnos",f"Se encontraron {len(results)} coincidencias.")
                 
                 self.view_fechaDePago.setDate(QDate.currentDate())
@@ -2361,51 +2359,8 @@ class VentanaPrincipal(QMainWindow):
                 self.view_nomb.clear()
                 self.view_apellido.clear()
                 
-                headers = [description[0].replace('_', ' ').upper() for description in cursor.description]
-                
-                self.tablaVIEW.setRowCount(len(results))
-                self.tablaVIEW.setColumnCount(len(results[0]))
-                self.tablaVIEW.setHorizontalHeaderLabels(headers)
-                
-                # Establecer la propiedad de "stretch" en el encabezado horizontal
-                header = self.tablaVIEW.horizontalHeader()
-                header.setSectionResizeMode(QHeaderView.ResizeMode.Stretch)
-                self.tablaVIEW.verticalHeader().setSectionResizeMode(QHeaderView.ResizeMode.ResizeToContents)
-                self.tablaVIEW.setSelectionBehavior(QTableWidget.SelectionBehavior.SelectRows)
-                self.tablaVIEW.setEditTriggers(QAbstractItemView.EditTrigger.NoEditTriggers)
-                self.tablaVIEW.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAsNeeded)
-
-                for i, row in enumerate(results):
-                    for j, val in enumerate(row):
-                        item = QTableWidgetItem(str(val))
-                        # Indices de las columnas que contienen fechas
-                        if j == 6 or j == 9:  
-                            fecha = QDate.fromString(str(val), "yyyy-MM-dd")  # Convertir la fecha a objeto QDate
-                            item.setText(fecha.toString("dd-MM-yyyy"))  # Establecer el formato de visualización
-                        
-                        if j in [2, 4, 5, 6, 8, 9]:  # Ajustar alineación para ciertas columnas
-                            item.setTextAlignment(Qt.AlignmentFlag.AlignCenter) 
-                        self.tablaVIEW.setItem(i, j, item)
-                        
-                if self.tablaVIEW.rowCount() == len(results):
-                    total_precios = sum(row[8] for row in results)  # para cada fila en results, se toma el valor que está en la posición 4 (quinta columna, considerando que la indexación comienza en 0) y se suma a un acumulador.
-
-                    # Agregar una fila al final de la tabla para mostrar la suma total
-                    total_row = self.tablaVIEW.rowCount()
-                    self.tablaVIEW.insertRow(total_row)
-
-                    # Mostrar la etiqueta "Total" en la primera celda de la fila de total
-                    item_total_label_alumno = QTableWidgetItem("TOTAL: ")
-                    item_total_label_alumno.setFont(itemColor_TOTAL(item_total_label_alumno))  # Funcion para estilos de item
-                    item_total_label_alumno.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
-                    self.tablaVIEW.setItem(total_row, 7, item_total_label_alumno)
-
-                    # Mostrar la suma total en la celda debajo de la columna 'precios'
-                    item_total_precio_alumno = QTableWidgetItem(str(f"$ {total_precios}"))
-                    item_total_precio_alumno.setFont(itemColor_RESULTADO(item_total_precio_alumno))  # Funcion para estilos de item
-                    self.tablaVIEW.setItem(total_row, 8, item_total_precio_alumno)
-                    item_total_precio_alumno.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
-                
+                consulta1(self,cursor,results,QHeaderView,QTableWidget,QAbstractItemView,QTableWidgetItem,QDate,Qt)
+                            
             else:
                 aviso_resultado("Registro de alumnos",f"Se encontraron {len(results)} coincidencias.")
 
@@ -2431,9 +2386,7 @@ class VentanaPrincipal(QMainWindow):
         try:
             db = conectar_base_de_datos()
             cursor = db.cursor()
-            query = f"SELECT u.nombre, u.apellido, u.dni, u.sexo, u.edad, u.celular, u.fecha_registro, d.nombre AS DISCIPLINA, p.precio, p.fecha, p.modalidad FROM usuario u JOIN pago p ON u.id_usuario = p.id_usuario JOIN disciplina d ON p.id_disciplina = d.id_disciplina WHERE p.fecha BETWEEN '{fecha_inicio}' AND '{fecha_fin}' ORDER BY p.fecha ASC"
-            # f"SELECT ru.nombre, ru.apellido, ru.dni, ru.sexo, ru.edad, d.disciplina, ru.celular, ru.fecha, d.precio, d.fecha_pago, d.modalidad, d.estado FROM usuario ru JOIN disciplina d ON ru.dni = d.dni WHERE d.fecha_pago BETWEEN '{fecha_inicio}' AND '{fecha_fin}' ORDER BY d.fecha_pago ASC "
-            cursor.execute(query)
+            query = f"SELECT u.nombre, u.apellido, u.dni, u.sexo, u.edad, u.celular, u.fecha_registro, d.nombre AS DISCIPLINA, p.precio, p.fecha, p.modalidad FROM usuario u JOIN pago p ON u.dni = p.id_usuario JOIN disciplina d ON p.id_disciplina = d.id_disciplina WHERE p.fecha BETWEEN '{fecha_inicio}' AND '{fecha_fin}' ORDER BY p.fecha ASC"
             results = cursor.fetchall()
             
             if results:
@@ -2442,51 +2395,7 @@ class VentanaPrincipal(QMainWindow):
                 self.view_fechaDePago.setDate(QDate.currentDate())
                 self.view_al.setDate(QDate.currentDate())
                 
-                headers = [description[0].replace('_', ' ').upper() for description in cursor.description]
-                    
-                self.tablaVIEW.setRowCount(len(results))
-                self.tablaVIEW.setColumnCount(len(results[0]))
-                self.tablaVIEW.setHorizontalHeaderLabels(headers)
-                    
-                # Establecer la propiedad de "stretch" en el encabezado horizontal
-                header = self.tablaVIEW.horizontalHeader()
-                header.setSectionResizeMode(QHeaderView.ResizeMode.Stretch)#ResizeToContents)# 
-                header.setAutoScroll(True)
-                self.tablaVIEW.setSelectionBehavior(QTableWidget.SelectionBehavior.SelectRows)
-                self.tablaVIEW.verticalHeader().setSectionResizeMode(QHeaderView.ResizeMode.ResizeToContents)
-                self.tablaVIEW.setSizeAdjustPolicy(QAbstractScrollArea.SizeAdjustPolicy.AdjustToContents)
-                self.tablaVIEW.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAsNeeded)
-                self.tablaVIEW.setEditTriggers(QAbstractItemView.EditTrigger.NoEditTriggers)
-                    
-                for i, fila in enumerate(results):
-                    for j, valor in enumerate(fila):
-                        item = QTableWidgetItem(str(valor)) 
-                        if j == 7 or j == 9:  # Indices de las columnas que contienen fechas
-                            fecha = QDate.fromString(str(valor), "yyyy-MM-dd")  # Convertir la fecha a objeto QDate
-                            item.setText(fecha.toString("dd-MM-yyyy"))  # Establecer el formato de visualización
-                        
-                        if j in [2, 4, 5, 6, 7, 8, 9]:  # Ajustar alineación para ciertas columnas
-                            item.setTextAlignment(Qt.AlignmentFlag.AlignCenter)                  
-                        self.tablaVIEW.setItem(i, j, item)
-                
-                if self.tablaVIEW.rowCount() == len(results):
-                    total_precios = sum(row[8] for row in results)  # para cada fila en results, se toma el valor que está en la posición 4 (quinta columna, considerando que la indexación comienza en 0) y se suma a un acumulador.
-
-                    # Agregar una fila al final de la tabla para mostrar la suma total
-                    total_row = self.tablaVIEW.rowCount()
-                    self.tablaVIEW.insertRow(total_row)
-
-                    # Mostrar la etiqueta "Total" en la primera celda de la fila de total
-                    item_total_label_alumno = QTableWidgetItem("TOTAL: ")
-                    item_total_label_alumno.setFont(itemColor_TOTAL(item_total_label_alumno))  # Funcion para estilos de item
-                    item_total_label_alumno.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
-                    self.tablaVIEW.setItem(total_row, 7, item_total_label_alumno)
-
-                    # Mostrar la suma total en la celda debajo de la columna 'precios'
-                    item_total_precio_alumno = QTableWidgetItem(str(f"$ {total_precios}"))
-                    item_total_precio_alumno.setFont(itemColor_RESULTADO(item_total_precio_alumno))  # Funcion para estilos de item
-                    self.tablaVIEW.setItem(total_row, 8, item_total_precio_alumno)
-                    item_total_precio_alumno.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
+                consulta2(self,cursor,results,QHeaderView,QTableWidget,QAbstractItemView,QAbstractScrollArea,QTableWidgetItem,QDate,Qt)
                 
             else: 
                 aviso_resultado("Registro de alumnos",f"Se encontraron {len(results)} coincidencias.")
@@ -2499,16 +2408,7 @@ class VentanaPrincipal(QMainWindow):
             print("Error executing the query", ex)
             
     def limpiar_tabla_balance(self):
-        # Obtener el número de filas de la tabla
-        num_filas = self.tablaVIEW.rowCount()
-
-        # Eliminar todas las filas de la tabla
-        for i in range(num_filas):
-            self.tablaVIEW.removeRow(0)
-
-        # Eliminar los encabezados de la tabla
-        self.tablaVIEW.clearContents()
-        self.tablaVIEW.setRowCount(0) 
+        limpiar(self)
             
     def consultar3(self): # buscar y MOSTRAR DISCIPLINAS CON SU COSTO TOTAL entre fechas de pago ------ LISTO!!!!
         if not self.view_fechaDePago.date().toString("yyyy-MM-dd"):
@@ -2522,15 +2422,9 @@ class VentanaPrincipal(QMainWindow):
             mensaje_ingreso_datos("Registro de alumnos","La fecha de fin debe ser posterior a la fecha de inicio.")
             return
         try:
-            db = mysql.connector.connect(
-                host="localhost",
-                port="3306",
-                user="root",
-                password="root",
-                database="thebox_bd"
-            )
+            db = conectar_base_de_datos()
             cursor = db.cursor()
-            query = f"SELECT ru.nombre, ru.apellido, d.disciplina, SUM(d.precio) as total_precio, '{fecha_inicio}' AS inicio_periodo, '{fecha_fin}' AS fin_periodo FROM usuario u JOIN disciplina d ON ru.dni = d.dni WHERE d.fecha_pago BETWEEN '{fecha_inicio}' AND '{fecha_fin}' GROUP BY ru.nombre, ru.apellido, d.disciplina" 
+            query = f"SELECT u.nombre, u.apellido, d.nombre AS DISCIPLINA, SUM(p.precio) as total_precio, '{fecha_inicio}' AS inicio_periodo, '{fecha_fin}' AS fin_periodo FROM usuario u JOIN disciplina d ON u.id_usuario = p.id_usuario JOIN pago p WHERE p.fecha BETWEEN '{fecha_inicio}' AND '{fecha_fin}' GROUP BY u.nombre, u.apellido, d.nombre" 
             cursor.execute(query)
             results = cursor.fetchall()
             
