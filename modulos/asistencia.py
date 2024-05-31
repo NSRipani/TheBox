@@ -2,8 +2,8 @@
 from datetime import date, timedelta, datetime
 
 # Librerías de PyQt6
-from PyQt6.QtWidgets import QCompleter,QDateEdit,QFrame,QHBoxLayout,QSpacerItem,QSizePolicy, QMainWindow, QWidget, QVBoxLayout, QPushButton, QLineEdit, QLabel, QMessageBox
-from PyQt6.QtCore import Qt, QTimer
+from PyQt6.QtWidgets import QCompleter,QFrame,QHBoxLayout,QSpacerItem,QSizePolicy, QMainWindow, QWidget, QVBoxLayout, QPushButton, QLineEdit, QLabel, QMessageBox
+from PyQt6.QtCore import Qt, QDateTime, QTimer
 from PyQt6.QtGui import QPixmap, QFont,QIcon, QPalette, QBrush
 
 # Librería de MySQL
@@ -76,8 +76,9 @@ class Asistencia(QMainWindow):
         label_fecha_hoy.setStyleSheet(style.label_fecha)
         lV.addWidget(label_fecha_hoy)
 
-        fechaHOY = date.today()
-        fecha = fechaHOY.strftime("%d/%m/%Y")
+        # fechaHOY = date.today()
+        fechaHOY = QDateTime.currentDateTime().toString("dd/MM/yyyy")
+        fecha = fechaHOY #toString("dd/MM/yyyy") #strftime("%d/%m/%Y")
         label_fecha_actual = QLabel(fecha, self)
         label_fecha_actual.setStyleSheet(style.estiloFechaActual)
         lV.addWidget(label_fecha_actual)
@@ -124,7 +125,7 @@ class Asistencia(QMainWindow):
         layout_vertical.setContentsMargins(50,100,80,100)
         
         self.label_texto1 = QLabel()
-        self.label_texto1.setFont(QFont("Segoe UI", 40))
+        self.label_texto1.setFont(QFont("Segoe UI", 45))
         self.label_texto1.setFrameShadow(QFrame.Shadow.Plain)
         self.label_texto1.setFrameShape(QFrame.Shape.Panel)
         self.label_texto1.setWordWrap(True)
@@ -138,7 +139,7 @@ class Asistencia(QMainWindow):
         layout_vertical.addItem(spacer5)
 
         self.label_texto2 = QLabel()
-        self.label_texto2.setFont(QFont("Segoe UI", 40))
+        self.label_texto2.setFont(QFont("Segoe UI", 50))
         self.label_texto2.setFrameShadow(QFrame.Shadow.Plain)
         self.label_texto2.setFrameShape(QFrame.Shape.Panel)
         self.label_texto2.setWordWrap(True)
@@ -155,14 +156,9 @@ class Asistencia(QMainWindow):
         self.central_widget.setLayout(layout_horizontal)
         
         # Configuración del temporizador para ocultar los mensajes después de unos segundos
-        self.timer = QTimer(self)
-        self.timer.timeout.connect(self.actualizar_fecha)
-        self.timer.start(24 * 60 * 60 * 1000)  # 30 días en milisegundos
-
-    def actualizar_fecha(self,fecha_registro_tabla):
-        dias_restantes = (fecha_registro_tabla + timedelta(days=30)) - date.today()
-        if dias_restantes.days == 0:
-            fecha_registro_tabla += timedelta(days=30)
+        # self.timer = QTimer(self)
+        # self.timer.timeout.connect(self.actualizar_fecha)
+        # self.timer.start(30 * 24 * 60 * 60 * 1000)  # 30 días en milisegundos
     
     def set_focus(self):
         self.numero_documento.setFocus()
@@ -178,16 +174,13 @@ class Asistencia(QMainWindow):
     def keyPressEvent(self, event):
         if event.key() == Qt.Key.Key_Return or event.key() == Qt.Key.Key_Enter:
             self.registrar_asistencia()
-    
-    # def diferencia_de_dias(self, fecha_inicio, fecha_fin):
-    #     return (fecha_fin - fecha_inicio).days
-   
-    # Funcion para registrar asistencia y mostrar mensajes       
+              
     def registrar_asistencia(self):
-           
+        # Dato ingreado por teclado   
         dni = self.numero_documento.text()
         fecha_hoy = datetime.now().date() ##date.today()
         print(fecha_hoy)
+        
         # patron = re.compile(r'^[0-9]+$')
         if not dni.isdigit() or len(dni) != 8:
             mensaje_ingreso_datos("Registro de asistecia","El número de documento debe contener 8 dígitos numéricos.")
@@ -219,60 +212,101 @@ class Asistencia(QMainWindow):
                 apellido = resultUser[1]                
                 fecha_registro = resultUser[2]
                 print(f"{fecha_registro}\n")
+                print(type(fecha_registro))
+            
+            # Establecer datos 'nombre' y 'apellido', de la consulta en los QLabel    
+            self.label_texto1.setText(f"¡En hora buena {nombre} {apellido}! \n\nSu asistencia fue registrada.")
+            self.label_texto1.setStyleSheet("background-color: #DAD7CD; color: #000;")
+                    
+      
+            diferencia_dias = (fecha_hoy - fecha_registro).days
+            print(f"Diferencia de días: {diferencia_dias}")
+            
+            # if diferencia_dias > 0:
+            #     texto_cuota = f"\nÚltimo pago: {fecha_registro}. \n\nPróximo pago en {dif_dias} días.\n"
+            # elif diferencia_dias < 0:
+            #     fecha_nueva = fecha_registro + timedelta(days=30)
+            #     diferencia_dias = (fecha_hoy - fecha_nueva).days
+            
+            #     fecha_nueva = fecha_registro 
                 
+            # dif_dias = diferencia_dias
+            # fecha_actualizada = fecha_nueva
+                    
+            # Mensajes a mostrar         
+            texto_cuota = f"\nÚltimo pago: {fecha_registro}. \n\nPróximo pago en {diferencia_dias} días.\n"
+            texto_vencido2 = f"\nCuota vencida hace {diferencia_dias} días. \n\nÚltimo pago: {fecha_registro}.\n\nDebe abonar su cuota.\n"
+        
+            print(f"{diferencia_dias}\n")
+            
+            
+            # Corroborar que condición corresponde de acuerdo a los días calculados
+            if 30 >= diferencia_dias > 14:
+                self.label_texto2.setText(texto_cuota)
+                self.label_texto2.setStyleSheet("background-color: #7FFF00; color: #000;")
+                # self.timer.start(6000)
+                print(f"Número de días transcurridos para 30 a 15 días: {diferencia_dias}")
+            elif 14 >= diferencia_dias > 4:
+                self.label_texto2.setText(texto_cuota)
+                self.label_texto2.setStyleSheet("background-color: #FFFF00;color: #000;")
+                # self.timer.start(6000)
+                print(f"Número de días transcurridos para 14 a 5 días: {diferencia_dias}")
+            elif 4 >= diferencia_dias >= 0:
+                self.label_texto2.setText(texto_cuota)
+                self.label_texto2.setStyleSheet("background-color: #FF8000; color: #000;")
+                # self.timer.start(6000)
+                print(f"Número de días transcurridos para 4 a 0 días: {diferencia_dias}")
+            elif diferencia_dias > 0:
+                self.label_texto2.setText(texto_vencido2)
+                self.label_texto2.setStyleSheet("background-color: #FF0000; color: #fff;")
+                # self.timer.start(6000)
+            else:
+                print("Se han superado los 30 días desde el último pago.")
+
+            self.numero_documento.clear()
+
         except Error as e:
             errorConsulta("Registro de asistecia", f"Error al registrar la asistencia: {str(e)}")
         finally:
             cursor.close()
             conn.close()
         
-        # Establecer datos 'nombre' y 'apellido', de la consulta en los QLabel    
-        self.label_texto1.setText(f"¡En hora buena {nombre} {apellido}! Su asistencia fue registrada.")
-        self.label_texto1.setStyleSheet("background-color: #DAD7CD; color: #000")
+    # def actualizar_fecha(self):
+    #     print("Actualización cada 30 días")
         
-        # Calculo de dias desde la fecha_registo hasta la fecha del día
-        fecha_registro_tabla = datetime.strptime(str(fecha_registro), "%Y-%m-%d").date()
-        print(f"Fecha registro(tabla): {fecha_registro_tabla}\n")
+        #     # Mensajes a mostrar         
+        #     texto_cuota = f"Último pago: {fecha_registro_text}. \nPróximo pago en {dias_restantes.days} días.\n"
+        #     texto_vencido2 = f"Cuota vencida hace {abs(dias_restantes.days)} días. \nDebe abonar su cuota.\n"
         
-        fecha_registro_text = fecha_registro_tabla.strftime("%d-%m-%Y")
-        
-        dias_restantes = (fecha_registro_tabla + timedelta(days=30)) - date.today()
-        dias_restantes.days# = dias_restantes.__abs__()
-        
-        print(f"Dias a la Fecha registro(tabla): {dias_restantes.days}\n")
-        
-        # Mensajes a mostrar         
-        texto_cuota = f"Último pago: {fecha_registro_text}. Próximo pago en {dias_restantes.days} días."
-        texto_vencido2 = f"Cuota vencida hace {abs(dias_restantes.days)} días. Debe abonar."
-    
-        print(f"{abs(dias_restantes.days)}\n")
-        
-        # Corroborar que condición corresponde de acuerdo a los días calculados
-        if 30 >= dias_restantes.days > 14:
-            self.label_texto2.setText(texto_cuota)
-            self.label_texto2.setStyleSheet("background-color: #7FFF00; color: #000;")
-            # self.timer.start(6000)
-            print(f"Número de días transcurridos para 30 a 15 días: {dias_restantes.days}")
-        elif 14 >= dias_restantes.days > 4:
-            self.label_texto2.setText(texto_cuota)
-            self.label_texto2.setStyleSheet("background-color: #FFFF00;color: #000;")
-            # self.timer.start(6000)
-            print(f"Número de días transcurridos para 14 a 5 días: {dias_restantes.days}")
-        elif 4 >= dias_restantes.days >= 0:
-            self.label_texto2.setText(texto_cuota)
-            self.label_texto2.setStyleSheet("background-color: #FF8000; color: #000;")
-            # self.timer.start(6000)
-            print(f"Número de días transcurridos para 4 a 0 días: {dias_restantes.days}")
-        elif dias_restantes.days > 0:
-            self.label_texto2.setText(texto_vencido2)
-            self.label_texto2.setStyleSheet("background-color: #FF0000; color: #fff;")
-            # self.timer.start(6000)
-        else:
-            print("Se han superado los 30 días desde el último pago.")
+        #     print(f"{abs(dias_restantes.days)}\n")
+            
+        #     # Corroborar que condición corresponde de acuerdo a los días calculados
+        #     if 30 >= dias_restantes.days > 14:
+        #         self.label_texto2.setText(texto_cuota)
+        #         self.label_texto2.setStyleSheet("background-color: #7FFF00; color: #000;")
+        #         # self.timer.start(6000)
+        #         print(f"Número de días transcurridos para 30 a 15 días: {dias_restantes.days}")
+        #     elif 14 >= dias_restantes.days > 4:
+        #         self.label_texto2.setText(texto_cuota)
+        #         self.label_texto2.setStyleSheet("background-color: #FFFF00;color: #000;")
+        #         # self.timer.start(6000)
+        #         print(f"Número de días transcurridos para 14 a 5 días: {dias_restantes.days}")
+        #     elif 4 >= dias_restantes.days >= 0:
+        #         self.label_texto2.setText(texto_cuota)
+        #         self.label_texto2.setStyleSheet("background-color: #FF8000; color: #000;")
+        #         # self.timer.start(6000)
+        #         print(f"Número de días transcurridos para 4 a 0 días: {dias_restantes.days}")
+        #     elif dias_restantes.days > 0:
+        #         self.label_texto2.setText(texto_vencido2)
+        #         self.label_texto2.setStyleSheet("background-color: #FF0000; color: #fff;")
+        #         # self.timer.start(6000)
+        #     else:
+        #         print("Se han superado los 30 días desde el último pago.")
 
-        self.numero_documento.clear()
-        # else:
-        #     print("No se encontraron registros para el DNI especificado.")
-        self.actualizar_fecha(fecha_registro,fecha_registro_tabla)  
-        
-    
+        #     self.numero_documento.clear()
+        # # except Error as e:
+        # #     errorConsulta("Registro de asistecia", f"Error al registrar la asistencia: {str(e)}")
+        # # finally:
+        # #     cursor.close()
+        # #     conn.close()
+   
