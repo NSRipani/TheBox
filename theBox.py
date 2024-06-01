@@ -7,7 +7,7 @@ from mysql.connector import Error
 
 # Librerías de PyQt6
 from PyQt6.QtWidgets import QApplication,QLabel, QPushButton, QWidget, QMessageBox, QLineEdit, QCheckBox
-from PyQt6.QtGui import QIcon, QPixmap
+from PyQt6.QtGui import QIcon, QPixmap,QPalette,QColor
 from PyQt6.QtCore import QSettings, Qt
 
 # Módulos de la carpta del proyecto
@@ -90,12 +90,14 @@ class Login(QWidget):
         self.password_input.setPlaceholderText("Ingrese números y letras")
 
         self.ver_contraseña = QCheckBox(self)
+        self.ver_contraseña.setStyleSheet(style.checkbox_style)
         self.ver_contraseña.setText("Ver contraseña")
-        self.ver_contraseña.move(125, 265)
+        self.ver_contraseña.move(120, 270)
         self.ver_contraseña.clicked.connect(self.ver)
         
         self.Remember = QCheckBox("Recordarme", self)
-        self.Remember.move(235, 265)
+        self.Remember.setStyleSheet(style.checkbox_style)
+        self.Remember.move(240, 270)
         self.Remember.setChecked(True)
         
         self.login_button = QPushButton("Iniciar sesion", self)
@@ -227,3 +229,4 @@ if __name__ == "__main__":
     login_window = Login()
     login_window.show()
     sys.exit(app.exec())
+    

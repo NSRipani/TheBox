@@ -16,7 +16,7 @@ from mysql.connector import Error
 from PyQt6.QtWidgets import (QLabel,QFileDialog, QCompleter, QAbstractScrollArea, QHeaderView, QGridLayout, QHBoxLayout, QDateEdit, 
                              QMessageBox, QTableWidget, QAbstractItemView, QTableWidgetItem, QPushButton, QLineEdit, QStatusBar, QWidget,
                              QVBoxLayout, QGroupBox, QMainWindow, QFrame, QTabWidget, QComboBox)
-from PyQt6.QtGui import QIcon, QKeySequence, QAction, QPixmap
+from PyQt6.QtGui import QIcon, QKeySequence, QAction, QPixmap, QPalette, QColor
 from PyQt6.QtCore import *
 
 # Módulo de para las cajas de mensajes
@@ -42,7 +42,6 @@ from modulos.carga_empleado.reg_empleado import Empleado
 from modulos.cargar_cuenta.carga_cuenta import CuentaContable
 
 # Módulo de Estilos
-from qss.style_item import itemColor_TOTAL, itemColor_RESULTADO
 from qss import style
 
 # conexion
@@ -330,7 +329,7 @@ class VentanaPrincipal(QMainWindow):
         date.setStyleSheet(style.label)
         date.setFixedWidth(80)
         self.input_date = QDateEdit(customer_details)
-        self.input_date.setStyleSheet(style.estilo_fecha)
+        self.input_date.setStyleSheet(style.estilo_fechas)
         self.input_date.setFixedWidth(200)
         self.input_date.setLocale(QLocale("es-AR"))
         self.input_date.setCursor(Qt.CursorShape.PointingHandCursor)
@@ -522,7 +521,7 @@ class VentanaPrincipal(QMainWindow):
         date2.setFixedWidth(80)
         self.input_date2 = QDateEdit(update_customer_details)
         self.input_date2.setLocale(QLocale("es-AR"))
-        self.input_date2.setStyleSheet(style.estilo_fecha)
+        self.input_date2.setStyleSheet(style.estilo_fechas)
         self.input_date2.setCursor(Qt.CursorShape.PointingHandCursor)
         self.input_date2.setEnabled(False)
         self.input_date2.setFixedWidth(200)
@@ -874,7 +873,7 @@ class VentanaPrincipal(QMainWindow):
         self.input_fechaDePago = QDateEdit(grupo_pagos)
         self.input_fechaDePago.setCursor(Qt.CursorShape.PointingHandCursor)
         self.input_fechaDePago.setLocale(QLocale("es-AR"))
-        self.input_fechaDePago.setStyleSheet(style.estilo_fecha)
+        self.input_fechaDePago.setStyleSheet(style.estilo_fechas)
         self.input_fechaDePago.setFixedWidth(150)
         self.input_fechaDePago.setDate(QDate.currentDate()) 
         self.input_fechaDePago.setCalendarPopup(True)
@@ -1023,7 +1022,7 @@ class VentanaPrincipal(QMainWindow):
         self.view_apellido.setFixedWidth(200)
         elementos.addWidget(view_apellido)     
         elementos.addWidget(self.view_apellido)
-        actualizar_combobox_consulta1_usuario(self)
+        # actualizar_combobox_consulta1_usuario(self)
         # layout_H14.addSpacing(10)
                 
         view_disciplina = QLabel("Disciplina:", comboView)
@@ -1031,8 +1030,6 @@ class VentanaPrincipal(QMainWindow):
         view_disciplina.setFixedWidth(100)
         self.view_disciplina = QComboBox(comboView)
         self.view_disciplina.currentData()
-        # lista = ["- Elije una disciplina","Musculación","Cross Funcional","Funcional","Gap","Ritmos","Kids","Adultos","Stretching","Cardio"]
-        # self.view_disciplina.addItems(lista)
         self.view_disciplina.setStyleSheet(style.estilo_combo)
         self.view_disciplina.setFixedWidth(200)
         elementos.addWidget(view_disciplina)       
@@ -1043,7 +1040,7 @@ class VentanaPrincipal(QMainWindow):
         view_fechaDePago.setStyleSheet(style.label)
         view_fechaDePago.setFixedWidth(140)
         self.view_fechaDePago = QDateEdit(comboView)
-        self.view_fechaDePago.setStyleSheet(style.estilo_fecha)
+        self.view_fechaDePago.setStyleSheet(style.estilo_fechas)
         self.view_fechaDePago.setLocale(QLocale("es-AR"))
         self.view_fechaDePago.setCursor(Qt.CursorShape.PointingHandCursor)
         self.view_fechaDePago.setFixedWidth(200)
@@ -1058,7 +1055,7 @@ class VentanaPrincipal(QMainWindow):
         view_al2.setStyleSheet(style.label)
         view_al2.setFixedWidth(30)
         self.view_al2 = QDateEdit(comboView)
-        self.view_al2.setStyleSheet(style.estilo_fecha)
+        self.view_al2.setStyleSheet(style.estilo_fechas)
         self.view_al2.setLocale(QLocale("es-AR"))
         self.view_al2.setCursor(Qt.CursorShape.PointingHandCursor)
         self.view_al2.setFixedWidth(200)
@@ -1073,7 +1070,7 @@ class VentanaPrincipal(QMainWindow):
         view_asistencia.setStyleSheet(style.label)
         view_asistencia.setFixedWidth(140)
         self.view_asistencia = QDateEdit(comboView)
-        self.view_asistencia.setStyleSheet(style.estilo_fecha)
+        self.view_asistencia.setStyleSheet(style.estilo_fechas)
         self.view_asistencia.setLocale(QLocale("es-AR"))
         self.view_asistencia.setCursor(Qt.CursorShape.PointingHandCursor)
         self.view_asistencia.setFixedWidth(200)
@@ -1087,7 +1084,7 @@ class VentanaPrincipal(QMainWindow):
         view_al.setStyleSheet(style.label)
         view_al.setFixedWidth(30)
         self.view_al = QDateEdit(comboView)
-        self.view_al.setStyleSheet(style.estilo_fecha)
+        self.view_al.setStyleSheet(style.estilo_fechas)
         self.view_al.setLocale(QLocale("es-AR"))
         self.view_al.setCursor(Qt.CursorShape.PointingHandCursor)
         self.view_al.setFixedWidth(200)
@@ -1236,7 +1233,7 @@ class VentanaPrincipal(QMainWindow):
         fecha_tra.setFixedWidth(60)
         self.fecha_tra = QDateEdit(grupo_empleados)
         self.fecha_tra.setLocale(QLocale("es-AR"))
-        self.fecha_tra.setStyleSheet(style.estilo_fecha)
+        self.fecha_tra.setStyleSheet(style.estilo_fechas)
         self.fecha_tra.setCursor(Qt.CursorShape.PointingHandCursor)
         self.fecha_tra.setFixedWidth(200)
         self.fecha_tra.setDate(QDate.currentDate())
@@ -1249,7 +1246,7 @@ class VentanaPrincipal(QMainWindow):
         periodo.setStyleSheet(style.label)
         periodo.setFixedWidth(80)
         self.periodo = QDateEdit(grupo_empleados)
-        self.periodo.setStyleSheet(style.estilo_fecha)
+        self.periodo.setStyleSheet(style.estilo_fechas)
         self.periodo.setLocale(QLocale("es-AR"))
         self.periodo.setCursor(Qt.CursorShape.PointingHandCursor)
         self.periodo.setFixedWidth(200)
@@ -1264,7 +1261,7 @@ class VentanaPrincipal(QMainWindow):
         fin_tra.setFixedWidth(50)
         self.fin_tra = QDateEdit(grupo_empleados)
         self.fin_tra.setLocale(QLocale("es-AR"))
-        self.fin_tra.setStyleSheet(style.estilo_fecha)
+        self.fin_tra.setStyleSheet(style.estilo_fechas)
         self.fin_tra.setCursor(Qt.CursorShape.PointingHandCursor)
         self.fin_tra.setFixedWidth(200)
         self.fin_tra.setDate(QDate.currentDate())
@@ -1421,7 +1418,7 @@ class VentanaPrincipal(QMainWindow):
         fecha_gastos.setFixedWidth(80)
         self.fecha_gastos = QDateEdit(grupo_resumen)
         self.fecha_gastos.setLocale(QLocale("es-AR"))
-        self.fecha_gastos.setStyleSheet(style.estilo_fecha)
+        self.fecha_gastos.setStyleSheet(style.estilo_fechas)
         self.fecha_gastos.setCursor(Qt.CursorShape.PointingHandCursor)
         self.fecha_gastos.setFixedWidth(150)
         self.fecha_gastos.setCalendarPopup(True)
@@ -1476,7 +1473,7 @@ class VentanaPrincipal(QMainWindow):
         fecha_periodo.setStyleSheet(style.label)
         fecha_periodo.setFixedWidth(80)
         self.fecha_periodo = QDateEdit(grupo_resumen)
-        self.fecha_periodo.setStyleSheet(style.estilo_fecha)
+        self.fecha_periodo.setStyleSheet(style.estilo_fechas)
         self.fecha_periodo.setLocale(QLocale("es-AR"))
         self.fecha_periodo.setCursor(Qt.CursorShape.PointingHandCursor)
         self.fecha_periodo.setFixedWidth(150)
@@ -1491,7 +1488,7 @@ class VentanaPrincipal(QMainWindow):
         fecha_fin.setStyleSheet(style.label)
         fecha_fin.setFixedWidth(45)
         self.fecha_fin = QDateEdit(grupo_resumen)
-        self.fecha_fin.setStyleSheet(style.estilo_fecha)
+        self.fecha_fin.setStyleSheet(style.estilo_fechas)
         self.fecha_fin.setLocale(QLocale("es-AR"))
         self.fecha_fin.setCursor(Qt.CursorShape.PointingHandCursor)
         self.fecha_fin.setFixedWidth(150)
@@ -1734,32 +1731,26 @@ class VentanaPrincipal(QMainWindow):
         fecha = self.input_date.date().toPyDate()
         
         registroUSER(nombre1,apellido1, dni, sexo, edad, celu)
-        
-        cargar = inicio("Registro de alumnos","¿Desea guardar alumno?")
-        if cargar == QMessageBox.StandardButton.Yes: 
-            try:   
-                db = conectar_base_de_datos()
-                cursor = db.cursor()
-                        
-                query = "INSERT INTO usuario (nombre, apellido, dni, sexo, edad, celular, fecha_registro) VALUES (%s, %s, %s, %s, %s, %s, %s)"
-                values = (nombre1, apellido1, dni, sexo, edad, celu, fecha)
-                cursor.execute(query, values)
-                db.commit()
-                                
-                if cursor.rowcount > 0:
-                    mensaje_ingreso_datos("Registro de alumnos","Registro cargado")
+        try:   
+            db = conectar_base_de_datos()
+            cursor = db.cursor()
                     
-                    limpiasElementosUser(self,QDate)
-                else:
-                    mensaje_ingreso_datos("Registro de alumnos","Registro no cargado")
+            query = "INSERT INTO usuario (nombre, apellido, dni, sexo, edad, celular, fecha_registro) VALUES (%s, %s, %s, %s, %s, %s, %s)"
+            values = (nombre1, apellido1, dni, sexo, edad, celu, fecha)
+            cursor.execute(query, values)
+            db.commit()
+                            
+            if cursor.rowcount > 0:
+                mensaje_ingreso_datos("Registro de alumnos","Registro cargado")
+                
+                limpiasElementosUser(self,QDate)
+            else:
+                mensaje_ingreso_datos("Registro de alumnos","Registro no cargado")
 
-                cursor.close()
-                db.close()
-            except Error as ex:
-                errorConsulta("Registro de alumnos",f"Error en la consulta: {str(ex)}")
-                print("Error executing the query", ex)
-        else:
-            print("No se guarda registro")
+            cursor.close()
+            db.close()
+        except Error as ex:
+            errorConsulta("Registro de alumnos",f"Error en la consulta: {str(ex)}")
     
     def search(self):
         if not self.input_nombre1.text():

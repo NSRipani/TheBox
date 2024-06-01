@@ -72,7 +72,6 @@ def actualizar_combobox_consulta1_usuario(self):
     cursor = conn.cursor()
     
     self.view_nomb.clear()
-    self.view_apellido.clear()
 
     # Consulta para obtener los datos de una columna específica
     cursor.execute("SELECT u.nombre, u.apellido FROM usuario u ORDER BY u.nombre ASC")
@@ -80,7 +79,5 @@ def actualizar_combobox_consulta1_usuario(self):
 
     for resultado in resultados:
         self.view_nomb.addItem(str(resultado[0]).capitalize().title(), resultado)
-    for resultado in resultados:   
-        self.view_apellido.addItem(str(resultado[1]).capitalize().title(), resultado)
     cursor.close()
     conn.close()

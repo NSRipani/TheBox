@@ -43,7 +43,39 @@ lineedit_logo = """
     QLineEdit:hover{
         background-color: #adb5bd;
     }"""
+checkbox_style = """
+    QCheckBox {
+        color: #333333;
+        font-size: 14px;
+    }
     
+    QCheckBox::indicator {
+        width: 16px;
+        height: 16px;
+        background-color: #ffffff;
+        border: 2px solid #000000;
+        border-radius: 3px;
+    }
+    
+    QCheckBox::indicator:unchecked {
+        background-color: #ffffff;
+    }
+    
+    QCheckBox::indicator:checked {
+        image: url("img/controlar.png");
+        background-color: #0291fe;
+        border-color: #0291fe;
+    }
+    
+    QCheckBox::indicator:hover {
+        border-color: #999999;
+    }
+    
+    QCheckBox::indicator:pressed {
+        background-color: #e6e6e6;
+    }
+"""
+
 estBo = """
     QPushButton{
         color: white;
@@ -98,6 +130,7 @@ botones_profesores = """
 qgrupo_profesor = """
     QGroupBox{
         border: 2px solid black;
+        color: black;
         border-radius: 5px;
         font: 15px;
         font-weight: bold;
@@ -123,6 +156,7 @@ label_profesor = """
     
 lineedit_profesor = """
     QLineEdit{
+        color: black;
         background-color: white;
         border: 1px solid black;
         border-radius: 4px;
@@ -192,14 +226,7 @@ fondo2 = """
         background-color: QLinearGradient(x1: 0, y1: 0, x2: 1, y2: 1, stop: 0 #ffffff, stop: 0.45 #fcb045,stop: 0.66 #ff9500, stop: 1 #000000);
     }"""
 
-checkbox = """
-    QCheckBox {
-        font-size: 20px;
-        width: 20px;
-        height: 20px;
-        color: black;
-        background-color: transparent;
-    }"""
+
 estilo_statusbar = """
     QStatusBar{
         background-color: #7f7f7f; 
@@ -252,6 +279,7 @@ estilo_tab = """
 estilo_grupo = """
     QGroupBox{
         border: 1px solid black;
+        color: black;
         border-radius: 5px;
         font: 20px;
         font-weight: bold;
@@ -273,6 +301,7 @@ label = """
         background-color: transparent;
         font-size: 20px;
         font-family: "Segoe UI";
+        color: black;
     }"""
 
 label_contable = """
@@ -283,23 +312,11 @@ QLabel{
     font-weight: bold;
 }"""
 
-estilo_lineedit = """
-    QLineEdit{
-        background-color: white;
-        border: 1px solid black;
-        border-radius: 4px;
-        font-size: 15px;
-        font-family: "Segoe UI";
-    }
-    QLineEdit:hover{
-        background-color: #adb5bd;
-    }"""
-
 estilo_combo = """
         /* RECUADRO CON ITEMS*/
     QComboBox {
         background-color: #FFFFFF;
-        color: #000000; 
+        color: black; 
         border: 1px solid black;
         border-radius: 4px;
         font-size: 20px;
@@ -388,7 +405,7 @@ completer = """
         color: #FFFFFF;
     }
 """
-estilo_fecha = """
+estilo_fechas = """
     QDateEdit{
         background-color: #FFFFFF;
         color: #000000;
@@ -410,7 +427,6 @@ estilo_fecha = """
         font-size: 23px;
         background-color: transparent;
     }
-    
     QCalendarWidget QAbstractItemView {
         border: 2px solid #adb5bd;
         background-color: #ffffff; 
@@ -642,6 +658,7 @@ label_documento = """
 estilo_lineedit = """
     QLineEdit{
         background-color: white;
+        color: black;
         border: 1px solid black;
         border-radius: 4px;
         font-size: 20px;
