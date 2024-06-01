@@ -498,7 +498,7 @@ esttabla = """
         background-color: #9a9a9a;
         color: black;
         font-weight: bold;
-        font-size: 20px;
+        font-size: 17px;
     }
     QScrollBar:vertical {
         background-color: #808080; 

@@ -447,3 +447,74 @@ def tabla_libroDiario_CONTABILIDAD(self,Workbook,Font,PatternFill,Border,Side,nu
                 aviso_descargaExitosa("Descarga exitosa","La tabla se ha descargado en un archivo Excel con éxito.")
             except Exception as e:
                 aviso_Advertencia_De_excel("Advertencia", f"No se pudo guardar el archivo: {str(e)}.\nEL archivo que deseas reemplazar esta en uso, de2ebes cerrar el archivo y luego guardarlo. El nombre puede ser parecido pero no igual.")
+
+def excelConsulta(self,Workbook,Font,PatternFill,Border,Side,numbers,QFileDialog):
+    if self.tablaVIEW.rowCount() == 0:
+        mensaje_ingreso_datos("Descarga de archivo","Primero debe mostrar una tabla antes de descargarla en un archivo Excel.")
+        return
+    
+    formatos_columnas = {
+        "NOMBRE": numbers.FORMAT_TEXT,"APELLIDO": numbers.FORMAT_TEXT,"DNI": numbers.FORMAT_TEXT, "SEXO": numbers.FORMAT_TEXT,"EDAD": numbers.FORMAT_TEXT,
+        "CELULAR": numbers.FORMAT_TEXT, "PRECIO": numbers.FORMAT_NUMBER_00, "DISCIPLINA": numbers.FORMAT_TEXT,"TOTAL_PRECIO": numbers.FORMAT_NUMBER_00, 
+        "INICIO PERIODO": numbers.FORMAT_TEXT, "FIN PERIODO": numbers.FORMAT_TEXT, "FECHA": numbers.FORMAT_TEXT, "FIN DE PAGO": numbers.FORMAT_TEXT,
+        "MODALIDAD": numbers.FORMAT_TEXT,"ESTADO": numbers.FORMAT_TEXT
+    }
+    
+    workbook = Workbook()
+    sheet = workbook.active
+
+    # Obtener encabezados de la tabla y guardarlos en el archivo Excel
+    for col in range(self.tablaVIEW.columnCount()):
+        header_item = self.tablaVIEW.horizontalHeaderItem(col)
+        if header_item is not None:
+            header_cell = sheet.cell(row=1, column=col + 1)
+            header_cell.value = header_item.text()
+            # Establecer estilo personalizado a las celdas de encabezado
+            header_cell.font = Font(name='Arial', bold=True)  # Cambiar el tipo de fuente aquí
+            header_cell.fill = PatternFill(start_color="FFA500", end_color="FFA500", fill_type="solid")
+            header_cell.border = Border(top=Side(style="thin"), bottom=Side(style="thin"), left=Side(style="thin"), right=Side(style="thin"))
+    
+    # Obtener datos de la tabla y guardarlos en el archivo Excel
+    for row in range(self.tablaVIEW.rowCount()):
+        for col in range(self.tablaVIEW.columnCount()):
+            item = self.tablaVIEW.item(row, col)
+            if item is not None:
+                cell = sheet.cell(row=row+2, column=col+1)
+                cell.value = item.text()
+
+                # Establecer estilo personalizado a las celdas
+                cell.font = Font(name="Arial", bold=True)
+                cell.fill = PatternFill(start_color="FFFFFF", end_color="FFFFFF", fill_type="solid")
+                cell.border = Border(top=Side(style="thin"), bottom=Side(style="thin"), left=Side(style="thin"), right=Side(style="thin"))
+
+                # Aplicar formato a las celdas de acuerdo al nombre de la columna
+                nombre_columna = self.tablaVIEW.horizontalHeaderItem(col).text()
+                if nombre_columna in formatos_columnas:
+                    formato = formatos_columnas[nombre_columna]
+                    cell.number_format = formato
+                    
+    # Autoajustar el ancho de las columnas
+    for col in sheet.columns:
+        max_length = 0
+        column = col[0].column_letter  # obtiene el nombre de la columna
+        for cell in col:
+            try:  # Evitar errores en celdas vacías
+                if len(str(cell.value)) > max_length:
+                    max_length = len(cell.value)
+            except:
+                pass
+        adjusted_width = (max_length + 2) * 1.2
+        sheet.column_dimensions[column].width = adjusted_width
+    
+    file_path, _ = QFileDialog.getSaveFileName(self, "Guardar archivo Excel", "", "Archivos Excel (*.xlsx)")
+
+    if file_path:
+        if os.path.exists(file_path):
+            file_name, file_extension = os.path.splitext(file_path)
+            file_path = f"{file_name}_nuevo{file_extension}"
+
+        try:
+            workbook.save(file_path)
+            aviso_descargaExitosa("Descarga exitosa","La tabla se ha descargado en un archivo Excel con éxito.")
+        except Exception as e:
+            aviso_Advertencia_De_excel("Advertencia", f"No se pudo guardar el archivo: {str(e)}.\nEL archivo que deseas reemplazar esta en uso, de2ebes cerrar el archivo y luego guardarlo. El nombre puede ser parecido pero no igual.")

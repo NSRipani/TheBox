@@ -9,7 +9,7 @@ from openpyxl import Workbook
 from openpyxl.styles import Font, PatternFill, Border, Side, numbers
 
 # Librería de MySQL
-import mysql.connector
+import mysql.connector 
 from mysql.connector import Error
 
 # Librerías de PyQt6
@@ -22,24 +22,24 @@ from PyQt6.QtCore import *
 # Módulo de para las cajas de mensajes
 from modulos.mensajes import (mensaje_ingreso_datos, errorConsulta, inicio, aviso_descargaExitosa, aviso_Advertencia_De_excel, 
                               resultado_empleado, aviso_resultado, mensaje_horas_empleados, aviso_resultado_asistencias)
-from utilidades.completar_combobox import actualizar_combobox_user, actualizar_combobox_disc,completar_nombre_empleado
+from utilidades.completar_combobox import actualizar_combobox_user, actualizar_combobox_disc,completar_nombre_empleado,actualizar_combobox_consulta4, actualizar_combobox_consulta1_usuario
 
 # Validaciones y demas funciones 
 from validaciones.usuario import (registroUSER, limpiasElementosUser, limpiar_campos, actualizarUSER, limpiasElementosUseraActualizar, 
                                   autoCompletadoACTULIZAR,limpiar_tablaRecord, limpiar_tablaUpdate, tabla_registroUSER)
 from validaciones.updateYdelete_usuario import tabla_updateUSER, tabla_eliminarUSER, borrarTabla
 from validaciones.archivo_Excel import (tabla_registroUSUARIO, tabla_registroDISCIPLINA, horas_Excel, 
-                                        tabla_libroDiario_CONTABILIDAD, pagos_EXCEL)
+                                        tabla_libroDiario_CONTABILIDAD, pagos_EXCEL, excelConsulta)
 from validaciones.disciplina import guardarACTIVIDAD, completar_CAMPOS_ACTIVIDAD, clear_tabla_disciplina, tabla_DISCIPLINA
 from validaciones.pagos import seleccionDeTablaPAGOS, tabla_pagos
 from validaciones.contabilidad import validadciones, tabla_contabilidad, selccionarTabla, limpiarCampos, clear_tabla
 from validaciones.horas import tabla_HorasTotales,tabla_HorasXEmpleado, autoCompletado, tabla_General, clearTabla
-from validaciones.consultas import consulta1, consulta2, limpiar
+from validaciones.consultas import consultaPorAlumno, totalAlumno, limpiar, consultarDeDisciplina, consultaPorDisciplina, asistenciaTotal,asistenciaPorAlumno
 
 # Módulo de Registro de Asistencia
 from modulos.asistencia import Asistencia
 from modulos.carga_empleado.reg_empleado import Empleado
-from modulos.carga_cuenta.carga_cuenta import CuentaContable
+from modulos.cargar_cuenta.carga_cuenta import CuentaContable
 
 # Módulo de Estilos
 from qss.style_item import itemColor_TOTAL, itemColor_RESULTADO
@@ -151,15 +151,6 @@ class VentanaPrincipal(QMainWindow):
         empleados_button.setIcon(icon7)
         empleados_button.setIconSize(QSize(25,25))
         empleados_button.clicked.connect(self.empleados)
-        
-        # horas = QPushButton(" HORAS", self)
-        # horas.setCursor(Qt.CursorShape.PointingHandCursor)
-        # horas.setStyleSheet(style.estilo)
-        # horas.setFixedSize(200, 55)
-        # icon7 = QIcon("img/hora.png")
-        # horas.setIcon(icon7)
-        # horas.setIconSize(QSize(25,25))
-        # horas.clicked.connect(self.horas)
         
         gastos_button = QPushButton(" CONTABILIDAD", self)
         gastos_button.setCursor(Qt.CursorShape.PointingHandCursor)
@@ -927,18 +918,6 @@ class VentanaPrincipal(QMainWindow):
         layoutBoton2.addWidget(act_pagos)
         layoutBoton2.addWidget(eli_pagos)
         
-        # self.verificado = QCheckBox(grupo_pagos)
-        # self.verificado.setStyleSheet(style.checkbox)
-        # self.verificado.setText("Verificado")
-        # self.verificado.setChecked(False)
-        # self.verificado.setIconSize(QSize(20, 20))
-        # self.verificado.setMinimumSize(QSize(140, 24))
-        # self.verificado.setMaximumSize(QSize(140, 24))
-        # self.verificado.setFixedWidth(150)
-        # self.verificado.setFont(QFont("Segoe UI", 15))
-        # self.verificado.setLayoutDirection(Qt.LayoutDirection.RightToLeft)
-        # layout_elementos_pagos3.addWidget(self.verificado)
-        
         layout_panilla = QHBoxLayout() 
         layout_panilla.setAlignment(Qt.AlignmentFlag.AlignRight)
         planilla = QPushButton('PLANILLA', grupo_pagos)
@@ -1013,50 +992,52 @@ class VentanaPrincipal(QMainWindow):
         view_nomb = QLabel("Nombre:",comboView)
         view_nomb.setStyleSheet(style.label)
         view_nomb.setFixedWidth(140)
-        self.view_nomb = QLineEdit(comboView)
+        self.view_nomb = QComboBox(comboView)
         self.view_nomb.setFixedWidth(200)
-        self.view_nomb.setStyleSheet(style.estilo_lineedit)
+        self.view_nomb.setStyleSheet(style.estilo_combo)
         elementos.addWidget(view_nomb)     
         elementos.addWidget(self.view_nomb)
-        
-        #  Conexión a la base de datos MySQL
-        conn = conectar_base_de_datos()
-        cursor = conn.cursor()
+        actualizar_combobox_consulta1_usuario(self)
+        # #  Conexión a la base de datos MySQL
+        # conn = conectar_base_de_datos()
+        # cursor = conn.cursor()
 
-        # Consulta para obtener los datos de una columna específica
-        cursor.execute("SELECT nombre FROM usuario")
-        datos = cursor.fetchall()
-        suger3 = [str(item[0]) for item in datos]
+        # # Consulta para obtener los datos de una columna específica
+        # cursor.execute("SELECT nombre FROM usuario")
+        # datos = cursor.fetchall()
+        # suger3 = [str(item[0]) for item in datos]
 
-        nombre = QCompleter(suger3)
-        nombre.setFilterMode(Qt.MatchFlag.MatchStartsWith)
-        nombre.popup().setStyleSheet(style.completer)
-        self.view_nomb.setCompleter(nombre)
+        # nombre = QCompleter(suger3)
+        # nombre.setFilterMode(Qt.MatchFlag.MatchStartsWith)
+        # nombre.popup().setStyleSheet(style.completer)
+        # self.view_nomb.setCompleter(nombre)
         
-        cursor.close()
-        conn.close()
+        # cursor.close()
+        # conn.close()
         
         view_apellido = QLabel("Apellido:",comboView)
         view_apellido.setStyleSheet(style.label)
         view_apellido.setFixedWidth(80)
-        self.view_apellido = QLineEdit(comboView)
-        self.view_apellido.setStyleSheet(style.estilo_lineedit)
+        self.view_apellido = QComboBox(comboView)
+        self.view_apellido.setStyleSheet(style.estilo_combo)
         self.view_apellido.setFixedWidth(200)
         elementos.addWidget(view_apellido)     
         elementos.addWidget(self.view_apellido)
+        actualizar_combobox_consulta1_usuario(self)
         # layout_H14.addSpacing(10)
                 
         view_disciplina = QLabel("Disciplina:", comboView)
         view_disciplina.setStyleSheet(style.label)
         view_disciplina.setFixedWidth(100)
         self.view_disciplina = QComboBox(comboView)
-        lista = ["- Elije una disciplina","Musculación","Cross Funcional","Funcional","Gap","Ritmos","Kids","Adultos","Stretching","Cardio"]
-        self.view_disciplina.addItems(lista)
+        self.view_disciplina.currentData()
+        # lista = ["- Elije una disciplina","Musculación","Cross Funcional","Funcional","Gap","Ritmos","Kids","Adultos","Stretching","Cardio"]
+        # self.view_disciplina.addItems(lista)
         self.view_disciplina.setStyleSheet(style.estilo_combo)
         self.view_disciplina.setFixedWidth(200)
         elementos.addWidget(view_disciplina)       
         elementos.addWidget(self.view_disciplina)
-        # layout_H14.addSpacing(370)      
+        actualizar_combobox_consulta4(self) 
                 
         view_fechaDePago = QLabel("Fecha de pago:", comboView)
         view_fechaDePago.setStyleSheet(style.label)
@@ -1124,11 +1105,11 @@ class VentanaPrincipal(QMainWindow):
         button14.setFixedWidth(200)
         button14.setCursor(Qt.CursorShape.PointingHandCursor)
         button14.setStyleSheet(style.estilo_boton)
-        button17 = QPushButton('TOTAL POR DISCIPLINAS', comboView)
+        button17 = QPushButton('TOTAL POR DISCIPLINA', comboView)
         button17.setFixedWidth(200)
         button17.setCursor(Qt.CursorShape.PointingHandCursor)
         button17.setStyleSheet(style.estilo_boton)
-        button19 = QPushButton('ASISTENCIA POR ALUMNO', comboView)
+        button19 = QPushButton('ASISTENCIA DE ALUMNO', comboView)
         button19.setFixedWidth(200)
         button19.setCursor(Qt.CursorShape.PointingHandCursor)
         button19.setStyleSheet(style.estilo_boton)
@@ -1142,7 +1123,7 @@ class VentanaPrincipal(QMainWindow):
         button15.setFixedWidth(200)
         button15.setCursor(Qt.CursorShape.PointingHandCursor)
         button15.setStyleSheet(style.estilo_boton)
-        button16 = QPushButton('TOTAL DE DISCIPLINAS', comboView)
+        button16 = QPushButton('TOTAL DE DISCIPLINA', comboView)
         button16.setFixedWidth(200)
         button16.setCursor(Qt.CursorShape.PointingHandCursor)
         button16.setStyleSheet(style.estilo_boton)
@@ -1418,10 +1399,7 @@ class VentanaPrincipal(QMainWindow):
         tab_emp_layout = QVBoxLayout()
         tab_emp_layout.addWidget(grupo_empleados)
         pestania_empleados.setLayout(tab_emp_layout)
-        
-        #-----------------------------------------------------------------
-        
-        
+                
         #-----------------------------------------------------------------
         # PESTAÑA REGISTRAR GASTOS
         
@@ -1526,11 +1504,11 @@ class VentanaPrincipal(QMainWindow):
         # CREA UN LAYOUT HORIZONTAL
         botones_resumen = QHBoxLayout()
         botones_resumen.setAlignment(Qt.AlignmentFlag.AlignRight)
-        buttonREG = QPushButton('REGISTRAR DATOS', grupo_resumen)
+        buttonREG = QPushButton('REGISTRAR', grupo_resumen)
         buttonREG.setFixedWidth(200)
         buttonREG.setCursor(Qt.CursorShape.PointingHandCursor)
         buttonREG.setStyleSheet(style.estilo_boton)
-        buttonACT = QPushButton('ACTUALIZAR DATOS', grupo_resumen)
+        buttonACT = QPushButton('ACTUALIZAR', grupo_resumen)
         buttonACT.setFixedWidth(200)
         buttonACT.setCursor(Qt.CursorShape.PointingHandCursor)
         buttonACT.setStyleSheet(style.estilo_boton)
@@ -1551,8 +1529,8 @@ class VentanaPrincipal(QMainWindow):
         botones_resumen2.addWidget(button_eliminar)
         
         # CREA UN LAYOUT HORIZONTAL
-        botones_resumen3 = QHBoxLayout()
-        botones_resumen3.setAlignment(Qt.AlignmentFlag.AlignRight)
+        # botones_resumen3 = QHBoxLayout()
+        # botones_resumen3.setAlignment(Qt.AlignmentFlag.AlignRight)
         
         # boton_limpiarTabla.setStyleSheet(style.estilo_boton)
         # excel_resumen = QPushButton('DESCARGAR PLANILLA', grupo_resumen)
@@ -1570,7 +1548,7 @@ class VentanaPrincipal(QMainWindow):
         h2.addLayout(botones_resumen2)
         h3 = QHBoxLayout()
         h3.addLayout(layout_libro3)
-        h3.addLayout(botones_resumen3)
+        # h3.addLayout(botones_resumen3)
         
         # AGREDA LOS LAYOUT HORIZONTALES AL LAYOUT VERTICAL
         vertical.addLayout(h1)
@@ -1708,6 +1686,9 @@ class VentanaPrincipal(QMainWindow):
     def balances(self):
         self.tab.setCurrentIndex(5)
         self.tab.setDisabled(False)
+        # actualiza comobox disciplina
+        actualizar_combobox_consulta4(self)
+        actualizar_combobox_consulta1_usuario(self)
         
         # FUNCION QUE VINCULA LA VENTANA DE ASISTENCIA
     def assistance(self):
@@ -2316,14 +2297,14 @@ class VentanaPrincipal(QMainWindow):
             
     # ----------- PESTAÑA BALANCE -----------------
     def consultar(self):
-        nombre = self.view_nomb.text()
+        nombre = self.view_nomb.currentData()[0]
 
         patron = re.compile(r'^[a-zA-ZáéíóúÁÉÍÓÚüÜ\'\s]+$') 
         if not isinstance(nombre, str) or nombre.isspace() or not patron.match(nombre): 
             mensaje_ingreso_datos("Registro de alumnos","El nombre debe contener: \n- Letras y/o espacios entre nombres(si tiene mas de dos).")
             return
 
-        # apellido1 = self.view_apellido.text()
+        apellido1 = self.view_apellido.currentData()[1]
 
         if not self.view_fechaDePago.date().toString("yyyy-MM-dd"):
             mensaje_ingreso_datos("Registro de alumnos","Debe ingresar una fecha de inicio de pago.")
@@ -2339,14 +2320,14 @@ class VentanaPrincipal(QMainWindow):
         try:
             db = conectar_base_de_datos()
             cursor = db.cursor()
-            query = f"SELECT u.nombre, u.apellido, u.dni, u.sexo, u.edad, u.celular, u.fecha_registro, d.nombre AS DISCIPLINA, p.precio, p.fecha, p.modalidad FROM usuario u JOIN pago p ON u.dni = p.id_usuario JOIN disciplina d ON p.id_disciplina = d.id_disciplina WHERE u.nombre = '{nombre}' AND p.fecha BETWEEN '{fecha_inicio}' AND '{fecha_fin}' ORDER BY p.fecha ASC" # JOIN disciplina d ON p.id_disciplina = d.id_disciplina
+            query = f"SELECT u.nombre, u.apellido, u.dni, u.sexo, u.edad, u.celular, u.fecha_registro, d.nombre AS DISCIPLINA, p.precio, p.fecha, p.modalidad FROM usuario u JOIN pago p ON u.dni = p.id_usuario JOIN disciplina d ON p.id_disciplina = d.id_disciplina WHERE u.nombre = '{nombre}' AND p.fecha BETWEEN '{fecha_inicio}' AND '{fecha_fin}'" # JOIN disciplina d ON p.id_disciplina = d.id_disciplina
 
-            # if apellido1:
-            #     patron_nom2 = re.compile(r'^[a-zA-ZáéíóúÁÉÍÓÚüÜ\'\s]+$') 
-            #     if not isinstance(apellido1, str) or apellido1.isspace() or not patron_nom2.match(apellido1): 
-            #         mensaje_ingreso_datos("Registro de alumnos","El apellido debe contener: \n- Letras y/o espacios entre nombres(si tiene mas de dos).")
-            #         return 
-            #     query += f" AND ru.apellido = '{apellido1}'"
+            if apellido1:
+                patron_nom2 = re.compile(r'^[a-zA-ZáéíóúÁÉÍÓÚüÜ\'\s]+$') 
+                if not isinstance(apellido1, str) or apellido1.isspace() or not patron_nom2.match(apellido1): 
+                    mensaje_ingreso_datos("Registro de alumnos","El apellido debe contener: \n- Letras y/o espacios entre nombres(si tiene mas de dos).")
+                    return 
+                query += f" AND u.apellido = '{apellido1}' ORDER BY p.fecha ASC"
             
             cursor.execute(query)
             results = cursor.fetchall()
@@ -2359,7 +2340,7 @@ class VentanaPrincipal(QMainWindow):
                 self.view_nomb.clear()
                 self.view_apellido.clear()
                 
-                consulta1(self,cursor,results,QHeaderView,QTableWidget,QAbstractItemView,QTableWidgetItem,QDate,Qt)
+                consultaPorAlumno(self,cursor,results,QHeaderView,QTableWidget,QAbstractItemView,QTableWidgetItem,QDate,Qt)
                             
             else:
                 aviso_resultado("Registro de alumnos",f"Se encontraron {len(results)} coincidencias.")
@@ -2387,6 +2368,7 @@ class VentanaPrincipal(QMainWindow):
             db = conectar_base_de_datos()
             cursor = db.cursor()
             query = f"SELECT u.nombre, u.apellido, u.dni, u.sexo, u.edad, u.celular, u.fecha_registro, d.nombre AS DISCIPLINA, p.precio, p.fecha, p.modalidad FROM usuario u JOIN pago p ON u.dni = p.id_usuario JOIN disciplina d ON p.id_disciplina = d.id_disciplina WHERE p.fecha BETWEEN '{fecha_inicio}' AND '{fecha_fin}' ORDER BY p.fecha ASC"
+            cursor.execute(query)
             results = cursor.fetchall()
             
             if results:
@@ -2395,7 +2377,7 @@ class VentanaPrincipal(QMainWindow):
                 self.view_fechaDePago.setDate(QDate.currentDate())
                 self.view_al.setDate(QDate.currentDate())
                 
-                consulta2(self,cursor,results,QHeaderView,QTableWidget,QAbstractItemView,QAbstractScrollArea,QTableWidgetItem,QDate,Qt)
+                totalAlumno(self,cursor,results,QHeaderView,QTableWidget,QAbstractItemView,QAbstractScrollArea,QTableWidgetItem,QDate,Qt)
                 
             else: 
                 aviso_resultado("Registro de alumnos",f"Se encontraron {len(results)} coincidencias.")
@@ -2424,7 +2406,7 @@ class VentanaPrincipal(QMainWindow):
         try:
             db = conectar_base_de_datos()
             cursor = db.cursor()
-            query = f"SELECT u.nombre, u.apellido, d.nombre AS DISCIPLINA, SUM(p.precio) as total_precio, '{fecha_inicio}' AS inicio_periodo, '{fecha_fin}' AS fin_periodo FROM usuario u JOIN disciplina d ON u.id_usuario = p.id_usuario JOIN pago p WHERE p.fecha BETWEEN '{fecha_inicio}' AND '{fecha_fin}' GROUP BY u.nombre, u.apellido, d.nombre" 
+            query = f"SELECT u.nombre, u.apellido, d.nombre AS DISCIPLINA, SUM(p.precio) AS total_precio, '{fecha_inicio}' AS inicio_periodo, '{fecha_fin}' AS fin_periodo FROM usuario u JOIN pago p ON u.dni = p.id_usuario JOIN disciplina d ON p.id_disciplina = d.id_disciplina WHERE p.fecha BETWEEN '{fecha_inicio}' AND '{fecha_fin}' GROUP BY u.nombre, u.apellido, d.nombre"
             cursor.execute(query)
             results = cursor.fetchall()
             
@@ -2433,54 +2415,8 @@ class VentanaPrincipal(QMainWindow):
                 
                 self.view_fechaDePago.setDate(QDate.currentDate())
                 self.view_al2.setDate(QDate.currentDate())
-                
-                headers = [description[0].replace('_', ' ').upper() for description in cursor.description]
-                headers.append("Total Precio")
-
-                self.tablaVIEW.setRowCount(len(results))
-                self.tablaVIEW.setColumnCount(len(results[0]))
-                self.tablaVIEW.setHorizontalHeaderLabels(headers)
-                
-                # Establecer la propiedad de "stretch" en el encabezado horizontal
-                header = self.tablaVIEW.horizontalHeader()
-                header.setSectionResizeMode(QHeaderView.ResizeMode.Stretch)
-                self.tablaVIEW.setSelectionBehavior(QTableWidget.SelectionBehavior.SelectRows)
-                self.tablaVIEW.setAutoScroll(True)
-                self.tablaVIEW.setEditTriggers(QAbstractItemView.EditTrigger.NoEditTriggers)
-                
-                for i, row in enumerate(results):
-                    for j, val in enumerate(row):
-                        item = QTableWidgetItem(str(val))
-                        
-                        # Indices de las columnas que contienen fechas
-                        if j in [4,5,6]:  
-                            fecha = QDate.fromString(str(val), "yyyy-MM-dd")  # Convertir la fecha a objeto QDate
-                            item.setText(fecha.toString("dd-MM-yyyy"))  # Establecer el formato de visualización
-                        
-                        if j in [3, 4, 5, 6]:  # Ajustar alineación para ciertas columnas
-                            item.setTextAlignment(Qt.AlignmentFlag.AlignCenter) 
-                        self.tablaVIEW.setItem(i, j, item)
-                
-                # Después de mostrar los resultados en la tabla
-                if self.tablaVIEW.rowCount() == len(results):
-                    total_precios = sum(row[3] for row in results)  # para cada fila en results, se toma el valor que está en la posición 4 (quinta columna, considerando que la indexación comienza en 0) y se suma a un acumulador.
-
-                    # Agregar una fila al final de la tabla para mostrar la suma total
-                    total_row = self.tablaVIEW.rowCount()
-                    self.tablaVIEW.insertRow(total_row)
-
-                    # Mostrar la etiqueta "Total" en la primera celda de la fila de total
-                    item_total_label = QTableWidgetItem("TOTAL: ")
-                    item_total_label.setFont(itemColor_TOTAL(item_total_label))  # Funcion para estilos de item
-                    item_total_label.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
-                    self.tablaVIEW.setItem(total_row, 2, item_total_label)
-
-                    # Mostrar la suma total en la celda debajo de la columna 'precios'
-                    item_total_precio = QTableWidgetItem(str(f"$ {total_precios}"))
-                    item_total_precio.setFont(itemColor_RESULTADO(item_total_precio))  # Funcion para estilos de item
-                    self.tablaVIEW.setItem(total_row, 3, item_total_precio)
-                    item_total_precio.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
-            
+                consultarDeDisciplina(self,cursor,results,QHeaderView,QTableWidget,QAbstractItemView,QTableWidgetItem,QDate,Qt)
+                            
             else:
                 aviso_resultado("Registro de alumnos",f"Se encontraron {len(results)} coincidencias.")
                 
@@ -2491,7 +2427,7 @@ class VentanaPrincipal(QMainWindow):
             print("Error executing the query", ex)
             
     def consultar4(self):
-        actividad = self.view_disciplina.currentText() #text().capitalize().title()
+        actividad = self.view_disciplina.currentData()[0] #text().capitalize().title()
         
         lista = ["musculacion","cross funcional","gap","kids","fucional","cardio","stretching","adulto","ritmos"]
         patrones = re.compile(r'^[a-zA-ZáéíóúÁÉÍÓÚüÜ\'\s]+$')
@@ -2511,91 +2447,41 @@ class VentanaPrincipal(QMainWindow):
             mensaje_ingreso_datos("Registro de alumnos","La fecha de fin debe ser posterior a la fecha de inicio.")
             return
         
-        alumno = self.view_nomb.text()
-        apellido = self.view_apellido.text()
+        # alumno = self.view_nomb.text()
+        # apellido = self.view_apellido.text()
         
         try:
-            db = mysql.connector.connect(
-                host="localhost",
-                port="3306",
-                user="root",
-                password="root",
-                database="thebox_bd"
-            )
+            db = conectar_base_de_datos()
             cursor = db.cursor()
-            query = f"SELECT u.nombre, u.apellido, u.dni, u.sexo, u.edad, d.disciplina, d.precio, d.fecha_pago, d.modalidad, d.estado FROM usuario u JOIN disciplina d ON u.dni = d.dni WHERE d.fecha_pago BETWEEN '{fecha_inicio}' AND '{fecha_fin}' AND d.disciplina = '{actividad}'"
+            query = f"SELECT u.nombre, u.apellido, u.dni, u.sexo, u.edad, d.nombre AS DISCIPLINA, p.modalidad, p.fecha, SUM(p.precio) AS total_precio FROM usuario u JOIN pago p ON u.dni = p.id_usuario JOIN disciplina d ON p.id_disciplina = d.id_disciplina WHERE p.fecha BETWEEN '{fecha_inicio}' AND '{fecha_fin}' AND d.nombre = '{actividad}' GROUP BY u.nombre, u.apellido, u.dni, u.sexo, u.edad, d.nombre, p.modalidad, p.fecha ORDER BY p.fecha ASC"
             
-            if alumno:
-                patron_nom3 = re.compile(r'^[a-zA-ZáéíóúÁÉÍÓÚüÜ\'\s]+$') 
-                if not isinstance(alumno, str) or alumno.isspace() or not patron_nom3.match(alumno): 
-                    mensaje_ingreso_datos("Registro de alumnos","El apellido debe contener: \n- Letras y/o espacios entre nombres(si tiene mas de dos).")
-                    return 
-                query += f" AND ru.nombre = '{alumno}'"
+            # if alumno:
+            #     patron_nom3 = re.compile(r'^[a-zA-ZáéíóúÁÉÍÓÚüÜ\'\s]+$') 
+            #     if not isinstance(alumno, str) or alumno.isspace() or not patron_nom3.match(alumno): 
+            #         mensaje_ingreso_datos("Registro de alumnos","El apellido debe contener: \n- Letras y/o espacios entre nombres(si tiene mas de dos).")
+            #         return 
+            #     query += f" AND u.nombre = '{alumno}'"
 
-            if apellido:
-                if not isinstance(apellido, str) or apellido.isspace() or not patron_nom3.match(apellido): 
-                    mensaje_ingreso_datos("Registro de alumnos","El apellido debe contener: \n- Letras y/o espacios entre nombres(si tiene mas de dos).")
-                    return
-                query += f" AND ru.apellido = '{apellido}'"
+            # if apellido:
+            #     if not isinstance(apellido, str) or apellido.isspace() or not patron_nom3.match(apellido): 
+            #         mensaje_ingreso_datos("Registro de alumnos","El apellido debe contener: \n- Letras y/o espacios entre nombres(si tiene mas de dos).")
+            #         return
+            #     query += f" AND u.apellido = '{apellido}'"
 
-            query += " ORDER BY d.fecha_pago ASC"
+            # query += " ORDER BY p.fecha ASC"
             cursor.execute(query)
             results = cursor.fetchall()
                     
-            if results:
+            if len(results) > 0:
                 aviso_resultado("Registro de alumnos",f"Se encontraron {len(results)} coincidencias.")
                 
-                self.view_disciplina.setCurrentIndex(0)
+                self.view_disciplina.currentData()[0]
                 self.view_fechaDePago.setDate(QDate.currentDate())
                 self.view_al2.setDate(QDate.currentDate())
-                self.view_nomb.clear()
-                self.view_apellido.clear()
+                # self.view_nomb.clear()
+                # self.view_apellido.clear()
+                consultaPorDisciplina(self,cursor,results,QHeaderView,QTableWidget,QAbstractItemView,QTableWidgetItem,QDate,Qt)
                 
-                headers = [description[0].replace('_', ' ').upper() for description in cursor.description]
-                
-                self.tablaVIEW.setRowCount(len(results))
-                self.tablaVIEW.setColumnCount(len(results[0]))
-                self.tablaVIEW.setHorizontalHeaderLabels(headers)
-                
-                # Establecer la propiedad de "stretch" en el encabezado horizontal
-                header = self.tablaVIEW.horizontalHeader()
-                header.setSectionResizeMode(QHeaderView.ResizeMode.Stretch)
-                self.tablaVIEW.setSelectionBehavior(QTableWidget.SelectionBehavior.SelectRows)
-                self.tablaVIEW.setEditTriggers(QAbstractItemView.EditTrigger.NoEditTriggers)
-                self.tablaVIEW.setAutoScroll(True)
-                    
-                for i, row in enumerate(results):
-                    for j, val in enumerate(row):
-                        item = QTableWidgetItem(str(val))
-                        
-                        # Indices de las columnas que contienen fechas
-                        if j == 7 :  
-                            fecha = QDate.fromString(str(val), "yyyy-MM-dd")  # Convertir la fecha a objeto QDate
-                            item.setText(fecha.toString("dd-MM-yyyy"))  # Establecer el formato de visualización
-                        
-                        if j in [2, 4, 6, 7, 9]:  # Ajustar alineación para ciertas columnas
-                            item.setTextAlignment(Qt.AlignmentFlag.AlignCenter)  
-                        self.tablaVIEW.setItem(i, j, item)
-                            
-                # Después de mostrar los resultados en la tabla
-                if self.tablaVIEW.rowCount() == len(results):
-                    total_precios = sum(row[6] for row in results)  # para cada fila en results, se toma el valor que está en la posición 4 (quinta columna, considerando que la indexación comienza en 0) y se suma a un acumulador.
-
-                    # Agregar una fila al final de la tabla para mostrar la suma total
-                    total_row = self.tablaVIEW.rowCount()
-                    self.tablaVIEW.insertRow(total_row)
-
-                    # Mostrar la etiqueta "Total" en la primera celda de la fila de total
-                    item_total_label2 = QTableWidgetItem("TOTAL: ")
-                    item_total_label2.setFont(itemColor_TOTAL(item_total_label2))  # Funcion para estilos de item
-                    item_total_label2.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
-                    self.tablaVIEW.setItem(total_row, 5, item_total_label2)
-
-                    # Mostrar la suma total en la celda debajo de la columna 'precios'
-                    item_total_precio2 = QTableWidgetItem(str(f"$ {total_precios}"))
-                    item_total_precio2.setFont(itemColor_RESULTADO(item_total_precio2))  # Funcion para estilos de item
-                    item_total_precio2.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
-                    self.tablaVIEW.setItem(total_row, 6, item_total_precio2)
             else:
                 aviso_resultado("Registro de alumnos",f"Se encontraron {len(results)} coincidencias.")
                 
@@ -2619,15 +2505,15 @@ class VentanaPrincipal(QMainWindow):
             return      
         
         try:
-            db = mysql.connector.connect(
-                host="localhost",
-                port="3306",
-                user="root",
-                password="root",
-                database="thebox_bd"
-            )
+            db = conectar_base_de_datos()
             cursor = db.cursor()
-            query = F"SELECT ru.nombre, ru.apellido, ru.dni, ru.sexo, ru.edad, a.asistencia FROM usuario ru JOIN (SELECT dni, asistencia FROM asistencia WHERE asistencia BETWEEN '{fecha_inicio2}' AND '{fecha_fin2}') a ON ru.dni = a.dni WHERE a.asistencia <= CURDATE() ORDER BY a.asistencia ASC"
+            
+            cursor.execute("SELECT id_usuario FROM usuario")
+            datos = cursor.fetchall()
+            user = datos[0]
+            print(type(user[0]))
+            
+            query = f"SELECT u.nombre, u.apellido, u.dni, u.sexo, u.edad, a.asistencia FROM usuario u JOIN (SELECT asistencia FROM asistencia WHERE asistencia BETWEEN '{fecha_inicio2}' AND '{fecha_fin2}') a ON u.id_usuario = '{str(user[0])}' WHERE a.asistencia <= CURDATE() ORDER BY a.asistencia ASC"
             cursor.execute(query)
             results = cursor.fetchall()
             
@@ -2636,53 +2522,8 @@ class VentanaPrincipal(QMainWindow):
                 
                 self.view_asistencia.setDate(QDate.currentDate())
                 self.view_al.setDate(QDate.currentDate())
+                asistenciaTotal(self,cursor,results,QHeaderView,QTableWidget,QAbstractItemView,QTableWidgetItem,QDate,Qt)
                 
-                headers = [description[0].replace('_', ' ').upper() for description in cursor.description]
-                
-                self.tablaVIEW.setRowCount(len(results))
-                self.tablaVIEW.setColumnCount(len(results[0]))
-                self.tablaVIEW.setHorizontalHeaderLabels(headers)
-                
-                # Establecer la propiedad de "stretch" en el encabezado horizontal
-                header = self.tablaVIEW.horizontalHeader()
-                header.setSectionResizeMode(QHeaderView.ResizeMode.Stretch)
-                
-                # Ajustar el tamaño de las filas para que se ajusten al contenido
-                self.tablaVIEW.verticalHeader().setSectionResizeMode(QHeaderView.ResizeMode.ResizeToContents)
-                self.tablaVIEW.setSelectionBehavior(QTableWidget.SelectionBehavior.SelectRows)
-                self.tablaVIEW.setEditTriggers(QAbstractItemView.EditTrigger.NoEditTriggers)
-                    
-                for i, row in enumerate(results):
-                    for j, val in enumerate(row):
-                        item = QTableWidgetItem(str(val))
-                        
-                        # Indices de las columnas que contienen fechas
-                        if j == 5:
-                            fecha = QDate.fromString(str(val), "yyyy-MM-dd")  # Convertir la fecha a objeto QDate
-                            item.setText(fecha.toString("dd-MM-yyyy"))  # Establecer el formato de visualización
-                        
-                        if j in [2, 4, 5]:  # Ajustar alineación para ciertas columnas     
-                            item.setTextAlignment(Qt.AlignmentFlag.AlignCenter)  
-                        self.tablaVIEW.setItem(i, j, item)
-                # Calcular la cantidad total de días de asistencia
-                total_dias_asistencia = sum(1 for row in results if row[5])
-
-                # Crear una nueva fila en la tabla para mostrar la cantidad total de días de asistencia
-                row_count = self.tablaVIEW.rowCount()
-                self.tablaVIEW.insertRow(row_count)     # Agregar la nueva fila al final de la tabla
-
-                # Mostrar la etiqueta "Total" en la primera celda de la fila de total
-                item_total_label3 = QTableWidgetItem("TOTAL: ")
-                item_total_label3.setFont(itemColor_TOTAL(item_total_label3))  # Funcion para estilos de item
-                item_total_label3.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
-                self.tablaVIEW.setItem(row_count, 4, item_total_label3)
-                
-                # Agregar la información de la cantidad total de días de asistencia en la nueva fila
-                item_dias_asistencia = QTableWidgetItem(str(total_dias_asistencia))
-                item_dias_asistencia.setFont(itemColor_RESULTADO(item_dias_asistencia))  # Funcion para estilos de item
-                item_dias_asistencia.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
-                self.tablaVIEW.setItem(row_count, 5, item_dias_asistencia)  # Agregar en la primera columna o en la que desees
-
             else:
                 aviso_resultado("Registro de alumnos",f"Se encontraron {len(results)} coincidencias.")
 
@@ -2713,23 +2554,23 @@ class VentanaPrincipal(QMainWindow):
             return
         
         apellido = self.view_apellido.text()
-               
+        
+        self.consultar5()
         try:
-            db = mysql.connector.connect(
-                host="localhost",
-                port="3306",
-                user="root",
-                password="root",
-                database="thebox_bd"
-            )
+            db = conectar_base_de_datos()
             cursor = db.cursor()
-            query = f"SELECT ru.nombre, ru.apellido, ru.dni, ru.sexo, ru.edad, a.asistencia FROM usuario ru JOIN asistencia a ON ru.dni = a.dni WHERE a.asistencia BETWEEN '{fecha_inicio}' AND '{fecha_fin}' AND a.asistencia <= CURDATE() AND ru.nombre = '{alumno}' "
+            
+            cursor.execute("SELECT id_usuario FROM usuario")
+            datos = cursor.fetchall()
+            user = datos[0]
+            
+            query = f"SELECT u.nombre, u.apellido, u.dni, u.sexo, u.edad, a.asistencia FROM usuario u JOIN asistencia a ON u.id_usuario = '{str(user[0])}' WHERE a.asistencia BETWEEN '{fecha_inicio}' AND '{fecha_fin}' AND a.asistencia <= CURDATE() AND u.nombre = '{alumno}' "
             
             if apellido:
                 if not isinstance(apellido, str) or apellido.isspace() or not patron_nom3.match(apellido): 
                     mensaje_ingreso_datos("Registro de alumnos","El apellido debe contener: \n- Letras y/o espacios entre nombres(si tiene mas de dos).")
                     return 
-                query += f" AND ru.apellido = '{apellido}' ORDER BY a.asistencia ASC"
+                query += f" AND u.apellido = '{apellido}' ORDER BY a.asistencia ASC"
                 
             # Ejecutar la consulta
             cursor.execute(query)
@@ -2742,53 +2583,8 @@ class VentanaPrincipal(QMainWindow):
                 self.view_al.setDate(QDate.currentDate())
                 self.view_apellido.clear()
                 self.view_nomb.clear()
-                
-                headers = [description[0].replace('_', ' ').upper() for description in cursor.description]
-                
-                self.tablaVIEW.setRowCount(len(results5))
-                self.tablaVIEW.setColumnCount(len(results5[0]))
-                self.tablaVIEW.setHorizontalHeaderLabels(headers)
-                
-                # Establecer la propiedad de "stretch" en el encabezado horizontal
-                self.tablaVIEW.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeMode.Stretch)
-                
-                # Ajustar el tamaño de las filas para que se ajusten al contenido
-                self.tablaVIEW.verticalHeader().setSectionResizeMode(QHeaderView.ResizeMode.ResizeToContents)
-                self.tablaVIEW.setSelectionBehavior(QTableWidget.SelectionBehavior.SelectRows)
-                self.tablaVIEW.setEditTriggers(QAbstractItemView.EditTrigger.NoEditTriggers)
-                    
-                for i, row in enumerate(results5):
-                    for j, val in enumerate(row):
-                        item = QTableWidgetItem(str(val))
-                        
-                        # Indices de las columnas que contienen fechas
-                        if j == 5:  
-                            fecha = QDate.fromString(str(val), "yyyy-MM-dd")  # Convertir la fecha a objeto QDate
-                            item.setText(fecha.toString("dd-MM-yyyy"))  # Establecer el formato de visualización
-                        
-                        if j in [2, 4, 5]:  # Ajustar alineación para ciertas columnas
-                            item.setTextAlignment(Qt.AlignmentFlag.AlignCenter)   
-                        self.tablaVIEW.setItem(i, j, item)
-                        
-                # Calcular la cantidad total de días de asistencia
-                total_dias_asistencia = sum(1 for row in results5 if row[5])
-
-                # Crear una nueva fila en la tabla para mostrar la cantidad total de días de asistencia
-                row_count = self.tablaVIEW.rowCount()
-                self.tablaVIEW.insertRow(row_count)
-
-                # Mostrar la etiqueta "Total" en la primera celda de la fila de total
-                item_total_label4 = QTableWidgetItem("TOTAL:")
-                item_total_label4.setFont(itemColor_TOTAL(item_total_label4))  # Funcion para estilos de item
-                item_total_label4.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
-                self.tablaVIEW.setItem(row_count, 4, item_total_label4)
-                
-                # Agregar la información de la cantidad total de días de asistencia en la nueva fila
-                item_dias_asistencia2 = QTableWidgetItem(str(total_dias_asistencia))
-                item_dias_asistencia2.setFont(itemColor_RESULTADO(item_dias_asistencia2))  # Funcion para estilos de item
-                item_dias_asistencia2.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
-                self.tablaVIEW.setItem(row_count, 5, item_dias_asistencia2)  # Agregar en la primera columna o en la que desees
-
+                asistenciaPorAlumno(self,cursor,results5,QHeaderView,QTableWidget,QAbstractItemView,QTableWidgetItem,QDate,Qt)
+            
             else:
                 aviso_resultado_asistencias("Busqueda de alumnos",f"Se encontraron {len(results5)} asistencias.")
             
@@ -2800,75 +2596,7 @@ class VentanaPrincipal(QMainWindow):
             print("Error executing the query", ex) 
         
     def tabla_balance(self):
-        if self.tablaVIEW.rowCount() == 0:
-            mensaje_ingreso_datos("Descarga de archivo","Primero debe mostrar una tabla antes de descargarla en un archivo Excel.")
-            return
-        
-        formatos_columnas = {
-            "NOMBRE": numbers.FORMAT_TEXT,"APELLIDO": numbers.FORMAT_TEXT,"DNI": numbers.FORMAT_TEXT, "SEXO": numbers.FORMAT_TEXT,"EDAD": numbers.FORMAT_TEXT,
-            "CELULAR": numbers.FORMAT_TEXT, "PRECIO": numbers.FORMAT_NUMBER_00, "DISCIPLINA": numbers.FORMAT_TEXT,"TOTAL_PRECIO": numbers.FORMAT_NUMBER_00, 
-            "INICIO PERIODO": numbers.FORMAT_TEXT, "FIN PERIODO": numbers.FORMAT_TEXT, "FECHA": numbers.FORMAT_TEXT, "FIN DE PAGO": numbers.FORMAT_TEXT,
-            "MODALIDAD": numbers.FORMAT_TEXT,"ESTADO": numbers.FORMAT_TEXT
-        }
-        
-        workbook = Workbook()
-        sheet = workbook.active
-
-        # Obtener encabezados de la tabla y guardarlos en el archivo Excel
-        for col in range(self.tablaVIEW.columnCount()):
-            header_item = self.tablaVIEW.horizontalHeaderItem(col)
-            if header_item is not None:
-                header_cell = sheet.cell(row=1, column=col + 1)
-                header_cell.value = header_item.text()
-                # Establecer estilo personalizado a las celdas de encabezado
-                header_cell.font = Font(name='Arial', bold=True)  # Cambiar el tipo de fuente aquí
-                header_cell.fill = PatternFill(start_color="FFA500", end_color="FFA500", fill_type="solid")
-                header_cell.border = Border(top=Side(style="thin"), bottom=Side(style="thin"), left=Side(style="thin"), right=Side(style="thin"))
-        
-        # Obtener datos de la tabla y guardarlos en el archivo Excel
-        for row in range(self.tablaVIEW.rowCount()):
-            for col in range(self.tablaVIEW.columnCount()):
-                item = self.tablaVIEW.item(row, col)
-                if item is not None:
-                    cell = sheet.cell(row=row+2, column=col+1)
-                    cell.value = item.text()
-
-                    # Establecer estilo personalizado a las celdas
-                    cell.font = Font(name="Arial", bold=True)
-                    cell.fill = PatternFill(start_color="FFFFFF", end_color="FFFFFF", fill_type="solid")
-                    cell.border = Border(top=Side(style="thin"), bottom=Side(style="thin"), left=Side(style="thin"), right=Side(style="thin"))
-
-                    # Aplicar formato a las celdas de acuerdo al nombre de la columna
-                    nombre_columna = self.tablaVIEW.horizontalHeaderItem(col).text()
-                    if nombre_columna in formatos_columnas:
-                        formato = formatos_columnas[nombre_columna]
-                        cell.number_format = formato
-                        
-        # Autoajustar el ancho de las columnas
-        for col in sheet.columns:
-            max_length = 0
-            column = col[0].column_letter  # obtiene el nombre de la columna
-            for cell in col:
-                try:  # Evitar errores en celdas vacías
-                    if len(str(cell.value)) > max_length:
-                        max_length = len(cell.value)
-                except:
-                    pass
-            adjusted_width = (max_length + 2) * 1.2
-            sheet.column_dimensions[column].width = adjusted_width
-        
-        file_path, _ = QFileDialog.getSaveFileName(self, "Guardar archivo Excel", "", "Archivos Excel (*.xlsx)")
-
-        if file_path:
-            if os.path.exists(file_path):
-                file_name, file_extension = os.path.splitext(file_path)
-                file_path = f"{file_name}_nuevo{file_extension}"
-
-            try:
-                workbook.save(file_path)
-                aviso_descargaExitosa("Descarga exitosa","La tabla se ha descargado en un archivo Excel con éxito.")
-            except Exception as e:
-                aviso_Advertencia_De_excel("Advertencia", f"No se pudo guardar el archivo: {str(e)}.\nEL archivo que deseas reemplazar esta en uso, de2ebes cerrar el archivo y luego guardarlo. El nombre puede ser parecido pero no igual.")
+        excelConsulta(self,Workbook,Font,PatternFill,Border,Side,numbers,QFileDialog)
             
     # ----------------------- EMPLEADOS Y HORAS -------------------------------------
     def guardar_horas(self):

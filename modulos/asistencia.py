@@ -201,8 +201,17 @@ class Asistencia(QMainWindow):
             
             # Insertar el número de DNI y la fecha actual en la tabla correspondiente
             cursor.execute("INSERT INTO asistencia (asistencia, id_usuario, id_disciplina) VALUES (%s,%s,%s)", (fecha_hoy,result[0],id_disciplina[0]))
-            conn.commit()
+            conn.commit()               
+        except Error as e:
+            errorConsulta("Registro de asistecia", f"Error al registrar la asistencia: {str(e)}")
+        finally:
+            cursor.close()
+            conn.close()   
             
+        try:
+            conn = conectar_base_de_datos()
+            cursor = conn.cursor()
+                 
             # Consultar el nombre y apellido del usuario
             cursor.execute(f"SELECT nombre, apellido, fecha_registro FROM usuario WHERE dni='{dni}'")
             resultUser = cursor.fetchone()
@@ -217,96 +226,81 @@ class Asistencia(QMainWindow):
             # Establecer datos 'nombre' y 'apellido', de la consulta en los QLabel    
             self.label_texto1.setText(f"¡En hora buena {nombre} {apellido}! \n\nSu asistencia fue registrada.")
             self.label_texto1.setStyleSheet("background-color: #DAD7CD; color: #000;")
-                    
-      
-            diferencia_dias = (fecha_hoy - fecha_registro).days
-            print(f"Diferencia de días: {diferencia_dias}")
-            
-            # if diferencia_dias > 0:
-            #     texto_cuota = f"\nÚltimo pago: {fecha_registro}. \n\nPróximo pago en {dif_dias} días.\n"
-            # elif diferencia_dias < 0:
-            #     fecha_nueva = fecha_registro + timedelta(days=30)
-            #     diferencia_dias = (fecha_hoy - fecha_nueva).days
-            
-            #     fecha_nueva = fecha_registro 
-                
-            # dif_dias = diferencia_dias
-            # fecha_actualizada = fecha_nueva
-                    
-            # Mensajes a mostrar         
-            texto_cuota = f"\nÚltimo pago: {fecha_registro}. \n\nPróximo pago en {diferencia_dias} días.\n"
-            texto_vencido2 = f"\nCuota vencida hace {diferencia_dias} días. \n\nÚltimo pago: {fecha_registro}.\n\nDebe abonar su cuota.\n"
-        
-            print(f"{diferencia_dias}\n")
-            
-            
-            # Corroborar que condición corresponde de acuerdo a los días calculados
-            if 30 >= diferencia_dias > 14:
-                self.label_texto2.setText(texto_cuota)
-                self.label_texto2.setStyleSheet("background-color: #7FFF00; color: #000;")
-                # self.timer.start(6000)
-                print(f"Número de días transcurridos para 30 a 15 días: {diferencia_dias}")
-            elif 14 >= diferencia_dias > 4:
-                self.label_texto2.setText(texto_cuota)
-                self.label_texto2.setStyleSheet("background-color: #FFFF00;color: #000;")
-                # self.timer.start(6000)
-                print(f"Número de días transcurridos para 14 a 5 días: {diferencia_dias}")
-            elif 4 >= diferencia_dias >= 0:
-                self.label_texto2.setText(texto_cuota)
-                self.label_texto2.setStyleSheet("background-color: #FF8000; color: #000;")
-                # self.timer.start(6000)
-                print(f"Número de días transcurridos para 4 a 0 días: {diferencia_dias}")
-            elif diferencia_dias > 0:
-                self.label_texto2.setText(texto_vencido2)
-                self.label_texto2.setStyleSheet("background-color: #FF0000; color: #fff;")
-                # self.timer.start(6000)
-            else:
-                print("Se han superado los 30 días desde el último pago.")
-
-            self.numero_documento.clear()
-
         except Error as e:
-            errorConsulta("Registro de asistecia", f"Error al registrar la asistencia: {str(e)}")
+                errorConsulta("Registro de asistecia", f"Error al registrar la asistencia: {str(e)}")
         finally:
             cursor.close()
-            conn.close()
-        
-    # def actualizar_fecha(self):
-    #     print("Actualización cada 30 días")
-        
-        #     # Mensajes a mostrar         
-        #     texto_cuota = f"Último pago: {fecha_registro_text}. \nPróximo pago en {dias_restantes.days} días.\n"
-        #     texto_vencido2 = f"Cuota vencida hace {abs(dias_restantes.days)} días. \nDebe abonar su cuota.\n"
-        
-        #     print(f"{abs(dias_restantes.days)}\n")
+            conn.close()           
+      
+            # diferencia_dias = (fecha_hoy - fecha_registro).days
+            # print(f"Diferencia de días: {diferencia_dias}")
+                    
+            # fecha_registro += timedelta(days=30)
             
-        #     # Corroborar que condición corresponde de acuerdo a los días calculados
-        #     if 30 >= dias_restantes.days > 14:
-        #         self.label_texto2.setText(texto_cuota)
-        #         self.label_texto2.setStyleSheet("background-color: #7FFF00; color: #000;")
-        #         # self.timer.start(6000)
-        #         print(f"Número de días transcurridos para 30 a 15 días: {dias_restantes.days}")
-        #     elif 14 >= dias_restantes.days > 4:
-        #         self.label_texto2.setText(texto_cuota)
-        #         self.label_texto2.setStyleSheet("background-color: #FFFF00;color: #000;")
-        #         # self.timer.start(6000)
-        #         print(f"Número de días transcurridos para 14 a 5 días: {dias_restantes.days}")
-        #     elif 4 >= dias_restantes.days >= 0:
-        #         self.label_texto2.setText(texto_cuota)
-        #         self.label_texto2.setStyleSheet("background-color: #FF8000; color: #000;")
-        #         # self.timer.start(6000)
-        #         print(f"Número de días transcurridos para 4 a 0 días: {dias_restantes.days}")
-        #     elif dias_restantes.days > 0:
-        #         self.label_texto2.setText(texto_vencido2)
-        #         self.label_texto2.setStyleSheet("background-color: #FF0000; color: #fff;")
-        #         # self.timer.start(6000)
-        #     else:
-        #         print("Se han superado los 30 días desde el último pago.")
+            # Mensajes a mostrar         
+            
+        while True:
+            # diferencia_dias = (fecha_hoy - fecha_registro).days
+            diferencia_dias = (fecha_registro - fecha_hoy).days
+            
+            texto_cuota = f"\nÚltimo pago: {fecha_registro.strftime('%d/%m/%Y')}. \n\nPróximo pago en {abs(diferencia_dias)} días.\n"
+            texto_vencido2 = f"Cuota vencida hace {abs(diferencia_dias)} días. \n\nÚltimo pago: {fecha_registro.strftime('%d/%m/%Y')}.\n\nDebe abonar su cuota."
+            print(f"{diferencia_dias}\n")
+            
+            # Condiciones basadas en la diferencia de días
+            if 30 > abs(diferencia_dias) > 14:
+                self.label_texto2.setText(texto_cuota)
+                self.label_texto2.setStyleSheet("background-color: #7FFF00; color: #000;")
+                # while 30 > diferencia_dias > 14:
+                #     fecha_registro += timedelta(days=30)
+                #     diferencia_dias = (fecha_hoy - fecha_registro).days
+                # self.label_texto2.setText(texto_cuota)
+                # self.label_texto2.setStyleSheet("background-color: #7FFF00; color: #000;") 
+                print(f"Nueva fecha de registro: {fecha_registro}")
+                print(f"Número de días transcurridos para 30 a 15 días: {diferencia_dias}")
+                break
+            elif 14 >= abs(diferencia_dias) > 4:
+                self.label_texto2.setText(texto_cuota)
+                self.label_texto2.setStyleSheet("background-color: #FFFF00;color: #000;")
+                # while 14 >= diferencia_dias > 4:
+                #     fecha_registro += timedelta(days=30)
+                #     diferencia_dias = (fecha_hoy - fecha_registro).days
+                # self.label_texto2.setText(texto_cuota)
+                # self.label_texto2.setStyleSheet("background-color: #FFFF00;color: #000;")
+                print(f"Número de días transcurridos para 14 a 5 días: {diferencia_dias}")
+                break
+            elif 4 >= abs(diferencia_dias) >= 0:
+                self.label_texto2.setText(texto_cuota)
+                self.label_texto2.setStyleSheet("background-color: #FF8000; color: #000;")
+                # while 4 >= diferencia_dias >= 0:
+                #     fecha_registro += timedelta(days=30)
+                #     diferencia_dias = (fecha_hoy - fecha_registro).days
+                # self.label_texto2.setText(texto_cuota)
+                # self.label_texto2.setStyleSheet("background-color: #FF8000; color: #000;")
+                print(f"Número de días transcurridos para 4 a 0 días: {diferencia_dias}")
+                break
+            else:
+                abs(diferencia_dias) >= 30
+                self.label_texto2.setText(texto_vencido2)
+                self.label_texto2.setStyleSheet("background-color: #FF0000; color: #fff;")
+                # while diferencia_dias > 30:
+                #     fecha_registro += timedelta(days=30)
+                #     diferencia_dias = (fecha_hoy - fecha_registro).days
+                #     print(f"Nueva fecha de registro: {fecha_registro}")
+                print("Se han superado los 30 días desde el último pago.")
+                break  # Si diferencia_dias es menor o igual a 0, romper el bucle
+            
+        self.numero_documento.clear()
+            
+            # Actualizar la fecha de registro sumando 30 días
+            # fecha_registro += timedelta(days=30)
+            
+            
+            
+        # if dni is None:
+        #     fecha_registro += timedelta(days=30)
+            
 
-        #     self.numero_documento.clear()
-        # # except Error as e:
-        # #     errorConsulta("Registro de asistecia", f"Error al registrar la asistencia: {str(e)}")
-        # # finally:
-        # #     cursor.close()
-        # #     conn.close()
-   
+        
+        
+    

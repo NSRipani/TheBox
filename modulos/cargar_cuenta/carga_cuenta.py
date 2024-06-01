@@ -3,8 +3,8 @@ import mysql.connector
 from mysql.connector import Error
 
 # Librería para generar Archivos de tipo Excel(.xlsx)
-from openpyxl import Workbook
-from openpyxl.styles import Font, PatternFill, Border, Side, numbers
+# from openpyxl import Workbook
+# from openpyxl.styles import Font, PatternFill, Border, Side, numbers
 
 # Librerías de PyQt6
 from PyQt6.QtWidgets import (QLabel,QFormLayout,QFileDialog, QCompleter, QAbstractScrollArea, QHeaderView, QGridLayout, QHBoxLayout, QDateEdit, 
@@ -14,14 +14,16 @@ from PyQt6.QtGui import QIcon, QKeySequence, QAction, QPixmap,QGuiApplication
 from PyQt6.QtCore import *
 
 # Módulo de para las cajas de mensajes
-from modulos.mensajes import (mensaje_ingreso_datos, errorConsulta, inicio, aviso_descargaExitosa, aviso_Advertencia_De_excel, 
-                              resultado_empleado, aviso_resultado, mensaje_horas_empleados, aviso_resultado_asistencias)
+from modulos.mensajes import mensaje_ingreso_datos, errorConsulta, inicio, resultado_empleado
 
 # Validaciones
 from validaciones.contabilidad import cuentas
+
 # Módulo de Estilos
 from qss import style
 
+# Cargar tipo
+from modulos.cargar_cuenta.catagarTipoCuenta import actualizar_combobox_TipoCUENTA 
 
 # conexion
 from conexion_DB.dataBase import conectar_base_de_datos
@@ -35,41 +37,42 @@ class CuentaContable(QWidget):
         self.setWindowTitle("Registro de empleado")
         self.setWindowIcon(QIcon("img/logo.png"))
         self.setStyleSheet(style.fondo2)
-        
+
         # Crear el QGroupBox
         group_box = QGroupBox("DETALLE DE CUENTA CONTABLE")
         group_box.setStyleSheet(style.estilo_grupo)
 
         contenedor_formularios = QHBoxLayout()
         
-        titulo_cuenta = QLabel("CARGAR CUENTA CONTABLE")
-        titulo_cuenta.setStyleSheet(style.label_contable)
+        titulo_tipocuenta = QLabel("CARGAR TIPO DE CUENTA")
+        titulo_tipocuenta.setStyleSheet(style.label_contable)
         
         # Crear el layout del formulario
-        form_layout_cuenta = QFormLayout()
-        form_layout_tipoCuenta = QFormLayout()
+        form_layout_Tcuenta = QFormLayout()
+        form_layout_Cuenta = QFormLayout()
         
         # Ajustar alineación y espaciado
-        form_layout_cuenta.setLabelAlignment(Qt.AlignmentFlag.AlignRight)
-        form_layout_cuenta.setFormAlignment(Qt.AlignmentFlag.AlignCenter)
-        form_layout_cuenta.setSpacing(10)
-        form_layout_cuenta.setContentsMargins(10, 10, 10, 10)
+        form_layout_Tcuenta.setLabelAlignment(Qt.AlignmentFlag.AlignRight)
+        form_layout_Tcuenta.setFormAlignment(Qt.AlignmentFlag.AlignCenter)
+        form_layout_Tcuenta.setSpacing(10)
+        form_layout_Tcuenta.setContentsMargins(10, 10, 10, 10)
         
-        form_layout_tipoCuenta.setLabelAlignment(Qt.AlignmentFlag.AlignRight)
-        form_layout_tipoCuenta.setFormAlignment(Qt.AlignmentFlag.AlignCenter)
-        form_layout_tipoCuenta.setSpacing(10)
-        form_layout_tipoCuenta.setContentsMargins(10, 10, 10, 10)
+        form_layout_Cuenta.setLabelAlignment(Qt.AlignmentFlag.AlignRight)
+        form_layout_Cuenta.setFormAlignment(Qt.AlignmentFlag.AlignCenter)
+        form_layout_Cuenta.setSpacing(10)
+        form_layout_Cuenta.setContentsMargins(10, 10, 10, 10)
         
         # Crear widgets de etiquetas y entradas
         self.nombre = QLineEdit()
         self.nombre.setStyleSheet(style.estilo_lineedit)
+        self.nombre.setPlaceholderText("Activos, Pasivos, Patrimonio, Ingresos o Egreso")
 
-        n_cuneta = QLabel("Nombre:")
-        n_cuneta.setStyleSheet(style.label)
+        t_cuneta = QLabel("Tipo:")
+        t_cuneta.setStyleSheet(style.label)
         
         # Añadir widgets al formulario
-        form_layout_cuenta.addRow(titulo_cuenta)
-        form_layout_cuenta.addRow(n_cuneta, self.nombre)
+        form_layout_Tcuenta.addRow(titulo_tipocuenta)
+        form_layout_Tcuenta.addRow(t_cuneta, self.nombre)
         
         # Crear los botones al formulaio 'Cuenta'
         guardar_button = QPushButton("Guardar")
@@ -93,41 +96,47 @@ class CuentaContable(QWidget):
         botones_layout.addWidget(eliminar_button)
         
         layuot = QVBoxLayout()
-        spacer4 = QSpacerItem(10, 80, QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Fixed)# Expanding, QSizePolicy.Policy.Expanding)
+        spacer4 = QSpacerItem(10, 120, QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Fixed)
         layuot.addItem(spacer4)
         
         # Añadir los botones al formulario
-        form_layout_cuenta.addRow(layuot)
-        form_layout_cuenta.addRow(botones_layout)
+        form_layout_Tcuenta.addRow(layuot)
+        form_layout_Tcuenta.addRow(botones_layout)
         
         # Crear un QFrame para ser usado como divisor
         divisor = QFrame()
         divisor.setFrameShape(QFrame.Shape.VLine)  # Línea vertical
         divisor.setFrameShadow(QFrame.Shadow.Sunken)
         
-        titulo_tipocuenta = QLabel("TIPO DE CUENTA")
+        titulo_tipocuenta = QLabel("CUENTA")
         titulo_tipocuenta.setStyleSheet(style.label_contable)
         
-        n_tipo = QLabel("Nombre:")
-        n_tipo.setStyleSheet(style.label)
-        t_cuenta = QLabel("Tipo de cuenta: ")
+        n_cuenta = QLabel("Nombre:")
+        n_cuenta.setStyleSheet(style.label)
+        t_cuenta = QLabel("Tipo: ")
         t_cuenta.setStyleSheet(style.label)
         descripcion = QLabel("Descripción: ")
         descripcion.setStyleSheet(style.label)
+        categoria = QLabel("Categoría: ")
+        categoria.setStyleSheet(style.label)
         
-        self.n_tipo = QLineEdit()
-        self.n_tipo.setStyleSheet(style.estilo_lineedit)
-        self.t_cuenta = QLineEdit()
-        self.t_cuenta.setPlaceholderText("Activos, Pasivos, Patrimonio, Ingresos o Egreso")
-        self.t_cuenta.setStyleSheet(style.estilo_lineedit)
+        self.n_cuenta = QLineEdit()
+        self.n_cuenta.setStyleSheet(style.estilo_lineedit)
+        self.t_cuenta = QComboBox()
+        self.t_cuenta.setStyleSheet(style.estilo_combo)
         self.descripcion = QLineEdit()
         self.descripcion.setStyleSheet(style.estilo_lineedit)
+        self.categoria = QLineEdit()
+        self.categoria.setStyleSheet(style.estilo_lineedit)
+        self.categoria.setPlaceholderText("Debe, Haber")
+        actualizar_combobox_TipoCUENTA(self)
         
         # Añadir widgets al formulario
-        form_layout_tipoCuenta.addRow(titulo_tipocuenta)
-        form_layout_tipoCuenta.addRow(n_tipo, self.n_tipo)
-        form_layout_tipoCuenta.addRow(t_cuenta, self.t_cuenta)
-        form_layout_tipoCuenta.addRow(descripcion, self.descripcion)
+        form_layout_Cuenta.addRow(titulo_tipocuenta)
+        form_layout_Cuenta.addRow(n_cuenta, self.n_cuenta)
+        form_layout_Cuenta.addRow(t_cuenta, self.t_cuenta)
+        form_layout_Cuenta.addRow(descripcion, self.descripcion)
+        form_layout_Cuenta.addRow(categoria, self.categoria)
         
         # Crear los botones al formulaio 'Tipo de Cuenta'
         guardar_button2 = QPushButton("Guardar")
@@ -151,22 +160,22 @@ class CuentaContable(QWidget):
         botones_layout2.addWidget(eliminar_button2)
         
         # Añadir los botones al formulario
-        form_layout_tipoCuenta.addRow(botones_layout2)
+        form_layout_Cuenta.addRow(botones_layout2)
         
-        contenedor_formularios.addLayout(form_layout_cuenta)
+        contenedor_formularios.addLayout(form_layout_Tcuenta)
         contenedor_formularios.addWidget(divisor)
-        contenedor_formularios.addLayout(form_layout_tipoCuenta)
+        contenedor_formularios.addLayout(form_layout_Cuenta)
 
         # Señales
-        guardar_button.clicked.connect(self.guardar_empleado)
-        mostrar_button.clicked.connect(self.mostrar_empleado)
-        actualizar_button.clicked.connect(self.actualizar_empleado)
-        eliminar_button.clicked.connect(self.eliminar_empleado)
+        guardar_button.clicked.connect(self.guardar_cuenta)
+        mostrar_button.clicked.connect(self.mostrar_cuenta)
+        actualizar_button.clicked.connect(self.actualizar_cuenta)
+        eliminar_button.clicked.connect(self.eliminar_cuenta)
         
         # Crear la tabla
         self.tablacuenta = QTableWidget()
         self.tablacuenta.setStyleSheet(style.esttabla)
-        self.tablacuenta.clicked.connect(self.autocompleto_de_datos_empleado)
+        self.tablacuenta.clicked.connect(self.autocompleto_de_datos_cuenta)
         
         # Crear un layout vertical para el QGroupBox
         vbox = QVBoxLayout()
@@ -195,7 +204,7 @@ class CuentaContable(QWidget):
         y = (screen_geometry.height() - self.height()) // 2
         self.move(x, y)
         
-    def guardar_empleado(self):       
+    def guardar_cuenta(self):       
         nom_emp = self.nombre.text().capitalize().title()
         if not isinstance(nom_emp, str) or not nom_emp.isalpha():
             mensaje_ingreso_datos("Registro de cuenta","La cuenta debe contener: \n- Letras y/o espacios entre cuentas.")
@@ -219,7 +228,7 @@ class CuentaContable(QWidget):
             errorConsulta("Registro de cuenta",f"Error en la consulta: {str(ex)}")
             print("Error executing the query", ex)
     
-    def mostrar_empleado(self):
+    def mostrar_cuenta(self):
         try:
             db = conectar_base_de_datos()
             cursor = db.cursor()
@@ -237,7 +246,7 @@ class CuentaContable(QWidget):
             errorConsulta("Registro de cuenta",f"Error en la consulta: {str(ex)}")
             print("Error executing the query", ex)
 
-    def autocompleto_de_datos_empleado(self):
+    def autocompleto_de_datos_cuenta(self):
         rows = self.tablacuenta.currentRow()
         
         descripcion = self.tablacuenta.item(rows,1).text()
@@ -245,7 +254,7 @@ class CuentaContable(QWidget):
         
         self.tablacuenta.clearSelection() # Deselecciona la fila
 
-    def actualizar_empleado(self):
+    def actualizar_cuenta(self):
         # Verificar si se ha seleccionado una fila
         if not self.tablacuenta.currentItem():
             mensaje_ingreso_datos("Registro de cuenta","Debe seleccionar la cuenta de la tabla para actualizar")
@@ -283,7 +292,7 @@ class CuentaContable(QWidget):
         else:
             print("No se actualiza registro")
 
-    def eliminar_empleado(self):
+    def eliminar_cuenta(self):
         # Primero corroborar la seleccion de la fila
         if not self.tablacuenta.currentItem():
             mensaje_ingreso_datos("Registro de cuenta","Debe buscar una cuenta a eliminar")
@@ -316,8 +325,6 @@ class CuentaContable(QWidget):
             
         else:
             print("No se elimino registro")
-            
-    # def planilla_excel(self):
-    #     empleado_EXCEL(self,Workbook,Font,PatternFill,Border,Side,numbers,QFileDialog)
-    # def limpiar_tabla_empleados(self):
-    #     clearTabla(self)
+
+    ### ////////////////////////// PARA CUENTA ///////////////////////////////////////
+    
