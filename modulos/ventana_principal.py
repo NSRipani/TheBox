@@ -22,7 +22,7 @@ from PyQt6.QtCore import *
 # Módulo de para las cajas de mensajes
 from modulos.mensajes import (mensaje_ingreso_datos, errorConsulta, inicio, aviso_descargaExitosa, aviso_Advertencia_De_excel, 
                               resultado_empleado, aviso_resultado, mensaje_horas_empleados, aviso_resultado_asistencias)
-from utilidades.completar_combobox import actualizar_combobox_user, actualizar_combobox_disc,completar_nombre_empleado,actualizar_combobox_consulta4, actualizar_combobox_consulta1_usuario
+from utilidades.completar_combobox import actualizar_combobox_user, actualizar_combobox_disc,completar_nombre_empleado,actualizar_combobox_consulta4, actualizar_combobox_consulta1_usuario, actualizar_combobox_consulta1_apellido
 
 # Validaciones y demas funciones 
 from validaciones.usuario import (registroUSER, limpiasElementosUser, limpiar_campos, actualizarUSER, limpiasElementosUseraActualizar, 
@@ -46,7 +46,6 @@ from qss import style
 
 # conexion
 from conexion_DB.dataBase import conectar_base_de_datos
-
 
 class VentanaPrincipal(QMainWindow):
     def __init__(self):
@@ -254,7 +253,7 @@ class VentanaPrincipal(QMainWindow):
         self.input_nombre1 = QLineEdit(customer_details)
         self.input_nombre1.setFixedWidth(200)
         self.input_nombre1.setStyleSheet(style.estilo_lineedit)
-        layout_H1.addWidget(nombre1)         # EN ESTA LINEA COMO LA SIGUIENTE, AGREGA LOS ALEMENTOS AL LAYOUT HORIZONTAL
+        layout_H1.addWidget(nombre1)        
         layout_H1.addWidget(self.input_nombre1)
         
         # Conexión a la base de datos MySQL
@@ -280,7 +279,7 @@ class VentanaPrincipal(QMainWindow):
         self.input_apellido1 = QLineEdit(customer_details)
         self.input_apellido1.setStyleSheet(style.estilo_lineedit)
         self.input_apellido1.setFixedWidth(200)
-        layout_H1.addWidget(apellido1)       # EN ESTA LINEA COMO LA SIGUIENTE, AGREGA LOS ALEMENTOS AL LAYOUT HORIZONTAL
+        layout_H1.addWidget(apellido1)       
         layout_H1.addWidget(self.input_apellido1)
         
         dni = QLabel('DNI:',customer_details)
@@ -291,7 +290,7 @@ class VentanaPrincipal(QMainWindow):
         self.input_dni.setFixedWidth(200)
         self.input_dni.setPlaceholderText("Sin puntos")
         self.input_dni.setMaxLength(8)
-        layout_H1.addWidget(dni)         # EN ESTA LINEA COMO LA SIGUIENTE, AGREGA LOS ALEMENTOS AL LAYOUT HORIZONTAL
+        layout_H1.addWidget(dni)         
         layout_H1.addWidget(self.input_dni)
 
         # QComboBox para sexo y disciplina
@@ -302,7 +301,7 @@ class VentanaPrincipal(QMainWindow):
         self.input_sex.setStyleSheet(style.estilo_combo)
         self.input_sex.setFixedWidth(200)
         self.input_sex.addItems(['- Elige un sexo','Hombre','Mujer'])
-        layout_H2.addWidget(sex)         # EN ESTA LINEA COMO LA SIGUIENTE, AGREGA LOS ALEMENTOS AL LAYOUT HORIZONTAL
+        layout_H2.addWidget(sex)         
         layout_H2.addWidget(self.input_sex)
         
         age = QLabel('Edad:',customer_details)
@@ -312,7 +311,7 @@ class VentanaPrincipal(QMainWindow):
         self.input_age.setStyleSheet(style.estilo_lineedit)
         self.input_age.setFixedWidth(200)
         self.input_age.setMaxLength(2)
-        layout_H2.addWidget(age)         # EN ESTA LINEA COMO LA SIGUIENTE, AGREGA LOS ALEMENTOS AL LAYOUT HORIZONTAL
+        layout_H2.addWidget(age)         
         layout_H2.addWidget(self.input_age)
                
         celular = QLabel('N° celular:', customer_details)
@@ -322,7 +321,7 @@ class VentanaPrincipal(QMainWindow):
         self.input_celular.setStyleSheet(style.estilo_lineedit)
         self.input_celular.setFixedWidth(200)
         self.input_celular.setPlaceholderText("Ej: 3424789123")
-        layout_H2.addWidget(celular)         # EN ESTA LINEA COMO LA SIGUIENTE, AGREGA LOS ALEMENTOS AL LAYOUT HORIZONTAL
+        layout_H2.addWidget(celular)
         layout_H2.addWidget(self.input_celular)
 
         date = QLabel('Fecha:',customer_details)
@@ -336,7 +335,7 @@ class VentanaPrincipal(QMainWindow):
         self.input_date.setCalendarPopup(True)
         self.input_date.setDate(QDate.currentDate())
         self.input_date.setDisplayFormat("dd/MM/yyyy")
-        layout_H.addWidget(date)       # EN ESTA LINEA COMO LA SIGUIENTE, AGREGA LOS ALEMENTOS AL LAYOUT HORIZONTAL
+        layout_H.addWidget(date)      
         layout_H.addWidget(self.input_date)
         
         # Crear un layout horizontal para los botones y Se coloca el icono de la 'manito' al cursor
@@ -440,7 +439,7 @@ class VentanaPrincipal(QMainWindow):
         self.input_nombre2 = QLineEdit(update_customer_details)
         self.input_nombre2.setStyleSheet(style.estilo_lineedit)
         self.input_nombre2.setFixedWidth(200)
-        layout_ele1.addWidget(nombre2)        # EN ESTA LINEA COMO LA SIGUIENTE, AGREGA LOS ALEMENTOS AL LAYOUT HORIZONTAL
+        layout_ele1.addWidget(nombre2)       
         layout_ele1.addWidget(self.input_nombre2)
         
         # Conexión a la base de datos MySQL
@@ -467,7 +466,7 @@ class VentanaPrincipal(QMainWindow):
         self.input_apellido2.setStyleSheet(style.estilo_lineedit)
         self.input_apellido2.setEnabled(False)
         self.input_apellido2.setFixedWidth(200)
-        layout_ele1.addWidget(apellido2)          # EN ESTA LINEA COMO LA SIGUIENTE, AGREGA LOS ALEMENTOS AL LAYOUT HORIZONTAL
+        layout_ele1.addWidget(apellido2)          
         layout_ele1.addWidget(self.input_apellido2)
         
         dni2 = QLabel('DNI:',update_customer_details)
@@ -479,7 +478,7 @@ class VentanaPrincipal(QMainWindow):
         self.input_dni2.setFixedWidth(200)
         self.input_dni2.setPlaceholderText("Sin puntos")
         self.input_dni2.setMaxLength(8)
-        layout_ele1.addWidget(dni2)       # EN ESTA LINEA COMO LA SIGUIENTE, AGREGA LOS ALEMENTOS AL LAYOUT HORIZONTAL
+        layout_ele1.addWidget(dni2)    
         layout_ele1.addWidget(self.input_dni2)
 
         # QComboBox para sexo y disciplina
@@ -491,7 +490,7 @@ class VentanaPrincipal(QMainWindow):
         self.input_sex2.setFixedWidth(200)
         self.input_sex2.addItems(['- Elige un sexo','Hombre','Mujer'])
         self.input_sex2.setEnabled(False)
-        layout_ele2.addWidget(sex2)       # EN ESTA LINEA COMO LA SIGUIENTE, AGREGA LOS ALEMENTOS AL LAYOUT HORIZONTAL
+        layout_ele2.addWidget(sex2)       
         layout_ele2.addWidget(self.input_sex2)
         
         age2 = QLabel('Edad:',update_customer_details)
@@ -502,7 +501,7 @@ class VentanaPrincipal(QMainWindow):
         self.input_age2.setEnabled(False)
         self.input_age2.setFixedWidth(200)
         self.input_age2.setMaxLength(2)
-        layout_ele2.addWidget(age2)       # EN ESTA LINEA COMO LA SIGUIENTE, AGREGA LOS ALEMENTOS AL LAYOUT HORIZONTAL
+        layout_ele2.addWidget(age2)      
         layout_ele2.addWidget(self.input_age2)
                
         celular2 = QLabel('N° celular:', update_customer_details)
@@ -513,7 +512,7 @@ class VentanaPrincipal(QMainWindow):
         self.input_celular2.setPlaceholderText("Ej: 3424789123")
         self.input_celular2.setEnabled(False)
         self.input_celular2.setFixedWidth(200)
-        layout_ele2.addWidget(celular2)       # EN ESTA LINEA COMO LA SIGUIENTE, AGREGA LOS ALEMENTOS AL LAYOUT HORIZONTAL
+        layout_ele2.addWidget(celular2)       
         layout_ele2.addWidget(self.input_celular2)
         
         date2 = QLabel('Fecha:', update_customer_details)
@@ -528,7 +527,7 @@ class VentanaPrincipal(QMainWindow):
         self.input_date2.setCalendarPopup(True)
         self.input_date2.setDate(QDate.currentDate())
         self.input_date2.setDisplayFormat("dd/MM/yyyy")
-        layout_ele3.addWidget(date2)      # EN ESTA LINEA COMO LA SIGUIENTE, AGREGA LOS ALEMENTOS AL LAYOUT HORIZONTAL
+        layout_ele3.addWidget(date2)     
         layout_ele3.addWidget(self.input_date2)
             
         # Crear un layout horizontal para los botones y Se coloca el icono de la 'manito' al cursor
@@ -707,7 +706,7 @@ class VentanaPrincipal(QMainWindow):
         self.input_disciplina4.setStyleSheet(style.estilo_lineedit)
         self.input_disciplina4.setFixedWidth(200)
         self.input_disciplina4.setStyleSheet(style.estilo_lineedit)
-        layout_H8.addWidget(disciplina4)        # EN ESTA LINEA COMO LA SIGUIENTE, AGREGA LOS ALEMENTOS AL LAYOUT HORIZONTAL
+        layout_H8.addWidget(disciplina4)        
         layout_H8.addWidget(self.input_disciplina4)
         
         precio = QLabel('Precio($):',comboActiv)
@@ -717,7 +716,7 @@ class VentanaPrincipal(QMainWindow):
         self.input_precio.setStyleSheet(style.estilo_lineedit)
         self.input_precio.setFixedWidth(200)
         self.input_precio.setPlaceholderText("Ej: 5000")
-        layout_H9.addWidget(precio)     # EN ESTA LINEA COMO LA SIGUIENTE, AGREGA LOS ALEMENTOS AL LAYOUT HORIZONTAL
+        layout_H9.addWidget(precio)     
         layout_H9.addWidget(self.input_precio)  
                 
         # layout horizontal para botones
@@ -840,7 +839,7 @@ class VentanaPrincipal(QMainWindow):
         self.idUser = QComboBox(grupo_pagos)
         self.idUser.setStyleSheet(style.estilo_combo)
         self.idUser.setFixedWidth(150)
-        layout_elementos_pagos.addWidget(idUser)     # EN ESTA LINEA COMO LA SIGUIENTE, AGREGA LOS ALEMENTOS AL LAYOUT HORIZONTAL
+        layout_elementos_pagos.addWidget(idUser)     
         layout_elementos_pagos.addWidget(self.idUser)
     
         # actualiza comobox ussuario con los DNI
@@ -853,7 +852,7 @@ class VentanaPrincipal(QMainWindow):
         self.idDis.setStyleSheet(style.estilo_combo)
         self.idDis.setFixedWidth(200)
         self.idDis.setStyleSheet(style.estilo_combo)
-        layout_elementos_pagos.addWidget(idDis)     # EN ESTA LINEA COMO LA SIGUIENTE, AGREGA LOS ALEMENTOS AL LAYOUT HORIZONTAL
+        layout_elementos_pagos.addWidget(idDis)     
         layout_elementos_pagos.addWidget(self.idDis)
         
         self.label_monto = QLabel()
@@ -878,7 +877,7 @@ class VentanaPrincipal(QMainWindow):
         self.input_fechaDePago.setDate(QDate.currentDate()) 
         self.input_fechaDePago.setCalendarPopup(True)
         self.input_fechaDePago.setDisplayFormat("dd/MM/yyyy")
-        layout_elementos_pagos2.addWidget(fechaDePago)        # EN ESTA LINEA COMO LA SIGUIENTE, AGREGA LOS ALEMENTOS AL LAYOUT HORIZONTAL
+        layout_elementos_pagos2.addWidget(fechaDePago)        
         layout_elementos_pagos2.addWidget(self.input_fechaDePago)
         
         tipoDePago = QLabel('Medio de pago:',grupo_pagos)
@@ -888,7 +887,7 @@ class VentanaPrincipal(QMainWindow):
         self.input_tipoDePago.setStyleSheet(style.estilo_combo)
         self.input_tipoDePago.setFixedWidth(300)
         self.input_tipoDePago.addItems(["- Seleccione medio de pago","Efectivo", "Transferecia"])
-        layout_elementos_pagos2.addWidget(tipoDePago)    # EN ESTA LINEA COMO LA SIGUIENTE, AGREGA LOS ALEMENTOS AL LAYOUT HORIZONTAL
+        layout_elementos_pagos2.addWidget(tipoDePago)   
         layout_elementos_pagos2.addWidget(self.input_tipoDePago)
         
         layoutBoton = QHBoxLayout() 
@@ -1022,7 +1021,7 @@ class VentanaPrincipal(QMainWindow):
         self.view_apellido.setFixedWidth(200)
         elementos.addWidget(view_apellido)     
         elementos.addWidget(self.view_apellido)
-        # actualizar_combobox_consulta1_usuario(self)
+        actualizar_combobox_consulta1_apellido(self)
         # layout_H14.addSpacing(10)
                 
         view_disciplina = QLabel("Disciplina:", comboView)
@@ -1683,9 +1682,12 @@ class VentanaPrincipal(QMainWindow):
     def balances(self):
         self.tab.setCurrentIndex(5)
         self.tab.setDisabled(False)
+        
         # actualiza comobox disciplina
         actualizar_combobox_consulta4(self)
+        
         actualizar_combobox_consulta1_usuario(self)
+        actualizar_combobox_consulta1_apellido(self)
         
         # FUNCION QUE VINCULA LA VENTANA DE ASISTENCIA
     def assistance(self):

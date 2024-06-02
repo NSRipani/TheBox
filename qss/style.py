@@ -307,6 +307,7 @@ label = """
 label_contable = """
 QLabel{
     background-color: transparent;
+    color: black;
     font-size: 20px;
     font-family: "Segoe UI";
     font-weight: bold;
@@ -453,7 +454,7 @@ estilo_fechas = """
         border: 4px solid #000000;
     }
     QCalendarWidget QHeaderView:section {
-        background-color: green;
+        background-color: #b5b5b5;
         font-weight: bold;
         border: none; 
     }

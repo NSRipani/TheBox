@@ -2,9 +2,8 @@
 import mysql.connector
 from mysql.connector import Error
 
-# Librería para generar Archivos de tipo Excel(.xlsx)
-# from openpyxl import Workbook
-# from openpyxl.styles import Font, PatternFill, Border, Side, numbers
+from modulos.mensajes import mensaje_ingreso_datos
+import re
 
 # Librerías de PyQt6
 from PyQt6.QtWidgets import (QLabel,QFormLayout,QFileDialog, QCompleter, QAbstractScrollArea, QHeaderView, QGridLayout, QHBoxLayout, QDateEdit, 
@@ -128,7 +127,7 @@ class CuentaContable(QWidget):
         self.descripcion.setStyleSheet(style.estilo_lineedit)
         self.categoria = QLineEdit()
         self.categoria.setStyleSheet(style.estilo_lineedit)
-        self.categoria.setPlaceholderText("Debe, Haber")
+        self.categoria.setPlaceholderText("Debe o Haber")
         actualizar_combobox_TipoCUENTA(self)
         
         # Añadir widgets al formulario
@@ -167,15 +166,20 @@ class CuentaContable(QWidget):
         contenedor_formularios.addLayout(form_layout_Cuenta)
 
         # Señales
-        guardar_button.clicked.connect(self.guardar_cuenta)
-        mostrar_button.clicked.connect(self.mostrar_cuenta)
-        actualizar_button.clicked.connect(self.actualizar_cuenta)
-        eliminar_button.clicked.connect(self.eliminar_cuenta)
+        guardar_button.clicked.connect(self.guardar_tipo)
+        mostrar_button.clicked.connect(self.mostrar_tipo)
+        actualizar_button.clicked.connect(self.actualizar_tipo)
+        eliminar_button.clicked.connect(self.eliminar_tipo)
+        
+        guardar_button2.clicked.connect(self.guardar_cuenta)
+        mostrar_button2.clicked.connect(self.mostrar_cuenta)
+        actualizar_button2.clicked.connect(self.actualizar_cuenta)
+        eliminar_button2.clicked.connect(self.eliminar_cuenta)
         
         # Crear la tabla
         self.tablacuenta = QTableWidget()
         self.tablacuenta.setStyleSheet(style.esttabla)
-        self.tablacuenta.clicked.connect(self.autocompleto_de_datos_cuenta)
+        self.tablacuenta.clicked.connect(self.autocompleto_de_datos_tipo)
         
         # Crear un layout vertical para el QGroupBox
         vbox = QVBoxLayout()
@@ -204,7 +208,7 @@ class CuentaContable(QWidget):
         y = (screen_geometry.height() - self.height()) // 2
         self.move(x, y)
         
-    def guardar_cuenta(self):       
+    def guardar_tipo(self):       
         nom_emp = self.nombre.text().capitalize().title()
         if not isinstance(nom_emp, str) or not nom_emp.isalpha():
             mensaje_ingreso_datos("Registro de cuenta","La cuenta debe contener: \n- Letras y/o espacios entre cuentas.")
@@ -228,7 +232,7 @@ class CuentaContable(QWidget):
             errorConsulta("Registro de cuenta",f"Error en la consulta: {str(ex)}")
             print("Error executing the query", ex)
     
-    def mostrar_cuenta(self):
+    def mostrar_tipo(self):
         try:
             db = conectar_base_de_datos()
             cursor = db.cursor()
@@ -246,7 +250,7 @@ class CuentaContable(QWidget):
             errorConsulta("Registro de cuenta",f"Error en la consulta: {str(ex)}")
             print("Error executing the query", ex)
 
-    def autocompleto_de_datos_cuenta(self):
+    def autocompleto_de_datos_tipo(self):
         rows = self.tablacuenta.currentRow()
         
         descripcion = self.tablacuenta.item(rows,1).text()
@@ -254,13 +258,13 @@ class CuentaContable(QWidget):
         
         self.tablacuenta.clearSelection() # Deselecciona la fila
 
-    def actualizar_cuenta(self):
+    def actualizar_tipo(self):
         # Verificar si se ha seleccionado una fila
         if not self.tablacuenta.currentItem():
             mensaje_ingreso_datos("Registro de cuenta","Debe seleccionar la cuenta de la tabla para actualizar")
             return
         
-        id_empl = int(self.tablacuenta.item(self.tablacuenta.currentRow(), 0).text())
+        id_tipo = int(self.tablacuenta.item(self.tablacuenta.currentRow(), 0).text())
         descripcion = self.nombre.text().capitalize().title()
         
         if not isinstance(descripcion, str) or not descripcion.isalpha():
@@ -272,7 +276,7 @@ class CuentaContable(QWidget):
             try:
                 db = conectar_base_de_datos()
                 cursor = db.cursor()
-                cursor.execute("UPDATE tipo SET nombre = %s WHERE id_tipo = %s", (descripcion,id_empl))
+                cursor.execute("UPDATE tipo SET nombre = %s WHERE id_tipo = %s", (descripcion,id_tipo))
                 db.commit() 
                 
                 if cursor:
@@ -292,6 +296,160 @@ class CuentaContable(QWidget):
         else:
             print("No se actualiza registro")
 
+    def eliminar_tipo(self):
+        # Primero corroborar la seleccion de la fila
+        if not self.tablacuenta.currentItem():
+            mensaje_ingreso_datos("Registro de cuenta","Debe buscar una cuenta a eliminar")
+            return
+        
+        # Selecciona la fila acutal
+        selectedRow = self.tablacuenta.currentItem().row()
+        id_tipo = int(self.tablacuenta.item(selectedRow, 0).text())
+        
+        try:
+            db = conectar_base_de_datos()
+            cursor = db.cursor()
+            cursor.execute(f"DELETE FROM tipo WHERE id_tipo = {id_tipo}")
+            db.commit()
+            if cursor:
+                mensaje_ingreso_datos("Registro de cuenta","Registro eliminado")
+                self.tablacuenta.removeRow(selectedRow)
+                self.nombre.clear()
+                self.tablacuenta.clearSelection() # Deselecciona la fila
+            else:
+                mensaje_ingreso_datos("Registro de cuenta","Registro no eliminado")  
+                            
+        except Error as ex:
+            errorConsulta("Registro de cuenta",f"Error en la consulta: {str(ex)}")
+            print("Error executing the query", ex)
+        cursor.close()
+        db.close()
+
+    ### ////////////////////////// PARA CUENTA ///////////////////////////////////////
+    def guardar_cuenta(self):       
+        nomTipo = self.n_cuenta.text().capitalize()
+        tipo = self.t_cuenta.currentText()
+        descrip = self.descripcion.text().capitalize()
+        categor = self.categoria.text().capitalize()
+        
+        patron = re.compile(r'^[a-zA-ZáéíóúÁÉÍÓÚüÜ\'\s]+$') 
+        if not isinstance(nomTipo, str) or nomTipo.isspace() or not patron.match(nomTipo): 
+            mensaje_ingreso_datos("Registro de cuenta","El 'nombre' debe contener:\n\n- Letras y/o espacios entre nombres(si tiene mas de dos).")
+            return
+        if not isinstance(tipo, str) or not tipo.isalpha():
+            mensaje_ingreso_datos("Registro de cuenta","El tipo debe contener: \n- Las opciones mostradas.")
+            return
+        if not isinstance(descrip, str) or descrip.isspace() or not patron.match(descrip): 
+            mensaje_ingreso_datos("Registro de cuenta","La descripción debe contener: \n- Solo texto.")
+            return 
+        if not isinstance(categor, str) or not categor.isalpha():
+            mensaje_ingreso_datos("Registro de cuenta","La categoría deben contener: \n- 'Debe' o 'Haber'.")
+            return 
+        
+        try:
+            db = conectar_base_de_datos()
+            cursor = db.cursor()
+            cursor.execute("INSERT INTO cuenta (nombre,tipo,descripcion,categoria) VALUES (%s,%s,%s,%s)",(nomTipo,tipo,descrip,categor))
+            db.commit()
+            
+            if cursor:
+                mensaje_ingreso_datos("Registro de cuenta","Registro cargado")
+                self.n_cuenta.clear()
+                self.t_cuenta.setCurrentIndex(0)
+                self.descripcion.clear()
+                self.categoria.clear()
+                self.tablacuenta.clearSelection() # Deselecciona la fila
+            else:
+                mensaje_ingreso_datos("Registro de cuenta","Registro no cargado")
+                
+            cursor.close()
+            db.close()
+        except Error as ex:
+            errorConsulta("Registro de cuenta",f"Error en la consulta: {str(ex)}")
+            print("Error executing the query", ex)
+    
+    def mostrar_cuenta(self):
+        try:
+            db = conectar_base_de_datos()
+            cursor = db.cursor()
+            cursor.execute(f"SELECT * FROM cuenta ORDER BY id_cuenta")
+            busqueda = cursor.fetchall()
+            if len(busqueda) > 0:
+                resultado_empleado("Registro de cuenta",f"Se encontraron {len(busqueda)} coincidencias.")
+                cuentas(self,cursor,busqueda,QHeaderView,QTableWidget,QAbstractItemView,QTableWidgetItem,QDate,Qt)
+                self.tablacuenta.clearSelection() # Deselecciona la fila
+            else:
+                resultado_empleado("Registro de cuenta",f"Se encontraron {len(busqueda)} coincidencias.")
+                
+            cursor.close()
+            db.close()
+        except Error as ex:
+            errorConsulta("Registro de cuenta",f"Error en la consulta: {str(ex)}")
+            print("Error executing the query", ex)
+
+    def autocompleto_de_datos_tipo(self):
+        row = self.tablacuenta.currentRow()
+        
+        nomTipo = self.tablacuenta.item(row,1).text()
+        tipo = self.tablacuenta.item(row,2).text()
+        descrip = self.tablacuenta.item(row,3).text()
+        categor = self.tablacuenta.item(row,4).text()
+        
+        self.n_cuenta.setText(nomTipo)
+        self.t_cuenta.setCurrentText(tipo)
+        self.descripcion.setText(descrip)
+        self.categoria.setText(categor)
+
+        self.tablacuenta.clearSelection() # Deselecciona la fila
+
+    def actualizar_cuenta(self):
+        # Verificar si se ha seleccionado una fila
+        if not self.tablacuenta.currentItem():
+            mensaje_ingreso_datos("Registro de cuenta","Debe seleccionar la cuenta de la tabla para actualizar")
+            return
+        
+        id_cuenta = int(self.tablacuenta.item(self.tablacuenta.currentRow(), 0).text())
+        nomTipo = self.n_cuenta.text().capitalize()
+        tipo = self.t_cuenta.currentText()
+        descrip = self.descripcion.text().capitalize()
+        categor = self.categoria.text().capitalize()
+        
+        patron = re.compile(r'^[a-zA-ZáéíóúÁÉÍÓÚüÜ\'\s]+$') 
+        if not isinstance(nomTipo, str) or nomTipo.isspace() or not patron.match(nomTipo): 
+            mensaje_ingreso_datos("Registro de cuenta","El 'nombre' debe contener:\n\n- Letras y/o espacios entre nombres(si tiene mas de dos).")
+            return
+        if not isinstance(tipo, str) or not tipo.isalpha():
+            mensaje_ingreso_datos("Registro de cuenta","El tipo debe contener: \n- Las opciones mostradas.")
+            return
+        if not isinstance(descrip, str) or descrip.isspace() or not patron.match(descrip): 
+            mensaje_ingreso_datos("Registro de cuenta","La descripción debe contener: \n- Solo texto.")
+            return 
+        if not isinstance(categor, str) or not categor.isalpha():
+            mensaje_ingreso_datos("Registro de cuenta","La categoría deben contener: \n- 'Debe' o 'Haber'.")
+            return 
+           
+        try:
+            db = conectar_base_de_datos()
+            cursor = db.cursor()
+            cursor.execute("UPDATE cuenta SET nombre = %s, tipo = %s, descripcion = %s, categoria = %s WHERE id_cuenta = %s", (nomTipo,tipo,descrip,categor,id_cuenta))
+            db.commit() 
+            
+            if cursor:
+                mensaje_ingreso_datos("Registro de cuenta","Registro actualizado")
+                self.n_cuenta.clear()
+                self.t_cuenta.setCurrentIndex(0)
+                self.descripcion.clear()
+                self.categoria.clear()
+                self.tablacuenta.clearSelection() # Deselecciona la fila
+            else:
+                mensaje_ingreso_datos("Registro de cuenta","Registro no actualizado")
+                
+            cursor.close()
+            db.close() 
+        
+        except Error as ex:
+            errorConsulta("Registro de cuenta",f"Error en la consulta: {str(ex)}")
+
     def eliminar_cuenta(self):
         # Primero corroborar la seleccion de la fila
         if not self.tablacuenta.currentItem():
@@ -300,31 +458,26 @@ class CuentaContable(QWidget):
         
         # Selecciona la fila acutal
         selectedRow = self.tablacuenta.currentItem().row()
-        id_ = int(self.tablacuenta.item(selectedRow, 0).text())
+        id_cuenta = int(self.tablacuenta.item(selectedRow, 0).text())
         
-        empleado_eliminar = inicio("Registro de cuenta","¿Desea eliminar el empleado?")
-        if empleado_eliminar == QMessageBox.StandardButton.Yes:
-            try:
-                db = conectar_base_de_datos()
-                cursor = db.cursor()
-                cursor.execute(f"DELETE FROM tipo WHERE id_tipo = {id_}")
-                db.commit()
-                if cursor:
-                    mensaje_ingreso_datos("Registro de cuenta","Registro eliminado")
-                    self.tablacuenta.removeRow(selectedRow)
-                    self.nombre.clear()
-                    self.tablacuenta.clearSelection() # Deselecciona la fila
-                else:
-                    mensaje_ingreso_datos("Registro de cuenta","Registro no eliminado")  
-                                
-            except Error as ex:
-                errorConsulta("Registro de cuenta",f"Error en la consulta: {str(ex)}")
-                print("Error executing the query", ex)
-            cursor.close()
-            db.close()
-            
-        else:
-            print("No se elimino registro")
-
-    ### ////////////////////////// PARA CUENTA ///////////////////////////////////////
-    
+        try:
+            db = conectar_base_de_datos()
+            cursor = db.cursor()
+            cursor.execute(f"DELETE FROM cuenta WHERE id_cuenta = {id_cuenta}")
+            db.commit()
+            if cursor:
+                mensaje_ingreso_datos("Registro de cuenta","Registro eliminado")
+                self.tablacuenta.removeRow(selectedRow)
+                self.n_cuenta.clear()
+                self.t_cuenta.setCurrentIndex(0)
+                self.descripcion.clear()
+                self.categoria.clear()
+                self.tablacuenta.clearSelection() # Deselecciona la fila
+            else:
+                mensaje_ingreso_datos("Registro de cuenta","Registro no eliminado")  
+                            
+        except Error as ex:
+            errorConsulta("Registro de cuenta",f"Error en la consulta: {str(ex)}")
+            print("Error executing the query", ex)
+        cursor.close()
+        db.close()

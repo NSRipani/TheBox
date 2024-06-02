@@ -68,7 +68,7 @@ class Empleado(QWidget):
         self.celular.setMaxLength(10)
         self.celular.setStyleSheet(style.estilo_lineedit)
         self.fecha = QDateEdit()
-        self.fecha.setStyleSheet(style.estilo_fecha)
+        self.fecha.setStyleSheet(style.estilo_fechas)
         self.fecha.setLocale(QLocale("es-AR"))
         self.fecha.setCursor(Qt.CursorShape.PointingHandCursor)
         self.fecha.setFixedWidth(200)
