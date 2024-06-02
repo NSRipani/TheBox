@@ -22,7 +22,7 @@ from PyQt6.QtCore import *
 # Módulo de para las cajas de mensajes
 from modulos.mensajes import (mensaje_ingreso_datos, errorConsulta, inicio, aviso_descargaExitosa, aviso_Advertencia_De_excel, 
                               resultado_empleado, aviso_resultado, mensaje_horas_empleados, aviso_resultado_asistencias)
-from utilidades.completar_combobox import actualizar_combobox_user, actualizar_combobox_disc,completar_nombre_empleado,actualizar_combobox_consulta4, actualizar_combobox_consulta1_usuario, actualizar_combobox_consulta1_apellido
+from utilidades.completar_combobox import actualizar_combobox_user, actualizar_combobox_disc,completar_nombre_empleado,actualizar_combobox_consulta4, actualizar_combobox_consulta1_usuario
 
 # Validaciones y demas funciones 
 from validaciones.usuario import (registroUSER, limpiasElementosUser, limpiar_campos, actualizarUSER, limpiasElementosUseraActualizar, 
@@ -987,7 +987,7 @@ class VentanaPrincipal(QMainWindow):
         elementos3 = QHBoxLayout()
         elementos3.setAlignment(Qt.AlignmentFlag.AlignLeft)
         
-        view_nomb = QLabel("Nombre:",comboView)
+        view_nomb = QLabel("N° DNI:",comboView)
         view_nomb.setStyleSheet(style.label)
         view_nomb.setFixedWidth(140)
         self.view_nomb = QComboBox(comboView)
@@ -1013,16 +1013,14 @@ class VentanaPrincipal(QMainWindow):
         # cursor.close()
         # conn.close()
         
-        view_apellido = QLabel("Apellido:",comboView)
-        view_apellido.setStyleSheet(style.label)
-        view_apellido.setFixedWidth(80)
-        self.view_apellido = QComboBox(comboView)
-        self.view_apellido.setStyleSheet(style.estilo_combo)
-        self.view_apellido.setFixedWidth(200)
-        elementos.addWidget(view_apellido)     
-        elementos.addWidget(self.view_apellido)
-        actualizar_combobox_consulta1_apellido(self)
-        # layout_H14.addSpacing(10)
+        # view_apellido = QLabel("Apellido:",comboView)
+        # view_apellido.setStyleSheet(style.label)
+        # view_apellido.setFixedWidth(80)
+        # self.view_apellido = QComboBox(comboView)
+        # self.view_apellido.setStyleSheet(style.estilo_combo)
+        # self.view_apellido.setFixedWidth(200)
+        # elementos.addWidget(view_apellido)     
+        # elementos.addWidget(self.view_apellido)
                 
         view_disciplina = QLabel("Disciplina:", comboView)
         view_disciplina.setStyleSheet(style.label)
@@ -1145,13 +1143,13 @@ class VentanaPrincipal(QMainWindow):
         layout_H20.addWidget(bottonExcel)
         
         # CONECCION DE SEÑALES A LAS FUNCIONES
-        button14.clicked.connect(self.consultar)
-        button15.clicked.connect(self.consultar2)
-        button16.clicked.connect(self.consultar3)
+        button14.clicked.connect(self.consultar_TotalPorAlumno)
+        button15.clicked.connect(self.consultar_TotalAlumno)
+        button16.clicked.connect(self.consultar_TotalDisciplina)
         sacar_tabla.clicked.connect(self.limpiar_tabla_balance)
-        button17.clicked.connect(self.consultar4)
-        button18.clicked.connect(self.consultar5)
-        button19.clicked.connect(self.consultar6)
+        button17.clicked.connect(self.consultar_PorDisciplina)
+        button18.clicked.connect(self.consultar_AsisteTotal)
+        button19.clicked.connect(self.consultar_AsistePorAlumno)
         bottonExcel.clicked.connect(self.tabla_balance)
         
         horizontal = QHBoxLayout()
@@ -1687,7 +1685,6 @@ class VentanaPrincipal(QMainWindow):
         actualizar_combobox_consulta4(self)
         
         actualizar_combobox_consulta1_usuario(self)
-        actualizar_combobox_consulta1_apellido(self)
         
         # FUNCION QUE VINCULA LA VENTANA DE ASISTENCIA
     def assistance(self):
@@ -2289,15 +2286,17 @@ class VentanaPrincipal(QMainWindow):
         pagos_EXCEL(self,Workbook,Font,PatternFill,Border,Side,numbers,QFileDialog)
             
     # ----------- PESTAÑA BALANCE -----------------
-    def consultar(self):
-        nombre = self.view_nomb.currentData()[0]
+    def consultar_TotalPorAlumno(self):
+        nombre = self.view_nomb.currentData()[0] #currentText()
+        print(nombre)
+        print(type(nombre))
 
-        patron = re.compile(r'^[a-zA-ZáéíóúÁÉÍÓÚüÜ\'\s]+$') 
-        if not isinstance(nombre, str) or nombre.isspace() or not patron.match(nombre): 
-            mensaje_ingreso_datos("Registro de alumnos","El nombre debe contener: \n- Letras y/o espacios entre nombres(si tiene mas de dos).")
+        patron = re.compile(r'^[0-9]+$')
+        # patron = re.compile(r'^[a-zA-ZáéíóúÁÉÍÓÚüÜ\'\s]+$') 
+        if not isinstance(nombre, str)  or not patron.match(nombre): #or nombre.isdigit()
+            mensaje_ingreso_datos("Registro de alumnos","Debe elige un DNI")
+            # mensaje_ingreso_datos("Registro de alumnos","El nombre debe contener: \n- Letras y/o espacios entre nombres(si tiene mas de dos).")
             return
-
-        apellido1 = self.view_apellido.currentData()[1]
 
         if not self.view_fechaDePago.date().toString("yyyy-MM-dd"):
             mensaje_ingreso_datos("Registro de alumnos","Debe ingresar una fecha de inicio de pago.")
@@ -2313,25 +2312,17 @@ class VentanaPrincipal(QMainWindow):
         try:
             db = conectar_base_de_datos()
             cursor = db.cursor()
-            query = f"SELECT u.nombre, u.apellido, u.dni, u.sexo, u.edad, u.celular, u.fecha_registro, d.nombre AS DISCIPLINA, p.precio, p.fecha, p.modalidad FROM usuario u JOIN pago p ON u.dni = p.id_usuario JOIN disciplina d ON p.id_disciplina = d.id_disciplina WHERE u.nombre = '{nombre}' AND p.fecha BETWEEN '{fecha_inicio}' AND '{fecha_fin}'" # JOIN disciplina d ON p.id_disciplina = d.id_disciplina
-
-            if apellido1:
-                patron_nom2 = re.compile(r'^[a-zA-ZáéíóúÁÉÍÓÚüÜ\'\s]+$') 
-                if not isinstance(apellido1, str) or apellido1.isspace() or not patron_nom2.match(apellido1): 
-                    mensaje_ingreso_datos("Registro de alumnos","El apellido debe contener: \n- Letras y/o espacios entre nombres(si tiene mas de dos).")
-                    return 
-                query += f" AND u.apellido = '{apellido1}' ORDER BY p.fecha ASC"
+            query = f"SELECT u.nombre, u.apellido, u.dni, u.sexo, u.edad, u.celular, u.fecha_registro, d.nombre AS DISCIPLINA, p.precio, p.fecha, p.modalidad FROM usuario u JOIN pago p ON u.dni = p.id_usuario JOIN disciplina d ON p.id_disciplina = d.id_disciplina WHERE u.dni = '{nombre}' AND p.fecha BETWEEN '{fecha_inicio}' AND '{fecha_fin}' ORDER BY p.fecha ASC" # JOIN disciplina d ON p.id_disciplina = d.id_disciplina
             
             cursor.execute(query)
             results = cursor.fetchall()
             
-            if results:
+            if len(results) > 0:
                 aviso_resultado("Registro de alumnos",f"Se encontraron {len(results)} coincidencias.")
                 
                 self.view_fechaDePago.setDate(QDate.currentDate())
                 self.view_al2.setDate(QDate.currentDate())
-                self.view_nomb.clear()
-                self.view_apellido.clear()
+                self.view_nomb.currentData()
                 
                 consultaPorAlumno(self,cursor,results,QHeaderView,QTableWidget,QAbstractItemView,QTableWidgetItem,QDate,Qt)
                             
@@ -2345,7 +2336,7 @@ class VentanaPrincipal(QMainWindow):
             errorConsulta("Registro de alumnos",f"Error en la consulta: {str(ex)}")
             print("Error executing the query", ex)
     
-    def consultar2(self):
+    def consultar_TotalAlumno(self):
         if not self.view_fechaDePago.date().toString("yyyy-MM-dd"):
             mensaje_ingreso_datos("Registro de alumnos","Debe establcer un rango de inicio y fin de fechas de pago.")
             return
@@ -2385,7 +2376,7 @@ class VentanaPrincipal(QMainWindow):
     def limpiar_tabla_balance(self):
         limpiar(self)
             
-    def consultar3(self): # buscar y MOSTRAR DISCIPLINAS CON SU COSTO TOTAL entre fechas de pago ------ LISTO!!!!
+    def consultar_TotalDisciplina(self): # buscar y MOSTRAR DISCIPLINAS CON SU COSTO TOTAL entre fechas de pago ------ LISTO!!!!
         if not self.view_fechaDePago.date().toString("yyyy-MM-dd"):
             mensaje_ingreso_datos("Registro de alumnos","Debe establcer un rango de inicio y fin de fechas de pago.")
             return
@@ -2419,13 +2410,13 @@ class VentanaPrincipal(QMainWindow):
             errorConsulta("Registro de alumnos",f"Error en la consulta: {str(ex)}")
             print("Error executing the query", ex)
             
-    def consultar4(self):
+    def consultar_PorDisciplina(self):
         actividad = self.view_disciplina.currentData()[0] #text().capitalize().title()
         
-        lista = ["musculacion","cross funcional","gap","kids","fucional","cardio","stretching","adulto","ritmos"]
+        # lista = ["musculacion","cross funcional","gap","kids","fucional","cardio","stretching","adulto","ritmos"]
         patrones = re.compile(r'^[a-zA-ZáéíóúÁÉÍÓÚüÜ\'\s]+$')
         
-        if not isinstance(actividad,str) or not patrones.match(actividad) or not actividad not in lista:
+        if not isinstance(actividad,str) or not patrones.match(actividad):
             mensaje_ingreso_datos("Registro de alumnos","Debe elegir una disciplina")
             return
         
@@ -2439,29 +2430,12 @@ class VentanaPrincipal(QMainWindow):
         if fecha_fin <= fecha_inicio:
             mensaje_ingreso_datos("Registro de alumnos","La fecha de fin debe ser posterior a la fecha de inicio.")
             return
-        
-        # alumno = self.view_nomb.text()
-        # apellido = self.view_apellido.text()
-        
+                
         try:
             db = conectar_base_de_datos()
             cursor = db.cursor()
             query = f"SELECT u.nombre, u.apellido, u.dni, u.sexo, u.edad, d.nombre AS DISCIPLINA, p.modalidad, p.fecha, SUM(p.precio) AS total_precio FROM usuario u JOIN pago p ON u.dni = p.id_usuario JOIN disciplina d ON p.id_disciplina = d.id_disciplina WHERE p.fecha BETWEEN '{fecha_inicio}' AND '{fecha_fin}' AND d.nombre = '{actividad}' GROUP BY u.nombre, u.apellido, u.dni, u.sexo, u.edad, d.nombre, p.modalidad, p.fecha ORDER BY p.fecha ASC"
             
-            # if alumno:
-            #     patron_nom3 = re.compile(r'^[a-zA-ZáéíóúÁÉÍÓÚüÜ\'\s]+$') 
-            #     if not isinstance(alumno, str) or alumno.isspace() or not patron_nom3.match(alumno): 
-            #         mensaje_ingreso_datos("Registro de alumnos","El apellido debe contener: \n- Letras y/o espacios entre nombres(si tiene mas de dos).")
-            #         return 
-            #     query += f" AND u.nombre = '{alumno}'"
-
-            # if apellido:
-            #     if not isinstance(apellido, str) or apellido.isspace() or not patron_nom3.match(apellido): 
-            #         mensaje_ingreso_datos("Registro de alumnos","El apellido debe contener: \n- Letras y/o espacios entre nombres(si tiene mas de dos).")
-            #         return
-            #     query += f" AND u.apellido = '{apellido}'"
-
-            # query += " ORDER BY p.fecha ASC"
             cursor.execute(query)
             results = cursor.fetchall()
                     
@@ -2471,8 +2445,6 @@ class VentanaPrincipal(QMainWindow):
                 self.view_disciplina.currentData()[0]
                 self.view_fechaDePago.setDate(QDate.currentDate())
                 self.view_al2.setDate(QDate.currentDate())
-                # self.view_nomb.clear()
-                # self.view_apellido.clear()
                 consultaPorDisciplina(self,cursor,results,QHeaderView,QTableWidget,QAbstractItemView,QTableWidgetItem,QDate,Qt)
                 
             else:
@@ -2485,7 +2457,7 @@ class VentanaPrincipal(QMainWindow):
             errorConsulta("Registro de alumnos",f"Error en la consulta: {str(ex)}")
             print("Error executing the query", ex)
             
-    def consultar5(self):
+    def consultar_AsisteTotal(self):
         if not self.view_asistencia.date().toString("yyyy-MM-dd"):
             mensaje_ingreso_datos("Registro de alumnos","Debe establcer un rango de inicio y fin de fechas de asistencia.")
             return
@@ -2506,7 +2478,7 @@ class VentanaPrincipal(QMainWindow):
             user = datos[0]
             print(type(user[0]))
             
-            query = f"SELECT u.nombre, u.apellido, u.dni, u.sexo, u.edad, a.asistencia FROM usuario u JOIN (SELECT asistencia FROM asistencia WHERE asistencia BETWEEN '{fecha_inicio2}' AND '{fecha_fin2}') a ON u.id_usuario = '{str(user[0])}' WHERE a.asistencia <= CURDATE() ORDER BY a.asistencia ASC"
+            query = f"SELECT u.nombre, u.apellido, u.dni, u.sexo, u.edad, a.asistencia FROM usuario u JOIN (SELECT asistencia FROM asistencia WHERE asistencia BETWEEN '{fecha_inicio2}' AND '{fecha_fin2}') a ON u.id_usuario = (SELECT id_usuario FROM usuario) WHERE a.asistencia <= CURDATE() ORDER BY a.asistencia ASC"
             cursor.execute(query)
             results = cursor.fetchall()
             
@@ -2527,12 +2499,14 @@ class VentanaPrincipal(QMainWindow):
             errorConsulta("Registro de alumnos",f"Error en la consulta: {str(ex)}")
             print("Error executing the query", ex)
     
-    def consultar6(self):
-        alumno = self.view_nomb.text()
+    def consultar_AsistePorAlumno(self):
+        alumno = self.view_nomb.currentData()[0]
         
-        patron_nom3 = re.compile(r'^[a-zA-ZáéíóúÁÉÍÓÚüÜ\'\s]+$') 
-        if not isinstance(alumno, str) or alumno.isspace() or not patron_nom3.match(alumno): 
-            mensaje_ingreso_datos("Registro de alumnos","Posibles errores:\n- Debe ingresar correctamente el nombre.\n- Debe establecer un rango de fechas de asistencias.\n\nDatos opcional a incorporar:\n- Debe ingresar 'Apellido'.")
+        patron = re.compile(r'^[0-9]+$')
+        # patron_nom3 = re.compile(r'^[a-zA-ZáéíóúÁÉÍÓÚüÜ\'\s]+$') 
+        if not isinstance(alumno, str) or not patron.match(alumno): 
+            mensaje_ingreso_datos("Registro de alumnos","Debe elige un DNI")
+            # mensaje_ingreso_datos("Registro de alumnos","Posibles errores:\n- Debe ingresar correctamente el nombre.\n- Debe establecer un rango de fechas de asistencias.\n\nDatos opcional a incorporar:\n- Debe ingresar 'Apellido'.")
             return
         
         if not self.view_asistencia.date().toString("yyyy-MM-dd"):
@@ -2546,25 +2520,17 @@ class VentanaPrincipal(QMainWindow):
             mensaje_ingreso_datos("Registro de alumnos","La fecha de fin debe ser posterior a la fecha de inicio.")
             return
         
-        apellido = self.view_apellido.text()
-        
-        self.consultar5()
+        # self.consultar5()
         try:
             db = conectar_base_de_datos()
             cursor = db.cursor()
             
-            cursor.execute("SELECT id_usuario FROM usuario")
-            datos = cursor.fetchall()
-            user = datos[0]
+            # cursor.execute("SELECT id_usuario FROM usuario")
+            # datos = cursor.fetchall()
+            # user = datos[0]
             
-            query = f"SELECT u.nombre, u.apellido, u.dni, u.sexo, u.edad, a.asistencia FROM usuario u JOIN asistencia a ON u.id_usuario = '{str(user[0])}' WHERE a.asistencia BETWEEN '{fecha_inicio}' AND '{fecha_fin}' AND a.asistencia <= CURDATE() AND u.nombre = '{alumno}' "
+            query = f"SELECT u.nombre, u.apellido, u.dni, u.sexo, u.edad, a.asistencia FROM usuario u JOIN asistencia a ON u.id_usuario = (SELECT id_usuario FROM usuario) WHERE a.asistencia BETWEEN '{fecha_inicio}' AND '{fecha_fin}' AND a.asistencia <= CURDATE() AND u.dni = '{alumno}' ORDER BY a.asistencia ASC"
             
-            if apellido:
-                if not isinstance(apellido, str) or apellido.isspace() or not patron_nom3.match(apellido): 
-                    mensaje_ingreso_datos("Registro de alumnos","El apellido debe contener: \n- Letras y/o espacios entre nombres(si tiene mas de dos).")
-                    return 
-                query += f" AND u.apellido = '{apellido}' ORDER BY a.asistencia ASC"
-                
             # Ejecutar la consulta
             cursor.execute(query)
             results5 = cursor.fetchall()
@@ -2574,8 +2540,7 @@ class VentanaPrincipal(QMainWindow):
             
                 self.view_asistencia.setDate(QDate.currentDate())
                 self.view_al.setDate(QDate.currentDate())
-                self.view_apellido.clear()
-                self.view_nomb.clear()
+                self.view_nomb.currentData()
                 asistenciaPorAlumno(self,cursor,results5,QHeaderView,QTableWidget,QAbstractItemView,QTableWidgetItem,QDate,Qt)
             
             else:

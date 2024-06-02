@@ -74,7 +74,7 @@ def actualizar_combobox_consulta1_usuario(self):
     self.view_nomb.clear()
 
     # Consulta para obtener los datos de una columna específica
-    cursor.execute("SELECT u.nombre FROM usuario u ORDER BY u.nombre ASC")
+    cursor.execute("SELECT u.dni FROM usuario u ORDER BY u.dni ASC")
     resultados = cursor.fetchall()
 
     for resultado in resultados:
@@ -82,18 +82,3 @@ def actualizar_combobox_consulta1_usuario(self):
     cursor.close()
     conn.close()
     
-def actualizar_combobox_consulta1_apellido(self):
-    #  Conexión a la base de datos MySQL
-    conn = conectar_base_de_datos()
-    cursor = conn.cursor()
-    
-    self.view_apellido.clear()
-
-    # Consulta para obtener los datos de una columna específica
-    cursor.execute("SELECT u.apellido FROM usuario u ORDER BY u.apellido ASC")
-    resultados = cursor.fetchall()
-
-    for resultado in resultados:
-        self.view_apellido.addItem(str(resultado[0]).capitalize().title(), resultado)
-    cursor.close()
-    conn.close()

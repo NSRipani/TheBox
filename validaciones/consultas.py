@@ -9,6 +9,8 @@ def consultaPorAlumno(self,cursor,results,QHeaderView,QTableWidget,QAbstractItem
     self.tablaVIEW.setColumnCount(len(results[0]))
     self.tablaVIEW.setHorizontalHeaderLabels(headers)
     
+    self.tablaVIEW.verticalHeader().setVisible(False)
+    
     # Establecer la propiedad de "stretch" en el encabezado horizontal
     header = self.tablaVIEW.horizontalHeader()
     header.setSectionResizeMode(QHeaderView.ResizeMode.Stretch)
@@ -24,9 +26,10 @@ def consultaPorAlumno(self,cursor,results,QHeaderView,QTableWidget,QAbstractItem
             if j == 6 or j == 9:  
                 fecha = QDate.fromString(str(val), "yyyy-MM-dd")  # Convertir la fecha a objeto QDate
                 item.setText(fecha.toString("dd-MM-yyyy"))  # Establecer el formato de visualización
-            
-            if j in [2, 4, 5, 6, 8, 9]:  # Ajustar alineación para ciertas columnas
-                item.setTextAlignment(Qt.AlignmentFlag.AlignCenter) 
+            if j in [2, 4, 5, 6, 9]:  # Ajustar alineación para ciertas columnas
+                item.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
+            if j == 8:  # Ajustar alineación para ciertas columnas
+                item.setTextAlignment(Qt.AlignmentFlag.AlignRight)
             self.tablaVIEW.setItem(i, j, item)
             
     if self.tablaVIEW.rowCount() == len(results):
@@ -39,14 +42,14 @@ def consultaPorAlumno(self,cursor,results,QHeaderView,QTableWidget,QAbstractItem
         # Mostrar la etiqueta "Total" en la primera celda de la fila de total
         item_total_label_alumno = QTableWidgetItem("TOTAL: ")
         item_total_label_alumno.setFont(itemColor_TOTAL(item_total_label_alumno))  # Funcion para estilos de item
-        item_total_label_alumno.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
+        item_total_label_alumno.setTextAlignment(Qt.AlignmentFlag.AlignRight)
         self.tablaVIEW.setItem(total_row, 7, item_total_label_alumno)
 
         # Mostrar la suma total en la celda debajo de la columna 'precios'
         item_total_precio_alumno = QTableWidgetItem(str(total_precios))
         item_total_precio_alumno.setFont(itemColor_RESULTADO(item_total_precio_alumno))  # Funcion para estilos de item
         self.tablaVIEW.setItem(total_row, 8, item_total_precio_alumno)
-        item_total_precio_alumno.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
+        item_total_precio_alumno.setTextAlignment(Qt.AlignmentFlag.AlignRight)
                 
 def totalAlumno(self,cursor,results,QHeaderView,QTableWidget,QAbstractItemView,QAbstractScrollArea,QTableWidgetItem,QDate,Qt):
     
@@ -74,12 +77,13 @@ def totalAlumno(self,cursor,results,QHeaderView,QTableWidget,QAbstractItemView,Q
     for i, fila in enumerate(results):
         for j, valor in enumerate(fila):
             item = QTableWidgetItem(str(valor)) 
-            if j == 6:# or j == 9:  # Indices de las columnas que contienen fechas
+            if j in [6, 9]:# or j == 9:  # Indices de las columnas que contienen fechas
                 fecha = QDate.fromString(str(valor), "yyyy-MM-dd")  # Convertir la fecha a objeto QDate
                 item.setText(fecha.toString("dd-MM-yyyy"))  # Establecer el formato de visualización
-            
             if j in [2, 4, 5, 6, 9]:  # Ajustar alineación para ciertas columnas
-                item.setTextAlignment(Qt.AlignmentFlag.AlignCenter)                  
+                item.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
+            if j == 8:  # Ajustar alineación para ciertas columnas
+                item.setTextAlignment(Qt.AlignmentFlag.AlignRight)
             self.tablaVIEW.setItem(i, j, item)
     
     if self.tablaVIEW.rowCount() == len(results):
@@ -92,14 +96,14 @@ def totalAlumno(self,cursor,results,QHeaderView,QTableWidget,QAbstractItemView,Q
         # Mostrar la etiqueta "Total" en la primera celda de la fila de total
         item_total_label_alumno = QTableWidgetItem("TOTAL: ")
         item_total_label_alumno.setFont(itemColor_TOTAL(item_total_label_alumno))  # Funcion para estilos de item
-        item_total_label_alumno.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
+        item_total_label_alumno.setTextAlignment(Qt.AlignmentFlag.AlignRight)
         self.tablaVIEW.setItem(total_row, 7, item_total_label_alumno)
 
         # Mostrar la suma total en la celda debajo de la columna 'precios'
         item_total_precio_alumno = QTableWidgetItem(str(total_precios))
         item_total_precio_alumno.setFont(itemColor_RESULTADO(item_total_precio_alumno))  # Funcion para estilos de item
         self.tablaVIEW.setItem(total_row, 8, item_total_precio_alumno)
-        item_total_precio_alumno.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
+        item_total_precio_alumno.setTextAlignment(Qt.AlignmentFlag.AlignRight)
         
 def limpiar(self):
     # Obtener el número de filas de la tabla
@@ -141,9 +145,10 @@ def consultarDeDisciplina(self,cursor,results,QHeaderView,QTableWidget,QAbstract
             if j in [4,5,6]:  
                 fecha = QDate.fromString(str(val), "yyyy-MM-dd")  # Convertir la fecha a objeto QDate
                 item.setText(fecha.toString("dd-MM-yyyy"))  # Establecer el formato de visualización
-            
             if j in [3, 4, 5, 6]:  # Ajustar alineación para ciertas columnas
                 item.setTextAlignment(Qt.AlignmentFlag.AlignCenter) 
+            if j == 3:  # Ajustar alineación para ciertas columnas
+                item.setTextAlignment(Qt.AlignmentFlag.AlignRight) 
             self.tablaVIEW.setItem(i, j, item)
     
     # Después de mostrar los resultados en la tabla
@@ -157,14 +162,14 @@ def consultarDeDisciplina(self,cursor,results,QHeaderView,QTableWidget,QAbstract
         # Mostrar la etiqueta "Total" en la primera celda de la fila de total
         item_total_label = QTableWidgetItem("TOTAL: ")
         item_total_label.setFont(itemColor_TOTAL(item_total_label))  # Funcion para estilos de item
-        item_total_label.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
+        item_total_label.setTextAlignment(Qt.AlignmentFlag.AlignRight)
         self.tablaVIEW.setItem(total_row, 2, item_total_label)
 
         # Mostrar la suma total en la celda debajo de la columna 'precios'
         item_total_precio = QTableWidgetItem(str(total_precios))
         item_total_precio.setFont(itemColor_RESULTADO(item_total_precio))  # Funcion para estilos de item
         self.tablaVIEW.setItem(total_row, 3, item_total_precio)
-        item_total_precio.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
+        item_total_precio.setTextAlignment(Qt.AlignmentFlag.AlignRight)
         
 def consultaPorDisciplina(self,cursor,results,QHeaderView,QTableWidget,QAbstractItemView,QTableWidgetItem,QDate,Qt):
     headers = [description[0].replace('_', ' ').upper() for description in cursor.description]
@@ -192,8 +197,10 @@ def consultaPorDisciplina(self,cursor,results,QHeaderView,QTableWidget,QAbstract
                 fecha = QDate.fromString(str(val), "yyyy-MM-dd")  # Convertir la fecha a objeto QDate
                 item.setText(fecha.toString("dd-MM-yyyy"))  # Establecer el formato de visualización
             
-            if j in [2, 4, 6, 7, 8]:  # Ajustar alineación para ciertas columnas
+            if j in [2, 4, 6, 7]:  # Ajustar alineación para ciertas columnas
                 item.setTextAlignment(Qt.AlignmentFlag.AlignCenter)  
+            if j == 8:  # Ajustar alineación para ciertas columnas
+                item.setTextAlignment(Qt.AlignmentFlag.AlignRight)
             self.tablaVIEW.setItem(i, j, item)
                 
     # Después de mostrar los resultados en la tabla
@@ -207,13 +214,13 @@ def consultaPorDisciplina(self,cursor,results,QHeaderView,QTableWidget,QAbstract
         # Mostrar la etiqueta "Total" en la primera celda de la fila de total
         item_total_label2 = QTableWidgetItem("TOTAL: ")
         item_total_label2.setFont(itemColor_TOTAL(item_total_label2))  # Funcion para estilos de item
-        item_total_label2.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
+        item_total_label2.setTextAlignment(Qt.AlignmentFlag.AlignRight)
         self.tablaVIEW.setItem(total_row, 7, item_total_label2)
 
         # Mostrar la suma total en la celda debajo de la columna 'precios'
         item_total_precio2 = QTableWidgetItem(str(total_precios))
         item_total_precio2.setFont(itemColor_RESULTADO(item_total_precio2))  # Funcion para estilos de item
-        item_total_precio2.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
+        item_total_precio2.setTextAlignment(Qt.AlignmentFlag.AlignRight)
         self.tablaVIEW.setItem(total_row, 8, item_total_precio2)
 
 def asistenciaTotal(self,cursor,results,QHeaderView,QTableWidget,QAbstractItemView,QTableWidgetItem,QDate,Qt):
@@ -257,7 +264,7 @@ def asistenciaTotal(self,cursor,results,QHeaderView,QTableWidget,QAbstractItemVi
     # Mostrar la etiqueta "Total" en la primera celda de la fila de total
     item_total_label3 = QTableWidgetItem("TOTAL: ")
     item_total_label3.setFont(itemColor_TOTAL(item_total_label3))  # Funcion para estilos de item
-    item_total_label3.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
+    item_total_label3.setTextAlignment(Qt.AlignmentFlag.AlignRight)
     self.tablaVIEW.setItem(row_count, 4, item_total_label3)
     
     # Agregar la información de la cantidad total de días de asistencia en la nueva fila
@@ -306,7 +313,7 @@ def asistenciaPorAlumno(self,cursor,results5,QHeaderView,QTableWidget,QAbstractI
     # Mostrar la etiqueta "Total" en la primera celda de la fila de total
     item_total_label4 = QTableWidgetItem("TOTAL:")
     item_total_label4.setFont(itemColor_TOTAL(item_total_label4))  # Funcion para estilos de item
-    item_total_label4.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
+    item_total_label4.setTextAlignment(Qt.AlignmentFlag.AlignRight)
     self.tablaVIEW.setItem(row_count, 4, item_total_label4)
     
     # Agregar la información de la cantidad total de días de asistencia en la nueva fila
