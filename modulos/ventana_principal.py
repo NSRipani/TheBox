@@ -1417,41 +1417,85 @@ class VentanaPrincipal(QMainWindow):
         self.fecha_gastos.setLocale(QLocale("es-AR"))
         self.fecha_gastos.setStyleSheet(style.estilo_fechas)
         self.fecha_gastos.setCursor(Qt.CursorShape.PointingHandCursor)
-        self.fecha_gastos.setFixedWidth(150)
+        self.fecha_gastos.setFixedWidth(200)
         self.fecha_gastos.setCalendarPopup(True)
         self.fecha_gastos.setDisplayFormat("dd/MM/yyyy")
         self.fecha_gastos.setDate(QDate.currentDate())
         layout_libro.addWidget(fecha_gastos)    # EN ESTA LINEA COMO LA SIGUIENTE, AGREGA LOS ALEMENTOS AL LAYOUT HORIZONTAL
         layout_libro.addWidget(self.fecha_gastos)
         
-        concepto_debe = QLabel('Concepto (Debe):',grupo_resumen)
+        # cuenta = QLabel('ID Cuenta:',grupo_resumen)
+        # cuenta.setStyleSheet(style.label)
+        # cuenta.setFixedWidth(100)
+        # self.cuenta = QComboBox(grupo_resumen)
+        # self.cuenta.setStyleSheet(style.estilo_combo)
+        # self.cuenta.setFixedWidth(80)
+        # layout_libro.addWidget(cuenta)
+        # layout_libro.addWidget(self.cuenta)
+        # actualizar_combobox_IDcuenta(self)
+        
+        # LAYOUT HORIZONTAL PARA LOS ELEMENTOS
+        layout_conepto = QHBoxLayout()
+        layout_conepto.setAlignment(Qt.AlignmentFlag.AlignLeft)
+        
+        concepto_debe = QLabel('Cuenta (Debe):',grupo_resumen)
         concepto_debe.setStyleSheet(style.label)
         concepto_debe.setFixedWidth(160)
         self.concepto_debe = QLineEdit(grupo_resumen)
         self.concepto_debe.setStyleSheet(style.estilo_lineedit)
         self.concepto_debe.setFixedWidth(200)
-        layout_libro.addWidget(concepto_debe)   # EN ESTA LINEA COMO LA SIGUIENTE, AGREGA LOS ALEMENTOS AL LAYOUT HORIZONTAL
-        layout_libro.addWidget(self.concepto_debe)
+        layout_conepto.addWidget(concepto_debe)   # EN ESTA LINEA COMO LA SIGUIENTE, AGREGA LOS ALEMENTOS AL LAYOUT HORIZONTAL
+        layout_conepto.addWidget(self.concepto_debe)
         
-        concepto_haber = QLabel('Concepto (Haber):',grupo_resumen)
+        # Conexión a la base de datos MySQL
+        conn = conectar_base_de_datos()
+        cursor = conn.cursor()
+
+        # Consulta para obtener los datos de una columna específica
+        cursor.execute("SELECT nombre FROM cuenta WHERE categoria = 'debe'")
+        dato = cursor.fetchall()
+        sugerencia = [str(item[0]) for item in dato]
+
+        lista_debe = QCompleter(sugerencia)
+        lista_debe.setFilterMode(Qt.MatchFlag.MatchStartsWith)
+        lista_debe.popup().setStyleSheet(style.completer)
+        self.concepto_debe.setCompleter(lista_debe)
+        
+        cursor.close()
+        conn.close()
+        
+        concepto_haber = QLabel('Cuenta (Haber):',grupo_resumen)
         concepto_haber.setStyleSheet(style.label)
         concepto_haber.setFixedWidth(160)
         self.concepto_haber = QLineEdit(grupo_resumen)
         self.concepto_haber.setStyleSheet(style.estilo_lineedit)
         self.concepto_haber.setFixedWidth(200)
-        layout_libro.addWidget(concepto_haber)  # EN ESTA LINEA COMO LA SIGUIENTE, AGREGA LOS ALEMENTOS AL LAYOUT HORIZONTAL
-        layout_libro.addWidget(self.concepto_haber)
+        layout_conepto.addWidget(concepto_haber)  # EN ESTA LINEA COMO LA SIGUIENTE, AGREGA LOS ALEMENTOS AL LAYOUT HORIZONTAL
+        layout_conepto.addWidget(self.concepto_haber)
         
-        # LAYOUT HORIZONTAL PARA LOS ELEMENTOS
-        layout_conepto = QHBoxLayout()
-        layout_conepto.setAlignment(Qt.AlignmentFlag.AlignLeft)
+        # Conexión a la base de datos MySQL
+        conn = conectar_base_de_datos()
+        cursor = conn.cursor()
+
+        # Consulta para obtener los datos de una columna específica
+        cursor.execute("SELECT nombre FROM cuenta WHERE categoria = 'haber'")
+        datos = cursor.fetchall()
+        sugerencia = [str(item[0]) for item in datos]
+
+        lista_haber = QCompleter(sugerencia)
+        lista_haber.setFilterMode(Qt.MatchFlag.MatchStartsWith)
+        lista_haber.popup().setStyleSheet(style.completer)
+        self.concepto_haber.setCompleter(lista_haber)
+        
+        cursor.close()
+        conn.close()
         
         debe = QLabel('Debe ($):',grupo_resumen)
         debe.setStyleSheet(style.label)
         debe.setFixedWidth(80)
         self.debe = QLineEdit(grupo_resumen)
         self.debe.setStyleSheet(style.estilo_lineedit)
-        self.debe.setFixedWidth(150)
+        self.debe.setFixedWidth(100)
         layout_conepto.addWidget(debe)    # EN ESTA LINEA COMO LA SIGUIENTE, AGREGA LOS ALEMENTOS AL LAYOUT HORIZONTAL
         layout_conepto.addWidget(self.debe)
         
@@ -1460,10 +1504,10 @@ class VentanaPrincipal(QMainWindow):
         haber.setFixedWidth(90)
         self.haber = QLineEdit(grupo_resumen)
         self.haber.setStyleSheet(style.estilo_lineedit)
-        self.haber.setFixedWidth(150)
+        self.haber.setFixedWidth(100)
         layout_conepto.addWidget(haber)   # EN ESTA LINEA COMO LA SIGUIENTE, AGREGA LOS ALEMENTOS AL LAYOUT HORIZONTAL
         layout_conepto.addWidget(self.haber)
-       
+        
         layout_libro3 = QHBoxLayout()
         layout_libro3.setAlignment(Qt.AlignmentFlag.AlignLeft)
         fecha_periodo = QLabel('Periodo:',grupo_resumen)
@@ -1473,7 +1517,7 @@ class VentanaPrincipal(QMainWindow):
         self.fecha_periodo.setStyleSheet(style.estilo_fechas)
         self.fecha_periodo.setLocale(QLocale("es-AR"))
         self.fecha_periodo.setCursor(Qt.CursorShape.PointingHandCursor)
-        self.fecha_periodo.setFixedWidth(150)
+        self.fecha_periodo.setFixedWidth(200)
         self.fecha_periodo.setCalendarPopup(True)
         self.fecha_periodo.setDisplayFormat("dd/MM/yyyy")
         self.fecha_periodo.setDate(QDate.currentDate())
@@ -1488,7 +1532,7 @@ class VentanaPrincipal(QMainWindow):
         self.fecha_fin.setStyleSheet(style.estilo_fechas)
         self.fecha_fin.setLocale(QLocale("es-AR"))
         self.fecha_fin.setCursor(Qt.CursorShape.PointingHandCursor)
-        self.fecha_fin.setFixedWidth(150)
+        self.fecha_fin.setFixedWidth(200)
         self.fecha_fin.setCalendarPopup(True)
         self.fecha_fin.setDisplayFormat("dd/MM/yyyy")
         self.fecha_fin.setDate(QDate.currentDate())
@@ -1699,6 +1743,10 @@ class VentanaPrincipal(QMainWindow):
     def registro_de_ingYegreso(self):
         self.tab.setCurrentIndex(7)
         self.tab.setDisabled(False)
+               
+        # actualizar_combobox_IDcuenta(self)
+        
+        # actualizar_combobox_cuentaHaber(self)
     
     # def registro_de_ingYegreso(self):
     #     self.tab.setCurrentIndex(8)
@@ -2860,7 +2908,7 @@ class VentanaPrincipal(QMainWindow):
             try:
                 db = conectar_base_de_datos()
                 cursor = db.cursor()
-                cursor.execute(f"SELECT * FROM contabilidad WHERE fecha BETWEEN '{principio}' AND '{final}'")
+                cursor.execute(f"SELECT c.fecha, t.id_cuenta AS CODIGO = (SELECT id_cuenta FROM cuenta WHERE categori = 'debe' OR WHERE categoria = 'haber'), c.concepto_debe, c.concepto_haber, c.debe, c.haber FROM contabilidad c WHERE fecha BETWEEN '{principio}' AND '{final}'")
                 busqueda = cursor.fetchall()
                 if len(busqueda) > 0:
                     self.fecha_periodo.setDate(QDate.currentDate())
