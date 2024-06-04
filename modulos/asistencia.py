@@ -216,12 +216,12 @@ class Asistencia(QMainWindow):
             cursor.execute(f"SELECT nombre, apellido, fecha_registro FROM usuario WHERE dni='{dni}'")
             resultUser = cursor.fetchone()
             print(f"{resultUser}\n")
-            if len(resultUser) > 0:
-                nombre = resultUser[0]
-                apellido = resultUser[1]                
-                fecha_registro = resultUser[2]
-                print(f"{fecha_registro}\n")
-                print(type(fecha_registro))
+            # if len(resultUser) > 0:
+            nombre = resultUser[0]
+            apellido = resultUser[1]                
+            fecha_registro = resultUser[2]
+            print(f"{fecha_registro}\n")
+            print(type(fecha_registro))
             
             # Establecer datos 'nombre' y 'apellido', de la consulta en los QLabel    
             self.label_texto1.setText(f"¡En hora buena {nombre} {apellido}! \n\nSu asistencia fue registrada.")

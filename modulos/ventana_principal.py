@@ -1570,14 +1570,6 @@ class VentanaPrincipal(QMainWindow):
         # botones_resumen3 = QHBoxLayout()
         # botones_resumen3.setAlignment(Qt.AlignmentFlag.AlignRight)
         
-        # boton_limpiarTabla.setStyleSheet(style.estilo_boton)
-        # excel_resumen = QPushButton('DESCARGAR PLANILLA', grupo_resumen)
-        # excel_resumen.setFixedWidth(200)
-        # excel_resumen.setCursor(Qt.CursorShape.PointingHandCursor)
-        # excel_resumen.setStyleSheet(style.boton_excel)
-        # botones_resumen3.addWidget(boton_limpiarTabla)
-        # botones_resumen3.addWidget(excel_resumen)
-        
         h1 = QHBoxLayout()
         h1.addLayout(layout_libro)
         h1.addLayout(botones_resumen)
@@ -1647,9 +1639,6 @@ class VentanaPrincipal(QMainWindow):
         hori2.addLayout(costado)
         hori2.addSpacing(25)
         grid_resumen.addLayout(hori2,1,0,1,5)
-        
-        # ESTABLECE LA TABLA EN A LA GRILLA
-        # grid_resumen.addWidget(self.tablaGastos,1,0,1,5)
     
         # Establecer el diseño del QGroupBox
         grupo_resumen.setLayout(grid_resumen)
@@ -2573,10 +2562,6 @@ class VentanaPrincipal(QMainWindow):
             db = conectar_base_de_datos()
             cursor = db.cursor()
             
-            # cursor.execute("SELECT id_usuario FROM usuario")
-            # datos = cursor.fetchall()
-            # user = datos[0]
-            
             query = f"SELECT u.nombre, u.apellido, u.dni, u.sexo, u.edad, a.asistencia FROM usuario u JOIN asistencia a ON u.id_usuario = (SELECT id_usuario FROM usuario) WHERE a.asistencia BETWEEN '{fecha_inicio}' AND '{fecha_fin}' AND a.asistencia <= CURDATE() AND u.dni = '{alumno}' ORDER BY a.asistencia ASC"
             
             # Ejecutar la consulta
@@ -2639,24 +2624,6 @@ class VentanaPrincipal(QMainWindow):
                 print("Error executing the query", ex)
         else:
             print("no se guardo")
-            
-    # def mostrar_horas(self):  
-    #     try:
-    #         db = conectar_base_de_datos()
-    #         cursor = db.cursor()
-    #         cursor.execute("SELECT h.id_hora, h.id_empleado, e.nombre, h.horas_diaria, h.fecha FROM hora as h INNER JOIN registro_empleado as e on h.id_empleado = e.id_empleado ORDER BY id_empleado, fecha")
-    #         busqueda = cursor.fetchall()
-    #         if len(busqueda) > 0:
-    #             resultado_empleado("Registro de empleado",f"Se encontraron {len(busqueda)} coincidencias.")
-    #             tabla_General(self,cursor,busqueda,QHeaderView,QTableWidget,QAbstractItemView,QTableWidgetItem,Qt,QDate)                
-    #         else:
-    #             resultado_empleado("Registro de empleado",f"Se encontraron {len(busqueda)} coincidencias.")
-                
-    #         cursor.close()
-    #         db.close()
-    #     except Error as ex:
-    #         errorConsulta("Registro de empleado",f"Error en la consulta: {str(ex)}")
-    #         print("Error executing the query", ex)
             
     def autocompleto_de_datos_horas(self):
         autoCompletado(self,QDate,mensaje_ingreso_datos)
@@ -2908,7 +2875,8 @@ class VentanaPrincipal(QMainWindow):
             try:
                 db = conectar_base_de_datos()
                 cursor = db.cursor()
-                cursor.execute(f"SELECT c.fecha, t.id_cuenta AS CODIGO = (SELECT id_cuenta FROM cuenta WHERE categori = 'debe' OR WHERE categoria = 'haber'), c.concepto_debe, c.concepto_haber, c.debe, c.haber FROM contabilidad c WHERE fecha BETWEEN '{principio}' AND '{final}'")
+                
+                cursor.execute(f"SELECT * FROM contabilidad")
                 busqueda = cursor.fetchall()
                 if len(busqueda) > 0:
                     self.fecha_periodo.setDate(QDate.currentDate())
