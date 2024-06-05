@@ -12,7 +12,6 @@ from PyQt6.QtCore import QSettings, Qt
 
 # Módulos de la carpta del proyecto
 from modulos.registro_administrador import RegistroUser
-from modulos.eliminar_administrador import DeleteUser
 from modulos.ventana_principal import VentanaPrincipal
 from modulos.mensajes import mensaje_ingreso_datos, errorConsulta, inicio
 from conexion_DB.dataBase import conectar_base_de_datos
@@ -111,13 +110,7 @@ class Login(QWidget):
         self.register_button.setStyleSheet(style.estBo)
         self.register_button.setGeometry(120, 360,220, 30)
         self.register_button.clicked.connect(self.registroUser)
-    
-        self.delete_user_button = QPushButton("Eliminar administrador", self)
-        self.delete_user_button.setCursor(Qt.CursorShape.PointingHandCursor)
-        self.delete_user_button.setStyleSheet(style.estBo)
-        self.delete_user_button.setGeometry(120, 400, 220, 30)
-        self.delete_user_button.clicked.connect(self.delete_User) 
-   
+       
         self.load_settings()
         self.login_button.clicked.connect(self.save_settings)
 
@@ -217,11 +210,6 @@ class Login(QWidget):
             self.Remember.setChecked(True)
         else:
             self.Remember.setChecked(False)
-    
-    # Función para abrir venta para el eliminar de ADMINISTRADOR
-    def delete_User(self):
-        self.user_delete = DeleteUser()
-        self.user_delete.show()
   
    
 if __name__ == "__main__":

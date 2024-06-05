@@ -9,7 +9,7 @@ from openpyxl.styles import Font, PatternFill, Border, Side, numbers
 # Librerías de PyQt6
 from PyQt6.QtWidgets import (QLabel,QFormLayout,QFileDialog, QCompleter, QAbstractScrollArea, QHeaderView, QGridLayout, QHBoxLayout, QDateEdit, 
                              QMessageBox, QTableWidget, QAbstractItemView, QTableWidgetItem, QPushButton, QLineEdit, QStatusBar, QWidget,
-                             QVBoxLayout, QGroupBox, QMainWindow, QFrame, QTabWidget, QComboBox)
+                             QVBoxLayout, QGroupBox, QDialog, QFrame, QTabWidget, QComboBox)
 from PyQt6.QtGui import QIcon, QKeySequence, QAction, QPixmap,QGuiApplication
 from PyQt6.QtCore import *
 
@@ -27,7 +27,7 @@ from validaciones.archivo_Excel import empleado_EXCEL
 # conexion
 from conexion_DB.dataBase import conectar_base_de_datos
 
-class Empleado(QWidget):
+class Empleado(QDialog):
     def __init__(self):
         super().__init__()
         self.empleo()
@@ -36,6 +36,7 @@ class Empleado(QWidget):
         self.setWindowTitle("Registro de empleado")
         self.setWindowIcon(QIcon("img/logo.png"))
         self.setStyleSheet(style.fondo2)
+        self.setModal(True)
         
         # Crear el QGroupBox
         group_box = QGroupBox("DATOS DEL EMPLEADO")
@@ -160,7 +161,6 @@ class Empleado(QWidget):
         self.setLayout(main_layout)
 
         # Configurar la ventana
-        self.setWindowTitle("Registro de empleado")
         self.setFixedSize(1300, 800)
         
         # Centrar la ventana
