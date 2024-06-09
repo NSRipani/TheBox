@@ -48,10 +48,14 @@ from qss import style
 from conexion_DB.dataBase import conectar_base_de_datos
 
 class VentanaPrincipal(QMainWindow):
-    def __init__(self):
+    def __init__(self, is_admin):
         super().__init__()
+        self.setIsAdmin(is_admin)
         self.ventana_pricipal()
         self.show()
+        
+    def setIsAdmin (self, is_admin):
+        self.is_admin = is_admin
     
     def ventana_pricipal(self):        
         self.showMaximized() # Maximizar la ventana al iniciar
@@ -222,11 +226,16 @@ class VentanaPrincipal(QMainWindow):
         self.tab.addTab(pestania_deleteRecord, 'ELIMINAR')
         self.tab.addTab(pestania_actividad, 'DISCIPLINA')
         self.tab.addTab(pestania_pagos, 'PAGOS')
-        self.tab.addTab(pestania_view, 'BALANCE')
+        # self.tab.addTab(pestania_view, 'BALANCE')
         self.tab.addTab(pestania_empleados, 'EMPLEADOS')
         # self.tab.addTab(pestania_horas, 'HORAS')
-        self.tab.addTab(pestania_resumen, 'CONTABILIDAD')
-   
+        # self.tab.addTab(pestania_resumen, 'CONTABILIDAD')
+
+        if self.is_admin == 1:
+            self.tab.addTab(pestania_resumen, 'CONTABILIDAD')
+            self.tab.addTab(pestania_view, 'BALANCE')
+            
+        
         # ----------------------------------------------------
         # PESTAÑA REGISTRAR
         # SE CREA ComboBox 'RECORD'
@@ -1676,11 +1685,16 @@ class VentanaPrincipal(QMainWindow):
         self.exit_action.setStatusTip('Salir de la aplicación')
         self.exit_action.triggered.connect(self.close)
         
+        self.change_password_action = QAction('&Cambiar contraseña', self)
+        self.change_password_action.setShortcut(QKeySequence('Ctrl+S'))
+        self.change_password_action.setStatusTip('Cambiar la contraseña de usuario')
+        # self.change_password_action.triggered.connect(self.cambiar_contrasena)
+        
         menubar = self.menuBar()
         menubar.setStyleSheet(style.estilo_menubar)
         file_menu = menubar.addMenu('&Archivo')
         file_menu.addAction(self.exit_action)
-    
+        file_menu.addAction(self.change_password_action)
     
         
     # FUNCIONES PARA VINCULAR EL QTabWidget
@@ -1760,33 +1774,41 @@ class VentanaPrincipal(QMainWindow):
     def guardar(self):
         nombre1 = self.input_nombre1.text().capitalize().title()
         apellido1 = self.input_apellido1.text().capitalize().title()
-        dni = self.input_dni.text().replace(".","")
+        dni = self.input_dni.text().replace(".", "")
         sexo = self.input_sex.currentText()
         edad = self.input_age.text()
-        celu = self.input_celular.text().replace(".", "")        
+        celu = self.input_celular.text().replace(".", "")
         fecha = self.input_date.date().toPyDate()
-        
-        registroUSER(nombre1,apellido1, dni, sexo, edad, celu)
-        try:   
+
+        registroUSER(nombre1, apellido1, dni, sexo, edad, celu)
+        try:
             db = conectar_base_de_datos()
             cursor = db.cursor()
-                    
-            query = "INSERT INTO usuario (nombre, apellido, dni, sexo, edad, celular, fecha_registro) VALUES (%s, %s, %s, %s, %s, %s, %s)"
-            values = (nombre1, apellido1, dni, sexo, edad, celu, fecha)
-            cursor.execute(query, values)
-            db.commit()
-                            
-            if cursor.rowcount > 0:
-                mensaje_ingreso_datos("Registro de alumnos","Registro cargado")
-                
-                limpiasElementosUser(self,QDate)
+
+            # Verificar si el dni ya existe
+            cursor.execute("SELECT COUNT(*) FROM usuario WHERE dni = %s", (dni,))
+            resultado = cursor.fetchone()
+
+            if resultado[0] > 0:
+                # Si el dni ya existe, mostrar un mensaje y no insertar
+                mensaje_ingreso_datos("Registro de alumnos", "El DNI ya está registrado")
             else:
-                mensaje_ingreso_datos("Registro de alumnos","Registro no cargado")
+                # Si el dni no existe, insertar el nuevo usuario
+                query_insertar = "INSERT INTO usuario (nombre, apellido, dni, sexo, edad, celular, fecha_registro) VALUES (%s, %s, %s, %s, %s, %s, %s)"
+                values = (nombre1, apellido1, dni, sexo, edad, celu, fecha)
+                cursor.execute(query_insertar, values)
+                db.commit()
+
+                if cursor.rowcount > 0:
+                    mensaje_ingreso_datos("Registro de alumnos", "Registro cargado")
+                    limpiasElementosUser(self, QDate)
+                else:
+                    mensaje_ingreso_datos("Registro de alumnos", "Registro no cargado")
 
             cursor.close()
             db.close()
         except Error as ex:
-            errorConsulta("Registro de alumnos",f"Error en la consulta: {str(ex)}")
+            errorConsulta("Registro de alumnos", f"Error en la consulta: {str(ex)}")
     
     def search(self):
         if not self.input_nombre1.text():
@@ -2045,33 +2067,43 @@ class VentanaPrincipal(QMainWindow):
     # -------------- PESTAÑA DE DISCIPLINA -----------------
     def guardarACTIV(self):
         actividad = self.input_disciplina4.text().capitalize().title()
-        precio = self.input_precio.text().replace(".","")
-        
-        guardarACTIVIDAD(actividad,precio)
+        precio = self.input_precio.text().replace(".", "")
 
-        guardar = inicio("Registro de alumnos","¿Desea guardar alumno?")
-        if guardar == QMessageBox.StandardButton.Yes: 
+        guardarACTIVIDAD(actividad, precio)
+
+        guardar = inicio("Registro de alumnos", "¿Desea guardar alumno?")
+        if guardar == QMessageBox.StandardButton.Yes:
             try:
                 db = conectar_base_de_datos()
                 cursor = db.cursor()
-                cursor.execute("INSERT INTO disciplina (nombre,precio) VALUES (%s, %s)", (actividad, precio),)
-                db.commit()
-                                
-                if cursor:      
-                    mensaje_ingreso_datos("Registro de alumnos","Registro cargado")
-                    self.input_disciplina4.clear()
-                    self.input_precio.clear()
+
+                # Verificar si la actividad ya existe
+                cursor.execute("SELECT COUNT(*) FROM disciplina WHERE nombre = %s", (actividad,))
+                resultado = cursor.fetchone()
+
+                if resultado[0] > 0:
+                    # Si la actividad ya existe, mostrar un mensaje y no insertar
+                    mensaje_ingreso_datos("Registro de alumnos", "La actividad ya está registrada")
                 else:
-                    mensaje_ingreso_datos("Registro de alumnos","Registro no cargado")
-                             
+                    # Si la actividad no existe, insertar la nueva actividad
+                    cursor.execute("INSERT INTO disciplina (nombre, precio) VALUES (%s, %s)", (actividad, precio))
+                    db.commit()
+
+                    if cursor.rowcount > 0:
+                        mensaje_ingreso_datos("Registro de alumnos", "Registro cargado")
+                        self.input_disciplina4.clear()
+                        self.input_precio.clear()
+                    else:
+                        mensaje_ingreso_datos("Registro de alumnos", "Registro no cargado")
+
                 cursor.close()
                 db.close()
             except Error as ex:
-                    errorConsulta("Registro de alumnos",f"Error en la consulta: {str(ex)}")
-                    print("Error executing the query", ex)
+                errorConsulta("Registro de alumnos", f"Error en la consulta: {str(ex)}")
+                print("Error executing the query", ex)
         else:
-            print("nose guardo")
-        
+            print("No se guardó")
+
     def mostrarACTIC(self):
         try:
             db = conectar_base_de_datos()

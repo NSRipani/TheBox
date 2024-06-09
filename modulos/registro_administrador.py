@@ -57,36 +57,36 @@ class RegistroUser(QDialog):
         self.dni.setMaxLength(8)
         self.contraseña = QLineEdit()
         self.contraseña.setStyleSheet(style.estilo_lineedit)
-        self.nombre = QLineEdit()
-        self.nombre.setStyleSheet(style.estilo_lineedit)
-        self.apellido = QLineEdit()
-        self.apellido.setStyleSheet(style.estilo_lineedit)
-        self.puesto = QLineEdit()
-        self.puesto.setStyleSheet(style.estilo_lineedit)
-        self.sex = QLineEdit()
-        self.sex.setStyleSheet(style.estilo_lineedit)
-        self.sex.setPlaceholderText("Hombre / Mujer")
+        # self.nombre = QLineEdit()
+        # self.nombre.setStyleSheet(style.estilo_lineedit)
+        # self.apellido = QLineEdit()
+        # self.apellido.setStyleSheet(style.estilo_lineedit)
+        # self.puesto = QLineEdit()
+        # self.puesto.setStyleSheet(style.estilo_lineedit)
+        # self.sex = QLineEdit()
+        # self.sex.setStyleSheet(style.estilo_lineedit)
+        # self.sex.setPlaceholderText("Hombre / Mujer")
 
         d = QLabel("DNI:")
         d.setStyleSheet(style.label)
         c = QLabel("Contraseña:")
         c.setStyleSheet(style.label)
-        n = QLabel("Nommbre:")
-        n.setStyleSheet(style.label)
-        a = QLabel("Apellido:")
-        a.setStyleSheet(style.label)
-        p = QLabel("Puesto:")
-        p.setStyleSheet(style.label)
-        s = QLabel("Sexo:")
-        s.setStyleSheet(style.label)
+        # n = QLabel("Nommbre:")
+        # n.setStyleSheet(style.label)
+        # a = QLabel("Apellido:")
+        # a.setStyleSheet(style.label)
+        # p = QLabel("Puesto:")
+        # p.setStyleSheet(style.label)
+        # s = QLabel("Sexo:")
+        # s.setStyleSheet(style.label)
 
         # Añadir widgets al formulario
         form_layout.addRow(d, self.dni)
         form_layout.addRow(c, self.contraseña)
-        form_layout.addRow(n, self.nombre)
-        form_layout.addRow(a, self.apellido)
-        form_layout.addRow(p, self.puesto)
-        form_layout.addRow(s, self.sex)
+        # form_layout.addRow(n, self.nombre)
+        # form_layout.addRow(a, self.apellido)
+        # form_layout.addRow(p, self.puesto)
+        # form_layout.addRow(s, self.sex)
 
         # Crear los botones
         guardar_button = QPushButton("Guardar")
@@ -139,7 +139,7 @@ class RegistroUser(QDialog):
         self.setLayout(main_layout)
 
         # Configurar la ventana
-        self.setFixedSize(1300, 800)
+        self.setFixedSize(800, 800)
         
         # Centrar la ventana
         self.centrar_ventana()
@@ -154,10 +154,10 @@ class RegistroUser(QDialog):
     def guardar(self):
         dni = self.dni.text().replace(".","")
         contraseña = self.contraseña.text()
-        nombre = self.nombre.text().capitalize().title()
-        apellido = self.apellido.text().capitalize().title()
-        ocupacion = self.puesto.text().capitalize()
-        sexo = self.sex.text().capitalize()
+        # nombre = self.nombre.text().capitalize().title()
+        # apellido = self.apellido.text().capitalize().title()
+        # ocupacion = self.puesto.text().capitalize()
+        # sexo = self.sex.text().capitalize()
 
         # Validar que el DNI sea un número entero
         if not dni.isdigit() or not len(dni) != 8:
@@ -174,29 +174,29 @@ class RegistroUser(QDialog):
             mensaje_ingreso_datos("Registro de administrador","La contaseña debe contener letras y/o números.")
             return
            
-        if not all(c.isalpha() or c.isspace() for c in nombre):
-            mensaje_ingreso_datos("Registro de administrador","El nombre debe contener: \n- Letras y/o espacios entre nombres(si tiene mas de dos).")
-            return
+        # if not all(c.isalpha() or c.isspace() for c in nombre):
+        #     mensaje_ingreso_datos("Registro de administrador","El nombre debe contener: \n- Letras y/o espacios entre nombres(si tiene mas de dos).")
+        #     return
 
-        if not all(c.isalpha() or c.isspace() for c in apellido):
-            mensaje_ingreso_datos("Registro de administrador","El apellido debe contener: \n- Letras y/o espacios entre apellidos(si tiene mas de dos).")
-            return
+        # if not all(c.isalpha() or c.isspace() for c in apellido):
+        #     mensaje_ingreso_datos("Registro de administrador","El apellido debe contener: \n- Letras y/o espacios entre apellidos(si tiene mas de dos).")
+        #     return
 
-        if not ocupacion.isalpha():
-            mensaje_ingreso_datos("Registro de administrador","Colocar su ocupación.")
-            return
+        # if not ocupacion.isalpha():
+        #     mensaje_ingreso_datos("Registro de administrador","Colocar su ocupación.")
+        #     return
 
-        if not sexo.isalpha():
-            mensaje_ingreso_datos("Registro de administrador","El sexo debe ser 'Hombre' o 'Mujer'.")
-            return
+        # if not sexo.isalpha():
+        #     mensaje_ingreso_datos("Registro de administrador","El sexo debe ser 'Hombre' o 'Mujer'.")
+        #     return
         
         cargar = inicio("Registro de alumnos","¿Desea guardar alumno?")
         if cargar == QMessageBox.StandardButton.Yes: 
             try:
                 db = conectar_base_de_datos()
                 cursor = db.cursor()
-                query = "INSERT INTO profesor (dni, contraseña, nombre, apellido, ocupacion, sexo) VALUES (%s,%s,%s,%s,%s,%s)"
-                values = (dni, contraseña, nombre, apellido, ocupacion, sexo)
+                query = "INSERT INTO profesor (dni, contraseña) VALUES (%s,%s)"#, nombre, apellido, ocupacion, sexo -- ,%s,%s,%s,%s -- , nombre, apellido, ocupacion, sexo
+                values = (dni, contraseña)
                 cursor.execute(query, values)
                 db.commit()      
 
@@ -205,10 +205,10 @@ class RegistroUser(QDialog):
 
                     self.dni.clear()
                     self.contraseña.clear()
-                    self.nombre.clear()
-                    self.apellido.clear()
-                    self.puesto.clear()
-                    self.sex.clear()
+                    # self.nombre.clear()
+                    # self.apellido.clear()
+                    # self.puesto.clear()
+                    # self.sex.clear()
                 else:
                     mensaje_ingreso_datos("Registro de administrador","Registro no cargado")
                     
@@ -249,7 +249,7 @@ class RegistroUser(QDialog):
                 for i, row in enumerate(resultados):
                     for j, val in enumerate(row):
                         item = QTableWidgetItem(str(val))
-                        if j in [1, 2, 5, 6]:  # Ajustar alineación para ciertas columnas
+                        if j in [0,1,3]:  # Ajustar alineación para ciertas columnas
                             item.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
                         self.tableWidget.setItem(i, j, item)
                 
@@ -271,18 +271,18 @@ class RegistroUser(QDialog):
         dni = int(dni)  # Convertir a entero
 
         password = self.tableWidget.item(row, 2).text()
-        nombre = self.tableWidget.item(row, 3).text()
-        apellido = self.tableWidget.item(row, 4).text()
-        ocupacion = self.tableWidget.item(row, 5).text()
-        sexo = self.tableWidget.item(row, 6).text()
+        # nombre = self.tableWidget.item(row, 3).text()
+        # apellido = self.tableWidget.item(row, 4).text()
+        # ocupacion = self.tableWidget.item(row, 5).text()
+        # sexo = self.tableWidget.item(row, 6).text()
 
         # Mostrar los datos en los campos correspondientes
         self.dni.setText(str(dni))  # Convertir a texto antes de asignar al QLineEdit
         self.contraseña.setText(password)
-        self.nombre.setText(nombre)
-        self.apellido.setText(apellido)
-        self.puesto.setText(ocupacion)
-        self.sex.setText(sexo)
+        # self.nombre.setText(nombre)
+        # self.apellido.setText(apellido)
+        # self.puesto.setText(ocupacion)
+        # self.sex.setText(sexo)
 
         self.tableWidget.clearSelection() # Deselecciona la tabla
 
@@ -292,10 +292,10 @@ class RegistroUser(QDialog):
         
         dni = self.dni.text().replace(".","")
         contraseña = self.contraseña.text()
-        nombre = self.nombre.text().capitalize().title()
-        apellido = self.apellido.text().capitalize().title()
-        ocupacion = self.puesto.text().capitalize()
-        sexo = self.sex.text().capitalize()
+        # nombre = self.nombre.text().capitalize().title()
+        # apellido = self.apellido.text().capitalize().title()
+        # ocupacion = self.puesto.text().capitalize()
+        # sexo = self.sex.text().capitalize()
 
         # Validar que el DNI sea un número entero
         if not dni.isdigit() or not len(dni) == 8:
@@ -312,33 +312,33 @@ class RegistroUser(QDialog):
             mensaje_ingreso_datos("Registro de administrador","La contaseña debe contener letras y/o números.")
             return
 
-        if not all(c.isalpha() or c.isspace() for c in nombre):
-            mensaje_ingreso_datos("Registro de administrador","El nombre debe contener: \n- Letras y/o espacios entre nombres(si tiene mas de dos).")
-            return
-        else:
-            print("correcto")
+        # if not all(c.isalpha() or c.isspace() for c in nombre):
+        #     mensaje_ingreso_datos("Registro de administrador","El nombre debe contener: \n- Letras y/o espacios entre nombres(si tiene mas de dos).")
+        #     return
+        # else:
+        #     print("correcto")
 
-        if not all(c.isalpha() or c.isspace() for c in apellido):
-            mensaje_ingreso_datos("Registro de administrador","El apellido debe contener: \n- Letras y/o espacios entre apellidos(si tiene mas de dos).")
-            return
-        else:
-            print("correcto")
+        # if not all(c.isalpha() or c.isspace() for c in apellido):
+        #     mensaje_ingreso_datos("Registro de administrador","El apellido debe contener: \n- Letras y/o espacios entre apellidos(si tiene mas de dos).")
+        #     return
+        # else:
+        #     print("correcto")
 
-        if not ocupacion.isalpha():
-            mensaje_ingreso_datos("Registro de administrador","Colocar su ocupación.")
-            return
+        # if not ocupacion.isalpha():
+        #     mensaje_ingreso_datos("Registro de administrador","Colocar su ocupación.")
+        #     return
 
-        if not sexo.isalpha():
-            mensaje_ingreso_datos("Registro de administrador","El sexo debe ser 'Hombre' o 'Mujer'.")
-            return
+        # if not sexo.isalpha():
+        #     mensaje_ingreso_datos("Registro de administrador","El sexo debe ser 'Hombre' o 'Mujer'.")
+        #     return
         
         actual = inicio("Busqueda de administrador","¿Desea actualizar?")
         if actual == QMessageBox.StandardButton.Yes:
             try:
                 db = conectar_base_de_datos()
                 cursor = db.cursor()
-                query = "UPDATE profesor SET contraseña=%s, nombre=%s, apellido=%s, ocupacion=%s, sexo=%s WHERE dni=%s"
-                values = (contraseña, nombre, apellido, ocupacion, sexo, dni)
+                query = "UPDATE profesor SET contraseña=%s WHERE dni=%s" # nombre, apellido, ocupacion, sexo, --- , nombre=%s, apellido=%s, ocupacion=%s, sexo=%s
+                values = (contraseña, dni)
                 cursor.execute(query, values)
                 db.commit()
             
@@ -346,10 +346,10 @@ class RegistroUser(QDialog):
                     mensaje_ingreso_datos("Registro de administrador","Registro actualizado")
                     self.dni.clear()
                     self.contraseña.clear()
-                    self.nombre.clear()
-                    self.apellido.clear()
-                    self.puesto.clear()
-                    self.sex.clear()
+                    # self.nombre.clear()
+                    # self.apellido.clear()
+                    # self.puesto.clear()
+                    # self.sex.clear()
 
                     self.mostrar()
                 
@@ -387,10 +387,10 @@ class RegistroUser(QDialog):
                     mensaje_ingreso_datos("Registro de administrador","Administrador eliminado")
                     self.dni.clear()
                     self.contraseña.clear()
-                    self.nombre.clear()
-                    self.apellido.clear()
-                    self.puesto.clear()
-                    self.sex.clear()
+                    # self.nombre.clear()
+                    # self.apellido.clear()
+                    # self.puesto.clear()
+                    # self.sex.clear()
                     self.mostrar()
                 else:
                     mensaje_ingreso_datos("Registro de administrador","Administrador no eliminado")

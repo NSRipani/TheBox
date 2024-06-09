@@ -170,15 +170,13 @@ class Login(QWidget):
                 cursor.execute(query)
                 resultados = cursor.fetchone()
                 if resultados:
-                    mensaje_ingreso_datos("Inicio de sesion","Acceso consedido")
-
-                    self.ventanaPrincipal = VentanaPrincipal()
+                    mensaje_ingreso_datos("Inicio de sesion","Acceso consedido")                  
+                    self.ventanaPrincipal = VentanaPrincipal(resultados[3])
                     self.ventanaPrincipal.show()
                     self.hide()
                 else:
                     mensaje_ingreso_datos("Inicio de sesion","Acceso denegado")
 
-                    
                 cursor.close()
                 db.close()
 
@@ -196,7 +194,6 @@ class Login(QWidget):
         self.ventana_registro = RegistroUser()
         self.ventana_registro.show()
         
-    
     # Función para el chequeo de la contraseña para mostrarla
     def ver(self, clicked):
         if clicked:
@@ -211,7 +208,6 @@ class Login(QWidget):
         else:
             self.Remember.setChecked(False)
   
-   
 if __name__ == "__main__":
     app = QApplication(sys.argv)
     login_window = Login()

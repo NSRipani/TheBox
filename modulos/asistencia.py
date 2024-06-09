@@ -192,7 +192,7 @@ class Asistencia(QMainWindow):
             cursor = conn.cursor()
                         
             # Buscar id_usuario y id_disciplina a partir del número de documento
-            cursor.execute("SELECT u.id_usuario, p.id_disciplina FROM usuario u JOIN pago p ON u.dni = %s LIMIT 1", (dni,))
+            cursor.execute("SELECT u.id_usuario, p.id_disciplina FROM usuario u JOIN pago p ON u.dni = %s LIMIT 1", (dni))
             result = cursor.fetchone()
             if result:
                 id_usuario = result[0]
@@ -219,7 +219,7 @@ class Asistencia(QMainWindow):
             
             fecha_limite = fecha_registro + datetime.timedelta(days=30)
             while True:
-                fecha_registro += fecha_registro
+                # fecha_registro += fecha_registro
                 cursor.execute("SELECT p.fecha, u.fecha_registro DATEDIFF(fecha, %s) FROM usuario u ON u.dni=p.id_usuario FROM pago p"
                             "WHERE p.fecha BETWEEN %s AND %s ")
                 for row in cursor:

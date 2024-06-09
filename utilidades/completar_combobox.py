@@ -49,6 +49,7 @@ def completar_nombre_empleado(self):
     cursor.close()
     conn.close() 
     
+# Funcion para completar el comobobox en la pestaña 'consulta'
 def actualizar_combobox_consulta4(self):
     #  Conexión a la base de datos MySQL
     conn = conectar_base_de_datos()
