@@ -847,7 +847,7 @@ class VentanaPrincipal(QMainWindow):
         idUser.setFixedWidth(140)
         self.idUser = QComboBox(grupo_pagos)
         self.idUser.setStyleSheet(style.estilo_combo)
-        self.idUser.setFixedWidth(150)
+        self.idUser.setFixedWidth(180)
         layout_elementos_pagos.addWidget(idUser)     
         layout_elementos_pagos.addWidget(self.idUser)
     
@@ -882,7 +882,7 @@ class VentanaPrincipal(QMainWindow):
         self.input_fechaDePago.setCursor(Qt.CursorShape.PointingHandCursor)
         self.input_fechaDePago.setLocale(QLocale("es-AR"))
         self.input_fechaDePago.setStyleSheet(style.estilo_fechas)
-        self.input_fechaDePago.setFixedWidth(150)
+        self.input_fechaDePago.setFixedWidth(180)
         self.input_fechaDePago.setDate(QDate.currentDate()) 
         self.input_fechaDePago.setCalendarPopup(True)
         self.input_fechaDePago.setDisplayFormat("dd/MM/yyyy")
@@ -1421,7 +1421,7 @@ class VentanaPrincipal(QMainWindow):
       
         fecha_gastos = QLabel('Fecha:',grupo_resumen)
         fecha_gastos.setStyleSheet(style.label)
-        fecha_gastos.setFixedWidth(80)
+        fecha_gastos.setFixedWidth(140)
         self.fecha_gastos = QDateEdit(grupo_resumen)
         self.fecha_gastos.setLocale(QLocale("es-AR"))
         self.fecha_gastos.setStyleSheet(style.estilo_fechas)
@@ -1433,28 +1433,19 @@ class VentanaPrincipal(QMainWindow):
         layout_libro.addWidget(fecha_gastos)    # EN ESTA LINEA COMO LA SIGUIENTE, AGREGA LOS ALEMENTOS AL LAYOUT HORIZONTAL
         layout_libro.addWidget(self.fecha_gastos)
         
-        # cuenta = QLabel('ID Cuenta:',grupo_resumen)
-        # cuenta.setStyleSheet(style.label)
-        # cuenta.setFixedWidth(100)
-        # self.cuenta = QComboBox(grupo_resumen)
-        # self.cuenta.setStyleSheet(style.estilo_combo)
-        # self.cuenta.setFixedWidth(80)
-        # layout_libro.addWidget(cuenta)
-        # layout_libro.addWidget(self.cuenta)
-        # actualizar_combobox_IDcuenta(self)
-        
         # LAYOUT HORIZONTAL PARA LOS ELEMENTOS
         layout_conepto = QHBoxLayout()
         layout_conepto.setAlignment(Qt.AlignmentFlag.AlignLeft)
         
         concepto_debe = QLabel('Cuenta (Debe):',grupo_resumen)
         concepto_debe.setStyleSheet(style.label)
-        concepto_debe.setFixedWidth(160)
+        concepto_debe.setFixedWidth(140)
         self.concepto_debe = QLineEdit(grupo_resumen)
         self.concepto_debe.setStyleSheet(style.estilo_lineedit)
         self.concepto_debe.setFixedWidth(200)
         layout_conepto.addWidget(concepto_debe)   # EN ESTA LINEA COMO LA SIGUIENTE, AGREGA LOS ALEMENTOS AL LAYOUT HORIZONTAL
         layout_conepto.addWidget(self.concepto_debe)
+        layout_conepto.addSpacing(5) # AGREGA ESPACIO ENTRE ELEMENTOS
         
         # Conexión a la base de datos MySQL
         conn = conectar_base_de_datos()
@@ -1475,12 +1466,13 @@ class VentanaPrincipal(QMainWindow):
         
         concepto_haber = QLabel('Cuenta (Haber):',grupo_resumen)
         concepto_haber.setStyleSheet(style.label)
-        concepto_haber.setFixedWidth(160)
+        concepto_haber.setFixedWidth(140)
         self.concepto_haber = QLineEdit(grupo_resumen)
         self.concepto_haber.setStyleSheet(style.estilo_lineedit)
         self.concepto_haber.setFixedWidth(200)
         layout_conepto.addWidget(concepto_haber)  # EN ESTA LINEA COMO LA SIGUIENTE, AGREGA LOS ALEMENTOS AL LAYOUT HORIZONTAL
         layout_conepto.addWidget(self.concepto_haber)
+        layout_conepto.addSpacing(5) # AGREGA ESPACIO ENTRE ELEMENTOS
         
         # Conexión a la base de datos MySQL
         conn = conectar_base_de_datos()
@@ -1507,6 +1499,7 @@ class VentanaPrincipal(QMainWindow):
         self.debe.setFixedWidth(100)
         layout_conepto.addWidget(debe)    # EN ESTA LINEA COMO LA SIGUIENTE, AGREGA LOS ALEMENTOS AL LAYOUT HORIZONTAL
         layout_conepto.addWidget(self.debe)
+        layout_conepto.addSpacing(5) # AGREGA ESPACIO ENTRE ELEMENTOS
         
         haber = QLabel('Haber ($):',grupo_resumen)
         haber.setStyleSheet(style.label)
@@ -1521,7 +1514,7 @@ class VentanaPrincipal(QMainWindow):
         layout_libro3.setAlignment(Qt.AlignmentFlag.AlignLeft)
         fecha_periodo = QLabel('Periodo:',grupo_resumen)
         fecha_periodo.setStyleSheet(style.label)
-        fecha_periodo.setFixedWidth(80)
+        fecha_periodo.setFixedWidth(140)
         self.fecha_periodo = QDateEdit(grupo_resumen)
         self.fecha_periodo.setStyleSheet(style.estilo_fechas)
         self.fecha_periodo.setLocale(QLocale("es-AR"))
@@ -2542,12 +2535,12 @@ class VentanaPrincipal(QMainWindow):
             db = conectar_base_de_datos()
             cursor = db.cursor()
             
-            cursor.execute("SELECT id_usuario FROM usuario")
-            datos = cursor.fetchall()
-            user = datos[0]
-            print(type(user[0]))
+            # cursor.execute("SELECT id_usuario FROM usuario")
+            # datos = cursor.fetchall()
+            # user = datos[0]
+            # print(type(user[0]))
             
-            query = f"SELECT u.nombre, u.apellido, u.dni, u.sexo, u.edad, a.asistencia FROM usuario u JOIN (SELECT asistencia FROM asistencia WHERE asistencia BETWEEN '{fecha_inicio2}' AND '{fecha_fin2}') a ON u.id_usuario = (SELECT id_usuario FROM usuario) WHERE a.asistencia <= CURDATE() ORDER BY a.asistencia ASC LIMIT 1"
+            query = f"SELECT u.nombre, u.apellido, u.dni, u.sexo, u.edad, a.asistencia FROM usuario u JOIN (SELECT asistencia FROM asistencia WHERE asistencia BETWEEN '{fecha_inicio2}' AND '{fecha_fin2}') a ON u.dni = (SELECT dni FROM usuario) WHERE a.asistencia <= CURDATE() ORDER BY a.asistencia ASC LIMIT 1"
             cursor.execute(query)
             results = cursor.fetchall()
             
@@ -2594,7 +2587,7 @@ class VentanaPrincipal(QMainWindow):
             db = conectar_base_de_datos()
             cursor = db.cursor()
             
-            query = f"SELECT u.nombre, u.apellido, u.dni, u.sexo, u.edad, a.asistencia FROM usuario u JOIN asistencia a ON u.id_usuario = (SELECT id_usuario FROM usuario) WHERE a.asistencia BETWEEN '{fecha_inicio}' AND '{fecha_fin}' AND a.asistencia <= CURDATE() AND u.dni = '{alumno}' ORDER BY a.asistencia ASC LIMIT 1"
+            query = f"SELECT u.nombre, u.apellido, u.dni, u.sexo, u.edad, a.asistencia FROM usuario u JOIN asistencia a ON a.dni = (SELECT dni FROM usuario) WHERE a.asistencia BETWEEN '{fecha_inicio}' AND '{fecha_fin}' AND a.asistencia <= CURDATE() AND u.dni = '{alumno}' ORDER BY a.asistencia ASC LIMIT 1"
             
             # Ejecutar la consulta
             cursor.execute(query)

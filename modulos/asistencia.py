@@ -178,8 +178,7 @@ class Asistencia(QMainWindow):
     def registrar_asistencia(self):
         # Dato ingresado por teclado   
         dni = self.numero_documento.text()
-        fecha_hoy = date.today()
-        print(fecha_hoy)
+        
         
         # Validar formato de número de documento
         if not dni.isdigit() or len(dni) != 8:
@@ -192,37 +191,45 @@ class Asistencia(QMainWindow):
             cursor = conn.cursor()
                 #---------------------------------------------------
             # Paso 1: Realizar la consulta y obtener todos los registros
-            cursor.execute("SELECT u.id_usuario, p.id_disciplina FROM usuario u JOIN pago p ON u.dni = %s", (dni,))
+            # cursor.execute("SELECT u.id_usuario, p.id_disciplina FROM usuario u JOIN pago p ON u.dni = %s", (dni,))
+            cursor.execute("SELECT p.id_usuario, p.id_disciplina FROM pago p WHERE p.id_usuario = %s", (dni,))
             result = cursor.fetchall()
 
             # Paso 2: Comprobar si se obtuvieron resultados
+            # if len(result) > 0:
+            #     u_dni = result[0]
+            #     id_disciplina = result[1]
+                # print(f"ID: {id_usuario[0]}, ID DIS: {id_disciplina[1]}")
+                # Chequear si la combinación ya existe en la tabla 'asistencia'
+                # cursor.execute("SELECT COUNT(*) FROM asistencia WHERE id_usuario = %s AND id_disciplina = %s", (u_dni, id_disciplina))
+                # if cursor.fetchone()[0] == 0:
             if len(result) > 0:
-                # Crear un diccionario para contar las combinaciones
-                combinaciones = {}
-                
-                for registro in result:
-                    id_usuario = registro[0]
-                    id_disciplina = registro[1]
-                    if id_usuario in combinaciones:
-                        combinaciones[id_usuario].append(id_disciplina)
-                    else:
-                        combinaciones[id_usuario] = [id_disciplina]
-                
-                # Paso 3: Identificar los id_usuario con más de una combinación
-                usuarios_con_multiples_disciplina = {usuario: disciplinas for usuario, disciplinas in combinaciones.items() if len(disciplinas) > 1}
-                
-                # Imprimir los usuarios y sus disciplinas
-                for usuario, disciplinas in usuarios_con_multiples_disciplina.items():
-                    print(f"ID Usuario: {usuario}, ID Disciplinas: {disciplinas}")
-                    
-                    # Paso 4: Insertar las combinaciones en otra tabla
-                    for disciplina in disciplinas:
-                        cursor.execute("INSERT INTO asistencia (asistencia, id_usuario, id_disciplina) VALUES (%s, %s, %s)", (fecha_hoy, usuario, disciplina))
-                    conn.commit()
-                    print(disciplinas)
-            else:
-                print("No se encontraron registros.")
+                disciplinas_registradas = []
+                for row in result:
+                    u_dni = row[0]
+                    id_disciplina = row[1]
 
+                    # Verificar si ya existe un registro de asistencia para el usuario y la disciplina en la fecha actual
+                    fecha_hoy = date.today()
+                    cursor.execute("SELECT COUNT(*) FROM asistencia WHERE dni = %s AND id_disciplina = %s AND asistencia = %s", (u_dni, id_disciplina, fecha_hoy))
+                    registros_existentes = cursor.fetchone()[0]
+
+                    if registros_existentes == 0:
+                        # Insertar los datos de asistencia
+                        cursor.execute("INSERT INTO asistencia (asistencia, dni, id_disciplina) VALUES (%s, %s, %s)", (fecha_hoy, u_dni, id_disciplina))
+                        conn.commit()
+                        print(f"Se ha insertado un registro de asistencia para el usuario con DNI {u_dni} y la disciplina {id_disciplina} en la fecha {fecha_hoy}.")
+                        disciplinas_registradas.append(id_disciplina)
+                    else:
+                        print(f"Ya existe un registro de asistencia para el usuario con DNI {u_dni} y la disciplina {id_disciplina} en la fecha {fecha_hoy}. No se registrará de nuevo.")
+
+                # Verificar si se registraron todas las disciplinas
+                if len(result) == len(disciplinas_registradas):
+                    print(f"Se han registrado todas las disciplinas relacionadas al DNI {dni}.")
+                else:
+                    print(f"No se han podido registrar todas las disciplinas relacionadas al DNI {dni}.")
+            else:
+                print(f"No se encontraron resultados para el usuario con DNI {dni}.")
                 
             # Consultar nombre y apellido del usuario
             cursor.execute("SELECT nombre, apellido FROM usuario WHERE dni = %s", (dni,))
@@ -237,47 +244,36 @@ class Asistencia(QMainWindow):
             self.label_texto1.setStyleSheet("background-color: #DAD7CD; color: #000;")
             print(nombre)
             
-            # Subconsulta para obtener una única fecha por combinación de id_usuario y id_disciplina
-            # cursor.execute("""SELECT DISTINCT p.fecha FROM pago p WHERE p.id_usuario IN (SELECT u.id_usuario FROM usuario u WHERE u.dni = %s) AND p.id_disciplina IN
-            #                (SELECT p.id_disciplina FROM pago p JOIN usuario u ON p.id_usuario = u.dni WHERE u.dni = %s)""", (dni, dni,))
-            # fechas = cursor.fetchall()
-            # print(fechas)
-            # for fecha in fechas:
-            #     fecha_pago = fechas[0]
-            #     dias_desde_pago = (fecha_hoy - fecha_pago).days
-            #     dias_hasta_30 = 30 - dias_desde_pago
-            #     fecha_limite_30_dias = fecha_pago + timedelta(days=30)
+            # Paso 1: Obtener la última fecha registrada para el usuario
+            cursor.execute("SELECT p.fecha FROM pago p WHERE p.id_usuario = %s ORDER BY p.fecha DESC LIMIT 1", (dni,))
+            ultima_fecha = cursor.fetchone()
+            ultima_fecha = ultima_fecha[0]
+            print(ultima_fecha)
+
+            # Paso 2: Calcular la diferencia de días entre la fecha actual y la última fecha registrada
+            fecha_actual = datetime.now().date()
+            diferencia_dias = (ultima_fecha + timedelta(days=30))
+            dias = diferencia_dias - fecha_actual
+            print(diferencia_dias)
             
-            # print(fecha_pago)
-            # print(dias_desde_pago)
-            # print(dias_hasta_30)
-            # print(fecha_limite_30_dias)
-            # Calcular diferencia de días y mostrar mensajes
-            # texto_cuota = f"\nÚltimo pago: {fecha_pago}. \n\nPróximo pago en {dias.days} días.\n"
-            # texto_vencido = f"Cuota vencida hace {dias.days} días. \n\nÚltimo pago: {fecha_pago}.\n\nDebe abonar su cuota."
+            ultima = ultima_fecha.strftime("%d/%m/%Y")
             
-            # if 30 > dias.days > 14:
-            #     self.label_texto2.setText(texto_cuota)
-            #     self.label_texto2.setStyleSheet("background-color: #7FFF00; color: #000;")
-            # elif 14 >= dias.days > 4:
-            #     self.label_texto2.setText(texto_cuota)
-            #     self.label_texto2.setStyleSheet("background-color: #FFFF00;color: #000;")
-            # elif 4 >= dias.days >= 0:
-            #     self.label_texto2.setText(texto_cuota)
-            #     self.label_texto2.setStyleSheet("background-color: #FF8000; color: #000;")
-            # else:
-            #     self.label_texto2.setText(texto_vencido)
-            #     self.label_texto2.setStyleSheet("background-color: #FF0000; color: #fff;")
+            texto_cuota = f"\nÚltimo pago: {ultima}. \n\nPróximo pago en {dias} días.\n"
+            texto_vencido = f"Cuota vencida hace {dias} días. \n\nÚltimo pago: {ultima}.\n\nDebe abonar su cuota."
+            
+            if 30 < dias.days < 14:
+                self.label_texto2.setText(texto_cuota)
+                self.label_texto2.setStyleSheet("background-color: #7FFF00; color: #000;")
+            elif dias.days < 14:
+                self.label_texto2.setText(texto_cuota)
+                self.label_texto2.setStyleSheet("background-color: #FFFF00;color: #000;")
+            elif 4 >= dias.days <= 0:
+                self.label_texto2.setText(texto_cuota)
+                self.label_texto2.setStyleSheet("background-color: #FF8000; color: #000;")
+            else:
+                self.label_texto2.setText(texto_vencido)
+                self.label_texto2.setStyleSheet("background-color: #FF0000; color: #fff;")
                 
-                # Actualizar la fecha de registro para el siguiente ciclo
-                # fecha_registro = fecha_limite
-                
-                # Esperar hasta la medianoche del siguiente día
-                # siguiente_dia = datetime.datetime.now() + datetime.timedelta(days=1)
-                # siguiente_dia = siguiente_dia.replace(hour=0, minute=0, second=0, microsecond=0)
-                # while datetime.datetime.now() < siguiente_dia:
-                #     continue
-                # break
             self.numero_documento.clear()
 
         except Error as e:
@@ -287,3 +283,36 @@ class Asistencia(QMainWindow):
             cursor.close()
             conn.close()
             
+
+
+
+
+#-------------------------------------------------
+# Paso 2: Comprobar si se obtuvieron resultados
+# if len(result) > 0:
+#     # Crear un diccionario para contar las combinaciones
+#     combinaciones = {}
+    
+#     for registro in result:
+#         id_usuario = registro[0]
+#         id_disciplina = registro[1]
+#         if id_usuario in combinaciones:
+#             combinaciones[id_usuario].append(id_disciplina)
+#         else:
+#             combinaciones[id_usuario] = [id_disciplina]
+    
+#     # Paso 3: Identificar los id_usuario con más de una combinación
+#     usuarios_con_multiples_disciplina = {usuario: disciplinas for usuario, disciplinas in combinaciones.items() if len(disciplinas) > 1}
+#     print(usuarios_con_multiples_disciplina)
+#     # Imprimir los usuarios y sus disciplinas
+#     for usuario, disciplinas in usuarios_con_multiples_disciplina.items():
+#         print(f"ID Usuario: {usuario}, ID Disciplinas: {disciplinas}")
+        
+#         # Paso 4: Insertar las combinaciones en otra tabla sin repetir 'id_disciplina'
+#         for disciplina in disciplinas:
+#             # Chequear si la combinación ya existe en la tabla 'asistencia'
+#             cursor.execute("SELECT COUNT(*) FROM asistencia WHERE id_usuario = %s AND id_disciplina = %s", (usuario, disciplina))
+#             if cursor.fetchone()[0] == 0:
+#                 cursor.execute("INSERT INTO asistencia (asistencia, id_usuario, id_disciplina) VALUES (%s, %s, %s)", (fecha_hoy, usuario, disciplina))
+#         conn.commit()
+#         print(disciplinas)
