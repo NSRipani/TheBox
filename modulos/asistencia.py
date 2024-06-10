@@ -252,8 +252,8 @@ class Asistencia(QMainWindow):
 
             # Paso 2: Calcular la diferencia de días entre la fecha actual y la última fecha registrada
             fecha_actual = datetime.now().date()
-            diferencia_dias = (ultima_fecha + timedelta(days=30))
-            dias = diferencia_dias - fecha_actual
+            diferencia_dias = (ultima_fecha + timedelta(days=30))- fecha_actual
+            dias = diferencia_dias.days
             print(diferencia_dias)
             
             ultima = ultima_fecha.strftime("%d/%m/%Y")
@@ -261,19 +261,20 @@ class Asistencia(QMainWindow):
             texto_cuota = f"\nÚltimo pago: {ultima}. \n\nPróximo pago en {dias} días.\n"
             texto_vencido = f"Cuota vencida hace {dias} días. \n\nÚltimo pago: {ultima}.\n\nDebe abonar su cuota."
             
-            if 30 < dias.days < 14:
+            if dias.days >= 29 and dias.days <= 15:
                 self.label_texto2.setText(texto_cuota)
                 self.label_texto2.setStyleSheet("background-color: #7FFF00; color: #000;")
-            elif dias.days < 14:
+            elif dias.days >= 14 and dias.days <= 5:
                 self.label_texto2.setText(texto_cuota)
                 self.label_texto2.setStyleSheet("background-color: #FFFF00;color: #000;")
-            elif 4 >= dias.days <= 0:
+            elif dias.days >= 4 and dias.days >= 0:
                 self.label_texto2.setText(texto_cuota)
                 self.label_texto2.setStyleSheet("background-color: #FF8000; color: #000;")
-            else:
+            elif abs(dias.days) > 30 or abs(dias.days) < 0:
                 self.label_texto2.setText(texto_vencido)
                 self.label_texto2.setStyleSheet("background-color: #FF0000; color: #fff;")
-                
+            else:
+                print(f"{dias.days} días")
             self.numero_documento.clear()
 
         except Error as e:
