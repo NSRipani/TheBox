@@ -1,5 +1,5 @@
 # Librería para uso de fechas
-import datetime
+from datetime import datetime, date, timedelta
 
 # Librerías de PyQt6
 from PyQt6.QtWidgets import QCompleter,QFrame,QHBoxLayout,QSpacerItem,QSizePolicy, QMainWindow, QWidget, QVBoxLayout, QPushButton, QLineEdit, QLabel, QMessageBox
@@ -178,7 +178,7 @@ class Asistencia(QMainWindow):
     def registrar_asistencia(self):
         # Dato ingresado por teclado   
         dni = self.numero_documento.text()
-        fecha_hoy = datetime.date.today()
+        fecha_hoy = date.today()
         print(fecha_hoy)
         
         # Validar formato de número de documento
@@ -190,72 +190,99 @@ class Asistencia(QMainWindow):
             # Conexión a la base de datos MySQL
             conn = conectar_base_de_datos()
             cursor = conn.cursor()
-                        
-            # Buscar id_usuario y id_disciplina a partir del número de documento
-            cursor.execute("SELECT u.id_usuario, p.id_disciplina FROM usuario u JOIN pago p ON u.dni = %s LIMIT 1", (dni))
-            result = cursor.fetchone()
-            if result:
-                id_usuario = result[0]
-                id_disciplina = result[1]
+                #---------------------------------------------------
+            # Paso 1: Realizar la consulta y obtener todos los registros
+            cursor.execute("SELECT u.id_usuario, p.id_disciplina FROM usuario u JOIN pago p ON u.dni = %s", (dni,))
+            result = cursor.fetchall()
+
+            # Paso 2: Comprobar si se obtuvieron resultados
+            if len(result) > 0:
+                # Crear un diccionario para contar las combinaciones
+                combinaciones = {}
                 
-                # # Registrar la asistencia
-                cursor.execute("INSERT INTO asistencia (asistencia, id_usuario, id_disciplina) VALUES (%s, %s, %s)", (fecha_hoy, id_usuario, id_disciplina))
-                conn.commit()
+                for registro in result:
+                    id_usuario = registro[0]
+                    id_disciplina = registro[1]
+                    if id_usuario in combinaciones:
+                        combinaciones[id_usuario].append(id_disciplina)
+                    else:
+                        combinaciones[id_usuario] = [id_disciplina]
+                
+                # Paso 3: Identificar los id_usuario con más de una combinación
+                usuarios_con_multiples_disciplina = {usuario: disciplinas for usuario, disciplinas in combinaciones.items() if len(disciplinas) > 1}
+                
+                # Imprimir los usuarios y sus disciplinas
+                for usuario, disciplinas in usuarios_con_multiples_disciplina.items():
+                    print(f"ID Usuario: {usuario}, ID Disciplinas: {disciplinas}")
+                    
+                    # Paso 4: Insertar las combinaciones en otra tabla
+                    for disciplina in disciplinas:
+                        cursor.execute("INSERT INTO asistencia (asistencia, id_usuario, id_disciplina) VALUES (%s, %s, %s)", (fecha_hoy, usuario, disciplina))
+                    conn.commit()
+                    print(disciplinas)
+            else:
+                print("No se encontraron registros.")
+
                 
             # Consultar nombre y apellido del usuario
-            cursor.execute("SELECT nombre, apellido, fecha_registro FROM usuario WHERE dni = %s", (dni,))
+            cursor.execute("SELECT nombre, apellido FROM usuario WHERE dni = %s", (dni,))
             result_usuario = cursor.fetchone()
+            print(result_usuario)
             if len(result_usuario) > 0:
                 nombre = result_usuario[0]
                 apellido = result_usuario[1]
-                fecha_registro = result_usuario[2]
-                print(fecha_registro.strftime("%d/%m/%Y"))
-                
+            
             # Mostrar mensaje en la interfaz
             self.label_texto1.setText(f"¡En hora buena {nombre} {apellido}! \n\nSu asistencia fue registrada.")
             self.label_texto1.setStyleSheet("background-color: #DAD7CD; color: #000;")
-                    
-            # Calcular diferencia de días y mostrar mensajes
+            print(nombre)
             
-            fecha_limite = fecha_registro + datetime.timedelta(days=30)
-            while True:
-                # fecha_registro += fecha_registro
-                cursor.execute("SELECT p.fecha, u.fecha_registro DATEDIFF(fecha, %s) FROM usuario u ON u.dni=p.id_usuario FROM pago p"
-                            "WHERE p.fecha BETWEEN %s AND %s ")
-                for row in cursor:
-                    fecha_registro = row[0]
-                    fecha = row[1]
-                    diferencia_dias = row[2]
-                    print(diferencia_dias)
-                    texto_cuota = f"\nÚltimo pago: {fecha_registro.strftime('%d/%m/%Y')}. \n\nPróximo pago en {abs(diferencia_dias)} días.\n"
-                    texto_vencido = f"Cuota vencida hace {abs(diferencia_dias)} días. \n\nÚltimo pago: {fecha_registro.strftime('%d/%m/%Y')}.\n\nDebe abonar su cuota."
-                    
-                    if 30 > abs(diferencia_dias) > 14:
-                        self.label_texto2.setText(texto_cuota)
-                        self.label_texto2.setStyleSheet("background-color: #7FFF00; color: #000;")
-                    elif 14 >= abs(diferencia_dias) > 4:
-                        self.label_texto2.setText(texto_cuota)
-                        self.label_texto2.setStyleSheet("background-color: #FFFF00;color: #000;")
-                    elif 4 >= abs(diferencia_dias) >= 0:
-                        self.label_texto2.setText(texto_cuota)
-                        self.label_texto2.setStyleSheet("background-color: #FF8000; color: #000;")
-                    else:
-                        self.label_texto2.setText(texto_vencido)
-                        self.label_texto2.setStyleSheet("background-color: #FF0000; color: #fff;")
+            # Subconsulta para obtener una única fecha por combinación de id_usuario y id_disciplina
+            # cursor.execute("""SELECT DISTINCT p.fecha FROM pago p WHERE p.id_usuario IN (SELECT u.id_usuario FROM usuario u WHERE u.dni = %s) AND p.id_disciplina IN
+            #                (SELECT p.id_disciplina FROM pago p JOIN usuario u ON p.id_usuario = u.dni WHERE u.dni = %s)""", (dni, dni,))
+            # fechas = cursor.fetchall()
+            # print(fechas)
+            # for fecha in fechas:
+            #     fecha_pago = fechas[0]
+            #     dias_desde_pago = (fecha_hoy - fecha_pago).days
+            #     dias_hasta_30 = 30 - dias_desde_pago
+            #     fecha_limite_30_dias = fecha_pago + timedelta(days=30)
+            
+            # print(fecha_pago)
+            # print(dias_desde_pago)
+            # print(dias_hasta_30)
+            # print(fecha_limite_30_dias)
+            # Calcular diferencia de días y mostrar mensajes
+            # texto_cuota = f"\nÚltimo pago: {fecha_pago}. \n\nPróximo pago en {dias.days} días.\n"
+            # texto_vencido = f"Cuota vencida hace {dias.days} días. \n\nÚltimo pago: {fecha_pago}.\n\nDebe abonar su cuota."
+            
+            # if 30 > dias.days > 14:
+            #     self.label_texto2.setText(texto_cuota)
+            #     self.label_texto2.setStyleSheet("background-color: #7FFF00; color: #000;")
+            # elif 14 >= dias.days > 4:
+            #     self.label_texto2.setText(texto_cuota)
+            #     self.label_texto2.setStyleSheet("background-color: #FFFF00;color: #000;")
+            # elif 4 >= dias.days >= 0:
+            #     self.label_texto2.setText(texto_cuota)
+            #     self.label_texto2.setStyleSheet("background-color: #FF8000; color: #000;")
+            # else:
+            #     self.label_texto2.setText(texto_vencido)
+            #     self.label_texto2.setStyleSheet("background-color: #FF0000; color: #fff;")
                 
                 # Actualizar la fecha de registro para el siguiente ciclo
-                fecha_registro = fecha_limite
+                # fecha_registro = fecha_limite
                 
                 # Esperar hasta la medianoche del siguiente día
-                siguiente_dia = datetime.datetime.now() + datetime.timedelta(days=1)
-                siguiente_dia = siguiente_dia.replace(hour=0, minute=0, second=0, microsecond=0)
-                while datetime.datetime.now() < siguiente_dia:
-                    continue
-                break
+                # siguiente_dia = datetime.datetime.now() + datetime.timedelta(days=1)
+                # siguiente_dia = siguiente_dia.replace(hour=0, minute=0, second=0, microsecond=0)
+                # while datetime.datetime.now() < siguiente_dia:
+                #     continue
+                # break
             self.numero_documento.clear()
 
         except Error as e:
             errorConsulta("Registro de asistencia", f"Error al registrar la asistencia: {str(e)}")
+            print(e)
         finally:
             cursor.close()
             conn.close()

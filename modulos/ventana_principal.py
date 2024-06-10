@@ -1733,7 +1733,7 @@ class VentanaPrincipal(QMainWindow):
         
         actualizar_combobox_consulta1_usuario(self)
         
-        # FUNCION QUE VINCULA LA VENTANA DE ASISTENCIA
+    # FUNCION QUE VINCULA LA VENTANA DE ASISTENCIA
     def assistance(self):
         self.boton = Asistencia()
         self.boton.show()
@@ -2547,7 +2547,7 @@ class VentanaPrincipal(QMainWindow):
             user = datos[0]
             print(type(user[0]))
             
-            query = f"SELECT u.nombre, u.apellido, u.dni, u.sexo, u.edad, a.asistencia FROM usuario u JOIN (SELECT asistencia FROM asistencia WHERE asistencia BETWEEN '{fecha_inicio2}' AND '{fecha_fin2}') a ON u.id_usuario = (SELECT id_usuario FROM usuario) WHERE a.asistencia <= CURDATE() ORDER BY a.asistencia ASC"
+            query = f"SELECT u.nombre, u.apellido, u.dni, u.sexo, u.edad, a.asistencia FROM usuario u JOIN (SELECT asistencia FROM asistencia WHERE asistencia BETWEEN '{fecha_inicio2}' AND '{fecha_fin2}') a ON u.id_usuario = (SELECT id_usuario FROM usuario) WHERE a.asistencia <= CURDATE() ORDER BY a.asistencia ASC LIMIT 1"
             cursor.execute(query)
             results = cursor.fetchall()
             
@@ -2594,7 +2594,7 @@ class VentanaPrincipal(QMainWindow):
             db = conectar_base_de_datos()
             cursor = db.cursor()
             
-            query = f"SELECT u.nombre, u.apellido, u.dni, u.sexo, u.edad, a.asistencia FROM usuario u JOIN asistencia a ON u.id_usuario = (SELECT id_usuario FROM usuario) WHERE a.asistencia BETWEEN '{fecha_inicio}' AND '{fecha_fin}' AND a.asistencia <= CURDATE() AND u.dni = '{alumno}' ORDER BY a.asistencia ASC"
+            query = f"SELECT u.nombre, u.apellido, u.dni, u.sexo, u.edad, a.asistencia FROM usuario u JOIN asistencia a ON u.id_usuario = (SELECT id_usuario FROM usuario) WHERE a.asistencia BETWEEN '{fecha_inicio}' AND '{fecha_fin}' AND a.asistencia <= CURDATE() AND u.dni = '{alumno}' ORDER BY a.asistencia ASC LIMIT 1"
             
             # Ejecutar la consulta
             cursor.execute(query)
