@@ -16,7 +16,7 @@ from qss import style
 from utilidades.completar_combobox import actualizar_combobox_disc
 
 # Modulo de para las cajas de mensajes
-from modulos.mensajes import mensaje_ingreso_datos
+from modulos.mensajes import mensaje_ingreso_datos,mensaje_datos_ingresado
 from conexion_DB.dataBase import conectar_base_de_datos
 from modulos.mensajes import errorConsulta
 
@@ -156,20 +156,20 @@ class Asistencia(QMainWindow):
         self.central_widget.setLayout(layout_horizontal)
         
         # Configuración del temporizador para ocultar los mensajes después de unos segundos
-        # self.timer = QTimer(self)
-        # self.timer.timeout.connect(self.actualizar_fecha)
+        self.timer = QTimer(self)
+        self.timer.timeout.connect(self.ocultar_mensajes)
         # self.timer.start(30 * 24 * 60 * 60 * 1000)  # 30 días en milisegundos
     
     def set_focus(self):
         self.numero_documento.setFocus()
     
-    # def ocultar_mensajes(self):
-    #     self.label_texto1.clear()
-    #     self.label_texto2.clear()
-    #     self.timer.stop()
+    def ocultar_mensajes(self,):
+        self.label_texto1.clear()
+        self.label_texto2.clear()
+        self.timer.stop()
         
-    #     self.label_texto1.setStyleSheet("")
-    #     self.label_texto2.setStyleSheet("")
+        self.label_texto1.setStyleSheet("")
+        self.label_texto2.setStyleSheet("")
     
     def keyPressEvent(self, event):
         if event.key() == Qt.Key.Key_Return or event.key() == Qt.Key.Key_Enter:
@@ -196,13 +196,6 @@ class Asistencia(QMainWindow):
             result = cursor.fetchall()
 
             # Paso 2: Comprobar si se obtuvieron resultados
-            # if len(result) > 0:
-            #     u_dni = result[0]
-            #     id_disciplina = result[1]
-                # print(f"ID: {id_usuario[0]}, ID DIS: {id_disciplina[1]}")
-                # Chequear si la combinación ya existe en la tabla 'asistencia'
-                # cursor.execute("SELECT COUNT(*) FROM asistencia WHERE id_usuario = %s AND id_disciplina = %s", (u_dni, id_disciplina))
-                # if cursor.fetchone()[0] == 0:
             if len(result) > 0:
                 disciplinas_registradas = []
                 for row in result:
@@ -218,10 +211,13 @@ class Asistencia(QMainWindow):
                         # Insertar los datos de asistencia
                         cursor.execute("INSERT INTO asistencia (asistencia, dni, id_disciplina) VALUES (%s, %s, %s)", (fecha_hoy, u_dni, id_disciplina))
                         conn.commit()
+                        
                         print(f"Se ha insertado un registro de asistencia para el usuario con DNI {u_dni} y la disciplina {id_disciplina} en la fecha {fecha_hoy}.")
+            
                         disciplinas_registradas.append(id_disciplina)
                     else:
-                        print(f"Ya existe un registro de asistencia para el usuario con DNI {u_dni} y la disciplina {id_disciplina} en la fecha {fecha_hoy}. No se registrará de nuevo.")
+                        mensaje_datos_ingresado("Registro de Asistencia",f"Ya existe un registro de asistencia para el usuario con DNI {u_dni} en la fecha {fecha_hoy}. No se registrará de nuevo.")
+                        print(f"Ya existe un registro de asistencia para el usuario con DNI {u_dni} en la fecha {fecha_hoy}. No se registrará de nuevo.")
 
                 # Verificar si se registraron todas las disciplinas
                 if len(result) == len(disciplinas_registradas):
@@ -252,30 +248,30 @@ class Asistencia(QMainWindow):
 
             # Paso 2: Calcular la diferencia de días entre la fecha actual y la última fecha registrada
             fecha_actual = datetime.now().date()
-            diferencia_dias = (ultima_fecha + timedelta(days=30))- fecha_actual
+            diferencia_dias = (ultima_fecha + timedelta(days=30)) - fecha_actual
             dias = diferencia_dias.days
             print(dias)
-            print(diferencia_dias)
             
-            ultima = ultima_fecha.strftime("%d/%m/%Y")
-            
-            texto_cuota = f"\nÚltimo pago: {ultima}. \n\nPróximo pago en {dias} días.\n"
-            texto_vencido = f"Cuota vencida hace {dias} días. \n\nÚltimo pago: {ultima}.\n\nDebe abonar su cuota."
-            
-            if abs(dias) < 30 and abs(dias) > 14:
+            texto_cuota = f"\nÚltimo pago: {ultima_fecha}. \n\nPróximo pago en {abs(dias)} días.\n"
+            texto_vencido = f"!Atención! Cuota vencida hace {abs(dias)} días. \n\nRegularice su cuenta mensual."
+              
+            if 30 > dias > 14:
                 self.label_texto2.setText(texto_cuota)
                 self.label_texto2.setStyleSheet("background-color: #7FFF00; color: #000;")
-            elif abs(dias) <= 14 and abs(dias) > 4:
+                self.timer.start(5000)
+            elif 14 >= dias > 4:
                 self.label_texto2.setText(texto_cuota)
                 self.label_texto2.setStyleSheet("background-color: #FFFF00;color: #000;")
-            elif abs(dias) <= 4 and abs(dias) > 0:
+                self.timer.start(5000)
+            elif 4 >= dias >= 0:
                 self.label_texto2.setText(texto_cuota)
-                self.label_texto2.setStyleSheet("background-color: #FF8000; color: #000;")
-            elif dias == 0 or dias :
+                self.label_texto2.setStyleSheet("background-color: #FF8000; color: #000;")               
+                self.timer.start(5000)
+            else:
                 self.label_texto2.setText(texto_vencido)
                 self.label_texto2.setStyleSheet("background-color: #FF0000; color: #fff;")
-            else:
-                print(f"{dias} días")
+                self.timer.start(5000)
+            
             self.numero_documento.clear()
 
         except Error as e:
@@ -284,37 +280,4 @@ class Asistencia(QMainWindow):
         finally:
             cursor.close()
             conn.close()
-            
-
-
-
-
-#-------------------------------------------------
-# Paso 2: Comprobar si se obtuvieron resultados
-# if len(result) > 0:
-#     # Crear un diccionario para contar las combinaciones
-#     combinaciones = {}
-    
-#     for registro in result:
-#         id_usuario = registro[0]
-#         id_disciplina = registro[1]
-#         if id_usuario in combinaciones:
-#             combinaciones[id_usuario].append(id_disciplina)
-#         else:
-#             combinaciones[id_usuario] = [id_disciplina]
-    
-#     # Paso 3: Identificar los id_usuario con más de una combinación
-#     usuarios_con_multiples_disciplina = {usuario: disciplinas for usuario, disciplinas in combinaciones.items() if len(disciplinas) > 1}
-#     print(usuarios_con_multiples_disciplina)
-#     # Imprimir los usuarios y sus disciplinas
-#     for usuario, disciplinas in usuarios_con_multiples_disciplina.items():
-#         print(f"ID Usuario: {usuario}, ID Disciplinas: {disciplinas}")
-        
-#         # Paso 4: Insertar las combinaciones en otra tabla sin repetir 'id_disciplina'
-#         for disciplina in disciplinas:
-#             # Chequear si la combinación ya existe en la tabla 'asistencia'
-#             cursor.execute("SELECT COUNT(*) FROM asistencia WHERE id_usuario = %s AND id_disciplina = %s", (usuario, disciplina))
-#             if cursor.fetchone()[0] == 0:
-#                 cursor.execute("INSERT INTO asistencia (asistencia, id_usuario, id_disciplina) VALUES (%s, %s, %s)", (fecha_hoy, usuario, disciplina))
-#         conn.commit()
-#         print(disciplinas)
+         

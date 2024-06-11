@@ -1,6 +1,7 @@
 # Librerías de PyQt6
 from PyQt6.QtWidgets import QMessageBox, QFileDialog
 from PyQt6.QtGui import QIcon
+from PyQt6.QtCore import QTimer
 
 # Módulo de Estilos
 from qss import style
@@ -96,3 +97,14 @@ def mensaje_horas_empleados(win_title2,message2):
     mensaje.setStandardButtons(QMessageBox.StandardButton.Ok)
     mensaje.exec()
     
+def mensaje_datos_ingresado(title, message):
+    msg = QMessageBox()
+    msg.setWindowTitle(title)
+    msg.setStyleSheet(style.message_box_estilos_eliminar_profesor)
+    msg.setText(message)
+
+    # Mostrar el mensaje durante 5 segundos
+    msg.show()
+    timer = QTimer()
+    timer.singleShot(5000, msg.close)
+    msg.exec()
