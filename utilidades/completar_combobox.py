@@ -73,7 +73,12 @@ def actualizar_combobox_consulta1_usuario(self):
     cursor = conn.cursor()
     
     self.view_nomb.clear()
-
+    
+    # Configurar el QComboBox editable para establecer un placeholder
+    self.view_nomb.setEditable(True)
+    self.view_nomb.lineEdit().setPlaceholderText("Seleccione un DNI")
+    self.view_nomb.lineEdit().setReadOnly(True)  # Evitar que el usuario escriba en el QComboBox
+    
     # Consulta para obtener los datos de una columna específica
     cursor.execute("SELECT u.dni FROM usuario u ORDER BY u.dni ASC")
     resultados = cursor.fetchall()

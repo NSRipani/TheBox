@@ -25,7 +25,6 @@ def registroUSER(nombre1 , apellido1, dni, sexo, edad, celu):
     if not edad.isdigit() or not len(edad) == 2 or not patron2.match(edad):
         mensaje_ingreso_datos("Registro de alumnos","La 'edad' debe ser:\n\n- Valores numéricos.\n- Contener 2 dígitos.\n- No contener puntos(.)")
         return
-    edad = int(edad)
 
     if not (celu.isdigit() and patron2.match(celu)):
         mensaje_ingreso_datos("Registro de alumnos","El 'celular' debe ser:\n\n- Valores numéricos.\n- Contener 10 dígitos.\n- No contener puntos(.)")
