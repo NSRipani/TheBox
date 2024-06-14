@@ -13,7 +13,7 @@ from mysql.connector import Error
 # Módulo de Estilos
 from qss import style
 
-from utilidades.completar_combobox import actualizar_combobox_disc
+# from utilidades.completar_combobox import actualizar_combobox_disc¡
 
 # Modulo de para las cajas de mensajes
 from modulos.mensajes import mensaje_ingreso_datos,mensaje_datos_ingresado

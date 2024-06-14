@@ -165,7 +165,7 @@ class Login(QWidget):
                 db = conectar_base_de_datos()
                 cursor = db.cursor()
                 
-                query = f"SELECT * FROM profesor WHERE dni = '{dni}' AND contraseña = '{contraseña}'"
+                query = f"SELECT * FROM profesor WHERE dni = {dni} AND contraseña = {contraseña}"
                 
                 cursor.execute(query)
                 resultados = cursor.fetchone()

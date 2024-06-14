@@ -10,14 +10,15 @@ def seleccionDeTablaPAGOS(self,QDate):
     fecha = self.tablePagos.item(fila,4).text()
     fecha = QDate.fromString(fecha,"dd-MM-yyyy")
     
-    disciplinas =  [self.idDis.itemText(i).lower() for i in range(self.idDis.count())]
-    id_disciplina = disciplinas.index(name_discipl.lower())
+    # disciplinas =  [self.idDis.itemText(i).lower() for i in range(self.idDis.count())]
+    # id_disciplina = disciplinas.index(name_discipl.lower())
     
-    self.idUser.setCurrentText(str(id_user))
-    self.idDis.setCurrentIndex(id_disciplina)
+    self.idUser.setText(str(id_user))
+    self.idDis.setText(name_discipl)
     self.input_tipoDePago.setCurrentText(tipoPago)
     self.input_fechaDePago.setDate(fecha)
 
+    self.tablePagos.clearSelection()  # Deseleccionar la fila eliminada
 
 def tabla_pagos(self, cursor, result, QHeaderView, QTableWidget, QAbstractItemView, QTableWidgetItem, QDate, Qt):
     # Coloca los nomnbres de la cabecera en mayuscula

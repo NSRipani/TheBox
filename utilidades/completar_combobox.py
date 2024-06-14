@@ -1,37 +1,41 @@
 from conexion_DB.dataBase import conectar_base_de_datos
 
-def actualizar_combobox_user(self):
-    conn = conectar_base_de_datos()
-    cursor = conn.cursor()
+# def actualizar_combobox_user(self):
+#     conn = conectar_base_de_datos()
+#     cursor = conn.cursor()
     
-    self.idUser.clear()
     
-    # Consulta para obtener los datos de una columna específica
-    cursor.execute("SELECT dni FROM usuario ORDER BY dni ASC")
-    datos = cursor.fetchall()
+    # self.idUser.clear()
+    
+    # # Consulta para obtener los datos de una columna específica
+    # cursor.execute("SELECT dni FROM usuario ORDER BY dni ASC")
+    # datos = cursor.fetchall()
 
-    for resultado in datos:
-        self.idUser.addItem(str(resultado[0]), resultado)
+    # for resultado in datos:
+    #     self.idUser.addItem(str(resultado[0]), resultado)
                 
-    cursor.close()
-    conn.close()
+    # cursor.close()
+    # conn.close()
 
     
-def actualizar_combobox_disc(self):
-    #  Conexión a la base de datos MySQL
-    conn = conectar_base_de_datos()
-    cursor = conn.cursor()
+# def actualizar_combobox_disc(self):
+    # #  Conexión a la base de datos MySQL
+    # conn = conectar_base_de_datos()
+    # cursor = conn.cursor()
     
-    self.idDis.clear()
+    # self.idDis.clear()
 
-    # Consulta para obtener los datos de una columna específica
-    cursor.execute("SELECT id_disciplina, nombre, precio FROM disciplina ORDER BY nombre ASC")
-    resultados = cursor.fetchall()
-
-    for resultado in resultados:
-        self.idDis.addItem(str(resultado[1]).capitalize().title(), resultado)
-    cursor.close()
-    conn.close()
+    # # Consulta para obtener los datos de una columna específica
+    # cursor.execute("SELECT id_disciplina, nombre, precio FROM disciplina ORDER BY nombre ASC")
+    # resultados = cursor.fetchall()
+    
+    # # Agregar un valor vacío al inicio del combobox
+    # self.idDis.addItem("", -1)
+    
+    # for resultado in resultados:
+    #     self.idDis.addItem(str(resultado[1]).capitalize().title(), resultado)
+    # cursor.close()
+    # conn.close()
 
 # Funcion para completar el comobobox en la pestaña 'PAGO'
 def completar_nombre_empleado(self):
@@ -44,7 +48,7 @@ def completar_nombre_empleado(self):
     resultados = cursor.fetchall()
 
     for resultado in resultados:
-        self.id_horas_empleado.addItem(str(resultado[1]).capitalize().title(), resultado)
+        self.id_horas_empleado.addItem(str(resultado[1]).title(), resultado)
     
     cursor.close()
     conn.close() 
@@ -73,11 +77,6 @@ def actualizar_combobox_consulta1_usuario(self):
     cursor = conn.cursor()
     
     self.view_nomb.clear()
-    
-    # Configurar el QComboBox editable para establecer un placeholder
-    self.view_nomb.setEditable(True)
-    self.view_nomb.lineEdit().setPlaceholderText("Seleccione un DNI")
-    self.view_nomb.lineEdit().setReadOnly(True)  # Evitar que el usuario escriba en el QComboBox
     
     # Consulta para obtener los datos de una columna específica
     cursor.execute("SELECT u.dni FROM usuario u ORDER BY u.dni ASC")
@@ -120,3 +119,21 @@ def actualizar_combobox_consulta1_usuario(self):
 #         self.concepto_haber.addItem(str(resultado[0]).capitalize().title(), resultado)
 #     cursor.close()
 #     conn.close()
+
+# Conexión a la base de datos MySQL
+    # conn = conectar_base_de_datos()
+    # cursor = conn.cursor()
+
+    # # Consulta para obtener los datos de una columna específica
+    # cursor.execute("SELECT dni FROM usuario ORDER BY dni ASC'")
+    # dato = cursor.fetchall()
+    # sugerencia = [str(item[0]) for item in dato]
+
+    # self.idUser = QLineEdit(sugerencia)
+    # self.idUser.setCaseSensitivity(Qt.CaseSensitivity.CaseInsensitive)
+    # self.idUser.setCompletionMode(QCompleter.CompletionMode.PopupCompletion)
+    # self.idUser.popup().setStyleSheet(style.completer)
+    # self.concepto_debe.setCompleter(self.idUser)
+    
+    # cursor.close()
+    # conn.close()

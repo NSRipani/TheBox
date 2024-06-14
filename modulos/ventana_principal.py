@@ -22,8 +22,8 @@ from PyQt6.QtCore import *
 # Módulo de para las cajas de mensajes
 from modulos.mensajes import (mensaje_ingreso_datos, errorConsulta, inicio, aviso_descargaExitosa, aviso_Advertencia_De_excel, 
                               resultado_empleado, aviso_resultado, mensaje_horas_empleados, aviso_resultado_asistencias)
-from utilidades.completar_combobox import actualizar_combobox_user, actualizar_combobox_disc,completar_nombre_empleado,actualizar_combobox_consulta4, actualizar_combobox_consulta1_usuario
-
+from utilidades.completar_combobox import completar_nombre_empleado,actualizar_combobox_consulta4, actualizar_combobox_consulta1_usuario
+# actualizar_combobox_disc,
 # Validaciones y demas funciones 
 from validaciones.usuario import (registroUSER, limpiasElementosUser, limpiar_campos, actualizarUSER, limpiasElementosUseraActualizar, 
                                   autoCompletadoACTULIZAR,limpiar_tablaRecord, limpiar_tablaUpdate, tabla_registroUSER)
@@ -857,22 +857,43 @@ class VentanaPrincipal(QMainWindow):
         idUser = QLabel('DNI',grupo_pagos)
         idUser.setStyleSheet(style.label)
         idUser.setFixedWidth(140)
-        self.idUser = QComboBox(grupo_pagos)
-        self.idUser.setStyleSheet(style.estilo_combo)
+        self.idUser = QLineEdit(grupo_pagos)
+        self.idUser.setStyleSheet(style.estilo_lineedit)
+        self.idUser.setPlaceholderText("Ingrese un DNI")
         self.idUser.setFixedWidth(180)
         layout_elementos_pagos.addWidget(idUser)     
         layout_elementos_pagos.addWidget(self.idUser)
     
         # actualiza comobox ussuario con los DNI
-        actualizar_combobox_user(self)
+        # actualizar_combobox_user(self)
+
+        conn = conectar_base_de_datos()
+        cursor = conn.cursor()
+
+        # Consulta para obtener los datos de una columna específica
+        cursor.execute("SELECT dni FROM usuario ORDER BY dni ASC")
+        dato = cursor.fetchall()
+        sugerencia = [str(item[0]) for item in dato]
+        
+        # Almacenar sugerencias en un conjunto para verificación rápida
+        self.sugerencias_set = set(sugerencia)
+        
+        idDNI = QCompleter(sugerencia)
+        idDNI.setCaseSensitivity(Qt.CaseSensitivity.CaseInsensitive)
+        idDNI.setCompletionMode(QCompleter.CompletionMode.PopupCompletion)
+        idDNI.popup().setStyleSheet(style.completer)
+        self.idUser.setCompleter(idDNI)
+        
+        cursor.close()
+        conn.close()
         
         idDis = QLabel('Disciplina:',grupo_pagos)
         idDis.setStyleSheet(style.label)
         idDis.setFixedWidth(150)
-        self.idDis = QComboBox(grupo_pagos)
-        self.idDis.setStyleSheet(style.estilo_combo)
+        self.idDis = QLineEdit(grupo_pagos)
+        self.idDis.setStyleSheet(style.estilo_lineedit)
         self.idDis.setFixedWidth(200)
-        self.idDis.setStyleSheet(style.estilo_combo)
+        self.idDis.setPlaceholderText("Nombre de la disciplina")
         layout_elementos_pagos.addWidget(idDis)     
         layout_elementos_pagos.addWidget(self.idDis)
         
@@ -880,12 +901,32 @@ class VentanaPrincipal(QMainWindow):
         self.label_monto.setStyleSheet(style.label)
         layout_elementos_pagos.addWidget(self.label_monto)
  
-        # actualiza comobox disciplina
-        actualizar_combobox_disc(self)
-        print(self.idDis.currentText())
+        # # actualiza comobox disciplina
+        # actualizar_combobox_disc(self)
+        # print(self.idDis.currentText())
+        
+        #  Conexión a la base de datos MySQL
+        conn = conectar_base_de_datos()
+        cursor = conn.cursor()
+        cursor.execute("SELECT id_disciplina, nombre, precio FROM disciplina ORDER BY nombre ASC")
+        dato = cursor.fetchall()
+        self.disciplinas = {str(item[1]): (item[0], item[2]) for item in dato}  # Mapear nombre a (id_disciplina, precio)
+        sugerencias = list(self.disciplinas.keys())
+        
+        # Almacenar sugerencias en un conjunto para verificación rápida
+        self.sugeren_set = set(sugerencias)
+        
+        idDis = QCompleter(sugerencias)
+        idDis.setCaseSensitivity(Qt.CaseSensitivity.CaseInsensitive)
+        idDis.setCompletionMode(QCompleter.CompletionMode.PopupCompletion)
+        idDis.popup().setStyleSheet(style.completer)
+        self.idDis.setCompleter(idDis)
+    
+        cursor.close()
+        conn.close()
         
         # Muestra el precio de cada disciplina al elegitr la disciplina
-        self.idDis.currentIndexChanged.connect(self.actualizar_precio)
+        idDis.activated.connect(self.actualizar_precio)
         
         fechaDePago = QLabel('Fecha de pago:',grupo_pagos)
         fechaDePago.setStyleSheet(style.label)
@@ -1116,7 +1157,7 @@ class VentanaPrincipal(QMainWindow):
         
         layout_H18 = QHBoxLayout() 
         layout_H18.setAlignment(Qt.AlignmentFlag.AlignRight)
-        button14 = QPushButton('TABLA POR ALUMNO', comboView)
+        button14 = QPushButton('TABLA POR CLIENTE', comboView)
         button14.setFixedWidth(200)
         button14.setCursor(Qt.CursorShape.PointingHandCursor)
         button14.setStyleSheet(style.estilo_boton)
@@ -1124,7 +1165,7 @@ class VentanaPrincipal(QMainWindow):
         button17.setFixedWidth(200)
         button17.setCursor(Qt.CursorShape.PointingHandCursor)
         button17.setStyleSheet(style.estilo_boton)
-        button19 = QPushButton('ASISTENCIA DE ALUMNO', comboView)
+        button19 = QPushButton('ASISTENCIA POR CLIENTE', comboView)
         button19.setFixedWidth(200)
         button19.setCursor(Qt.CursorShape.PointingHandCursor)
         button19.setStyleSheet(style.estilo_boton)
@@ -1134,11 +1175,11 @@ class VentanaPrincipal(QMainWindow):
         
         layout_H19 = QHBoxLayout()
         layout_H19.setAlignment(Qt.AlignmentFlag.AlignRight)
-        button15 = QPushButton('TABLA DE ALUMNOS', comboView)
+        button15 = QPushButton('TABLA CLIENTE', comboView)
         button15.setFixedWidth(200)
         button15.setCursor(Qt.CursorShape.PointingHandCursor)
         button15.setStyleSheet(style.estilo_boton)
-        button16 = QPushButton('TOTAL DE DISCIPLINA', comboView)
+        button16 = QPushButton('TOTAL DISCIPLINA', comboView)
         button16.setFixedWidth(200)
         button16.setCursor(Qt.CursorShape.PointingHandCursor)
         button16.setStyleSheet(style.estilo_boton)
@@ -1442,7 +1483,7 @@ class VentanaPrincipal(QMainWindow):
         self.fecha_gastos.setCalendarPopup(True)
         self.fecha_gastos.setDisplayFormat("dd/MM/yyyy")
         self.fecha_gastos.setDate(QDate.currentDate())
-        layout_libro.addWidget(fecha_gastos)    # EN ESTA LINEA COMO LA SIGUIENTE, AGREGA LOS ALEMENTOS AL LAYOUT HORIZONTAL
+        layout_libro.addWidget(fecha_gastos)  
         layout_libro.addWidget(self.fecha_gastos)
         
         # LAYOUT HORIZONTAL PARA LOS ELEMENTOS
@@ -1455,9 +1496,9 @@ class VentanaPrincipal(QMainWindow):
         self.concepto_debe = QLineEdit(grupo_resumen)
         self.concepto_debe.setStyleSheet(style.estilo_lineedit)
         self.concepto_debe.setFixedWidth(200)
-        layout_conepto.addWidget(concepto_debe)   # EN ESTA LINEA COMO LA SIGUIENTE, AGREGA LOS ALEMENTOS AL LAYOUT HORIZONTAL
+        layout_conepto.addWidget(concepto_debe)  
         layout_conepto.addWidget(self.concepto_debe)
-        layout_conepto.addSpacing(5) # AGREGA ESPACIO ENTRE ELEMENTOS
+        layout_conepto.addSpacing(5)
         
         # Conexión a la base de datos MySQL
         conn = conectar_base_de_datos()
@@ -1469,7 +1510,6 @@ class VentanaPrincipal(QMainWindow):
         sugerencia = [str(item[0]) for item in dato]
 
         lista_debe = QCompleter(sugerencia)
-        # lista_debe.setFilterMode(Qt.MatchFlag.MatchStartsWith)
         lista_debe.setCaseSensitivity(Qt.CaseSensitivity.CaseInsensitive)
         lista_debe.setCompletionMode(QCompleter.CompletionMode.PopupCompletion)
         lista_debe.popup().setStyleSheet(style.completer)
@@ -1484,9 +1524,9 @@ class VentanaPrincipal(QMainWindow):
         self.concepto_haber = QLineEdit(grupo_resumen)
         self.concepto_haber.setStyleSheet(style.estilo_lineedit)
         self.concepto_haber.setFixedWidth(200)
-        layout_conepto.addWidget(concepto_haber)  # EN ESTA LINEA COMO LA SIGUIENTE, AGREGA LOS ALEMENTOS AL LAYOUT HORIZONTAL
+        layout_conepto.addWidget(concepto_haber)
         layout_conepto.addWidget(self.concepto_haber)
-        layout_conepto.addSpacing(5) # AGREGA ESPACIO ENTRE ELEMENTOS
+        layout_conepto.addSpacing(5)
         
         # Conexión a la base de datos MySQL
         conn = conectar_base_de_datos()
@@ -1513,9 +1553,9 @@ class VentanaPrincipal(QMainWindow):
         self.debe = QLineEdit(grupo_resumen)
         self.debe.setStyleSheet(style.estilo_lineedit)
         self.debe.setFixedWidth(100)
-        layout_conepto.addWidget(debe)    # EN ESTA LINEA COMO LA SIGUIENTE, AGREGA LOS ALEMENTOS AL LAYOUT HORIZONTAL
+        layout_conepto.addWidget(debe)
         layout_conepto.addWidget(self.debe)
-        layout_conepto.addSpacing(5) # AGREGA ESPACIO ENTRE ELEMENTOS
+        layout_conepto.addSpacing(5) 
         
         haber = QLabel('Haber ($):',grupo_resumen)
         haber.setStyleSheet(style.label)
@@ -1523,7 +1563,7 @@ class VentanaPrincipal(QMainWindow):
         self.haber = QLineEdit(grupo_resumen)
         self.haber.setStyleSheet(style.estilo_lineedit)
         self.haber.setFixedWidth(100)
-        layout_conepto.addWidget(haber)   # EN ESTA LINEA COMO LA SIGUIENTE, AGREGA LOS ALEMENTOS AL LAYOUT HORIZONTAL
+        layout_conepto.addWidget(haber)
         layout_conepto.addWidget(self.haber)
         
         layout_libro3 = QHBoxLayout()
@@ -1539,7 +1579,7 @@ class VentanaPrincipal(QMainWindow):
         self.fecha_periodo.setCalendarPopup(True)
         self.fecha_periodo.setDisplayFormat("dd/MM/yyyy")
         self.fecha_periodo.setDate(QDate.currentDate())
-        layout_libro3.addWidget(fecha_periodo)   # EN ESTA LINEA COMO LA SIGUIENTE, AGREGA LOS ALEMENTOS AL LAYOUT HORIZONTAL
+        layout_libro3.addWidget(fecha_periodo)   
         layout_libro3.addWidget(self.fecha_periodo)
         layout_libro3.addSpacing(5) # AGREGA ESPACIO ENTRE ELEMENTOS
         
@@ -1554,7 +1594,7 @@ class VentanaPrincipal(QMainWindow):
         self.fecha_fin.setCalendarPopup(True)
         self.fecha_fin.setDisplayFormat("dd/MM/yyyy")
         self.fecha_fin.setDate(QDate.currentDate())
-        layout_libro3.addWidget(fecha_fin)   # EN ESTA LINEA COMO LA SIGUIENTE, AGREGA LOS ALEMENTOS AL LAYOUT HORIZONTAL
+        layout_libro3.addWidget(fecha_fin)   
         layout_libro3.addWidget(self.fecha_fin)
         
         # CREA UN LAYOUT HORIZONTAL
@@ -1728,10 +1768,10 @@ class VentanaPrincipal(QMainWindow):
         self.tab.setDisabled(False)
 
         # actualiza comobox usuario por DNI
-        actualizar_combobox_user(self)
+        # actualizar_combobox_user(self)
 
         # actualiza comobox disciplina
-        actualizar_combobox_disc(self)    
+        # actualizar_combobox_disc(self)    
         
     # FUNCION QUE VINCULA LA VENTANA DE ASISTENCIA
     def assistance(self):
@@ -1771,12 +1811,19 @@ class VentanaPrincipal(QMainWindow):
         self.tipo_cuenta = CuentaContable()
         self.tipo_cuenta.show()
     
-    def actualizar_precio(self):
-        index = self.idDis.currentIndex()
-        if index >= 0:
-            precio = self.idDis.currentData()[2]
-            self.label_monto.setText(str(f" ${precio}"))
-            self.label_monto.adjustSize()
+    def actualizar_precio(self, text):
+        if text in self.disciplinas:
+            id_disciplina, precio = self.disciplinas[text]
+            self.label_monto.setText(f"Precio: {precio}")
+            self.current_id_disciplina = id_disciplina
+        else:
+            self.label_monto.setText("Precio no encontrado")
+            self.current_id_disciplina = None
+        # index = self.idDis.currentIndex()
+        # if index >= 0:
+        #     precio = self.idDis.currentData()[2]
+        #     self.label_monto.setText(str(f" ${precio}"))
+        #     self.label_monto.adjustSize()
             print(precio)
 
     def guardar(self):
@@ -2229,42 +2276,56 @@ class VentanaPrincipal(QMainWindow):
         tabla_registroDISCIPLINA(self,Workbook,Font,PatternFill,Border,Side,numbers,QFileDialog)
     
     # ----------- PESTAÑA PAGOS -----------------
+    # Limpiar campos
+    def camposLimpios(self):
+        self.idUser.clear()
+        self.idDis.clear()
+        self.input_tipoDePago.setCurrentIndex(0)
+        self.input_fechaDePago.setDate(QDate.currentDate())
+    
     def guardarPagos(self):
-        id_alumno = self.idUser.currentData()[0]
-        id_activ = self.idDis.currentData()[0]
+        id_alumno = self.idUser.text() #currentData()[0]
+        id_activ = self.current_id_disciplina
+        print(id_activ)
         tipo = self.input_tipoDePago.currentText()
         date = self.input_fechaDePago.date().toPyDate()
-        monto = self.idDis.currentData()[2]
+        monto = self.label_monto.text().split(": ")[1] 
 
+        # Verificar si el id_alumno está en las sugerencias
+        if id_alumno not in self.sugerencias_set:
+            mensaje_ingreso_datos("Registro de pago", "Debe elegir un ID de usuario de la lista de sugerencias")
+            return
+            
         patronB = re.compile(r'^[a-zA-ZáéíóúÁÉÍÓÚüÜ\'\s]+$') 
         if not isinstance(tipo, str) or not patronB.match(tipo):
             mensaje_ingreso_datos("Registro de pago","Debe elegir un tipo de pago")
             return
         
-        save = inicio("Registro de pagos","¿Desea guardar el registro?")
-        if save == QMessageBox.StandardButton.Yes:
-            try:
-                db = conectar_base_de_datos()
-                cursor = db.cursor()
-                print(id_alumno, id_activ, tipo, date, monto)
-                cursor.execute("INSERT INTO pago (id_usuario, id_disciplina, modalidad, fecha, precio) VALUE (%s, %s, %s, %s, %s)", (id_alumno, id_activ, tipo, date, monto))
-                db.commit()
-                if cursor:
-                    mensaje_ingreso_datos("Registro de pagos","Registro cargado")
-                    self.idUser.setCurrentIndex(0)
-                    self.idDis.setCurrentIndex(0)
-                    self.input_tipoDePago.setCurrentIndex(0)
-                    self.input_fechaDePago.setDate(QDate.currentDate())
-                else:
-                    mensaje_ingreso_datos("Registro de pagos","Registro no cargado")
-                    
-                cursor.close()
-                db.close()
-            except Error as ex:
-                errorConsulta("Registro de pagos",f"Error en la cosulta: {str(ex)}")
-        else:
-            print("Error executing the query", ex)
-    
+        try:
+            db = conectar_base_de_datos()
+            cursor = db.cursor()
+            
+                # Verificar si ya existe un registro con los mismos id_usuario, id_disciplina y fecha
+            cursor.execute("SELECT COUNT(*) FROM pago WHERE id_usuario = %s AND id_disciplina = %s AND fecha = %s", (id_alumno, id_activ, date))
+            result = cursor.fetchone()
+            if result[0] > 0:
+                mensaje_ingreso_datos("Registro de pago", "Ya existe un registro con los mismos datos")
+                return
+            
+            print(id_alumno, id_activ, tipo, date, monto)
+            cursor.execute("INSERT INTO pago (id_usuario, id_disciplina, modalidad, fecha, precio) VALUE (%s, %s, %s, %s, %s)", (id_alumno, id_activ, tipo, date, monto))
+            db.commit()
+            if cursor:
+                mensaje_ingreso_datos("Registro de pagos","Registro cargado")
+                self.camposLimpios()
+            else:
+                mensaje_ingreso_datos("Registro de pagos","Registro no cargado")
+                
+            cursor.close()
+            db.close()
+        except Error as ex:
+            errorConsulta("Registro de pagos",f"Error en la cosulta: {str(ex)}")
+            print(ex)
     def mostrarPagos(self):
         try:
             db = conectar_base_de_datos()
@@ -2293,40 +2354,40 @@ class VentanaPrincipal(QMainWindow):
             return
         
         idpago = int(self.tablePagos.item(self.tablePagos.currentRow(),0).text())
-        id_alumno = self.idUser.currentData()[0]
-        id_activ = self.idDis.currentData()[0]
+        id_alumno = self.idUser.text() #currentData()[0]
+        id_activ = self.current_id_disciplina
+        print(id_activ)
         tipo = self.input_tipoDePago.currentText()
         date = self.input_fechaDePago.date().toPyDate()
-        
+        monto = self.label_monto.text().split(": ")[1] 
+
+        # Verificar si el id_alumno está en las sugerencias
+        if id_alumno not in self.sugerencias_set:
+            mensaje_ingreso_datos("Registro de pago", "Debe elegir un ID de usuario de la lista de sugerencias")
+            return
+            
         patronB = re.compile(r'^[a-zA-ZáéíóúÁÉÍÓÚüÜ\'\s]+$') 
         if not isinstance(tipo, str) or not patronB.match(tipo):
             mensaje_ingreso_datos("Registro de pago","Debe elegir un tipo de pago")
             return
         
-        preg = inicio("Registro de pago", "¿Desea actualizar registro?")
-        if preg == QMessageBox.StandardButton.Yes:
-            try:
-                db = conectar_base_de_datos()
-                cursor = db.cursor()
-                cursor.execute(f"UPDATE pago SET id_usuario='{id_alumno}', id_disciplina='{id_activ}', modalidad='{tipo}', fecha='{date}' WHERE id_pago='{idpago}'")
-                db.commit()
-           
-                if cursor:
-                    mensaje_ingreso_datos("Registro de pagos","Registro actualizado")
-                    self.idUser.setCurrentIndex(0)
-                    self.idDis.setCurrentIndex(0)
-                    self.input_tipoDePago.setCurrentIndex(0)
-                    self.input_fechaDePago.setDate(QDate.currentDate())
-                    self.mostrarPagos()
-                    self.tablePagos.clearSelection()  # Deseleccionar la fila eliminada 
-                else:
-                    mensaje_ingreso_datos("Registro de pagos","Registro no actualizado")
-                cursor.close()
-                db.close()
-            except Error as ex:
-                errorConsulta("Registro de pagos",f"Error en la cosulta: {str(ex)}")
-        else:
-            print("Error executing the query", ex)
+        try:
+            db = conectar_base_de_datos()
+            cursor = db.cursor()
+            cursor.execute(f"UPDATE pago SET id_usuario='{id_alumno}', id_disciplina='{id_activ}', modalidad='{tipo}', fecha='{date}', precio='{monto}' WHERE id_pago='{idpago}'")
+            db.commit()
+        
+            if cursor:
+                mensaje_ingreso_datos("Registro de pagos","Registro actualizado")
+                self.camposLimpios()
+                self.mostrarPagos()
+                self.tablePagos.clearSelection()  # Deseleccionar la fila eliminada 
+            else:
+                mensaje_ingreso_datos("Registro de pagos","Registro no actualizado")
+            cursor.close()
+            db.close()
+        except Error as ex:
+            errorConsulta("Registro de pagos",f"Error en la cosulta: {str(ex)}")
     
     def eliminarPagos(self):
         # Primero corroborar la seleccion de la fila
