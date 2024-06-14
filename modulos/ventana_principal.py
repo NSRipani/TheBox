@@ -261,6 +261,7 @@ class VentanaPrincipal(QMainWindow):
         nombre1.setFixedWidth(80)
         self.input_nombre1 = QLineEdit(customer_details)
         self.input_nombre1.setFixedWidth(200)
+        self.input_nombre1.setPlaceholderText("Escribe un nombre...")
         self.input_nombre1.setStyleSheet(style.estilo_lineedit)
         layout_H1.addWidget(nombre1)        
         layout_H1.addWidget(self.input_nombre1)
@@ -275,7 +276,6 @@ class VentanaPrincipal(QMainWindow):
         sugerencia = [str(item[0]) for item in datos]
 
         lista_nombre = QCompleter(sugerencia)
-        # lista_nombre.setFilterMode(Qt.MatchFlag.MatchStartsWith)
         lista_nombre.setCaseSensitivity(Qt.CaseSensitivity.CaseInsensitive)
         lista_nombre.setCompletionMode(QCompleter.CompletionMode.PopupCompletion)
         lista_nombre.popup().setStyleSheet(style.completer)
@@ -289,6 +289,7 @@ class VentanaPrincipal(QMainWindow):
         apellido1.setFixedWidth(80)
         self.input_apellido1 = QLineEdit(customer_details)
         self.input_apellido1.setStyleSheet(style.estilo_lineedit)
+        self.input_apellido1.setPlaceholderText("Ingrese apellido...")
         self.input_apellido1.setFixedWidth(200)
         layout_H1.addWidget(apellido1)       
         layout_H1.addWidget(self.input_apellido1)
@@ -308,10 +309,12 @@ class VentanaPrincipal(QMainWindow):
         sex = QLabel('Sexo:',customer_details)
         sex.setStyleSheet(style.label)
         sex.setFixedWidth(80)
-        self.input_sex = QComboBox(customer_details)
+        self.input_sex = QLineEdit(customer_details)
         self.input_sex.setStyleSheet(style.estilo_combo)
         self.input_sex.setFixedWidth(200)
-        self.input_sex.addItems(['- Elige un sexo','Hombre','Mujer'])
+        self.input_sex.setPlaceholderText("'Hombre' o 'Mujer'")
+        self.input_sex.setStyleSheet(style.estilo_lineedit)
+        # self.input_sex.addItems(['- Elige un sexo','Hombre','Mujer'])
         layout_H2.addWidget(sex)         
         layout_H2.addWidget(self.input_sex)
         
@@ -449,6 +452,7 @@ class VentanaPrincipal(QMainWindow):
         nombre2.setFixedWidth(80)
         self.input_nombre2 = QLineEdit(update_customer_details)
         self.input_nombre2.setStyleSheet(style.estilo_lineedit)
+        self.input_nombre2.setPlaceholderText("Ingrese nombre...")
         self.input_nombre2.setFixedWidth(200)
         layout_ele1.addWidget(nombre2)       
         layout_ele1.addWidget(self.input_nombre2)
@@ -477,6 +481,7 @@ class VentanaPrincipal(QMainWindow):
         apellido2.setFixedWidth(80)
         self.input_apellido2 = QLineEdit(update_customer_details)
         self.input_apellido2.setStyleSheet(style.estilo_lineedit)
+        self.input_apellido2.setPlaceholderText("Ingrese apellido...")
         self.input_apellido2.setEnabled(False)
         self.input_apellido2.setFixedWidth(200)
         layout_ele1.addWidget(apellido2)          
@@ -498,10 +503,11 @@ class VentanaPrincipal(QMainWindow):
         sex2 = QLabel('Sexo:',update_customer_details)
         sex2.setStyleSheet(style.label)
         sex2.setFixedWidth(80)
-        self.input_sex2 = QComboBox(update_customer_details)
+        self.input_sex2 = QLineEdit(update_customer_details)
         self.input_sex2.setStyleSheet(style.estilo_combo)
         self.input_sex2.setFixedWidth(200)
-        self.input_sex2.addItems(['- Elige un sexo','Hombre','Mujer'])
+        self.input_sex2.setPlaceholderText("'Hombre' o 'Mujer'")
+        # self.input_sex2.addItems(['- Elige un sexo','Hombre','Mujer'])
         self.input_sex2.setEnabled(False)
         layout_ele2.addWidget(sex2)       
         layout_ele2.addWidget(self.input_sex2)
@@ -1680,7 +1686,7 @@ class VentanaPrincipal(QMainWindow):
             button_Elim.setEnabled(False)
         else:
             button_Elim.setEnabled(True)
-        
+            
     def acciones(self):
         # BARRA DE ESTADO INFERIOR
         self.exit_action = QAction('&Cerrar sesion', self)
@@ -1777,11 +1783,18 @@ class VentanaPrincipal(QMainWindow):
         nombre1 = self.input_nombre1.text().title()
         apellido1 = self.input_apellido1.text().title()
         dni = self.input_dni.text().replace(".", "")
-        sexo = self.input_sex.currentText()
+        sexo = self.input_sex.text()
         edad = self.input_age.text()
         celu = self.input_celular.text().replace(".", "")
         fecha = self.input_date.date().toPyDate()
-
+        
+        patrones_validos = ["hombre", "mujer"]
+        if sexo not in patrones_validos:
+            mensaje_ingreso_datos("Registro de cliente","Debe elegir un sexo entre 'Hombre' o 'Mujer'.")
+            return
+        elif sexo in patrones_validos:
+            sexo = sexo.capitalize()
+            
         # Validar que los campos requeridos no estén vacíos
         if not nombre1 or not apellido1 or not dni or not sexo or not edad or not celu:
             mensaje_ingreso_datos("Registro de cliente", "Todos los campos son obligatorios")
@@ -1917,32 +1930,28 @@ class VentanaPrincipal(QMainWindow):
             mensaje_ingreso_datos("Registro de alumnos","El nombre debe contener: \n- Letras y/o espacios entre nombres(si tiene mas de dos).")
             return      
         
-        pregunta_actua = inicio("Registro de alumno","¿Seguro desea buscar?")
-        if pregunta_actua == QMessageBox.StandardButton.Yes:
-            try:
-                db = conectar_base_de_datos()
-                cursor = db.cursor()
-                cursor.execute("SELECT * FROM usuario ORDER BY nombre ASC")
-                resultados = cursor.fetchall()
-                
-                if len(resultados) > 0:
-                    aviso_resultado("Registro de alumnos",f"Se encontraron {len(resultados)} coincidencias.")
+        try:
+            db = conectar_base_de_datos()
+            cursor = db.cursor()
+            cursor.execute("SELECT * FROM usuario ORDER BY nombre ASC")
+            resultados = cursor.fetchall()
+            
+            if len(resultados) > 0:
+                aviso_resultado("Registro de alumnos",f"Se encontraron {len(resultados)} coincidencias.")
 
-                    self.input_nombre2.clear()
-                    tabla_updateUSER(self, cursor, resultados, QHeaderView, QTableWidget, QAbstractItemView, QTableWidgetItem, QDate, Qt)
-                    
-                    self.tablaUpdateRecord.clearSelection()  # Deseleccionar la fila eliminada
-                else:
-                    aviso_resultado("Registro de alumnos",f"Se encontraron {len(resultados)} coincidencias.")
-                    
-                cursor.close()
-                db.close()
+                self.input_nombre2.clear()
+                tabla_updateUSER(self, cursor, resultados, QHeaderView, QTableWidget, QAbstractItemView, QTableWidgetItem, QDate, Qt)
                 
-            except Error as ex:
-                errorConsulta("Registro de alumnos",f"Error en la consulta: {str(ex)}")
-                print("Error executing the query", ex) 
-        else:
-            print("Registro no encontrado")
+                self.tablaUpdateRecord.clearSelection()  # Deseleccionar la fila eliminada
+            else:
+                aviso_resultado("Registro de alumnos",f"Se encontraron {len(resultados)} coincidencias.")
+                
+            cursor.close()
+            db.close()
+            
+        except Error as ex:
+            errorConsulta("Registro de alumnos",f"Error en la consulta: {str(ex)}")
+            print("Error executing the query", ex)
     
     def limpiar(self,):
         limpiar_campos(self)
@@ -1956,13 +1965,25 @@ class VentanaPrincipal(QMainWindow):
             return
         
         id_reg = int(self.tablaUpdateRecord.item(self.tablaUpdateRecord.currentRow(), 0).text())
-        nombre2 = self.input_nombre2.text().capitalize().title()
-        apellido2 = self.input_apellido2.text().capitalize().title()
+        nombre2 = self.input_nombre2.text().title()
+        apellido2 = self.input_apellido2.text().title()
         dni2 = self.input_dni2.text()
-        sexo2 = self.input_sex2.currentText()
+        sexo2 = self.input_sex2.text()
         edad2 = self.input_age2.text()
         celu2 = self.input_celular2.text()
         fecha = self.input_date2.date().toPyDate()
+        
+        patrones_validos = ["hombre", "mujer"]
+        if sexo2 not in patrones_validos:
+            mensaje_ingreso_datos("Registro de cliente","Debe elegir un sexo entre 'Hombre' o 'Mujer'.")
+            return
+        elif sexo2 in patrones_validos:
+            sexo2 = sexo2.capitalize()
+            
+        # Validar que los campos requeridos no estén vacíos
+        if not nombre2 or not apellido2 or not dni2 or not sexo2 or not edad2 or not celu2:
+            mensaje_ingreso_datos("Registro de cliente", "Todos los campos son obligatorios")
+            return
         
         actualizarUSER(nombre2 , apellido2, dni2, sexo2, edad2, celu2)
         

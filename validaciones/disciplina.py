@@ -4,12 +4,12 @@ import re
 def guardarACTIVIDAD(actividad,precio):
     patronA = re.compile(r'^[a-zA-ZáéíóúÁÉÍÓÚüÜ\'\s]+$') 
     if not isinstance(actividad, str) or actividad.isspace() or not patronA.match(actividad):
-        mensaje_ingreso_datos("Registro de alumnos","Debe elegir una disciplina")
+        mensaje_ingreso_datos("Registro de cliente","Debe elegir una disciplina")
         return
 
     patron2 = re.compile(r'^[0-9]+$')
     if not (precio.isdigit() and patron2.match(precio)):
-        mensaje_ingreso_datos("Registro de alumnos","El precio debe ser número entero. Sin coma ','.")
+        mensaje_ingreso_datos("Registro de cliente","El precio debe ser número entero. Sin coma ','.")
     if precio: 
         precio = int(precio)
 
