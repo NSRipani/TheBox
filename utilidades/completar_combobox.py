@@ -38,20 +38,22 @@ from conexion_DB.dataBase import conectar_base_de_datos
     # conn.close()
 
 # Funcion para completar el comobobox en la pestaña 'PAGO'
-def completar_nombre_empleado(self):
-    #  Conexión a la base de datos MySQL
-    conn = conectar_base_de_datos()
-    cursor = conn.cursor()
+# def completar_nombre_empleado(self):
+#     #  Conexión a la base de datos MySQL
+#     conn = conectar_base_de_datos()
+#     cursor = conn.cursor()
     
-    self.id_horas_empleado.clear()
-    cursor.execute("SELECT id_empleado, nombre, apellido FROM registro_empleado ORDER BY nombre ASC")
-    resultados = cursor.fetchall()
+#     self.id_horas_empleado.clear()
+#     self.id_horas_empleado.addItem("Seleccionar empleado", None)  # Añadir un elemento inicial informativo
+    
+#     cursor.execute("SELECT id_empleado, nombre, apellido FROM registro_empleado ORDER BY nombre ASC")
+#     resultados = cursor.fetchall()
 
-    for resultado in resultados:
-        self.id_horas_empleado.addItem(str(resultado[1]).title(), resultado)
+#     for resultado in resultados:
+#         self.id_horas_empleado.addItem(str(resultado[1]).title(), resultado)
     
-    cursor.close()
-    conn.close() 
+#     cursor.close()
+#     conn.close() 
     
 # Funcion para completar el comobobox en la pestaña 'consulta'
 def actualizar_combobox_consulta4(self):

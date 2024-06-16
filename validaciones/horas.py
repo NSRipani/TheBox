@@ -65,13 +65,13 @@ def autoCompletado(self,QDate,mensaje_ingreso_datos):
         mensaje_ingreso_datos("Registro de Ingresos-Egresos","La última fila no debe ser precionada")
         return
     
-    emple = self.tablaHoras.item(fila,2).text()
+    emple = self.tablaHoras.item(fila,1).text()
     horas_h = self.tablaHoras.item(fila,3).text()
     fecha_h = self.tablaHoras.item(fila, 4).text()
     fecha_h = QDate.fromString(fecha_h, "dd-MM-yyyy")
 
     # Autocompletar los QLineEdits y la fecha
-    self.id_horas_empleado.setCurrentText(emple)
+    self.id_horas_empleado.setText(emple)
     self.horas_tra.setText(horas_h)
     self.fecha_tra.setDate(fecha_h)
 
