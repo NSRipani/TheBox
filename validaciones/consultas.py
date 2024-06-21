@@ -33,7 +33,7 @@ def consultaPorAlumno(self,cursor,results,QHeaderView,QTableWidget,QAbstractItem
             self.tablaVIEW.setItem(i, j, item)
             
     if self.tablaVIEW.rowCount() == len(results):
-        total_precios = sum(row[8] for row in results)  # para cada fila en results, se toma el valor que está en la posición 4 (quinta columna, considerando que la indexación comienza en 0) y se suma a un acumulador.
+        total_precios = sum(row[7] for row in results)  # para cada fila en results, se toma el valor que está en la posición 4 (quinta columna, considerando que la indexación comienza en 0) y se suma a un acumulador.
 
         # Agregar una fila al final de la tabla para mostrar la suma total
         total_row = self.tablaVIEW.rowCount()
@@ -43,12 +43,12 @@ def consultaPorAlumno(self,cursor,results,QHeaderView,QTableWidget,QAbstractItem
         item_total_label_alumno = QTableWidgetItem("TOTAL: ")
         item_total_label_alumno.setFont(itemColor_TOTAL(item_total_label_alumno))  # Funcion para estilos de item
         item_total_label_alumno.setTextAlignment(Qt.AlignmentFlag.AlignRight)
-        self.tablaVIEW.setItem(total_row, 7, item_total_label_alumno)
+        self.tablaVIEW.setItem(total_row, 6, item_total_label_alumno)
 
         # Mostrar la suma total en la celda debajo de la columna 'precios'
         item_total_precio_alumno = QTableWidgetItem(str(total_precios))
         item_total_precio_alumno.setFont(itemColor_RESULTADO(item_total_precio_alumno))  # Funcion para estilos de item
-        self.tablaVIEW.setItem(total_row, 8, item_total_precio_alumno)
+        self.tablaVIEW.setItem(total_row, 7, item_total_precio_alumno)
         item_total_precio_alumno.setTextAlignment(Qt.AlignmentFlag.AlignRight)
                 
 def totalAlumno(self,cursor,results,QHeaderView,QTableWidget,QAbstractItemView,QAbstractScrollArea,QTableWidgetItem,QDate,Qt):

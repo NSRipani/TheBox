@@ -14,10 +14,12 @@ def seleccionDeTablaPAGOS(self,QDate):
     # id_disciplina = disciplinas.index(name_discipl.lower())
     
     self.idUser.setText(str(id_user))
-    self.idDis.setText(name_discipl)
-    self.input_tipoDePago.setCurrentText(tipoPago)
+    self.idDis.setText(str(name_discipl))
+    self.input_tipoDePago.setText(tipoPago)
     self.input_fechaDePago.setDate(fecha)
-
+    
+    self.actualizar_precio(name_discipl)
+    
     self.tablePagos.clearSelection()  # Deseleccionar la fila eliminada
 
 def tabla_pagos(self, cursor, result, QHeaderView, QTableWidget, QAbstractItemView, QTableWidgetItem, QDate, Qt):

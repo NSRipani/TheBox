@@ -22,8 +22,8 @@ from PyQt6.QtCore import *
 # Módulo de para las cajas de mensajes
 from modulos.mensajes import (mensaje_ingreso_datos, errorConsulta, inicio, aviso_descargaExitosa, aviso_Advertencia_De_excel, 
                               resultado_empleado, aviso_resultado, mensaje_horas_empleados, aviso_resultado_asistencias)
-from utilidades.completar_combobox import actualizar_combobox_consulta4, actualizar_combobox_consulta1_usuario
-# actualizar_combobox_disc,completar_nombre_empleado
+# from utilidades.completar_combobox import actualizar_combobox_consulta4
+# actualizar_combobox_disc,completar_nombre_empleado,actualizar_combobox_consulta1_usuario
 # Validaciones y demas funciones 
 from validaciones.usuario import (registroUSER, limpiasElementosUser, limpiar_campos, actualizarUSER, limpiasElementosUseraActualizar, 
                                   autoCompletadoACTULIZAR,limpiar_tablaRecord, limpiar_tablaUpdate, tabla_registroUSER)
@@ -518,7 +518,7 @@ class VentanaPrincipal(QMainWindow):
         patrones_validos2 = ["hombre", "mujer"]
         completer = QCompleter(patrones_validos2)
         completer.popup().setStyleSheet(style.completer)
-        self.input_sex.setCompleter(completer)
+        self.input_sex2.setCompleter(completer)
         
         age2 = QLabel('Edad:',update_customer_details)
         age2.setStyleSheet(style.label)
@@ -955,12 +955,19 @@ class VentanaPrincipal(QMainWindow):
         tipoDePago = QLabel('Medio de pago:',grupo_pagos)
         tipoDePago.setStyleSheet(style.label)
         tipoDePago.setFixedWidth(150)
-        self.input_tipoDePago = QComboBox(grupo_pagos)
-        self.input_tipoDePago.setStyleSheet(style.estilo_combo)
+        self.input_tipoDePago = QLineEdit(grupo_pagos)
+        self.input_tipoDePago.setStyleSheet(style.estilo_lineedit)
         self.input_tipoDePago.setFixedWidth(300)
-        self.input_tipoDePago.addItems(["- Seleccione medio de pago","Efectivo", "Transferecia"])
+        self.input_tipoDePago.setPlaceholderText("'Efectivo' o 'Transferencia'")
         layout_elementos_pagos2.addWidget(tipoDePago)   
         layout_elementos_pagos2.addWidget(self.input_tipoDePago)
+        
+        medio_de_pago = ["Efectivo", "Transferencia"]
+        completer2 = QCompleter(medio_de_pago)
+        completer2.setCaseSensitivity(Qt.CaseSensitivity.CaseInsensitive)
+        completer2.setCompletionMode(QCompleter.CompletionMode.PopupCompletion)
+        completer2.popup().setStyleSheet(style.completer)
+        self.input_tipoDePago.setCompleter(completer2)
         
         layoutBoton = QHBoxLayout() 
         layoutBoton.setAlignment(Qt.AlignmentFlag.AlignRight)
@@ -1062,49 +1069,59 @@ class VentanaPrincipal(QMainWindow):
         view_nomb = QLabel("N° DNI:",comboView)
         view_nomb.setStyleSheet(style.label)
         view_nomb.setFixedWidth(140)
-        self.view_nomb = QComboBox(comboView)
+        self.view_nomb = QLineEdit(comboView)
+        self.view_nomb.setPlaceholderText("Ingrese un DNI")
+        self.view_nomb.setMaxLength(8)
         self.view_nomb.setFixedWidth(200)
-        self.view_nomb.setStyleSheet(style.estilo_combo)
+        self.view_nomb.setStyleSheet(style.estilo_lineedit)
         elementos.addWidget(view_nomb)     
         elementos.addWidget(self.view_nomb)
-        actualizar_combobox_consulta1_usuario(self)
-        # #  Conexión a la base de datos MySQL
-        # conn = conectar_base_de_datos()
-        # cursor = conn.cursor()
-
-        # # Consulta para obtener los datos de una columna específica
-        # cursor.execute("SELECT nombre FROM usuario")
-        # datos = cursor.fetchall()
-        # suger3 = [str(item[0]) for item in datos]
-
-        # nombre = QCompleter(suger3)
-        # nombre.setFilterMode(Qt.MatchFlag.MatchStartsWith)
-        # nombre.popup().setStyleSheet(style.completer)
-        # self.view_nomb.setCompleter(nombre)
+        # actualizar_combobox_consulta1_usuario(self)
         
-        # cursor.close()
-        # conn.close()
-        
-        # view_apellido = QLabel("Apellido:",comboView)
-        # view_apellido.setStyleSheet(style.label)
-        # view_apellido.setFixedWidth(80)
-        # self.view_apellido = QComboBox(comboView)
-        # self.view_apellido.setStyleSheet(style.estilo_combo)
-        # self.view_apellido.setFixedWidth(200)
-        # elementos.addWidget(view_apellido)     
-        # elementos.addWidget(self.view_apellido)
-                
+        # Conexión a la base de datos MySQL
+        conn = conectar_base_de_datos()
+        cursor = conn.cursor()
+
+        cursor.execute("SELECT u.dni FROM usuario u ORDER BY u.dni ASC")
+        datos = cursor.fetchall()
+        numeros = [str(item[0]) for item in datos]
+
+        nombre = QCompleter(numeros)
+        nombre.setCaseSensitivity(Qt.CaseSensitivity.CaseInsensitive)
+        nombre.setCompletionMode(QCompleter.CompletionMode.PopupCompletion)
+        nombre.popup().setStyleSheet(style.completer)
+        self.view_nomb.setCompleter(nombre)
+
+        cursor.close()
+        conn.close()
+                        
         view_disciplina = QLabel("Disciplina:", comboView)
         view_disciplina.setStyleSheet(style.label)
         view_disciplina.setFixedWidth(100)
-        self.view_disciplina = QComboBox(comboView)
-        self.view_disciplina.currentData()
-        self.view_disciplina.setStyleSheet(style.estilo_combo)
+        self.view_disciplina = QLineEdit(comboView)
+        self.view_disciplina.setPlaceholderText("Ingrese una disciplina")
+        self.view_disciplina.setStyleSheet(style.estilo_lineedit)
         self.view_disciplina.setFixedWidth(200)
         elementos.addWidget(view_disciplina)       
         elementos.addWidget(self.view_disciplina)
-        actualizar_combobox_consulta4(self) 
-                
+        # actualizar_combobox_consulta4(self) 
+        # Conexión a la base de datos MySQL
+        conn = conectar_base_de_datos()
+        cursor = conn.cursor()
+
+        cursor.execute("SELECT d.nombre FROM disciplina d ORDER BY d.nombre ASC")
+        datos = cursor.fetchall()
+        activi = [str(item[0]) for item in datos]
+
+        actividad = QCompleter(activi)
+        actividad.setCaseSensitivity(Qt.CaseSensitivity.CaseInsensitive)
+        actividad.setCompletionMode(QCompleter.CompletionMode.PopupCompletion)
+        actividad.popup().setStyleSheet(style.completer)
+        self.view_disciplina.setCompleter(actividad)
+
+        cursor.close()
+        conn.close()
+             
         view_fechaDePago = QLabel("Fecha de pago:", comboView)
         view_fechaDePago.setStyleSheet(style.label)
         view_fechaDePago.setFixedWidth(140)
@@ -1306,7 +1323,7 @@ class VentanaPrincipal(QMainWindow):
         self.id_horas_empleado.setCompleter(lista_empleado)
         
         # Agregar evento de selección de elemento del completer
-        lista_empleado.activated[str].connect(self.guardar_id_empleado)
+        lista_empleado.activated.connect(self.guardar_id_empleado)#[str]
         
         cursor.close()
         conn.close()
@@ -1316,7 +1333,7 @@ class VentanaPrincipal(QMainWindow):
         horas_tra.setFixedWidth(120)
         self.horas_tra = QLineEdit(grupo_empleados)
         self.horas_tra.setStyleSheet(style.estilo_lineedit)
-        self.horas_tra.setFixedWidth(200)
+        self.horas_tra.setFixedWidth(100)
         layout_emp.addWidget(horas_tra)      
         layout_emp.addWidget(self.horas_tra)
         
@@ -1810,11 +1827,6 @@ class VentanaPrincipal(QMainWindow):
     def balances(self):
         self.tab.setCurrentIndex(6)
         self.tab.setDisabled(False)
-        
-        # actualiza comobox disciplina
-        actualizar_combobox_consulta4(self)
-        
-        actualizar_combobox_consulta1_usuario(self)      
     
     def registro_de_ingYegreso(self):
         self.tab.setCurrentIndex(7)
@@ -1838,7 +1850,7 @@ class VentanaPrincipal(QMainWindow):
             self.current_id_disciplina = id_disciplina
         else:
             self.label_monto.setText("Precio no encontrado")
-            self.current_id_disciplina = None
+            # self.current_id_disciplina = None
         # index = self.idDis.currentIndex()
         # if index >= 0:
         #     precio = self.idDis.currentData()[2]
@@ -2163,38 +2175,34 @@ class VentanaPrincipal(QMainWindow):
 
         guardarACTIVIDAD(actividad, precio)
 
-        guardar = inicio("Registro de alumnos", "¿Desea guardar alumno?")
-        if guardar == QMessageBox.StandardButton.Yes:
-            try:
-                db = conectar_base_de_datos()
-                cursor = db.cursor()
+        try:
+            db = conectar_base_de_datos()
+            cursor = db.cursor()
 
-                # Verificar si la actividad ya existe
-                cursor.execute("SELECT COUNT(*) FROM disciplina WHERE nombre = %s", (actividad,))
-                resultado = cursor.fetchone()
+            # Verificar si la actividad ya existe
+            cursor.execute("SELECT COUNT(*) FROM disciplina WHERE nombre = %s", (actividad,))
+            resultado = cursor.fetchone()
 
-                if resultado[0] > 0:
-                    # Si la actividad ya existe, mostrar un mensaje y no insertar
-                    mensaje_ingreso_datos("Registro de alumnos", "La actividad ya está registrada")
+            if resultado[0] > 0:
+                # Si la actividad ya existe, mostrar un mensaje y no insertar
+                mensaje_ingreso_datos("Registro de disciplina", "La actividad ya está registrada")
+            else:
+                # Si la actividad no existe, insertar la nueva actividad
+                cursor.execute("INSERT INTO disciplina (nombre, precio) VALUES (%s, %s)", (actividad, precio))
+                db.commit()
+
+                if cursor.rowcount > 0:
+                    mensaje_ingreso_datos("Registro de disciplina", "Registro cargado")
+                    self.input_disciplina4.clear()
+                    self.input_precio.clear()
                 else:
-                    # Si la actividad no existe, insertar la nueva actividad
-                    cursor.execute("INSERT INTO disciplina (nombre, precio) VALUES (%s, %s)", (actividad, precio))
-                    db.commit()
+                    mensaje_ingreso_datos("Registro de disciplina", "Registro no cargado")
 
-                    if cursor.rowcount > 0:
-                        mensaje_ingreso_datos("Registro de alumnos", "Registro cargado")
-                        self.input_disciplina4.clear()
-                        self.input_precio.clear()
-                    else:
-                        mensaje_ingreso_datos("Registro de alumnos", "Registro no cargado")
-
-                cursor.close()
-                db.close()
-            except Error as ex:
-                errorConsulta("Registro de alumnos", f"Error en la consulta: {str(ex)}")
-                print("Error executing the query", ex)
-        else:
-            print("No se guardó")
+            cursor.close()
+            db.close()
+        except Error as ex:
+            errorConsulta("Registro de disciplina", f"Error en la consulta: {str(ex)}")
+            print("Error executing the query", ex)
 
     def mostrarACTIC(self):
         try:
@@ -2207,13 +2215,13 @@ class VentanaPrincipal(QMainWindow):
                 tabla_DISCIPLINA(self, resultados, cursor, QHeaderView, QTableWidget, QAbstractItemView, QTableWidgetItem, Qt)
                 self.tableActivi.clearSelection()  # Deseleccionar la fila eliminada
             else:
-                mensaje_ingreso_datos("Registro de alumnos","Tabla sin registros")
+                mensaje_ingreso_datos("Registro de disciplina","Tabla sin registros")
                     
             cursor.close()  
             db.close()
         
         except Error as ex:
-            errorConsulta("Registro de alumnos",f"Error en la consulta: {str(ex)}")
+            errorConsulta("Registro de disciplina",f"Error en la consulta: {str(ex)}")
             print("Error executing the query", ex)
         
     def seleccionDeDatos(self):
@@ -2221,7 +2229,7 @@ class VentanaPrincipal(QMainWindow):
         
     def actualizarACTIV(self):
         if not self.tableActivi.currentItem():
-            mensaje_ingreso_datos("Registro de alumnos","Por favor seleccione un registro para actualizar")
+            mensaje_ingreso_datos("Registro de disciplina","Por favor seleccione un registro para actualizar")
             return
         
         id_dis = int(self.tableActivi.item(self.tableActivi.currentRow(), 0).text())
@@ -2237,19 +2245,19 @@ class VentanaPrincipal(QMainWindow):
             db.commit()
             
             if cursor:
-                mensaje_ingreso_datos("Registro de alumnos","Registro actualizado")
+                mensaje_ingreso_datos("Registro de disciplina","Registro actualizado")
                 self.input_disciplina4.clear()
                 self.input_precio.clear()
                 self.mostrarACTIC()
                 self.tableActivi.clearSelection()  # Deseleccionar la fila
             else:
-                mensaje_ingreso_datos("Registro de alumnos","Registro no actualizado")
+                mensaje_ingreso_datos("Registro de disciplina","Registro no actualizado")
                 
             cursor.close()
             db.close()
 
         except Error as ex:
-            QMessageBox.warning(self,"Actualización de usuario","Error al actualizar el registro")
+            errorConsulta("Registro de disciplina",f"Error en la consulta: {str(ex)}")
             print("Error al ejecutar la consulta", ex)
             
     def limpiar_tabla_disciplina(self):
@@ -2262,39 +2270,35 @@ class VentanaPrincipal(QMainWindow):
     def eliminarACTIV(self):
         # Primero corroborar la seleccion de la fila
         if not self.tableActivi.currentItem():
-            mensaje_ingreso_datos("Registro de alumnos","Debe seleccione el registro de la tabla y presione 'ELIMINAR'")
+            mensaje_ingreso_datos("Registro de disciplina","Debe seleccione el registro de la tabla y presione 'ELIMINAR'")
             return
         
         # Selecciona la fila acutal
         selectedRow = self.tableActivi.currentItem().row()
         id_dis = int(self.tableActivi.item(selectedRow, 0).text())
         
-        responder4 = inicio("Regisro de alumno","¿Desea Eliminar alumno?")
-        if responder4 == QMessageBox.StandardButton.Yes:
-            try:
-                db = conectar_base_de_datos()
-                cursor = db.cursor()
-                cursor.execute(f"DELETE FROM disciplina WHERE id_disciplina = {id_dis}")    
-                
-                if cursor:
-                    mensaje_ingreso_datos("Registro de alumnos","Registo eliminado")
+        try:
+            db = conectar_base_de_datos()
+            cursor = db.cursor()
+            cursor.execute(f"DELETE FROM disciplina WHERE id_disciplina = {id_dis}")    
+            
+            if cursor:
+                mensaje_ingreso_datos("Registro de disciplina","Registo eliminado")
 
-                    self.tableActivi.removeRow(selectedRow)
-                    self.input_disciplina4.clear()
-                    self.input_precio.clear()
-                    self.tableActivi.clearSelection()  # Deseleccionar la fila eliminada
-                else:
-                    mensaje_ingreso_datos("Registro de alumnos","Registo no eliminado")
-                    
-                cursor.close()
-                db.commit()
+                self.tableActivi.removeRow(selectedRow)
+                self.input_disciplina4.clear()
+                self.input_precio.clear()
+                self.tableActivi.clearSelection()  # Deseleccionar la fila eliminada
+            else:
+                mensaje_ingreso_datos("Registro de disciplina","Registo no eliminado")
                 
-            except Error as ex:
-                errorConsulta("Registro de alumnos",f"Error en la consulta: {str(ex)}")
             cursor.close()
-            db.close()                
-        else:
-            print("No se elimino registro")
+            db.commit()
+            
+        except Error as ex:
+            errorConsulta("Registro de disciplina",f"Error en la consulta: {str(ex)}")
+        cursor.close()
+        db.close()
             
     def planilla_disciplina(self):
         tabla_registroDISCIPLINA(self,Workbook,Font,PatternFill,Border,Side,numbers,QFileDialog)
@@ -2304,17 +2308,18 @@ class VentanaPrincipal(QMainWindow):
     def camposLimpios(self):
         self.idUser.clear()
         self.idDis.clear()
-        self.input_tipoDePago.setCurrentIndex(0)
+        self.input_tipoDePago.clear()
         self.input_fechaDePago.setDate(QDate.currentDate())
         
     def guardarPagos(self):
-        id_alumno = self.idUser.text() #currentData()[0]
+        id_alumno = self.idUser.text()
         id_activ = self.current_id_disciplina
         print(id_activ)
-        tipo = self.input_tipoDePago.currentText()
+        tipo = self.input_tipoDePago.text()
         date = self.input_fechaDePago.date().toPyDate()
         monto = self.label_monto.text().split(": ")[1] 
-
+        monto = int(monto)
+        
         # Verificar si el id_alumno está en las sugerencias
         if id_alumno not in self.sugerencias_set:
             mensaje_ingreso_datos("Registro de pago", "Debe elegir un DNI de usuario de la lista de sugerencias")
@@ -2325,6 +2330,13 @@ class VentanaPrincipal(QMainWindow):
             mensaje_ingreso_datos("Registro de pago","Debe elegir un tipo de pago")
             return
         
+        medio_de_pago = ["Efectivo", "Transferencia"]
+        if tipo not in medio_de_pago:
+            mensaje_ingreso_datos("Registro de pago","Debe elegir un sexo entre 'Efectivo' o 'Transferencia'.")
+            return
+        elif tipo in medio_de_pago:
+            tipo = tipo.capitalize()
+            
         try:
             db = conectar_base_de_datos()
             cursor = db.cursor()
@@ -2372,7 +2384,7 @@ class VentanaPrincipal(QMainWindow):
         
     def establecer_datos(self):
         seleccionDeTablaPAGOS(self,QDate)
-    
+        
     def actualizarPagos(self):
         if not self.tablePagos.currentItem():
             mensaje_ingreso_datos("Registro de pago","Por favor seleccione un registro para actualizar")
@@ -2382,10 +2394,10 @@ class VentanaPrincipal(QMainWindow):
         id_alumno = self.idUser.text() #currentData()[0]
         id_activ = self.current_id_disciplina
         print(id_activ)
-        tipo = self.input_tipoDePago.currentText()
+        tipo = self.input_tipoDePago.text()
         date = self.input_fechaDePago.date().toPyDate()
         monto = self.label_monto.text().split(": ")[1] 
-
+            
         # Verificar si el id_alumno está en las sugerencias
         if id_alumno not in self.sugerencias_set:
             mensaje_ingreso_datos("Registro de pago", "Debe elegir un ID de usuario de la lista de sugerencias")
@@ -2396,6 +2408,13 @@ class VentanaPrincipal(QMainWindow):
             mensaje_ingreso_datos("Registro de pago","Debe elegir un tipo de pago")
             return
         
+        medio_de_pago = ["Efectivo", "Transferencia"]
+        if tipo not in medio_de_pago:
+            mensaje_ingreso_datos("Registro de pago","Debe elegir un sexo entre 'Efectivo' o 'Transferencia'.")
+            return
+        elif tipo in medio_de_pago:
+            tipo = tipo.capitalize()
+            
         try:
             db = conectar_base_de_datos()
             cursor = db.cursor()
@@ -2454,8 +2473,9 @@ class VentanaPrincipal(QMainWindow):
         pagos_EXCEL(self,Workbook,Font,PatternFill,Border,Side,numbers,QFileDialog)
             
     # ----------- PESTAÑA BALANCE -----------------
+        
     def consultar_TotalPorAlumno(self):
-        nombre = self.view_nomb.currentData()[0] #currentText()
+        nombre = self.view_nomb.text()
         print(nombre)
         print(type(nombre))
 
@@ -2465,7 +2485,7 @@ class VentanaPrincipal(QMainWindow):
             mensaje_ingreso_datos("Registro de alumnos","Debe elige un DNI")
             # mensaje_ingreso_datos("Registro de alumnos","El nombre debe contener: \n- Letras y/o espacios entre nombres(si tiene mas de dos).")
             return
-
+        
         if not self.view_fechaDePago.date().toString("yyyy-MM-dd"):
             mensaje_ingreso_datos("Registro de alumnos","Debe ingresar una fecha de inicio de pago.")
             return
@@ -2480,7 +2500,7 @@ class VentanaPrincipal(QMainWindow):
         try:
             db = conectar_base_de_datos()
             cursor = db.cursor()
-            query = f"SELECT u.nombre, u.apellido, u.dni, u.sexo, u.edad, u.celular, u.fecha_registro, d.nombre AS DISCIPLINA, p.precio, p.fecha, p.modalidad FROM usuario u JOIN pago p ON u.dni = p.id_usuario JOIN disciplina d ON p.id_disciplina = d.id_disciplina WHERE u.dni = '{nombre}' AND p.fecha BETWEEN '{fecha_inicio}' AND '{fecha_fin}' ORDER BY p.fecha ASC" # JOIN disciplina d ON p.id_disciplina = d.id_disciplina
+            query = f"SELECT u.nombre, u.apellido, u.dni, u.sexo, u.edad, u.fecha_registro, d.nombre AS DISCIPLINA, p.precio, p.fecha, p.modalidad FROM usuario u JOIN pago p ON u.dni = p.id_usuario JOIN disciplina d ON p.id_disciplina = d.id_disciplina WHERE u.dni = '{nombre}' AND p.fecha BETWEEN '{fecha_inicio}' AND '{fecha_fin}' ORDER BY p.fecha ASC" # JOIN disciplina d ON p.id_disciplina = d.id_disciplina
             
             cursor.execute(query)
             results = cursor.fetchall()
@@ -2490,7 +2510,7 @@ class VentanaPrincipal(QMainWindow):
                 
                 self.view_fechaDePago.setDate(QDate.currentDate())
                 self.view_al2.setDate(QDate.currentDate())
-                self.view_nomb.currentData()
+                self.view_nomb.clear()
                 
                 consultaPorAlumno(self,cursor,results,QHeaderView,QTableWidget,QAbstractItemView,QTableWidgetItem,QDate,Qt)
                             
@@ -2579,7 +2599,7 @@ class VentanaPrincipal(QMainWindow):
             print("Error executing the query", ex)
             
     def consultar_PorDisciplina(self):
-        actividad = self.view_disciplina.currentData()[0] #text().capitalize().title()
+        actividad = self.view_disciplina.text() #text().capitalize().title()
         
         # lista = ["musculacion","cross funcional","gap","kids","fucional","cardio","stretching","adulto","ritmos"]
         patrones = re.compile(r'^[a-zA-ZáéíóúÁÉÍÓÚüÜ\'\s]+$')
@@ -2610,7 +2630,7 @@ class VentanaPrincipal(QMainWindow):
             if len(results) > 0:
                 aviso_resultado("Registro de alumnos",f"Se encontraron {len(results)} coincidencias.")
                 
-                self.view_disciplina.currentData()[0]
+                self.view_disciplina.clear()
                 self.view_fechaDePago.setDate(QDate.currentDate())
                 self.view_al2.setDate(QDate.currentDate())
                 consultaPorDisciplina(self,cursor,results,QHeaderView,QTableWidget,QAbstractItemView,QTableWidgetItem,QDate,Qt)
@@ -2662,7 +2682,7 @@ class VentanaPrincipal(QMainWindow):
             print("Error executing the query", ex)
     
     def consultar_AsistePorAlumno(self):
-        alumno = self.view_nomb.currentData()[0]
+        alumno = self.view_nomb.text()
         
         patron = re.compile(r'^[0-9]+$')
         # patron_nom3 = re.compile(r'^[a-zA-ZáéíóúÁÉÍÓÚüÜ\'\s]+$') 
@@ -2696,7 +2716,7 @@ class VentanaPrincipal(QMainWindow):
             
                 self.view_asistencia.setDate(QDate.currentDate())
                 self.view_al.setDate(QDate.currentDate())
-                self.view_nomb.currentData()
+                self.view_nomb.clear()
                 asistenciaPorAlumno(self,cursor,results5,QHeaderView,QTableWidget,QAbstractItemView,QTableWidgetItem,QDate,Qt)
             
             else:
@@ -2721,8 +2741,8 @@ class VentanaPrincipal(QMainWindow):
                 self.id_empleado_seleccionado = id_empleado
                 print(type(self.id_empleado_seleccionado))
                 break
-        else:
-            self.id_empleado_seleccionado = None
+        # else:
+        #     self.id_empleado_seleccionado = None
             
     def guardar_horas(self):
         id_empleado_seleccionado = self.id_empleado_seleccionado  # Obtener el id_empleado seleccionado

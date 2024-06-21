@@ -255,7 +255,7 @@ class Asistencia(QMainWindow):
             texto_cuota = f"\nÚltimo pago: {ultima_fecha}. \n\nPróximo pago en {abs(dias)} días.\n"
             texto_vencido = f"!Atención! Cuota vencida hace {abs(dias)} días. \n\nRegularice su cuenta mensual."
               
-            if 30 > dias > 14:
+            if 31 > dias > 14:
                 self.label_texto2.setText(texto_cuota)
                 self.label_texto2.setStyleSheet("background-color: #7FFF00; color: #000;")
                 self.timer.start(5000)

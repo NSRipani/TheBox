@@ -51,8 +51,8 @@ def selccionarTabla(self,mensaje_ingreso_datos,QDate):
     
     # self.idConcepto.setText(str(id_concepto))
     self.fecha_gastos.setDate(fecha1)
-    self.concepto_debe.clear(conceptoDebe)
-    self.concepto_haber.clear(conceptoHaber)
+    self.concepto_debe.setText(conceptoDebe)
+    self.concepto_haber.setText(conceptoHaber)
     self.debe.setText(str(debe_valor))
     self.haber.setText(str(haber_valor))
     
