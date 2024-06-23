@@ -100,7 +100,7 @@ class Asistencia(QMainWindow):
         cursor = conn.cursor()
 
         # Consulta para obtener los datos de una columna específica
-        cursor.execute("SELECT dni FROM usuario")
+        cursor.execute("SELECT dni FROM usuario ORDER BY dni ASC")
         data = cursor.fetchall()
         suggestions = [str(item[0]) for item in data]
 
@@ -192,21 +192,25 @@ class Asistencia(QMainWindow):
                 #---------------------------------------------------
             # Paso 1: Realizar la consulta y obtener todos los registros
             # cursor.execute("SELECT u.id_usuario, p.id_disciplina FROM usuario u JOIN pago p ON u.dni = %s", (dni,))
-            cursor.execute("SELECT p.id_usuario, p.id_disciplina FROM pago p WHERE p.id_usuario = %s", (dni,))
+            cursor.execute("SELECT p.id_usuario, p.id_disciplina FROM pago p WHERE p.id_usuario = %s LIMIT 1", (dni,))
             result = cursor.fetchall()
 
             # Paso 2: Comprobar si se obtuvieron resultados
             if len(result) > 0:
                 disciplinas_registradas = []
+                fecha_hoy = date.today()
+                print(disciplinas_registradas)
+                print(f"Resultado: {result}")
+                
                 for row in result:
                     u_dni = row[0]
                     id_disciplina = row[1]
-
+                    
                     # Verificar si ya existe un registro de asistencia para el usuario y la disciplina en la fecha actual
-                    fecha_hoy = date.today()
-                    cursor.execute("SELECT COUNT(*) FROM asistencia WHERE dni = %s AND id_disciplina = %s AND asistencia = %s", (u_dni, id_disciplina, fecha_hoy))
+                    cursor.execute("SELECT COUNT(*) FROM asistencia WHERE dni = %s AND asistencia = CURDATE() AND id_disciplina = %s", (u_dni, id_disciplina))
                     registros_existentes = cursor.fetchone()[0]
-
+                    print(f"Existen: {registros_existentes}")
+                    
                     if registros_existentes == 0:
                         # Insertar los datos de asistencia
                         cursor.execute("INSERT INTO asistencia (asistencia, dni, id_disciplina) VALUES (%s, %s, %s)", (fecha_hoy, u_dni, id_disciplina))
@@ -215,6 +219,7 @@ class Asistencia(QMainWindow):
                         print(f"Se ha insertado un registro de asistencia para el usuario con DNI {u_dni} y la disciplina {id_disciplina} en la fecha {fecha_hoy}.")
             
                         disciplinas_registradas.append(id_disciplina)
+                        print(f"disciplinas: {disciplinas_registradas}")
                     else:
                         mensaje_datos_ingresado("Registro de Asistencia",f"Ya existe un registro de asistencia para el usuario con DNI {u_dni} en la fecha {fecha_hoy}. No se registrará de nuevo.")
                         print(f"Ya existe un registro de asistencia para el usuario con DNI {u_dni} en la fecha {fecha_hoy}. No se registrará de nuevo.")
@@ -235,49 +240,57 @@ class Asistencia(QMainWindow):
                 nombre = result_usuario[0]
                 apellido = result_usuario[1]
             
-            # Mostrar mensaje en la interfaz
-            self.label_texto1.setText(f"¡En hora buena {nombre} {apellido}! \n\nSu asistencia fue registrada.")
-            self.label_texto1.setStyleSheet("background-color: #DAD7CD; color: #000;")
-            print(nombre)
-            
+                # Mostrar mensaje en la interfaz
+                self.label_texto1.setText(f"¡En hora buena {nombre} {apellido}! \n\nSu asistencia fue registrada.")
+                self.label_texto1.setStyleSheet("background-color: #DAD7CD; color: #000;")
+                print(nombre)
+            else:
+                print(f"No se encontró información del usuario con DNI {dni}.")
+                return
             # Paso 1: Obtener la última fecha registrada para el usuario
             cursor.execute("SELECT p.fecha FROM pago p WHERE p.id_usuario = %s ORDER BY p.fecha DESC LIMIT 1", (dni,))
             ultima_fecha = cursor.fetchone()
-            ultima_fecha = ultima_fecha[0]
-            print(ultima_fecha)
-
-            # Paso 2: Calcular la diferencia de días entre la fecha actual y la última fecha registrada
-            fecha_actual = datetime.now().date()
-            diferencia_dias = (ultima_fecha + timedelta(days=30)) - fecha_actual
-            dias = diferencia_dias.days
-            print(dias)
             
-            texto_cuota = f"\nÚltimo pago: {ultima_fecha}. \n\nPróximo pago en {abs(dias)} días.\n"
-            texto_vencido = f"!Atención! Cuota vencida hace {abs(dias)} días. \n\nRegularice su cuenta mensual."
-              
-            if 31 > dias > 14:
-                self.label_texto2.setText(texto_cuota)
-                self.label_texto2.setStyleSheet("background-color: #7FFF00; color: #000;")
-                self.timer.start(5000)
-            elif 14 >= dias > 4:
-                self.label_texto2.setText(texto_cuota)
-                self.label_texto2.setStyleSheet("background-color: #FFFF00;color: #000;")
-                self.timer.start(5000)
-            elif 4 >= dias >= 0:
-                self.label_texto2.setText(texto_cuota)
-                self.label_texto2.setStyleSheet("background-color: #FF8000; color: #000;")               
+            if ultima_fecha:
+                ultima_fecha = ultima_fecha[0]
+                print(ultima_fecha)
+
+                # Paso 2: Calcular la diferencia de días entre la fecha actual y la última fecha registrada
+                fecha_actual = datetime.now().date()
+                diferencia_dias = (ultima_fecha + timedelta(days=30)) - fecha_actual
+                dias = diferencia_dias.days
+                print(dias)
+                
+                texto_cuota = f"\nÚltimo pago: {ultima_fecha}. \n\nPróximo pago en {abs(dias)} días.\n"
+                texto_vencido = f"!Atención! Cuota vencida hace {abs(dias)} días. \n\nRegularice su cuenta mensual."
+                
+                if 31 > dias > 14:
+                    self.label_texto2.setText(texto_cuota)
+                    self.label_texto2.setStyleSheet("background-color: #7FFF00; color: #000;")
+                    # self.timer.start(5000)
+                elif 14 >= dias > 4:
+                    self.label_texto2.setText(texto_cuota)
+                    self.label_texto2.setStyleSheet("background-color: #FFFF00;color: #000;")
+                    # self.timer.start(5000)
+                elif 4 >= dias >= 0:
+                    self.label_texto2.setText(texto_cuota)
+                    self.label_texto2.setStyleSheet("background-color: #FF8000; color: #000;")               
+                    # self.timer.start(5000)
+                else:
+                    self.label_texto2.setText(texto_vencido)
+                    self.label_texto2.setStyleSheet("background-color: #FF0000; color: #fff;")
                 self.timer.start(5000)
             else:
-                self.label_texto2.setText(texto_vencido)
-                self.label_texto2.setStyleSheet("background-color: #FF0000; color: #fff;")
-                self.timer.start(5000)
-            
+                print(f"No se pudo obtener la última fecha de pago para el usuario con DNI {dni}.")
+
             self.numero_documento.clear()
 
         except Error as e:
             errorConsulta("Registro de asistencia", f"Error al registrar la asistencia: {str(e)}")
             print(e)
         finally:
-            cursor.close()
-            conn.close()
+            if cursor:
+                cursor.close()
+            if conn:
+                conn.close()
          

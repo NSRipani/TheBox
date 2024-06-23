@@ -15,13 +15,13 @@ from mysql.connector import Error
 # Librerías de PyQt6
 from PyQt6.QtWidgets import (QLabel,QFileDialog, QCompleter, QAbstractScrollArea, QHeaderView, QGridLayout, QHBoxLayout, QDateEdit, 
                              QMessageBox, QTableWidget, QAbstractItemView, QTableWidgetItem, QPushButton, QLineEdit, QStatusBar, QWidget,
-                             QVBoxLayout, QGroupBox, QMainWindow, QFrame, QTabWidget, QComboBox)
+                             QVBoxLayout, QGroupBox, QMainWindow, QFrame, QTabWidget, QApplication)
 from PyQt6.QtGui import QIcon, QKeySequence, QAction, QPixmap, QPalette, QColor
 from PyQt6.QtCore import *
 
 # Módulo de para las cajas de mensajes
-from modulos.mensajes import (mensaje_ingreso_datos, errorConsulta, inicio, aviso_descargaExitosa, aviso_Advertencia_De_excel, 
-                              resultado_empleado, aviso_resultado, mensaje_horas_empleados, aviso_resultado_asistencias)
+from modulos.mensajes import (mensaje_ingreso_datos, errorConsulta, inicio, resultado_empleado, aviso_resultado, 
+                              mensaje_horas_empleados, aviso_resultado_asistencias)
 # from utilidades.completar_combobox import actualizar_combobox_consulta4
 # actualizar_combobox_disc,completar_nombre_empleado,actualizar_combobox_consulta1_usuario
 # Validaciones y demas funciones 
@@ -65,8 +65,8 @@ class VentanaPrincipal(QMainWindow):
         #BARRA INFERIOR DE ESTADO
         self.status_Bar = QStatusBar()
         self.status_Bar.setStyleSheet(style.estilo_statusbar)
-        self.setStatusBar(self.status_Bar)
         self.status_Bar.showMessage("by: Nicolas S. Ripani - 2024")
+        self.setStatusBar(self.status_Bar)
         
         # FUNCION PARA EL "MENUBAR"
         self.acciones()
@@ -1323,7 +1323,7 @@ class VentanaPrincipal(QMainWindow):
         self.id_horas_empleado.setCompleter(lista_empleado)
         
         # Agregar evento de selección de elemento del completer
-        lista_empleado.activated.connect(self.guardar_id_empleado)#[str]
+        lista_empleado.activated[str].connect(self.guardar_id_empleado)#[str]
         
         cursor.close()
         conn.close()
@@ -1640,30 +1640,18 @@ class VentanaPrincipal(QMainWindow):
         
         # CREA UN LAYOUT HORIZONTAL
         botones_resumen = QHBoxLayout()
-        botones_resumen.setAlignment(Qt.AlignmentFlag.AlignRight)
-        buttonREG = QPushButton('REGISTRAR', grupo_resumen)
-        buttonREG.setFixedWidth(200)
-        buttonREG.setCursor(Qt.CursorShape.PointingHandCursor)
-        buttonREG.setStyleSheet(style.estilo_boton)
-        buttonACT = QPushButton('ACTUALIZAR', grupo_resumen)
-        buttonACT.setFixedWidth(200)
-        buttonACT.setCursor(Qt.CursorShape.PointingHandCursor)
-        buttonACT.setStyleSheet(style.estilo_boton)
-        botones_resumen.addWidget(buttonREG)
-        botones_resumen.addWidget(buttonACT)
+        # botones_resumen.setAlignment(Qt.AlignmentFlag.AlignRight)
+        
+        
+        # botones_resumen.addWidget(buttonREG)
+        # botones_resumen.addWidget(buttonACT)
         
         botones_resumen2 = QHBoxLayout()
         botones_resumen2.setAlignment(Qt.AlignmentFlag.AlignRight)
-        buttonPERIODO = QPushButton('VISUALIZAR PERIODO', grupo_resumen)
-        buttonPERIODO.setFixedWidth(200)
-        buttonPERIODO.setCursor(Qt.CursorShape.PointingHandCursor)
-        buttonPERIODO.setStyleSheet(style.estilo_boton)
-        button_eliminar = QPushButton('ELIMINAR', grupo_resumen)
-        button_eliminar.setFixedWidth(200)
-        button_eliminar.setCursor(Qt.CursorShape.PointingHandCursor)
-        button_eliminar.setStyleSheet(style.estilo_boton)
-        botones_resumen2.addWidget(buttonPERIODO)
-        botones_resumen2.addWidget(button_eliminar)
+        
+        
+        # botones_resumen2.addWidget(buttonPERIODO)
+        # botones_resumen2.addWidget(button_eliminar)
         
         # CREA UN LAYOUT HORIZONTAL
         # botones_resumen3 = QHBoxLayout()
@@ -1685,10 +1673,6 @@ class VentanaPrincipal(QMainWindow):
         vertical.addLayout(h3)
         
         # CONECCION A LAS FUNCIONES
-        buttonREG.clicked.connect(self.registrar_datos)
-        buttonACT.clicked.connect(self.actualizar_datos)
-        button_eliminar.clicked.connect(self.eliminar_datos)
-        buttonPERIODO.clicked.connect(self.visualizacion_datos)
         
         # AGREDA LOS LAYOUT VERTICAL A LA GRILLA
         grid_resumen.addLayout(vertical,0,0,1,5)
@@ -1698,6 +1682,30 @@ class VentanaPrincipal(QMainWindow):
         self.tablaGastos.setCursor(Qt.CursorShape.PointingHandCursor)
         self.tablaGastos.setStyleSheet(style.esttabla)
         self.tablaGastos.clicked.connect(self.selecionarTabla)
+        
+        buttonREG = QPushButton('REGISTRAR', grupo_resumen)
+        buttonREG.setFixedWidth(200)
+        buttonREG.setCursor(Qt.CursorShape.PointingHandCursor)
+        buttonREG.setStyleSheet(style.estilo_boton)
+        buttonREG.clicked.connect(self.registrar_datos)
+        
+        buttonACT = QPushButton('ACTUALIZAR', grupo_resumen)
+        buttonACT.setFixedWidth(200)
+        buttonACT.setCursor(Qt.CursorShape.PointingHandCursor)
+        buttonACT.setStyleSheet(style.estilo_boton)
+        buttonACT.clicked.connect(self.actualizar_datos)
+        
+        buttonPERIODO = QPushButton('VISUALIZAR PERIODO', grupo_resumen)
+        buttonPERIODO.setFixedWidth(200)
+        buttonPERIODO.setCursor(Qt.CursorShape.PointingHandCursor)
+        buttonPERIODO.setStyleSheet(style.estilo_boton)
+        buttonPERIODO.clicked.connect(self.visualizacion_datos)
+        
+        button_eliminar = QPushButton('ELIMINAR', grupo_resumen)
+        button_eliminar.setFixedWidth(200)
+        button_eliminar.setCursor(Qt.CursorShape.PointingHandCursor)
+        button_eliminar.setStyleSheet(style.estilo_boton)
+        button_eliminar.clicked.connect(self.eliminar_datos)
         
         cuenta = QPushButton('CARGAR CUENTA', grupo_resumen)
         cuenta.setFixedWidth(200)
@@ -1722,11 +1730,15 @@ class VentanaPrincipal(QMainWindow):
         
         costado = QVBoxLayout()
         costado.setAlignment(Qt.AlignmentFlag.AlignTop)
-        # v2.addSpacing(20)
-        # v2.addWidget(self.empleado)
-        # v2.addSpacing(10)
-        # v2.addWidget(limpiarTABLA)
         costado.addSpacing(10)
+        costado.addWidget(buttonREG)
+        costado.addSpacing(10)
+        costado.addWidget(buttonPERIODO)
+        costado.addSpacing(10)
+        costado.addWidget(buttonACT)
+        costado.addSpacing(10)
+        costado.addWidget(button_eliminar)
+        costado.addSpacing(30)
         costado.addWidget(cuenta)
         costado.addSpacing(10)
         costado.addWidget(boton_limpiarTabla)
@@ -1775,16 +1787,16 @@ class VentanaPrincipal(QMainWindow):
         self.exit_action.setStatusTip('Salir de la aplicación')
         self.exit_action.triggered.connect(self.close)
         
-        self.change_password_action = QAction('&Cambiar contraseña', self)
-        self.change_password_action.setShortcut(QKeySequence('Ctrl+S'))
-        self.change_password_action.setStatusTip('Cambiar la contraseña de usuario')
-        # self.change_password_action.triggered.connect(self.cambiar_contrasena)
+        # self.change_password_action = QAction('&Cambiar contraseña', self)
+        # self.change_password_action.setShortcut(QKeySequence('Ctrl+S'))
+        # self.change_password_action.setStatusTip('Cambiar la contraseña de usuario')
+        # # self.change_password_action.triggered.connect(self.cambiar_contrasena)
         
         menubar = self.menuBar()
         menubar.setStyleSheet(style.estilo_menubar)
         file_menu = menubar.addMenu('&Archivo')
         file_menu.addAction(self.exit_action)
-        file_menu.addAction(self.change_password_action)
+        # file_menu.addAction(self.change_password_action)
     
         
     # FUNCIONES PARA VINCULAR EL QTabWidget
@@ -2053,7 +2065,7 @@ class VentanaPrincipal(QMainWindow):
         celu2 = self.input_celular2.text()
         fecha = self.input_date2.date().toPyDate()
         
-        patrones_validos = ["hombre", "mujer"]
+        patrones_validos = ["hombre", "mujer","Hombre", "Mujer"]
         if sexo2 not in patrones_validos:
             mensaje_ingreso_datos("Registro de cliente","Debe elegir un sexo entre 'Hombre' o 'Mujer'.")
             return
@@ -2454,7 +2466,7 @@ class VentanaPrincipal(QMainWindow):
                 self.tablePagos.removeRow(selectedRow)
                 self.idUser.clear()
                 self.idDis.clear()
-                self.input_tipoDePago.setCurrentIndex(0)
+                self.input_tipoDePago.clear(0)
                 self.input_fechaDePago.setDate(QDate.currentDate())
             
                 self.tablePagos.clearSelection()  # Deseleccionar la fila eliminada 
@@ -2564,7 +2576,7 @@ class VentanaPrincipal(QMainWindow):
     def limpiar_tabla_balance(self):
         limpiar(self)
             
-    def consultar_TotalDisciplina(self): # buscar y MOSTRAR DISCIPLINAS CON SU COSTO TOTAL entre fechas de pago ------ LISTO!!!!
+    def consultar_TotalDisciplina(self):
         if not self.view_fechaDePago.date().toString("yyyy-MM-dd"):
             mensaje_ingreso_datos("Registro de alumnos","Debe establcer un rango de inicio y fin de fechas de pago.")
             return
@@ -2739,7 +2751,7 @@ class VentanaPrincipal(QMainWindow):
             if nombre == texto:
                 # Guardar el id_empleado en una variable o tabla, según tu necesidad
                 self.id_empleado_seleccionado = id_empleado
-                print(type(self.id_empleado_seleccionado))
+                print(self.id_empleado_seleccionado)
                 break
         # else:
         #     self.id_empleado_seleccionado = None
@@ -2804,14 +2816,17 @@ class VentanaPrincipal(QMainWindow):
             return
         
         patron_mun = re.compile(r'^[0-9]+$')
-        if not (horas_h.isdigit() or len(horas_h) == "" or 0 < len(horas_h) >= 2 and patron_mun.match(horas_h)):
-            mensaje_ingreso_datos("Registro de horas","Las 'Horas diaria' debe ser numérico.")
+        if not (horas_h.isnumeric() and patron_mun.match(horas_h)):
+            mensaje_ingreso_datos("Registro de empleado","Las 'Horas diarias' debe ser numérico.")
             return
         horas_h = int(horas_h)
           
         try:
             db = conectar_base_de_datos()
             cursor = db.cursor()
+            print(id_empleado_seleccionado)
+            print(horas_h)
+            
             cursor.execute("UPDATE hora SET id_empleado = %s, horas_diaria = %s, fecha = %s WHERE id_hora = %s", (id_empleado_seleccionado,horas_h,fecha_h,id_ref))
             db.commit() 
             
@@ -2925,7 +2940,7 @@ class VentanaPrincipal(QMainWindow):
         try:
             db = conectar_base_de_datos()
             cursor = db.cursor()
-            cursor.execute(f"SELECT h.id_empleado, e.nombre, e.apellido, h.horas_diaria, h.fecha FROM hora AS h INNER JOIN registro_empleado AS e ON h.id_empleado = e.id_empleado AND h.fecha BETWEEN '{principio}' AND '{final}' ORDER BY e.nombre, h.fecha")
+            cursor.execute(f"SELECT h.id_empleado, e.nombre, e.apellido, h.horas_diaria, h.fecha FROM hora AS h INNER JOIN registro_empleado AS e ON h.id_empleado = e.id_empleado AND h.fecha BETWEEN '{principio}' AND '{final}' ORDER BY h.id_empleado, h.fecha")
             busqueda = cursor.fetchall()
                         
             if len(busqueda) > 0:
@@ -2994,7 +3009,7 @@ class VentanaPrincipal(QMainWindow):
         deber = self.debe.text()
         haberes = self.haber.text()
         
-        validadciones(self,re,mensaje_ingreso_datos,date,descripcion,descripcion_h,deber,haberes)
+        validadciones(date,descripcion,descripcion_h,deber,haberes)
         
         try:
             db = conectar_base_de_datos()
@@ -3084,3 +3099,4 @@ class VentanaPrincipal(QMainWindow):
       
     def tabla_resumen(self):
         tabla_libroDiario_CONTABILIDAD(self,Workbook,Font,PatternFill,Border,Side,numbers,QFileDialog)
+        

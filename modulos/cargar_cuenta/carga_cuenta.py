@@ -330,16 +330,16 @@ class CuentaContable(QDialog):
     ### ////////////////////////// PARA CUENTA ///////////////////////////////////////
     def guardar_cuenta(self):       
         nomTipo = self.n_cuenta.text().capitalize()
-        tipo = self.t_cuenta.currentText()
+        tipo = self.t_cuenta.text()
         descrip = self.descripcion.text().capitalize()
         categor = self.categoria.text().capitalize()
         
         patron = re.compile(r'^[a-zA-ZáéíóúÁÉÍÓÚüÜ\'\s]+$') 
         if not isinstance(nomTipo, str) or nomTipo.isspace() or not patron.match(nomTipo): 
-            mensaje_ingreso_datos("Registro de cuenta","El 'nombre' debe contener:\n\n- Letras y/o espacios entre nombres(si tiene mas de dos).")
+            mensaje_ingreso_datos("Registro de cuenta","El 'nombre' debe corresponder a una cuenta contable")
             return
         if not isinstance(tipo, str) or not tipo.isalpha():
-            mensaje_ingreso_datos("Registro de cuenta","El tipo debe contener: \n- Las opciones mostradas.")
+            mensaje_ingreso_datos("Registro de cuenta","El tipo debe contener: \n- Activo.\n- Pasivo.\n- Ingreso.\n- Engreso.\n- Patrimonio.")
             return
         if not isinstance(descrip, str) or descrip.isspace() or not patron.match(descrip): 
             mensaje_ingreso_datos("Registro de cuenta","La descripción debe contener: \n- Solo texto.")
@@ -357,7 +357,7 @@ class CuentaContable(QDialog):
             if cursor:
                 mensaje_ingreso_datos("Registro de cuenta","Registro cargado")
                 self.n_cuenta.clear()
-                self.t_cuenta.setCurrentIndex(0)
+                self.t_cuenta.clear(0)
                 self.descripcion.clear()
                 self.categoria.clear()
                 self.tablacuenta.clearSelection() # Deselecciona la fila
@@ -412,7 +412,7 @@ class CuentaContable(QDialog):
         
         id_cuenta = int(self.tablacuenta.item(self.tablacuenta.currentRow(), 0).text())
         nomTipo = self.n_cuenta.text().capitalize()
-        tipo = self.t_cuenta.currentText()
+        tipo = self.t_cuenta.text()
         descrip = self.descripcion.text().capitalize()
         categor = self.categoria.text().capitalize()
         
@@ -439,7 +439,7 @@ class CuentaContable(QDialog):
             if cursor:
                 mensaje_ingreso_datos("Registro de cuenta","Registro actualizado")
                 self.n_cuenta.clear()
-                self.t_cuenta.setCurrentIndex(0)
+                self.t_cuenta.clear(0)
                 self.descripcion.clear()
                 self.categoria.clear()
                 self.tablacuenta.clearSelection() # Deselecciona la fila
@@ -471,7 +471,7 @@ class CuentaContable(QDialog):
                 mensaje_ingreso_datos("Registro de cuenta","Registro eliminado")
                 self.tablacuenta.removeRow(selectedRow)
                 self.n_cuenta.clear()
-                self.t_cuenta.setCurrentIndex(0)
+                self.t_cuenta.clear(0)
                 self.descripcion.clear()
                 self.categoria.clear()
                 self.tablacuenta.clearSelection() # Deselecciona la fila

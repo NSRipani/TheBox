@@ -59,11 +59,18 @@ class Empleado(QDialog):
         self.sex = QLineEdit()
         self.sex.setStyleSheet(style.estilo_lineedit)
         self.sex.setPlaceholderText("Hombre / Mujer")
+        
+        patrones_validos = ["hombre", "mujer"]
+        completer = QCompleter(patrones_validos)
+        completer.popup().setStyleSheet(style.completer)
+        self.sex.setCompleter(completer)
+        
         self.edad = QLineEdit()
         self.edad.setMaxLength(2)
         self.edad.setStyleSheet(style.estilo_lineedit)
         self.dni = QLineEdit()
         self.dni.setMaxLength(8)
+        self.dni.setPlaceholderText("Sin punto")
         self.dni.setStyleSheet(style.estilo_lineedit)
         self.celular = QLineEdit()
         self.celular.setMaxLength(10)
@@ -175,13 +182,20 @@ class Empleado(QDialog):
         
     def guardar_empleado(self):
                 
-        nom_emp = self.nombre.text().capitalize().title()
-        apell_emp = self.apellido.text().capitalize().title()
+        nom_emp = self.nombre.text().title()
+        apell_emp = self.apellido.text().title()
         sex_emp = self.sex.text()
         edad_emp = self.edad.text()
         dni_emp = self.dni.text()
         cel = self.celular.text()
         fecha = self.fecha.date().toPyDate()
+        
+        patrones_validos = ["hombre", "mujer","Hombre", "Mujer"]
+        if sex_emp not in patrones_validos:
+            mensaje_ingreso_datos("Registro de empleado","Debe elegir un sexo entre 'hombre' o 'mujer'.")
+            return
+        elif sex_emp in patrones_validos:
+            sex_emp = sex_emp.capitalize()
         
         validacion = variables(nom_emp,apell_emp,sex_emp,edad_emp,dni_emp,cel)
         if validacion != "Validación exitosa.":
@@ -236,15 +250,26 @@ class Empleado(QDialog):
             return
         
         id_empl = int(self.tablaEmp.item(self.tablaEmp.currentRow(), 0).text())
-        nom_emp = self.nombre.text().capitalize().title()
-        apell_emp = self.apellido.text().capitalize().title()
+        nom_emp = self.nombre.text().title()
+        apell_emp = self.apellido.text().title()
         sex_emp = self.sex.text()
         edad_emp = self.edad.text()
         dni_emp = self.dni.text()
         cel = self.celular.text()
         fecha = self.fecha.date().toPyDate()
         
-        variables(nom_emp,apell_emp,sex_emp,edad_emp,dni_emp,cel)
+        patrones_validos = ["hombre", "mujer","Hombre", "Mujer"]
+        if sex_emp not in patrones_validos:
+            mensaje_ingreso_datos("Registro de empleado","Debe elegir un sexo entre 'hombre' o 'mujer'.")
+            return
+        elif sex_emp in patrones_validos:
+            sex_emp = sex_emp.capitalize()
+        
+        # variables(nom_emp,apell_emp,sex_emp,edad_emp,dni_emp,cel)
+        validacion = variables(nom_emp,apell_emp,sex_emp,edad_emp,dni_emp,cel)
+        if validacion != "Validación exitosa.":
+            mensaje_ingreso_datos("Error de validación", "Verifique los datos por favor")
+            return
                 
         empleado_Actualizar = inicio("Busqueda de empleado","¿Seguro que desea actulizar?")
         if empleado_Actualizar == QMessageBox.StandardButton.Yes:   
@@ -308,5 +333,3 @@ class Empleado(QDialog):
             
     def planilla_excel(self):
         empleado_EXCEL(self,Workbook,Font,PatternFill,Border,Side,numbers,QFileDialog)
-    # def limpiar_tabla_empleados(self):
-    #     clearTabla(self)

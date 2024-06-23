@@ -75,6 +75,9 @@ def autoCompletado(self,QDate,mensaje_ingreso_datos):
     self.horas_tra.setText(str(horas_h))
     self.fecha_tra.setDate(fecha_h)
 
+    # Asumiendo que 'emple' es el nombre del empleado, guarda su ID
+    self.guardar_id_empleado(emple)
+
     self.tablaHoras.clearSelection() # Deselecciona la fila
 
 def tabla_HorasXEmpleado(self,cursor,busqueda,QHeaderView,QTableWidget,QAbstractItemView,QTableWidgetItem,Qt,QDate):
