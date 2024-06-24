@@ -6,14 +6,15 @@ def validadciones(date,descripcion,descripcion_h,deber,haberes):
     if not date:
         mensaje_ingreso_datos("Registro de Ingresos-Egresos","Debe establcer un rango de inicio y fin de fechas.")
         return
-    
-    if not descripcion.isalpha() and descripcion != '':
-        mensaje_ingreso_datos("Registro de Ingresos-Egresos","El concepto en el 'Debe' debe ser solo texto o puede estar vacio.")
+    patron_texto_con_espacio = re.compile(r'^[a-zA-Z\s]+$')
+    if not descripcion.isalpha() and descripcion_h != '' and patron_texto_con_espacio.match(descripcion):
+        mensaje_ingreso_datos("Registro de Ingresos-Egresos", "El concepto en el 'Debe' debe ser solo texto o puede estar vacio.")
         return
     
-    if not descripcion_h.isalpha() and descripcion_h != '':
-        mensaje_ingreso_datos("Registro de Ingresos-Egresos","El concepto en el 'Haber' debe ser")
-            
+    if not descripcion_h.isalpha() and descripcion_h != '' and patron_texto_con_espacio.match(descripcion_h):
+        mensaje_ingreso_datos("Registro de Ingresos-Egresos", "El concepto en el 'Haber' debe ser solo texto o puede estar vacio.")
+        return
+    
     patron_mun = re.compile(r'^[0-9]+$')
     if not (deber.isnumeric() and patron_mun.match(deber)):
         mensaje_ingreso_datos("Registro de Ingresos-Egresos","El debe debe ser numérico")
@@ -22,6 +23,8 @@ def validadciones(date,descripcion,descripcion_h,deber,haberes):
     if not (haberes.isnumeric() and patron_mun.match(haberes)):
         mensaje_ingreso_datos("Registro de Ingresos-Egresos","El haber debe ser numérico")
         return
+    
+    return "Validación exitosa."
     
 def limpiarCampos(self,QDate):
     self.fecha_gastos.setDate(QDate.currentDate())
@@ -39,7 +42,9 @@ def selccionarTabla(self,mensaje_ingreso_datos,QDate):
     # Verifica si la fila seleccionada es la última fila de la tabla
     if rows == self.tablaGastos.rowCount() - 1:
         mensaje_ingreso_datos("Registro de Ingresos-Egresos","La última fila no debe ser precionada")
+        self.tablaGastos.clearSelection() # Deselecciona la fila
         return
+    
     
     # id_concepto = int(self.tablaGastos.item(rows,0).text())
     fecha1 = self.tablaGastos.item(rows,1).text()

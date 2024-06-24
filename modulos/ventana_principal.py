@@ -1311,7 +1311,7 @@ class VentanaPrincipal(QMainWindow):
         cursor = conn.cursor()
 
         # Consulta para obtener los datos de una columna específica
-        cursor.execute("SELECT id_empleado, nombre, apellido FROM registro_empleado ORDER BY nombre ASC")
+        cursor.execute("SELECT id_empleado, nombre FROM registro_empleado ORDER BY nombre ASC")
         datos = cursor.fetchall()
         self.listas = [(str(item[1]), item[0]) for item in datos]  # Crear una lista de tuplas (nombre, id_empleado)
         print(f"{self.listas[1]} ::+ {type(self.listas[1][1])}")
@@ -1671,9 +1671,7 @@ class VentanaPrincipal(QMainWindow):
         vertical.addLayout(h1)
         vertical.addLayout(h2)
         vertical.addLayout(h3)
-        
-        # CONECCION A LAS FUNCIONES
-        
+                
         # AGREDA LOS LAYOUT VERTICAL A LA GRILLA
         grid_resumen.addLayout(vertical,0,0,1,5)
         
@@ -2253,7 +2251,7 @@ class VentanaPrincipal(QMainWindow):
         try:
             db = conectar_base_de_datos()
             cursor = db.cursor()
-            cursor.execute("UPDATE disciplina SET nombre=%s, precio=%s WHERE id_disciplina=%s", (actividad, precio, id_dis),)
+            cursor.execute("UPDATE disciplina SET nombre=%s, precio=%s WHERE id_disciplina=%s", (actividad, precio, id_dis))
             db.commit()
             
             if cursor:
@@ -2408,7 +2406,7 @@ class VentanaPrincipal(QMainWindow):
         print(id_activ)
         tipo = self.input_tipoDePago.text()
         date = self.input_fechaDePago.date().toPyDate()
-        monto = self.label_monto.text().split(": ")[1] 
+        # monto = self.label_monto.text().split(": ")[1] 
             
         # Verificar si el id_alumno está en las sugerencias
         if id_alumno not in self.sugerencias_set:
@@ -2430,7 +2428,7 @@ class VentanaPrincipal(QMainWindow):
         try:
             db = conectar_base_de_datos()
             cursor = db.cursor()
-            cursor.execute(f"UPDATE pago SET id_usuario='{id_alumno}', id_disciplina='{id_activ}', modalidad='{tipo}', fecha='{date}', precio='{monto}' WHERE id_pago='{idpago}'")
+            cursor.execute(f"UPDATE pago SET id_usuario='{id_alumno}', id_disciplina='{id_activ}', modalidad='{tipo}', fecha='{date}' WHERE id_pago='{idpago}'")#
             db.commit()
         
             if cursor:
@@ -2758,7 +2756,6 @@ class VentanaPrincipal(QMainWindow):
             
     def guardar_horas(self):
         id_empleado_seleccionado = self.id_empleado_seleccionado  # Obtener el id_empleado seleccionado
-        print(id_empleado_seleccionado)
         horas_horas = self.horas_tra.text()
         fecha_horas = self.fecha_tra.date().toPyDate()
         
@@ -2776,6 +2773,14 @@ class VentanaPrincipal(QMainWindow):
         try:
             db = conectar_base_de_datos()
             cursor = db.cursor()
+            
+            # Verificar si ya existe un registro con los mismos id_usuario, id_disciplina y fecha
+            cursor.execute("SELECT COUNT(*) FROM hora WHERE id_empleado = %s AND horas_diaria = %s AND fecha = %s", (id_empleado_seleccionado, horas_horas, fecha_horas))
+            result = cursor.fetchone()
+            if result[0] > 0:
+                mensaje_ingreso_datos("Registro de empleados", "Ya existe un registro con los mismos datos")
+                return
+            
             cursor.execute("INSERT INTO hora (id_empleado,horas_diaria,fecha) VALUES (%s,%s,%s)", (id_empleado_seleccionado,horas_horas,fecha_horas))
             print(id_empleado_seleccionado,horas_horas,fecha_horas)
             db.commit()
@@ -2793,59 +2798,78 @@ class VentanaPrincipal(QMainWindow):
         except Error as ex:
             errorConsulta("Registro de empleado",f"Error en la consulta: {str(ex)}")
             print("Error executing the query", ex)
-            
-    def autocompleto_de_datos_horas(self):
-        autoCompletado(self,QDate,mensaje_ingreso_datos)
-    
-    def actualizar_horas(self):
-        # Verificar si se ha seleccionado una fila
-        if not self.tablaHoras.currentItem():
-            mensaje_ingreso_datos("Registro de horas","Debe seleccionar el registro de la tabla para actualizar")
-            return
+                
+    def limpiar_tabla_horas(self):
+        clearTabla(self) 
         
-        id_ref = self.tablaHoras.item(self.tablaHoras.currentRow(), 0).text()
-        id_ref = int(id_ref)
+    def horas_empleado(self):   
         id_empleado_seleccionado = self.id_empleado_seleccionado  # Obtener el id_empleado seleccionado
-        print(id_empleado_seleccionado)
-        horas_h = self.horas_tra.text()
-        fecha_h = self.fecha_tra.date().toPyDate()
             
-        # Verificar si el id_alumno está en las sugerencias
-        if id_empleado_seleccionado is None:
-            mensaje_ingreso_datos("Registro de pago", "Debe elegir un Nombre de empleado de la lista de sugerencias")
+        principio = self.periodo.date().toString("yyyy-MM-dd")
+        if not self.periodo.date().toString("yyyy-MM-dd"):
+            mensaje_ingreso_datos("Calculo de horas diarias","Debe establcer un rango de inicio y fin de fechas.")
             return
         
-        patron_mun = re.compile(r'^[0-9]+$')
-        if not (horas_h.isnumeric() and patron_mun.match(horas_h)):
-            mensaje_ingreso_datos("Registro de empleado","Las 'Horas diarias' debe ser numérico.")
+        final = self.fin_tra.date().toString("yyyy-MM-dd")
+        if final <= principio:
+            mensaje_ingreso_datos("Calculo de horas diarias","La fecha final debe ser posterior a la fecha de inicio.")
             return
-        horas_h = int(horas_h)
-          
+        
         try:
             db = conectar_base_de_datos()
             cursor = db.cursor()
-            print(id_empleado_seleccionado)
-            print(horas_h)
-            
-            cursor.execute("UPDATE hora SET id_empleado = %s, horas_diaria = %s, fecha = %s WHERE id_hora = %s", (id_empleado_seleccionado,horas_h,fecha_h,id_ref))
-            db.commit() 
-            
-            if cursor:
-                mensaje_ingreso_datos("Registro de horas","Registro actualizado")
-                self.id_horas_empleado.clear()
-                self.horas_tra.clear()
-                self.fecha_tra.setDate(QDate.currentDate())
-            else:
-                mensaje_ingreso_datos("Registro de horas","Registro no actualizado")
+            cursor.execute(f"SELECT h.id_hora AS REGISTRO, h.id_empleado, e.nombre, e.apellido, h.horas_diaria, h.fecha FROM hora AS h INNER JOIN registro_empleado AS e ON h.id_empleado = e.id_empleado WHERE h.id_empleado = '{id_empleado_seleccionado}' AND h.fecha BETWEEN '{principio}' AND '{final}' ORDER BY e.nombre, h.fecha")
+            busqueda = cursor.fetchall()
+                        
+            if len(busqueda) > 0:
+                resultado_empleado("Calculo de horas diarias",f"Se encontraron {len(busqueda)} coincidencias.")
+                self.periodo.setDate(QDate.currentDate())
+                self.fin_tra.setDate(QDate.currentDate())
+                tabla_HorasXEmpleado(self,cursor,busqueda,QHeaderView,QTableWidget,QAbstractItemView,QTableWidgetItem,Qt,QDate)            
+            else:    
+                resultado_empleado("Calculo de horas diarias",f"Se encontraron {len(busqueda)} coincidencias.")
+                self.periodo.setDate(QDate.currentDate())
+                self.fin_tra.setDate(QDate.currentDate())
                 
             cursor.close()
-            db.close() 
-            
-            self.tablaHoras.clearSelection() # Deselecciona la fila
-            
+            db.close()
         except Error as ex:
-            errorConsulta("Registro de horas",f"Error en la consulta: {str(ex)}")
+            errorConsulta("Registro de empleado",f"Error en la consulta: {str(ex)}")
             print("Error executing the query", ex)
+        
+    def horas_empleado_totales(self):
+        principio = self.periodo.date().toString("yyyy-MM-dd")
+        if not self.periodo.date().toString("yyyy-MM-dd"):
+            mensaje_horas_empleados("Calculo de horas diarias","Debe establcer un rango de inicio y fin de fechas.")
+            return
+        
+        final = self.fin_tra.date().toString("yyyy-MM-dd")
+        if final <= principio:
+            mensaje_horas_empleados("Calculo de horas diarias","La fecha final debe ser posterior a la fecha de inicio.")
+            return
+        try:
+            db = conectar_base_de_datos()
+            cursor = db.cursor()
+            cursor.execute(f"SELECT h.id_hora AS REGISTRO, h.id_empleado, e.nombre, e.apellido, h.horas_diaria, h.fecha FROM hora AS h INNER JOIN registro_empleado AS e ON h.id_empleado = e.id_empleado AND h.fecha BETWEEN '{principio}' AND '{final}' ORDER BY h.id_empleado, h.fecha")
+            busqueda = cursor.fetchall()
+                        
+            if len(busqueda) > 0:
+                resultado_empleado("Calculo de horas diarias",f"Se encontraron {len(busqueda)} coincidencias.")
+                self.periodo.setDate(QDate.currentDate())
+                self.fin_tra.setDate(QDate.currentDate())
+                tabla_HorasTotales(self,cursor,busqueda,QHeaderView,QTableWidget,QAbstractItemView,QTableWidgetItem,Qt,QDate)
+            else:
+                resultado_empleado("Calculo de horas diarias",f"Se encontraron {len(busqueda)} coincidencias.")
+                self.periodo.setDate(QDate.currentDate())
+                self.fin_tra.setDate(QDate.currentDate())
+                
+            cursor.close()
+            db.close()
+        except Error as ex:
+            errorConsulta("Registro de empleado",f"Error en la consulta: {str(ex)}")
+            
+    def autocompleto_de_datos_horas(self):
+        autoCompletado(self,QDate,mensaje_ingreso_datos)
             
     def eliminar_horas(self):
         # Primero corroborar la seleccion de la fila
@@ -2888,94 +2912,83 @@ class VentanaPrincipal(QMainWindow):
             print("Error executing the query", ex)
         cursor.close()
         db.close()
-    
-    def limpiar_tabla_horas(self):
-        clearTabla(self) 
         
-    def horas_empleado(self):   
-        id_empleado_seleccionado = self.id_empleado_seleccionado  # Obtener el id_empleado seleccionado
+    def actualizar_horas(self):
+        # Verificar si se ha seleccionado una fila
+        if not self.tablaHoras.currentItem():
+            mensaje_ingreso_datos("Registro de horas","Debe seleccionar el registro de la tabla para actualizar")
+            return
+        
+        id_ref = self.tablaHoras.item(self.tablaHoras.currentRow(), 0).text()
+        id_ref = int(id_ref)
+        id_empleado_seleccionado = self.id_empleado_seleccionado
+        id_empleado_seleccionado = int(id_empleado_seleccionado) # Obtener el id_empleado seleccionado
+        horas_h = self.horas_tra.text()
+        fecha_h = self.fecha_tra.date().toPyDate()
             
-        principio = self.periodo.date().toString("yyyy-MM-dd")
-        if not self.periodo.date().toString("yyyy-MM-dd"):
-            mensaje_ingreso_datos("Calculo de horas diarias","Debe establcer un rango de inicio y fin de fechas.")
+        # Verificar si el id_alumno está en las sugerencias
+        if id_empleado_seleccionado is None:
+            mensaje_ingreso_datos("Registro de pago", "Debe elegir un Nombre de empleado de la lista de sugerencias")
             return
         
-        final = self.fin_tra.date().toString("yyyy-MM-dd")
-        if final <= principio:
-            mensaje_ingreso_datos("Calculo de horas diarias","La fecha final debe ser posterior a la fecha de inicio.")
+        patron_mun = re.compile(r'^[0-9]+$')
+        if not (horas_h.isnumeric() and patron_mun.match(horas_h)):
+            mensaje_ingreso_datos("Registro de empleado","Las 'Horas diarias' debe ser numérico.")
             return
-        
+        horas_h = int(horas_h)
+          
         try:
             db = conectar_base_de_datos()
             cursor = db.cursor()
-            cursor.execute(f"SELECT h.id_empleado, e.nombre, e.apellido, h.horas_diaria, h.fecha FROM hora AS h INNER JOIN registro_empleado AS e ON h.id_empleado = e.id_empleado WHERE h.id_empleado = '{id_empleado_seleccionado}' AND h.fecha BETWEEN '{principio}' AND '{final}' ORDER BY e.nombre, h.fecha")
-            busqueda = cursor.fetchall()
-                        
-            if len(busqueda) > 0:
-                resultado_empleado("Calculo de horas diarias",f"Se encontraron {len(busqueda)} coincidencias.")
-                self.periodo.setDate(QDate.currentDate())
-                self.fin_tra.setDate(QDate.currentDate())
-                tabla_HorasXEmpleado(self,cursor,busqueda,QHeaderView,QTableWidget,QAbstractItemView,QTableWidgetItem,Qt,QDate)            
-            else:    
-                resultado_empleado("Calculo de horas diarias",f"Se encontraron {len(busqueda)} coincidencias.")
-                self.periodo.setDate(QDate.currentDate())
-                self.fin_tra.setDate(QDate.currentDate())
-                
-            cursor.close()
-            db.close()
-        except Error as ex:
-            errorConsulta("Registro de empleado",f"Error en la consulta: {str(ex)}")
-            print("Error executing the query", ex)
-        
-    def horas_empleado_totales(self):
-        principio = self.periodo.date().toString("yyyy-MM-dd")
-        if not self.periodo.date().toString("yyyy-MM-dd"):
-            mensaje_horas_empleados("Calculo de horas diarias","Debe establcer un rango de inicio y fin de fechas.")
-            return
-        
-        final = self.fin_tra.date().toString("yyyy-MM-dd")
-        if final <= principio:
-            mensaje_horas_empleados("Calculo de horas diarias","La fecha final debe ser posterior a la fecha de inicio.")
-            return
-        try:
-            db = conectar_base_de_datos()
-            cursor = db.cursor()
-            cursor.execute(f"SELECT h.id_empleado, e.nombre, e.apellido, h.horas_diaria, h.fecha FROM hora AS h INNER JOIN registro_empleado AS e ON h.id_empleado = e.id_empleado AND h.fecha BETWEEN '{principio}' AND '{final}' ORDER BY h.id_empleado, h.fecha")
-            busqueda = cursor.fetchall()
-                        
-            if len(busqueda) > 0:
-                resultado_empleado("Calculo de horas diarias",f"Se encontraron {len(busqueda)} coincidencias.")
-                self.periodo.setDate(QDate.currentDate())
-                self.fin_tra.setDate(QDate.currentDate())
-                tabla_HorasTotales(self,cursor,busqueda,QHeaderView,QTableWidget,QAbstractItemView,QTableWidgetItem,Qt,QDate)
+            cursor.execute("UPDATE hora SET horas_diaria = %s, fecha = %s WHERE id_empleado = %s AND id_hora = %s", (horas_h, fecha_h, id_empleado_seleccionado, id_ref))
+            db.commit() 
+            
+            if cursor:
+                mensaje_ingreso_datos("Registro de horas","Registro actualizado")
+                self.id_horas_empleado.clear()
+                self.horas_tra.clear()
+                self.fecha_tra.setDate(QDate.currentDate())
             else:
-                resultado_empleado("Calculo de horas diarias",f"Se encontraron {len(busqueda)} coincidencias.")
-                self.periodo.setDate(QDate.currentDate())
-                self.fin_tra.setDate(QDate.currentDate())
+                mensaje_ingreso_datos("Registro de horas","Registro no actualizado")
                 
             cursor.close()
-            db.close()
-        except Error as ex:
-            errorConsulta("Registro de empleado",f"Error en la consulta: {str(ex)}")
+            db.close() 
             
+            self.tablaHoras.clearSelection() # Deselecciona la fila
+            
+        except Error as ex:
+            errorConsulta("Registro de horas",f"Error en la consulta: {str(ex)}")
+            print("Error executing the query", ex)
+    
     def excel_horas(self):
         horas_Excel(self,Workbook,Font,PatternFill,Border,Side,numbers,QFileDialog)
         
     # -------------- LIBRO DIARIO -----------------------------
     def registrar_datos(self):
         date = self.fecha_gastos.date().toPyDate()
-        descripcion = self.concepto_debe.text().capitalize().title()
-        descripcion_h = self.concepto_haber.text().capitalize().title()
+        descripcion = self.concepto_debe.text().capitalize()
+        descripcion_h = self.concepto_haber.text().capitalize()
         deber = self.debe.text()
-        haberes = self.haber.text()
+        haberes = self.haber.text()      
         
-        validadciones(re,mensaje_ingreso_datos,date,descripcion,descripcion_h,deber,haberes)
-        
+        validadcion = validadciones(date,descripcion,descripcion_h,deber,haberes)
+        if validadcion != "Validación exitosa.":
+            mensaje_ingreso_datos("Error de validación", "Verifique los datos por favor")
+            return
+
         ingYegreso = inicio("Registro de Ingresos-Egresos","¿Desea guardar los datos?")
         if ingYegreso == QMessageBox.StandardButton.Yes: 
             try:
                 db = conectar_base_de_datos()
                 cursor = db.cursor()
+                
+                    # Verificar si ya existe un registro con los mismos id_usuario, id_disciplina y fecha
+                cursor.execute("SELECT COUNT(*) FROM contabilidad WHERE fecha = %s AND concepto_debe = %s AND concepto_haber = %s AND debe = %s AND haber = %s", (date, descripcion,descripcion_h, deber, haberes))
+                result = cursor.fetchone()
+                if result[0] > 0:
+                    mensaje_ingreso_datos("Registro de Ingresos-Egresos", "Ya existe un registro con los mismos datos")
+                    return
+                
                 cursor.execute("INSERT INTO contabilidad (fecha, concepto_debe, concepto_haber, debe, haber) VALUES (%s, %s, %s, %s, %s)", 
                                (date, descripcion,descripcion_h, deber, haberes))
                 db.commit()
@@ -3004,8 +3017,8 @@ class VentanaPrincipal(QMainWindow):
         
         id_concepto = int(self.tablaGastos.item(self.tablaGastos.currentRow(),0).text())
         date = self.fecha_gastos.date().toPyDate()
-        descripcion = self.concepto_debe.text().capitalize().title()
-        descripcion_h = self.concepto_haber.text().capitalize().title()
+        descripcion = self.concepto_debe.text().capitalize()
+        descripcion_h = self.concepto_haber.text().capitalize()
         deber = self.debe.text()
         haberes = self.haber.text()
         
@@ -3046,11 +3059,12 @@ class VentanaPrincipal(QMainWindow):
             db = conectar_base_de_datos()
             cursor = db.cursor()
             
-            cursor.execute(f"SELECT * FROM contabilidad")
+            cursor.execute(f"SELECT * FROM contabilidad WHERE fecha BETWEEN '{principio}' AND '{final}' ORDER BY fecha ASC")
             busqueda = cursor.fetchall()
             if len(busqueda) > 0:
-                self.fecha_periodo.setDate(QDate.currentDate())
                 resultado_empleado("Calculo de horas diarias",f"Se encontraron {len(busqueda)} coincidencias.")
+                self.fecha_periodo.setDate(QDate.currentDate())
+                self.fecha_fin.setDate(QDate.currentDate())
                 
                 tabla_contabilidad(self,cursor,busqueda,QHeaderView,QTableWidget,QAbstractItemView,QTableWidgetItem,QDate,Qt)
             else:
