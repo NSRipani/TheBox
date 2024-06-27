@@ -191,7 +191,6 @@ class Asistencia(QMainWindow):
             cursor = conn.cursor()
                 #---------------------------------------------------
             # Paso 1: Realizar la consulta y obtener todos los registros
-            # cursor.execute("SELECT u.id_usuario, p.id_disciplina FROM usuario u JOIN pago p ON u.dni = %s", (dni,))
             cursor.execute("SELECT p.id_usuario, p.id_disciplina FROM pago p WHERE p.id_usuario = %s LIMIT 1", (dni,))
             result = cursor.fetchall()
 
@@ -236,7 +235,7 @@ class Asistencia(QMainWindow):
             cursor.execute("SELECT nombre, apellido FROM usuario WHERE dni = %s", (dni,))
             result_usuario = cursor.fetchone()
             print(result_usuario)
-            if len(result_usuario) > 0:
+            if result_usuario:
                 nombre = result_usuario[0]
                 apellido = result_usuario[1]
             
@@ -245,6 +244,7 @@ class Asistencia(QMainWindow):
                 self.label_texto1.setStyleSheet("background-color: #DAD7CD; color: #000;")
                 print(nombre)
             else:
+                mensaje_datos_ingresado("Registro de asistencia","No se encontraron resultados para el usuario con DNI: {}".format(dni))
                 print(f"No se encontró información del usuario con DNI {dni}.")
                 return
             # Paso 1: Obtener la última fecha registrada para el usuario
