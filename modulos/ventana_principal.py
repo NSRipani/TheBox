@@ -51,6 +51,7 @@ class VentanaPrincipal(QMainWindow):
     def __init__(self):#, is_admin):
         super().__init__()
         # self.setIsAdmin(is_admin)
+        self.setWindowState(Qt.WindowState.WindowFullScreen)
         self.ventana_pricipal()
         self.show()
         
@@ -58,9 +59,10 @@ class VentanaPrincipal(QMainWindow):
         # self.is_admin = is_admin
     
     def ventana_pricipal(self):        
-        self.showMaximized() # Maximizar la ventana al iniciar
         self.setWindowIcon(QIcon("img/logo.png"))
         self.setWindowTitle("The Box - Gestion de usuarios")
+        # self.setWindowState(Qt.WindowState.WindowMaximized) # WindowMaximized)
+        # self.showMaximized()
         
         #BARRA INFERIOR DE ESTADO
         self.status_Bar = QStatusBar()
@@ -1638,39 +1640,20 @@ class VentanaPrincipal(QMainWindow):
         layout_libro3.addWidget(fecha_fin)   
         layout_libro3.addWidget(self.fecha_fin)
         
-        # CREA UN LAYOUT HORIZONTAL
-        botones_resumen = QHBoxLayout()
-        # botones_resumen.setAlignment(Qt.AlignmentFlag.AlignRight)
-        
-        
-        # botones_resumen.addWidget(buttonREG)
-        # botones_resumen.addWidget(buttonACT)
-        
-        botones_resumen2 = QHBoxLayout()
-        botones_resumen2.setAlignment(Qt.AlignmentFlag.AlignRight)
-        
-        
-        # botones_resumen2.addWidget(buttonPERIODO)
-        # botones_resumen2.addWidget(button_eliminar)
-        
-        # CREA UN LAYOUT HORIZONTAL
-        # botones_resumen3 = QHBoxLayout()
-        # botones_resumen3.setAlignment(Qt.AlignmentFlag.AlignRight)
-        
-        h1 = QHBoxLayout()
-        h1.addLayout(layout_libro)
-        h1.addLayout(botones_resumen)
-        h2 = QHBoxLayout()
-        h2.addLayout(layout_conepto)
-        h2.addLayout(botones_resumen2)
-        h3 = QHBoxLayout()
-        h3.addLayout(layout_libro3)
-        # h3.addLayout(botones_resumen3)
+        # h1 = QHBoxLayout()
+        # h1.addLayout(layout_libro)
+        # # h1.addLayout(botones_resumen)
+        # h2 = QHBoxLayout()
+        # h2.addLayout(layout_conepto)
+        # # h2.addLayout(botones_resumen2)
+        # h3 = QHBoxLayout()
+        # h3.addLayout(layout_libro3)
+        # # h3.addLayout(botones_resumen3)
         
         # AGREDA LOS LAYOUT HORIZONTALES AL LAYOUT VERTICAL
-        vertical.addLayout(h1)
-        vertical.addLayout(h2)
-        vertical.addLayout(h3)
+        vertical.addLayout(layout_libro)
+        vertical.addLayout(layout_conepto)
+        vertical.addLayout(layout_libro3)
                 
         # AGREDA LOS LAYOUT VERTICAL A LA GRILLA
         grid_resumen.addLayout(vertical,0,0,1,5)
@@ -1724,7 +1707,6 @@ class VentanaPrincipal(QMainWindow):
         excel_resumen.clicked.connect(self.tabla_resumen)  
         
         # AGREDA LA TABLA y BOTON A LA GRILLA 
-        hori2 = QHBoxLayout()
         
         costado = QVBoxLayout()
         costado.setAlignment(Qt.AlignmentFlag.AlignTop)
@@ -1743,6 +1725,7 @@ class VentanaPrincipal(QMainWindow):
         costado.addSpacing(10)
         costado.addWidget(excel_resumen)
         
+        hori2 = QHBoxLayout()
         hori2.addWidget(self.tablaGastos)
         hori2.addSpacing(25)
         hori2.addLayout(costado)
@@ -3046,12 +3029,12 @@ class VentanaPrincipal(QMainWindow):
     
     def visualizacion_datos(self):
         principio = self.fecha_periodo.date().toString("yyyy-MM-dd")
-        if not principio:
-            mensaje_ingreso_datos("Registro de Ingresos-Egresos","Debe establcer un rango de inicio y fin de fechas.")
-            return
+        if not principio or principio > QDate.currentDate().toString("yyyy-MM-dd"):
+            mensaje_ingreso_datos("Registro de Ingresos-Egresos","La fecha de inicio debe ser la actual o una fecha anterior.")
+            return 
         
         final = self.fecha_fin.date().toString("yyyy-MM-dd")
-        if final <= principio:
+        if final < principio :# or not final == QDate.currentDate():
             mensaje_ingreso_datos("Registro de Ingresos-Egresos","La fecha final debe ser posterior a la fecha de inicio.")
             return
         
@@ -3069,6 +3052,8 @@ class VentanaPrincipal(QMainWindow):
                 tabla_contabilidad(self,cursor,busqueda,QHeaderView,QTableWidget,QAbstractItemView,QTableWidgetItem,QDate,Qt)
             else:
                 resultado_empleado("Calculo de horas diarias",f"Se encontraron {len(busqueda)} coincidencias.")
+                self.fecha_periodo.setDate(QDate.currentDate())
+                self.fecha_fin.setDate(QDate.currentDate())
             
             cursor.close()
             db.close()
