@@ -406,102 +406,274 @@ completer = """
         color: #FFFFFF;
     }
 """
-estilo_fechas = """
-    QDateEdit{
+fecha = """
+    QDateEdit {
         background-color: #FFFFFF;
         color: #000000;
         border: 1px solid black;
         border-radius: 4px;
         font-size: 20px;
-        height: 35px
-        
+        height: 35px;
     }
+
     QDateEdit::drop-down {
         height: 35px;
         width: 30px;
     }
+
     QDateEdit::down-arrow {
         background: url("img/flecha-combo.png");
     }
-    
+
     QCalendarWidget {
         font-size: 23px;
         background-color: transparent;
     }
+
     QCalendarWidget QAbstractItemView {
+        background-color: #f0f0f0;
+        selection-background-color: #4d90fe;
+        selection-color: #ffffff;
+        alternate-background-color: #e0e0e0;
         border: 2px solid #adb5bd;
-        background-color: #ffffff; 
+        background-color: #ffffff;
     }
+
+    QCalendarWidget QAbstractItemView:item {
+        color: #333333;
+    }
+
+    /* Cambia el color de los días de sábado y domingo a rojo */
+    QCalendarWidget QAbstractItemView:item[isWeekend="true"] {
+        color: #ff0000; /* Color rojo */
+    }
+
     QCalendarWidget QAbstractItemView:enabled {
-        color: #000000; 
+        color: #000000;
     }
 
     QCalendarWidget QAbstractItemView:disabled {
-        color: #808080; 
+        color: #808080;
+    }
+
+    QCalendarWidget QAbstractItemView:item:current-date {
+        background-color: #FFFFFF;
+        color: #000000;
     }
 
     QCalendarWidget QAbstractItemView:selected {
-        background-color: #d1e7b3;
-        color: red;
+        background-color: #6f6f6f;
+        color: #FFFFFF;
     }
-    
+
     QCalendarWidget QAbstractItemView:item:hover {
-        background-color: #e0e0e0; 
+        background-color: #e0e0e0;
     }
 
     QCalendarWidget QAbstractItemView:item:pressed {
         background-color: #b8b8b8;
         border: 4px solid #000000;
     }
+
     QCalendarWidget QHeaderView:section {
-        background-color: #b5b5b5;
+        background-color: transparent;
         font-weight: bold;
-        border: none; 
+        border: none;
+    }
+
+    QCalendarWidget QHeaderView:section:Saturday,
+    QCalendarWidget QHeaderView:section:Sunday {
+        color: red;
     }
 
     QCalendarWidget QWidget#qt_calendar_navigationbar {
-        background-color: #adb5bd; 
-        color: #FFFFFF; 
-        padding: 2px; 
+        background-color: #adb5bd;
+        color: #FFFFFF;
+        padding: 2px;
+    }
+
+    QCalendarWidget QWidget#qt_calendar_yearbutton,
+    QCalendarWidget QWidget#qt_calendar_monthbutton {
+        background-color: #adb5bd;
+        color: white;
+        border-radius: 4px;
+        min-width: 20px;
+        min-height: 20px;
+        padding: 2px;
+    }
+
+    QCalendarWidget QWidget#qt_calendar_yearbutton:hover,
+    QCalendarWidget QWidget#qt_calendar_monthbutton:hover {
+        background-color: #e0e3e6;
+        color: #000000;
+        border: 2px solid #e0e3e6;
     }
 
     QCalendarWidget QToolButton {
         background-color: #adb5bd;
-        color: white; 
-        border-radius: 4px; 
+        color: white;
+        border-radius: 4px;
         min-width: 20px;
         min-height: 20px;
-        padding: 2px; 
+        padding: 2px;
     }
 
     QCalendarWidget QToolButton:hover {
         background-color: #e0e3e6;
-        color: #000000; 
+        color: #000000;
         border: 2px solid #e0e3e6;
     }
 
-    QCalendarWidget QMenu{ 
+    QCalendarWidget QMenu {
         font-size: 20px;
-        border : 4px solid #e0e3e6;
-        background-color: #ffffff; 
+        border: 4px solid #e0e3e6;
+        background-color: #ffffff;
         color: #000000;
     }
+
     QCalendarWidget QMenu:hover {
         color: black;
         background-color: red;
     }
-    QCalendarWidget QMenu::pressed{
+
+    QCalendarWidget QMenu::pressed {
         color: #ffffff;
         background-color: #6f6f6f;
     }
+
     QCalendarWidget QSpinBox {
-        background-color: #e0e3e6; 
-        color: #000000; 
-        border: 2px solid #000000; 
-        border-radius: 4px; 
+        background-color: #e0e3e6;
+        color: #000000;
+        border: 2px solid #000000;
+        border-radius: 4px;
         padding: 2px;
     }
 """
+    # QDateEdit{
+    #     background-color: #FFFFFF;
+    #     color: #000000;
+    #     border: 1px solid black;
+    #     border-radius: 4px;
+    #     font-size: 20px;
+    #     height: 35px
+    # }
+
+    # QDateEdit::drop-down {
+    #     height: 35px;
+    #     width: 30px;
+    # }
+
+    # QDateEdit::down-arrow {
+    #     background: url("img/flecha-combo.png");
+    # }
+
+    # QCalendarWidget {
+    #     font-size: 23px;
+    #     background-color: transparent;
+    # }
+
+    # QCalendarWidget QAbstractItemView {
+    #     border: 2px solid #adb5bd;
+    #     background-color: #ffffff; 
+    # }
+
+    # QCalendarWidget QAbstractItemView:enabled {
+    #     color: #000000; 
+    # }
+
+    # QCalendarWidget QAbstractItemView:disabled {
+    #     color: #808080; 
+    # }
+
+    # QCalendarWidget QAbstractItemView:item:current-date {
+    #     background-color: #FFFFFF;
+    #     color: #000000;
+    # }
+
+    # QCalendarWidget QAbstractItemView:selected {
+    #     background-color: #6f6f6f;
+    #     color: #FFFFFF;
+    # }
+
+    # QCalendarWidget QAbstractItemView:item:hover {
+    #     background-color: #e0e0e0; 
+    # }
+
+    # QCalendarWidget QAbstractItemView:item:pressed {
+    #     background-color: #b8b8b8;
+    #     border: 4px solid #000000;
+    # }
+
+    # QCalendarWidget QHeaderView:section {
+    #     background-color: transparent;
+    #     font-weight: bold;
+    #     border: none; 
+    # }
+
+    # QCalendarWidget QHeaderView:section:Saturday,
+    # QCalendarWidget QHeaderView:section:Sunday {
+    #     color: red;
+    # }
+
+    # QCalendarWidget QWidget#qt_calendar_navigationbar {
+    #     background-color: #adb5bd; 
+    #     color: #FFFFFF; 
+    #     padding: 2px; 
+    # }
+
+    # QCalendarWidget QWidget#qt_calendar_yearbutton,
+    # QCalendarWidget QWidget#qt_calendar_monthbutton {
+    #     background-color: #adb5bd;
+    #     color: white; 
+    #     border-radius: 4px; 
+    #     min-width: 20px;
+    #     min-height: 20px;
+    #     padding: 2px; 
+    # }
+
+    # QCalendarWidget QWidget#qt_calendar_yearbutton:hover,
+    # QCalendarWidget QWidget#qt_calendar_monthbutton:hover {
+    #     background-color: #e0e3e6;
+    #     color: #000000; 
+    #     border: 2px solid #e0e3e6;
+    # }
+
+    # QCalendarWidget QToolButton {
+    #     background-color: #adb5bd;
+    #     color: white; 
+    #     border-radius: 4px; 
+    #     min-width: 20px;
+    #     min-height: 20px;
+    #     padding: 2px; 
+    # }
+
+    # QCalendarWidget QToolButton:hover {
+    #     background-color: #e0e3e6;
+    #     color: #000000; 
+    #     border: 2px solid #e0e3e6;
+    # }
+
+    # QCalendarWidget QMenu{ 
+    #     font-size: 20px;
+    #     border : 4px solid #e0e3e6;
+    #     background-color: #ffffff; 
+    #     color: #000000;
+    # }
+    # QCalendarWidget QMenu:hover {
+    #     color: black;
+    #     background-color: red;
+    # }
+    # QCalendarWidget QMenu::pressed{
+    #     color: #ffffff;
+    #     background-color: #6f6f6f;
+    # }
+    # QCalendarWidget QSpinBox {
+    #     background-color: #e0e3e6; 
+    #     color: #000000; 
+    #     border: 2px solid #000000; 
+    #     border-radius: 4px; 
+    #     padding: 2px;
+    # }
     
 esttabla = """
     QTableWidget{

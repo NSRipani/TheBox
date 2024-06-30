@@ -72,7 +72,7 @@ def autoCompletado(self,QDate,mensaje_ingreso_datos):
 
     # Autocompletar los QLineEdits y la fecha
     self.id_horas_empleado.setText(emple)
-    self.id_horas_empleado.setEnabled(False)
+    # self.id_horas_empleado.setEnabled(False)
     self.horas_tra.setText(str(horas_h))
     self.fecha_tra.setDate(fecha_h)
 

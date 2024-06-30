@@ -7,15 +7,14 @@ from openpyxl import Workbook
 from openpyxl.styles import Font, PatternFill, Border, Side, numbers
 
 # Librerías de PyQt6
-from PyQt6.QtWidgets import (QLabel,QFormLayout,QFileDialog, QCompleter, QAbstractScrollArea, QHeaderView, QGridLayout, QHBoxLayout, QDateEdit, 
-                             QMessageBox, QTableWidget, QAbstractItemView, QTableWidgetItem, QPushButton, QLineEdit, QStatusBar, QWidget,
-                             QVBoxLayout, QGroupBox, QDialog, QFrame, QTabWidget, QComboBox)
-from PyQt6.QtGui import QIcon, QKeySequence, QAction, QPixmap,QGuiApplication
+from PyQt6.QtWidgets import (QLabel,QFormLayout,QFileDialog, QCompleter, QHeaderView, QHBoxLayout, QDateEdit, 
+                             QMessageBox, QTableWidget, QAbstractItemView, QTableWidgetItem, QPushButton, QLineEdit,
+                             QVBoxLayout, QGroupBox, QDialog)
+from PyQt6.QtGui import QIcon, QGuiApplication
 from PyQt6.QtCore import *
 
 # Módulo de para las cajas de mensajes
-from modulos.mensajes import (mensaje_ingreso_datos, errorConsulta, inicio, aviso_descargaExitosa, aviso_Advertencia_De_excel, 
-                              resultado_empleado, aviso_resultado, mensaje_horas_empleados, aviso_resultado_asistencias)
+from modulos.mensajes import (mensaje_ingreso_datos, errorConsulta, inicio, resultado_empleado)
 
 # Módulo de Estilos
 from qss import style

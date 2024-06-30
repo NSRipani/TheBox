@@ -23,12 +23,12 @@ def consultaPorAlumno(self,cursor,results,QHeaderView,QTableWidget,QAbstractItem
         for j, val in enumerate(row):
             item = QTableWidgetItem(str(val))
             # Indices de las columnas que contienen fechas
-            if j == 6 or j == 9:  
+            if j == 5 or j == 8:  
                 fecha = QDate.fromString(str(val), "yyyy-MM-dd")  # Convertir la fecha a objeto QDate
                 item.setText(fecha.toString("dd-MM-yyyy"))  # Establecer el formato de visualización
-            if j in [2, 4, 5, 6, 9]:  # Ajustar alineación para ciertas columnas
+            if j in [2, 4, 5, 8]:  # Ajustar alineación para ciertas columnas
                 item.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
-            if j == 8:  # Ajustar alineación para ciertas columnas
+            if j == 7:  # Ajustar alineación para ciertas columnas
                 item.setTextAlignment(Qt.AlignmentFlag.AlignRight)
             self.tablaVIEW.setItem(i, j, item)
             

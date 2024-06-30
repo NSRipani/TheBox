@@ -51,7 +51,7 @@ class VentanaPrincipal(QMainWindow):
     def __init__(self):#, is_admin):
         super().__init__()
         # self.setIsAdmin(is_admin)
-        self.setWindowState(Qt.WindowState.WindowFullScreen)
+        # self.setWindowState(Qt.WindowState.WindowFullScreen)
         self.ventana_pricipal()
         self.show()
         
@@ -349,7 +349,7 @@ class VentanaPrincipal(QMainWindow):
         date.setStyleSheet(style.label)
         date.setFixedWidth(80)
         self.input_date = QDateEdit(customer_details)
-        self.input_date.setStyleSheet(style.estilo_fechas)
+        self.input_date.setStyleSheet(style.fecha)
         self.input_date.setFixedWidth(200)
         self.input_date.setLocale(QLocale("es-AR"))
         self.input_date.setCursor(Qt.CursorShape.PointingHandCursor)
@@ -550,7 +550,7 @@ class VentanaPrincipal(QMainWindow):
         date2.setFixedWidth(80)
         self.input_date2 = QDateEdit(update_customer_details)
         self.input_date2.setLocale(QLocale("es-AR"))
-        self.input_date2.setStyleSheet(style.estilo_fechas)
+        self.input_date2.setStyleSheet(style.fecha)
         self.input_date2.setCursor(Qt.CursorShape.PointingHandCursor)
         self.input_date2.setEnabled(False)
         self.input_date2.setFixedWidth(200)
@@ -946,7 +946,7 @@ class VentanaPrincipal(QMainWindow):
         self.input_fechaDePago = QDateEdit(grupo_pagos)
         self.input_fechaDePago.setCursor(Qt.CursorShape.PointingHandCursor)
         self.input_fechaDePago.setLocale(QLocale("es-AR"))
-        self.input_fechaDePago.setStyleSheet(style.estilo_fechas)
+        self.input_fechaDePago.setStyleSheet(style.fecha)
         self.input_fechaDePago.setFixedWidth(180)
         self.input_fechaDePago.setDate(QDate.currentDate()) 
         self.input_fechaDePago.setCalendarPopup(True)
@@ -1128,7 +1128,7 @@ class VentanaPrincipal(QMainWindow):
         view_fechaDePago.setStyleSheet(style.label)
         view_fechaDePago.setFixedWidth(140)
         self.view_fechaDePago = QDateEdit(comboView)
-        self.view_fechaDePago.setStyleSheet(style.estilo_fechas)
+        self.view_fechaDePago.setStyleSheet(style.fecha)
         self.view_fechaDePago.setLocale(QLocale("es-AR"))
         self.view_fechaDePago.setCursor(Qt.CursorShape.PointingHandCursor)
         self.view_fechaDePago.setFixedWidth(200)
@@ -1143,7 +1143,7 @@ class VentanaPrincipal(QMainWindow):
         view_al2.setStyleSheet(style.label)
         view_al2.setFixedWidth(30)
         self.view_al2 = QDateEdit(comboView)
-        self.view_al2.setStyleSheet(style.estilo_fechas)
+        self.view_al2.setStyleSheet(style.fecha)
         self.view_al2.setLocale(QLocale("es-AR"))
         self.view_al2.setCursor(Qt.CursorShape.PointingHandCursor)
         self.view_al2.setFixedWidth(200)
@@ -1158,7 +1158,7 @@ class VentanaPrincipal(QMainWindow):
         view_asistencia.setStyleSheet(style.label)
         view_asistencia.setFixedWidth(140)
         self.view_asistencia = QDateEdit(comboView)
-        self.view_asistencia.setStyleSheet(style.estilo_fechas)
+        self.view_asistencia.setStyleSheet(style.fecha)
         self.view_asistencia.setLocale(QLocale("es-AR"))
         self.view_asistencia.setCursor(Qt.CursorShape.PointingHandCursor)
         self.view_asistencia.setFixedWidth(200)
@@ -1172,7 +1172,7 @@ class VentanaPrincipal(QMainWindow):
         view_al.setStyleSheet(style.label)
         view_al.setFixedWidth(30)
         self.view_al = QDateEdit(comboView)
-        self.view_al.setStyleSheet(style.estilo_fechas)
+        self.view_al.setStyleSheet(style.fecha)
         self.view_al.setLocale(QLocale("es-AR"))
         self.view_al.setCursor(Qt.CursorShape.PointingHandCursor)
         self.view_al.setFixedWidth(200)
@@ -1344,7 +1344,7 @@ class VentanaPrincipal(QMainWindow):
         fecha_tra.setFixedWidth(60)
         self.fecha_tra = QDateEdit(grupo_empleados)
         self.fecha_tra.setLocale(QLocale("es-AR"))
-        self.fecha_tra.setStyleSheet(style.estilo_fechas)
+        self.fecha_tra.setStyleSheet(style.fecha)
         self.fecha_tra.setCursor(Qt.CursorShape.PointingHandCursor)
         self.fecha_tra.setFixedWidth(200)
         self.fecha_tra.setDate(QDate.currentDate())
@@ -1357,7 +1357,7 @@ class VentanaPrincipal(QMainWindow):
         periodo.setStyleSheet(style.label)
         periodo.setFixedWidth(80)
         self.periodo = QDateEdit(grupo_empleados)
-        self.periodo.setStyleSheet(style.estilo_fechas)
+        self.periodo.setStyleSheet(style.fecha)
         self.periodo.setLocale(QLocale("es-AR"))
         self.periodo.setCursor(Qt.CursorShape.PointingHandCursor)
         self.periodo.setFixedWidth(200)
@@ -1372,7 +1372,7 @@ class VentanaPrincipal(QMainWindow):
         fin_tra.setFixedWidth(50)
         self.fin_tra = QDateEdit(grupo_empleados)
         self.fin_tra.setLocale(QLocale("es-AR"))
-        self.fin_tra.setStyleSheet(style.estilo_fechas)
+        self.fin_tra.setStyleSheet(style.fecha)
         self.fin_tra.setCursor(Qt.CursorShape.PointingHandCursor)
         self.fin_tra.setFixedWidth(200)
         self.fin_tra.setDate(QDate.currentDate())
@@ -1521,7 +1521,7 @@ class VentanaPrincipal(QMainWindow):
         fecha_gastos.setFixedWidth(140)
         self.fecha_gastos = QDateEdit(grupo_resumen)
         self.fecha_gastos.setLocale(QLocale("es-AR"))
-        self.fecha_gastos.setStyleSheet(style.estilo_fechas)
+        self.fecha_gastos.setStyleSheet(style.fecha)
         self.fecha_gastos.setCursor(Qt.CursorShape.PointingHandCursor)
         self.fecha_gastos.setFixedWidth(200)
         self.fecha_gastos.setCalendarPopup(True)
@@ -1615,7 +1615,7 @@ class VentanaPrincipal(QMainWindow):
         fecha_periodo.setStyleSheet(style.label)
         fecha_periodo.setFixedWidth(140)
         self.fecha_periodo = QDateEdit(grupo_resumen)
-        self.fecha_periodo.setStyleSheet(style.estilo_fechas)
+        self.fecha_periodo.setStyleSheet(style.fecha)
         self.fecha_periodo.setLocale(QLocale("es-AR"))
         self.fecha_periodo.setCursor(Qt.CursorShape.PointingHandCursor)
         self.fecha_periodo.setFixedWidth(200)
@@ -1630,7 +1630,7 @@ class VentanaPrincipal(QMainWindow):
         fecha_fin.setStyleSheet(style.label)
         fecha_fin.setFixedWidth(45)
         self.fecha_fin = QDateEdit(grupo_resumen)
-        self.fecha_fin.setStyleSheet(style.estilo_fechas)
+        self.fecha_fin.setStyleSheet(style.fecha)
         self.fecha_fin.setLocale(QLocale("es-AR"))
         self.fecha_fin.setCursor(Qt.CursorShape.PointingHandCursor)
         self.fecha_fin.setFixedWidth(200)
@@ -1707,7 +1707,6 @@ class VentanaPrincipal(QMainWindow):
         excel_resumen.clicked.connect(self.tabla_resumen)  
         
         # AGREDA LA TABLA y BOTON A LA GRILLA 
-        
         costado = QVBoxLayout()
         costado.setAlignment(Qt.AlignmentFlag.AlignTop)
         costado.addSpacing(10)
@@ -2466,30 +2465,30 @@ class VentanaPrincipal(QMainWindow):
         pagos_EXCEL(self,Workbook,Font,PatternFill,Border,Side,numbers,QFileDialog)
             
     # ----------- PESTAÑA BALANCE -----------------
-        
     def consultar_TotalPorAlumno(self):
         nombre = self.view_nomb.text()
         print(nombre)
         print(type(nombre))
 
         patron = re.compile(r'^[0-9]+$')
-        # patron = re.compile(r'^[a-zA-ZáéíóúÁÉÍÓÚüÜ\'\s]+$') 
-        if not isinstance(nombre, str)  or not patron.match(nombre): #or nombre.isdigit()
+        if not isinstance(nombre, str)  or not patron.match(nombre):
             mensaje_ingreso_datos("Registro de alumnos","Debe elige un DNI")
-            # mensaje_ingreso_datos("Registro de alumnos","El nombre debe contener: \n- Letras y/o espacios entre nombres(si tiene mas de dos).")
             return
         
-        if not self.view_fechaDePago.date().toString("yyyy-MM-dd"):
-            mensaje_ingreso_datos("Registro de alumnos","Debe ingresar una fecha de inicio de pago.")
-            return
-
         fecha_inicio = self.view_fechaDePago.date().toString("yyyy-MM-dd")
+        
+        if not fecha_inicio or fecha_inicio > QDate.currentDate().toString("yyyy-MM-dd"):
+            self.view_fechaDePago.setDate(QDate.currentDate())
+            mensaje_ingreso_datos("Calculo de horas diarias","La fecha de inicio debe ser la actual o una fecha anterior.")
+            return 
+        
         fecha_fin = self.view_al2.date().toString("yyyy-MM-dd")
 
-        if fecha_fin <= fecha_inicio:
-            mensaje_ingreso_datos("Registro de alumnos","La fecha de fin debe ser posterior a la fecha de inicio.")
+        if fecha_fin > QDate.currentDate().toString("yyyy-MM-dd") or fecha_fin < fecha_inicio:
+            self.view_al2.setDate(QDate.currentDate())
+            mensaje_ingreso_datos("Calculo de horas diarias","La fecha de inicio debe ser la actual o una fecha anterior.\nLa fecha final de periodo debe ser igual o no anterior a la fecha de inicio de periodo")
             return
-         
+        
         try:
             db = conectar_base_de_datos()
             cursor = db.cursor()
@@ -2500,16 +2499,16 @@ class VentanaPrincipal(QMainWindow):
             
             if len(results) > 0:
                 aviso_resultado("Registro de alumnos",f"Se encontraron {len(results)} coincidencias.")
-                
                 self.view_fechaDePago.setDate(QDate.currentDate())
                 self.view_al2.setDate(QDate.currentDate())
                 self.view_nomb.clear()
-                
                 consultaPorAlumno(self,cursor,results,QHeaderView,QTableWidget,QAbstractItemView,QTableWidgetItem,QDate,Qt)
                             
             else:
                 aviso_resultado("Registro de alumnos",f"Se encontraron {len(results)} coincidencias.")
-
+                self.view_fechaDePago.setDate(QDate.currentDate())
+                self.view_al2.setDate(QDate.currentDate())
+                
             cursor.close()
             db.close()
             
@@ -2518,15 +2517,16 @@ class VentanaPrincipal(QMainWindow):
             print("Error executing the query", ex)
     
     def consultar_TotalAlumno(self):
-        if not self.view_fechaDePago.date().toString("yyyy-MM-dd"):
-            mensaje_ingreso_datos("Registro de alumnos","Debe establcer un rango de inicio y fin de fechas de pago.")
-            return
-
         fecha_inicio = self.view_fechaDePago.date().toString("yyyy-MM-dd")
+        if not fecha_inicio or fecha_inicio > QDate.currentDate().toString("yyyy-MM-dd"):
+            self.view_fechaDePago.setDate(QDate.currentDate())
+            mensaje_ingreso_datos("Calculo de horas diarias","La fecha de inicio debe ser la actual o una fecha anterior.")
+            return 
+        
         fecha_fin = self.view_al2.date().toString("yyyy-MM-dd")
-
-        if fecha_fin <= fecha_inicio:
-            mensaje_ingreso_datos("Registro de alumnos","La fecha de fin debe ser posterior a la fecha de inicio.")
+        if fecha_fin > QDate.currentDate().toString("yyyy-MM-dd") or fecha_fin < fecha_inicio:
+            self.view_al2.setDate(QDate.currentDate())
+            mensaje_ingreso_datos("Calculo de horas diarias","La fecha de inicio debe ser la actual o una fecha anterior.\nLa fecha final de periodo debe ser igual o no anterior a la fecha de inicio de periodo")
             return
         
         try:
@@ -2538,15 +2538,15 @@ class VentanaPrincipal(QMainWindow):
             
             if results:
                 aviso_resultado("Registro de alumnos",f"Se encontraron {len(results)} coincidencias.")
-                
                 self.view_fechaDePago.setDate(QDate.currentDate())
                 self.view_al.setDate(QDate.currentDate())
-                
                 totalAlumno(self,cursor,results,QHeaderView,QTableWidget,QAbstractItemView,QAbstractScrollArea,QTableWidgetItem,QDate,Qt)
                 
             else: 
                 aviso_resultado("Registro de alumnos",f"Se encontraron {len(results)} coincidencias.")
-                  
+                self.view_fechaDePago.setDate(QDate.currentDate())
+                self.view_al2.setDate(QDate.currentDate())
+                
             cursor.close()
             db.close()
                 
@@ -2558,15 +2558,16 @@ class VentanaPrincipal(QMainWindow):
         limpiar(self)
             
     def consultar_TotalDisciplina(self):
-        if not self.view_fechaDePago.date().toString("yyyy-MM-dd"):
-            mensaje_ingreso_datos("Registro de alumnos","Debe establcer un rango de inicio y fin de fechas de pago.")
-            return
-
         fecha_inicio = self.view_fechaDePago.date().toString("yyyy-MM-dd")
+        if not fecha_inicio or fecha_inicio > QDate.currentDate().toString("yyyy-MM-dd"):
+            self.view_fechaDePago.setDate(QDate.currentDate())
+            mensaje_ingreso_datos("Calculo de horas diarias","La fecha de inicio debe ser la actual o una fecha anterior.")
+            return 
+        
         fecha_fin = self.view_al2.date().toString("yyyy-MM-dd")
-
-        if fecha_fin <= fecha_inicio:
-            mensaje_ingreso_datos("Registro de alumnos","La fecha de fin debe ser posterior a la fecha de inicio.")
+        if fecha_fin > QDate.currentDate().toString("yyyy-MM-dd") or fecha_fin < fecha_inicio:
+            self.view_al2.setDate(QDate.currentDate())
+            mensaje_ingreso_datos("Calculo de horas diarias","La fecha de inicio debe ser la actual o una fecha anterior.\nLa fecha final de periodo debe ser igual o no anterior a la fecha de inicio de periodo")
             return
         try:
             db = conectar_base_de_datos()
@@ -2577,13 +2578,14 @@ class VentanaPrincipal(QMainWindow):
             
             if results:
                 aviso_resultado("Registro de alumnos",f"Se encontraron {len(results)} coincidencias.")
-                
                 self.view_fechaDePago.setDate(QDate.currentDate())
                 self.view_al2.setDate(QDate.currentDate())
                 consultarDeDisciplina(self,cursor,results,QHeaderView,QTableWidget,QAbstractItemView,QTableWidgetItem,QDate,Qt)
                             
             else:
                 aviso_resultado("Registro de alumnos",f"Se encontraron {len(results)} coincidencias.")
+                self.view_fechaDePago.setDate(QDate.currentDate())
+                self.view_al2.setDate(QDate.currentDate())
                 
             cursor.close()
             db.close()
@@ -2592,24 +2594,23 @@ class VentanaPrincipal(QMainWindow):
             print("Error executing the query", ex)
             
     def consultar_PorDisciplina(self):
-        actividad = self.view_disciplina.text() #text().capitalize().title()
+        actividad = self.view_disciplina.text()
         
-        # lista = ["musculacion","cross funcional","gap","kids","fucional","cardio","stretching","adulto","ritmos"]
         patrones = re.compile(r'^[a-zA-ZáéíóúÁÉÍÓÚüÜ\'\s]+$')
-        
         if not isinstance(actividad,str) or not patrones.match(actividad):
             mensaje_ingreso_datos("Registro de alumnos","Debe elegir una disciplina")
             return
         
-        if not self.view_fechaDePago.date().toString("yyyy-MM-dd"):
-            mensaje_ingreso_datos("Registro de alumnos","Debe establcer un rango de inicio y fin de fechas de pago.")
-            return
-
         fecha_inicio = self.view_fechaDePago.date().toString("yyyy-MM-dd")
+        if not fecha_inicio or fecha_inicio > QDate.currentDate().toString("yyyy-MM-dd"):
+            self.view_fechaDePago.setDate(QDate.currentDate())
+            mensaje_ingreso_datos("Calculo de horas diarias","La fecha de inicio debe ser la actual o una fecha anterior.")
+            return 
+        
         fecha_fin = self.view_al2.date().toString("yyyy-MM-dd")
-
-        if fecha_fin <= fecha_inicio:
-            mensaje_ingreso_datos("Registro de alumnos","La fecha de fin debe ser posterior a la fecha de inicio.")
+        if fecha_fin > QDate.currentDate().toString("yyyy-MM-dd") or fecha_fin < fecha_inicio:
+            self.view_al2.setDate(QDate.currentDate())
+            mensaje_ingreso_datos("Calculo de horas diarias","La fecha de inicio debe ser la actual o una fecha anterior.\nLa fecha final de periodo debe ser igual o no anterior a la fecha de inicio de periodo")
             return
                 
         try:
@@ -2622,14 +2623,14 @@ class VentanaPrincipal(QMainWindow):
                     
             if len(results) > 0:
                 aviso_resultado("Registro de alumnos",f"Se encontraron {len(results)} coincidencias.")
-                
                 self.view_disciplina.clear()
                 self.view_fechaDePago.setDate(QDate.currentDate())
                 self.view_al2.setDate(QDate.currentDate())
                 consultaPorDisciplina(self,cursor,results,QHeaderView,QTableWidget,QAbstractItemView,QTableWidgetItem,QDate,Qt)
-                
             else:
                 aviso_resultado("Registro de alumnos",f"Se encontraron {len(results)} coincidencias.")
+                self.view_fechaDePago.setDate(QDate.currentDate())
+                self.view_al2.setDate(QDate.currentDate())
                 
             cursor.close()
             db.close()
@@ -2639,34 +2640,35 @@ class VentanaPrincipal(QMainWindow):
             print("Error executing the query", ex)
             
     def consultar_AsisteTotal(self):
-        if not self.view_asistencia.date().toString("yyyy-MM-dd"):
-            mensaje_ingreso_datos("Registro de alumnos","Debe establcer un rango de inicio y fin de fechas de asistencia.")
-            return
-
         fecha_inicio2 = self.view_asistencia.date().toString("yyyy-MM-dd")
+        if not fecha_inicio2 or fecha_inicio2 > QDate.currentDate().toString("yyyy-MM-dd"):
+            self.view_asistencia.setDate(QDate.currentDate())
+            mensaje_ingreso_datos("Calculo de horas diarias","La fecha de inicio debe ser la actual o una fecha anterior.")
+            return 
+        
         fecha_fin2 = self.view_al.date().toString("yyyy-MM-dd")
-
-        if fecha_fin2 <= fecha_inicio2:
-            mensaje_ingreso_datos("Registro de alumnos","La fecha de fin debe ser posterior a la fecha de inicio.")
-            return      
+        if fecha_fin2 > QDate.currentDate().toString("yyyy-MM-dd") or fecha_fin2 < fecha_inicio2:
+            self.view_al.setDate(QDate.currentDate())
+            mensaje_ingreso_datos("Calculo de horas diarias","La fecha de inicio debe ser la actual o una fecha anterior.\nLa fecha final de periodo debe ser igual o no anterior a la fecha de inicio de periodo")
+            return     
         
         try:
             db = conectar_base_de_datos()
-            cursor = db.cursor()
-            
+            cursor = db.cursor()            
             cursor.execute(f"SELECT u.nombre, u.apellido, u.dni, u.sexo, u.edad, a.asistencia FROM usuario u JOIN asistencia a ON u.dni = a.dni WHERE a.asistencia BETWEEN '{fecha_inicio2}' AND '{fecha_fin2}' ORDER BY a.asistencia ASC")
             results = cursor.fetchall()
             
             if len(results) > 0:
                 aviso_resultado("Registro de alumnos",f"Se encontraron {len(results)} coincidencias.")
-                
                 self.view_asistencia.setDate(QDate.currentDate())
                 self.view_al.setDate(QDate.currentDate())
                 asistenciaTotal(self,cursor,results,QHeaderView,QTableWidget,QAbstractItemView,QTableWidgetItem,QDate,Qt)
                 
             else:
                 aviso_resultado("Registro de alumnos",f"Se encontraron {len(results)} coincidencias.")
-
+                self.view_asistencia.setDate(QDate.currentDate())
+                self.view_al.setDate(QDate.currentDate())
+                
             cursor.close()
             db.close()
                 
@@ -2678,24 +2680,22 @@ class VentanaPrincipal(QMainWindow):
         alumno = self.view_nomb.text()
         
         patron = re.compile(r'^[0-9]+$')
-        # patron_nom3 = re.compile(r'^[a-zA-ZáéíóúÁÉÍÓÚüÜ\'\s]+$') 
         if not isinstance(alumno, str) or not patron.match(alumno): 
             mensaje_ingreso_datos("Registro de alumnos","Debe elige un DNI")
-            # mensaje_ingreso_datos("Registro de alumnos","Posibles errores:\n- Debe ingresar correctamente el nombre.\n- Debe establecer un rango de fechas de asistencias.\n\nDatos opcional a incorporar:\n- Debe ingresar 'Apellido'.")
-            return
-        
-        if not self.view_asistencia.date().toString("yyyy-MM-dd"):
-            mensaje_ingreso_datos("Registro de alumnos","Debe establcer un rango de inicio y fin de fechas de asistencia.")
             return
 
         fecha_inicio = self.view_asistencia.date().toString("yyyy-MM-dd")
-        fecha_fin = self.view_al.date().toString("yyyy-MM-dd")
-
-        if fecha_fin <= fecha_inicio:
-            mensaje_ingreso_datos("Registro de alumnos","La fecha de fin debe ser posterior a la fecha de inicio.")
+        if not fecha_inicio or fecha_inicio > QDate.currentDate().toString("yyyy-MM-dd"):
+            self.view_asistencia.setDate(QDate.currentDate())
+            mensaje_ingreso_datos("Calculo de horas diarias","La fecha de inicio debe ser la actual o una fecha anterior.")
             return
         
-        # self.consultar5()
+        fecha_fin = self.view_al.date().toString("yyyy-MM-dd")
+        if fecha_fin > QDate.currentDate().toString("yyyy-MM-dd") or fecha_fin < fecha_inicio:
+            self.view_al.setDate(QDate.currentDate())
+            mensaje_ingreso_datos("Calculo de horas diarias","La fecha de inicio debe ser la actual o una fecha anterior.\nLa fecha final de periodo debe ser igual o no anterior a la fecha de inicio de periodo")
+            return
+        
         try:
             db = conectar_base_de_datos()
             cursor = db.cursor()
@@ -2704,17 +2704,17 @@ class VentanaPrincipal(QMainWindow):
             cursor.execute(f"SELECT u.nombre, u.apellido, u.dni, u.sexo, u.edad, a.asistencia FROM usuario u JOIN asistencia a ON u.dni = a.dni WHERE a.asistencia BETWEEN '{fecha_inicio}' AND '{fecha_fin}' AND u.dni = '{alumno}' ORDER BY a.asistencia ASC")
             results5 = cursor.fetchall()
 
-            if  len(results5) > 0:
+            if len(results5) > 0:
                 aviso_resultado_asistencias("Busqueda de alumnos",f"Se encontraron {len(results5)} asistencias.")
-            
+                self.view_nomb.clear()
                 self.view_asistencia.setDate(QDate.currentDate())
                 self.view_al.setDate(QDate.currentDate())
-                self.view_nomb.clear()
                 asistenciaPorAlumno(self,cursor,results5,QHeaderView,QTableWidget,QAbstractItemView,QTableWidgetItem,QDate,Qt)
-            
             else:
                 aviso_resultado_asistencias("Busqueda de alumnos",f"Se encontraron {len(results5)} asistencias.")
-            
+                self.view_asistencia.setDate(QDate.currentDate())
+                self.view_al.setDate(QDate.currentDate())
+                
             cursor.close()
             db.close()
                 
@@ -2732,8 +2732,9 @@ class VentanaPrincipal(QMainWindow):
             if nombre == texto:
                 # Guardar el id_empleado en una variable o tabla, según tu necesidad
                 self.id_empleado_seleccionado = id_empleado
-                print(self.id_empleado_seleccionado)
+                print(f" id_empleado es de tipo: {type(id_empleado)}")
                 break
+            # return id_empleado
         # else:
         #     self.id_empleado_seleccionado = None
             
@@ -2785,23 +2786,28 @@ class VentanaPrincipal(QMainWindow):
     def limpiar_tabla_horas(self):
         clearTabla(self) 
         
-    def horas_empleado(self):   
-        id_empleado_seleccionado = self.id_empleado_seleccionado  # Obtener el id_empleado seleccionado
-            
-        principio = self.periodo.date().toString("yyyy-MM-dd")
-        if not self.periodo.date().toString("yyyy-MM-dd"):
-            mensaje_ingreso_datos("Calculo de horas diarias","Debe establcer un rango de inicio y fin de fechas.")
+    def horas_empleado(self):        
+        id_empleado = self.id_horas_empleado.text()
+        if not id_empleado:
+            mensaje_ingreso_datos("Calculo de horas diarias","Debe completar el nombre del empleado")
             return
         
+        principio = self.periodo.date().toString("yyyy-MM-dd")
+        if not principio or principio > QDate.currentDate().toString("yyyy-MM-dd"):
+            self.periodo.setDate(QDate.currentDate())
+            mensaje_ingreso_datos("Calculo de horas diarias","La fecha de inicio debe ser la actual o una fecha anterior.")
+            return 
+        
         final = self.fin_tra.date().toString("yyyy-MM-dd")
-        if final <= principio:
-            mensaje_ingreso_datos("Calculo de horas diarias","La fecha final debe ser posterior a la fecha de inicio.")
+        if final > QDate.currentDate().toString("yyyy-MM-dd") or final < principio:
+            self.fin_tra.setDate(QDate.currentDate())
+            mensaje_ingreso_datos("Calculo de horas diarias","La fecha de inicio debe ser la actual o una fecha anterior.\nLa fecha final de periodo debe ser igual o no anterior a la fecha de inicio de periodo")
             return
         
         try:
             db = conectar_base_de_datos()
             cursor = db.cursor()
-            cursor.execute(f"SELECT h.id_hora AS REGISTRO, h.id_empleado, e.nombre, e.apellido, h.horas_diaria, h.fecha FROM hora AS h INNER JOIN registro_empleado AS e ON h.id_empleado = e.id_empleado WHERE h.id_empleado = '{id_empleado_seleccionado}' AND h.fecha BETWEEN '{principio}' AND '{final}' ORDER BY e.nombre, h.fecha")
+            cursor.execute(f"SELECT h.id_hora AS REGISTRO, h.id_empleado, e.nombre, e.apellido, h.horas_diaria, h.fecha FROM hora AS h INNER JOIN registro_empleado AS e ON h.id_empleado = e.id_empleado WHERE h.id_empleado = '{id_empleado}' AND h.fecha BETWEEN '{principio}' AND '{final}' ORDER BY e.nombre, h.fecha")
             busqueda = cursor.fetchall()
                         
             if len(busqueda) > 0:
@@ -2822,14 +2828,17 @@ class VentanaPrincipal(QMainWindow):
         
     def horas_empleado_totales(self):
         principio = self.periodo.date().toString("yyyy-MM-dd")
-        if not self.periodo.date().toString("yyyy-MM-dd"):
-            mensaje_horas_empleados("Calculo de horas diarias","Debe establcer un rango de inicio y fin de fechas.")
-            return
+        if not principio or principio > QDate.currentDate().toString("yyyy-MM-dd"):
+            self.periodo.setDate(QDate.currentDate())
+            mensaje_ingreso_datos("Calculo de horas diarias","La fecha de inicio debe ser la actual o una fecha anterior.")
+            return 
         
         final = self.fin_tra.date().toString("yyyy-MM-dd")
-        if final <= principio:
-            mensaje_horas_empleados("Calculo de horas diarias","La fecha final debe ser posterior a la fecha de inicio.")
+        if final > QDate.currentDate().toString("yyyy-MM-dd") or final < principio:
+            self.fin_tra.setDate(QDate.currentDate())
+            mensaje_ingreso_datos("Calculo de horas diarias","La fecha de inicio debe ser la actual o una fecha anterior.\nLa fecha final de periodo debe ser igual o no anterior a la fecha de inicio de periodo")
             return
+        
         try:
             db = conectar_base_de_datos()
             cursor = db.cursor()
@@ -3030,12 +3039,14 @@ class VentanaPrincipal(QMainWindow):
     def visualizacion_datos(self):
         principio = self.fecha_periodo.date().toString("yyyy-MM-dd")
         if not principio or principio > QDate.currentDate().toString("yyyy-MM-dd"):
+            self.fecha_periodo.setDate(QDate.currentDate())
             mensaje_ingreso_datos("Registro de Ingresos-Egresos","La fecha de inicio debe ser la actual o una fecha anterior.")
             return 
         
         final = self.fecha_fin.date().toString("yyyy-MM-dd")
-        if final < principio :# or not final == QDate.currentDate():
-            mensaje_ingreso_datos("Registro de Ingresos-Egresos","La fecha final debe ser posterior a la fecha de inicio.")
+        if final > QDate.currentDate().toString("yyyy-MM-dd") or final < principio:
+            self.fecha_fin.setDate(QDate.currentDate())
+            mensaje_ingreso_datos("Registro de Ingresos-Egresos","La fecha de inicio debe ser la actual o una fecha anterior.\nLa fecha final de periodo debe ser igual o no anterior a la fecha de inicio de periodo")
             return
         
         try:

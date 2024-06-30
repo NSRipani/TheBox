@@ -7,6 +7,7 @@ from mysql.connector import Error
 
 # Librerías de PyQt6
 from PyQt6.QtWidgets import QApplication
+from PyQt6.QtGui import QGuiApplication
 from modulos.ventana_principal import VentanaPrincipal
 
 
@@ -41,6 +42,18 @@ class ConexionBaseDeDatos:
 if __name__ == "__main__":
     app = QApplication(sys.argv)
     login_window = VentanaPrincipal()
+    
+    # Obtener el tamaño de la pantalla
+    screen = QGuiApplication.primaryScreen()
+    screen_geometry = screen.availableGeometry()
+    
+    # Calcular la posición central
+    center_x = screen_geometry.width() // 2 - login_window.width() // 2
+    center_y = screen_geometry.height() // 2 - login_window.height() // 2
+    
+    # Establecer la posición central
+    login_window.move(center_x, center_y)
+     
     login_window.show()
     sys.exit(app.exec())
     
