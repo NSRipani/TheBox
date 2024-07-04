@@ -549,132 +549,6 @@ fecha = """
         padding: 2px;
     }
 """
-    # QDateEdit{
-    #     background-color: #FFFFFF;
-    #     color: #000000;
-    #     border: 1px solid black;
-    #     border-radius: 4px;
-    #     font-size: 20px;
-    #     height: 35px
-    # }
-
-    # QDateEdit::drop-down {
-    #     height: 35px;
-    #     width: 30px;
-    # }
-
-    # QDateEdit::down-arrow {
-    #     background: url("img/flecha-combo.png");
-    # }
-
-    # QCalendarWidget {
-    #     font-size: 23px;
-    #     background-color: transparent;
-    # }
-
-    # QCalendarWidget QAbstractItemView {
-    #     border: 2px solid #adb5bd;
-    #     background-color: #ffffff; 
-    # }
-
-    # QCalendarWidget QAbstractItemView:enabled {
-    #     color: #000000; 
-    # }
-
-    # QCalendarWidget QAbstractItemView:disabled {
-    #     color: #808080; 
-    # }
-
-    # QCalendarWidget QAbstractItemView:item:current-date {
-    #     background-color: #FFFFFF;
-    #     color: #000000;
-    # }
-
-    # QCalendarWidget QAbstractItemView:selected {
-    #     background-color: #6f6f6f;
-    #     color: #FFFFFF;
-    # }
-
-    # QCalendarWidget QAbstractItemView:item:hover {
-    #     background-color: #e0e0e0; 
-    # }
-
-    # QCalendarWidget QAbstractItemView:item:pressed {
-    #     background-color: #b8b8b8;
-    #     border: 4px solid #000000;
-    # }
-
-    # QCalendarWidget QHeaderView:section {
-    #     background-color: transparent;
-    #     font-weight: bold;
-    #     border: none; 
-    # }
-
-    # QCalendarWidget QHeaderView:section:Saturday,
-    # QCalendarWidget QHeaderView:section:Sunday {
-    #     color: red;
-    # }
-
-    # QCalendarWidget QWidget#qt_calendar_navigationbar {
-    #     background-color: #adb5bd; 
-    #     color: #FFFFFF; 
-    #     padding: 2px; 
-    # }
-
-    # QCalendarWidget QWidget#qt_calendar_yearbutton,
-    # QCalendarWidget QWidget#qt_calendar_monthbutton {
-    #     background-color: #adb5bd;
-    #     color: white; 
-    #     border-radius: 4px; 
-    #     min-width: 20px;
-    #     min-height: 20px;
-    #     padding: 2px; 
-    # }
-
-    # QCalendarWidget QWidget#qt_calendar_yearbutton:hover,
-    # QCalendarWidget QWidget#qt_calendar_monthbutton:hover {
-    #     background-color: #e0e3e6;
-    #     color: #000000; 
-    #     border: 2px solid #e0e3e6;
-    # }
-
-    # QCalendarWidget QToolButton {
-    #     background-color: #adb5bd;
-    #     color: white; 
-    #     border-radius: 4px; 
-    #     min-width: 20px;
-    #     min-height: 20px;
-    #     padding: 2px; 
-    # }
-
-    # QCalendarWidget QToolButton:hover {
-    #     background-color: #e0e3e6;
-    #     color: #000000; 
-    #     border: 2px solid #e0e3e6;
-    # }
-
-    # QCalendarWidget QMenu{ 
-    #     font-size: 20px;
-    #     border : 4px solid #e0e3e6;
-    #     background-color: #ffffff; 
-    #     color: #000000;
-    # }
-    # QCalendarWidget QMenu:hover {
-    #     color: black;
-    #     background-color: red;
-    # }
-    # QCalendarWidget QMenu::pressed{
-    #     color: #ffffff;
-    #     background-color: #6f6f6f;
-    # }
-    # QCalendarWidget QSpinBox {
-    #     background-color: #e0e3e6; 
-    #     color: #000000; 
-    #     border: 2px solid #000000; 
-    #     border-radius: 4px; 
-    #     padding: 2px;
-    # }
-    
 esttabla = """
     QTableWidget{
         background-color: #f5ebe0;
@@ -758,12 +632,10 @@ estilo_menubar = """
     QMenuBar::item:selected:disabled {
         background-color: #1a1a1a; 
     }   
-    QAction {
-        background-color: #1a1a1a;
-        color: white;
-        padding: 5px;
-    }"""
-
+    QAction:hover {
+        background-color: #333333;
+    }
+"""
 # ASISTENCIA
 fondo_asistencia = """
     QMainWindow{
@@ -861,3 +733,40 @@ boton = """
     QPushButton:pressed {
         background-color: #be4e0c;
     }"""
+
+textEdit = """
+    QTextEdit {
+        background-color: #fff9e0;
+        color: #000;
+        font-size: 14px;
+        font-family: 'Courier New', monospace;
+        padding: 10px;
+        border: 1px solid #333333;
+        border-radius: 5px;
+    }
+    QTextEdit:focus {
+        border: 1px solid #4CAF50;
+    }
+"""
+# estilo_lista = """
+#     QListWidget {
+#         background-color: #333333;
+#         color: #f1f1f1;
+#         font-size: 14px;
+#         font-family: 'Courier New', monospace;
+#         padding: 10px;
+#         border: none;
+#         outline: none;
+#     }
+#     QListWidget::item {
+#         padding: 5px 10px;
+#         border-radius: 5px;
+#     }
+#     QListWidget::item:hover {
+#         background-color: #444444;
+#     }
+#     QListWidget::item:selected {
+#         background-color: #4CAF50;
+#         color: #1f1f1f;
+#     }
+# """

@@ -15,8 +15,8 @@ from mysql.connector import Error
 # Librerías de PyQt6
 from PyQt6.QtWidgets import (QLabel,QFileDialog, QCompleter, QAbstractScrollArea, QHeaderView, QGridLayout, QHBoxLayout, QDateEdit, 
                              QMessageBox, QTableWidget, QAbstractItemView, QTableWidgetItem, QPushButton, QLineEdit, QStatusBar, QWidget,
-                             QVBoxLayout, QGroupBox, QMainWindow, QFrame, QTabWidget, QApplication)
-from PyQt6.QtGui import QIcon, QKeySequence, QAction, QPixmap, QPalette, QColor
+                             QVBoxLayout, QGroupBox, QMainWindow, QFrame, QTabWidget)
+from PyQt6.QtGui import QIcon, QKeySequence, QAction, QPixmap
 from PyQt6.QtCore import *
 
 # Módulo de para las cajas de mensajes
@@ -33,13 +33,14 @@ from validaciones.archivo_Excel import (tabla_registroUSUARIO, tabla_registroDIS
 from validaciones.disciplina import guardarACTIVIDAD, completar_CAMPOS_ACTIVIDAD, clear_tabla_disciplina, tabla_DISCIPLINA
 from validaciones.pagos import seleccionDeTablaPAGOS, tabla_pagos
 from validaciones.contabilidad import validadciones, tabla_contabilidad, selccionarTabla, limpiarCampos, clear_tabla
-from validaciones.horas import tabla_HorasTotales,tabla_HorasXEmpleado, autoCompletado, tabla_General, clearTabla
+from validaciones.horas import tabla_HorasTotales,tabla_HorasXEmpleado, autoCompletado, clearTabla
 from validaciones.consultas import consultaPorAlumno, totalAlumno, limpiar, consultarDeDisciplina, consultaPorDisciplina, asistenciaTotal,asistenciaPorAlumno
 
-# Módulo de Registro de Asistencia
+# Módulo de Registro
 from modulos.asistencia import Asistencia
 from modulos.carga_empleado.reg_empleado import Empleado
 from modulos.cargar_cuenta.carga_cuenta import CuentaContable
+from modulos.archivoTexto.archivoTexto import ArchivoTexto
 
 # Módulo de Estilos
 from qss import style
@@ -1761,23 +1762,33 @@ class VentanaPrincipal(QMainWindow):
             button_Elim.setEnabled(True)
             
     def acciones(self):
-        # BARRA DE ESTADO INFERIOR
+        # Acción para crear un archivo de texto
+        self.create_text_file_action = QAction('&Crear archivo de texto', self)
+        self.create_text_file_action.setShortcut(QKeySequence('Ctrl+N'))
+        self.create_text_file_action.setStatusTip('Crear un nuevo archivo de texto')
+        self.create_text_file_action.triggered.connect(self.createTextFile)
+        
         self.exit_action = QAction('&Cerrar sesion', self)
         self.exit_action.setShortcut(QKeySequence('Ctrl+A'))
         self.exit_action.setStatusTip('Salir de la aplicación')
         self.exit_action.triggered.connect(self.close)
         
-        # self.change_password_action = QAction('&Cambiar contraseña', self)
-        # self.change_password_action.setShortcut(QKeySequence('Ctrl+S'))
-        # self.change_password_action.setStatusTip('Cambiar la contraseña de usuario')
-        # # self.change_password_action.triggered.connect(self.cambiar_contrasena)
+        # Acción separadora
+        self.separator_action = QAction(self)
+        self.separator_action.setSeparator(True)
+        self.separator_action.setVisible(True)
         
         menubar = self.menuBar()
         menubar.setStyleSheet(style.estilo_menubar)
         file_menu = menubar.addMenu('&Archivo')
+        file_menu.addAction(self.create_text_file_action)
+        file_menu.addAction(self.separator_action)
         file_menu.addAction(self.exit_action)
-        # file_menu.addAction(self.change_password_action)
     
+    def createTextFile(self):
+        
+        self.texto = ArchivoTexto()
+        self.texto.show()
         
     # FUNCIONES PARA VINCULAR EL QTabWidget
     def record(self):
