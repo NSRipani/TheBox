@@ -10,7 +10,6 @@ from PyQt6.QtWidgets import QApplication
 from PyQt6.QtGui import QGuiApplication
 from modulos.ventana_principal import VentanaPrincipal
 
-
 # CLASE PARA BASE DE DATOS
 class ConexionBaseDeDatos:
     def __init__(self):

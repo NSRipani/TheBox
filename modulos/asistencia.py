@@ -125,7 +125,7 @@ class Asistencia(QMainWindow):
         layout_vertical.setContentsMargins(50,100,80,100)
         
         self.label_texto1 = QLabel()
-        self.label_texto1.setFont(QFont("Segoe UI", 45))
+        self.label_texto1.setFont(QFont("Segoe UI", 40))
         self.label_texto1.setFrameShadow(QFrame.Shadow.Plain)
         self.label_texto1.setFrameShape(QFrame.Shape.Panel)
         self.label_texto1.setWordWrap(True)
@@ -139,7 +139,7 @@ class Asistencia(QMainWindow):
         layout_vertical.addItem(spacer5)
 
         self.label_texto2 = QLabel()
-        self.label_texto2.setFont(QFont("Segoe UI", 50))
+        self.label_texto2.setFont(QFont("Segoe UI", 40))
         self.label_texto2.setFrameShadow(QFrame.Shadow.Plain)
         self.label_texto2.setFrameShape(QFrame.Shape.Panel)
         self.label_texto2.setWordWrap(True)
@@ -262,7 +262,7 @@ class Asistencia(QMainWindow):
                 print(dias)
                 
                 texto_cuota = f"\nÚltimo pago: {ultima_fecha}. \n\nPróximo pago en {abs(dias)} días.\n"
-                texto_vencido = f"!Atención! Cuota vencida hace {abs(dias)} días. \n\nRegularice su cuenta mensual."
+                texto_vencido = f"\n!Atención! Cuota vencida hace {abs(dias)} días.\n\nRegularice su cuenta mensual.\n"
                 
                 if 31 > dias > 14:
                     self.label_texto2.setText(texto_cuota)
@@ -279,7 +279,7 @@ class Asistencia(QMainWindow):
                 else:
                     self.label_texto2.setText(texto_vencido)
                     self.label_texto2.setStyleSheet("background-color: #FF0000; color: #fff;")
-                self.timer.start(5000)
+                self.timer.start(8000)
             else:
                 print(f"No se pudo obtener la última fecha de pago para el usuario con DNI {dni}.")
 

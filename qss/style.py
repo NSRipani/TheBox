@@ -748,25 +748,25 @@ textEdit = """
         border: 1px solid #4CAF50;
     }
 """
-# estilo_lista = """
-#     QListWidget {
-#         background-color: #333333;
-#         color: #f1f1f1;
-#         font-size: 14px;
-#         font-family: 'Courier New', monospace;
-#         padding: 10px;
-#         border: none;
-#         outline: none;
-#     }
-#     QListWidget::item {
-#         padding: 5px 10px;
-#         border-radius: 5px;
-#     }
-#     QListWidget::item:hover {
-#         background-color: #444444;
-#     }
-#     QListWidget::item:selected {
-#         background-color: #4CAF50;
-#         color: #1f1f1f;
-#     }
-# """
+estilo_lista = """
+    QListWidget {
+        background-color: #333333;
+        color: #f1f1f1;
+        font-size: 14px;
+        font-family: 'Courier New', monospace;
+        padding: 10px;
+        border-radius: 5px;
+        outline: none;
+    }
+    QListWidget::item {
+        padding: 5px 10px;
+        border-radius: 5px;
+    }
+    QListWidget::item:hover {
+        background-color: #444444;
+    }
+    QListWidget::item:selected {
+        background-color: #4CAF50;
+        color: #1f1f1f;
+    }
+"""

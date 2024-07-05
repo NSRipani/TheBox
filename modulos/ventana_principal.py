@@ -69,6 +69,7 @@ class VentanaPrincipal(QMainWindow):
         self.status_Bar = QStatusBar()
         self.status_Bar.setStyleSheet(style.estilo_statusbar)
         self.status_Bar.showMessage("by: Nicolas S. Ripani - 2024")
+        self.status_Bar.showMaximized()
         self.setStatusBar(self.status_Bar)
         
         # FUNCION PARA EL "MENUBAR"
@@ -1768,8 +1769,8 @@ class VentanaPrincipal(QMainWindow):
         self.create_text_file_action.setStatusTip('Crear un nuevo archivo de texto')
         self.create_text_file_action.triggered.connect(self.createTextFile)
         
-        self.exit_action = QAction('&Cerrar sesion', self)
-        self.exit_action.setShortcut(QKeySequence('Ctrl+A'))
+        self.exit_action = QAction('&Cerrar', self)
+        self.exit_action.setShortcut(QKeySequence('Ctrl+Q'))
         self.exit_action.setStatusTip('Salir de la aplicación')
         self.exit_action.triggered.connect(self.close)
         
@@ -2457,7 +2458,7 @@ class VentanaPrincipal(QMainWindow):
                 self.tablePagos.removeRow(selectedRow)
                 self.idUser.clear()
                 self.idDis.clear()
-                self.input_tipoDePago.clear(0)
+                self.input_tipoDePago.clear()
                 self.input_fechaDePago.setDate(QDate.currentDate())
             
                 self.tablePagos.clearSelection()  # Deseleccionar la fila eliminada 
