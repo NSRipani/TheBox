@@ -20,7 +20,7 @@ from PyQt6.QtGui import QIcon, QKeySequence, QAction, QPixmap
 from PyQt6.QtCore import *
 
 # Módulo de para las cajas de mensajes
-from modulos.mensajes import (mensaje_ingreso_datos, errorConsulta, inicio, resultado_empleado, aviso_resultado, 
+from modulos.mensajes import (ingreso_datos,ingreso_datos2,mensaje_ingreso_datos, errorConsulta, inicio, resultado_empleado, aviso_resultado, 
                               mensaje_horas_empleados, aviso_resultado_asistencias)
 # from utilidades.completar_combobox import actualizar_combobox_consulta4
 # actualizar_combobox_disc,completar_nombre_empleado,actualizar_combobox_consulta1_usuario
@@ -1307,9 +1307,6 @@ class VentanaPrincipal(QMainWindow):
         layout_emp.addWidget(id_horas_empleado)        
         layout_emp.addWidget(self.id_horas_empleado)
         
-        # completar_nombre_empleado(self)
-        # self.id_horas_empleado.currentData()[0]
-        
         # Conexión a la base de datos MySQL
         conn = conectar_base_de_datos()
         cursor = conn.cursor()
@@ -1415,15 +1412,8 @@ class VentanaPrincipal(QMainWindow):
         eliminar_horas.setStyleSheet(style.estilo_boton)
         eliminar_horas.clicked.connect(self.eliminar_horas)
         
-        # 
         emp4.addWidget(actualizar_hoas)
         emp4.addWidget(eliminar_horas)
-        # emp4.addWidget(limpiar_camp)
-        
-        # emp5 = QHBoxLayout()
-        # emp5.setAlignment(Qt.AlignmentFlag.AlignRight)
-        
-        # emp5.addWidget(excel_empleado)
                 
         primer = QHBoxLayout()
         primer.addLayout(layout_emp)
@@ -1431,13 +1421,10 @@ class VentanaPrincipal(QMainWindow):
         segundo = QHBoxLayout()
         segundo.addLayout(layout_emp1)
         segundo.addLayout(emp4)
-        # tercero = QHBoxLayout()
-        # tercero.addLayout(emp5)
         
         # AGREDA LAYOUT HORIZONTALES AL LAYOUT VERTICAL
         vertical_v.addLayout(primer)
         vertical_v.addLayout(segundo)
-        # vertical_v.addLayout(tercero)
         
         grid_emp.addLayout(vertical_v,0,0,1,5)
         
@@ -1488,11 +1475,7 @@ class VentanaPrincipal(QMainWindow):
         h.addSpacing(25)
         h.addLayout(v)
         h.addSpacing(25)
-        grid_emp.addLayout(h,1,0,1,5)
-        
-        # CONECTA LAS SEÑALES A LAS FUNCIONES
-        # limpiar_camp.clicked.connect(self.limpiar_camp)
-        
+        grid_emp.addLayout(h,1,0,1,5)       
         
         # Establecer el diseño del QGroupBox
         grupo_empleados.setLayout(grid_emp)
@@ -1641,16 +1624,6 @@ class VentanaPrincipal(QMainWindow):
         self.fecha_fin.setDate(QDate.currentDate())
         layout_libro3.addWidget(fecha_fin)   
         layout_libro3.addWidget(self.fecha_fin)
-        
-        # h1 = QHBoxLayout()
-        # h1.addLayout(layout_libro)
-        # # h1.addLayout(botones_resumen)
-        # h2 = QHBoxLayout()
-        # h2.addLayout(layout_conepto)
-        # # h2.addLayout(botones_resumen2)
-        # h3 = QHBoxLayout()
-        # h3.addLayout(layout_libro3)
-        # # h3.addLayout(botones_resumen3)
         
         # AGREDA LOS LAYOUT HORIZONTALES AL LAYOUT VERTICAL
         vertical.addLayout(layout_libro)
@@ -1810,13 +1783,7 @@ class VentanaPrincipal(QMainWindow):
     
     def pagos(self):
         self.tab.setCurrentIndex(4)
-        self.tab.setDisabled(False)
-
-        # actualiza comobox usuario por DNI
-        # actualizar_combobox_user(self)
-
-        # actualiza comobox disciplina
-        # actualizar_combobox_disc(self)    
+        self.tab.setDisabled(False)    
         
     # FUNCION QUE VINCULA LA VENTANA DE ASISTENCIA
     def assistance(self):
@@ -1905,10 +1872,10 @@ class VentanaPrincipal(QMainWindow):
                 db.commit()
 
                 if cursor.rowcount > 0:
-                    mensaje_ingreso_datos("Registro de cliente", "Registro cargado")
+                    ingreso_datos("Registro de cliente", "Registro cargado")
                     limpiasElementosUser(self, QDate)
                 else:
-                    mensaje_ingreso_datos("Registro de cliente", "Registro no cargado")
+                    ingreso_datos2("Registro de cliente", "Registro no cargado")
 
             cursor.close()
             db.close()
@@ -1963,7 +1930,7 @@ class VentanaPrincipal(QMainWindow):
                                
                 self.tablaRecord.clearSelection()  # Deseleccionar la fila eliminada
             else:
-                mensaje_ingreso_datos("Registro de alumnos","Tabla sin registros")
+                ingreso_datos("Registro de alumnos","Tabla sin registros")
                 
             cursor.close()
             db.close()
@@ -2157,8 +2124,10 @@ class VentanaPrincipal(QMainWindow):
                     self.tablaDeleteRecord.removeRow(selectedRow)
                     self.nombre_buscar3.clear()
                     self.limpiar_tabla()
-                    mensaje_ingreso_datos("Registro de alumnos","Registo eliminado")
-
+                    ingreso_datos("Registro de alumnos","Registo eliminado")
+                else:
+                    ingreso_datos("Registro de alumnos","Registo no eliminado")
+                    
                 cursor.close()
                 db.close()
                 self.tablaDeleteRecord.clearSelection()  # Deseleccionar la fila eliminada
@@ -2189,18 +2158,18 @@ class VentanaPrincipal(QMainWindow):
 
             if resultado[0] > 0:
                 # Si la actividad ya existe, mostrar un mensaje y no insertar
-                mensaje_ingreso_datos("Registro de disciplina", "La actividad ya está registrada")
+                ingreso_datos("Registro de disciplina", "La actividad ya está registrada")
             else:
                 # Si la actividad no existe, insertar la nueva actividad
                 cursor.execute("INSERT INTO disciplina (nombre, precio) VALUES (%s, %s)", (actividad, precio))
                 db.commit()
 
                 if cursor.rowcount > 0:
-                    mensaje_ingreso_datos("Registro de disciplina", "Registro cargado")
+                    ingreso_datos("Registro de disciplina", "Registro cargado")
                     self.input_disciplina4.clear()
                     self.input_precio.clear()
                 else:
-                    mensaje_ingreso_datos("Registro de disciplina", "Registro no cargado")
+                    ingreso_datos2("Registro de disciplina", "Registro no cargado")
 
             cursor.close()
             db.close()
@@ -2219,7 +2188,7 @@ class VentanaPrincipal(QMainWindow):
                 tabla_DISCIPLINA(self, resultados, cursor, QHeaderView, QTableWidget, QAbstractItemView, QTableWidgetItem, Qt)
                 self.tableActivi.clearSelection()  # Deseleccionar la fila eliminada
             else:
-                mensaje_ingreso_datos("Registro de disciplina","Tabla sin registros")
+                ingreso_datos("Registro de disciplina","Tabla sin registros")
                     
             cursor.close()  
             db.close()
@@ -2249,13 +2218,13 @@ class VentanaPrincipal(QMainWindow):
             db.commit()
             
             if cursor:
-                mensaje_ingreso_datos("Registro de disciplina","Registro actualizado")
+                ingreso_datos("Registro de disciplina","Registro actualizado")
                 self.input_disciplina4.clear()
                 self.input_precio.clear()
                 self.mostrarACTIC()
                 self.tableActivi.clearSelection()  # Deseleccionar la fila
             else:
-                mensaje_ingreso_datos("Registro de disciplina","Registro no actualizado")
+                ingreso_datos("Registro de disciplina","Registro no actualizado")
                 
             cursor.close()
             db.close()
@@ -2287,14 +2256,13 @@ class VentanaPrincipal(QMainWindow):
             cursor.execute(f"DELETE FROM disciplina WHERE id_disciplina = {id_dis}")    
             
             if cursor:
-                mensaje_ingreso_datos("Registro de disciplina","Registo eliminado")
-
+                ingreso_datos("Registro de disciplina","Registo eliminado")
                 self.tableActivi.removeRow(selectedRow)
                 self.input_disciplina4.clear()
                 self.input_precio.clear()
                 self.tableActivi.clearSelection()  # Deseleccionar la fila eliminada
             else:
-                mensaje_ingreso_datos("Registro de disciplina","Registo no eliminado")
+                ingreso_datos2("Registro de disciplina","Registo no eliminado")
                 
             cursor.close()
             db.commit()
@@ -2356,10 +2324,10 @@ class VentanaPrincipal(QMainWindow):
             cursor.execute("INSERT INTO pago (id_usuario, id_disciplina, modalidad, fecha, precio) VALUE (%s, %s, %s, %s, %s)", (id_alumno, id_activ, tipo, date, monto))
             db.commit()
             if cursor:
-                mensaje_ingreso_datos("Registro de pagos","Registro cargado")
+                ingreso_datos("Registro de pagos","Registro cargado")
                 self.camposLimpios()
             else:
-                mensaje_ingreso_datos("Registro de pagos","Registro no cargado")
+                ingreso_datos2("Registro de pagos","Registro no cargado")
                 
             cursor.close()
             db.close()
@@ -2426,12 +2394,12 @@ class VentanaPrincipal(QMainWindow):
             db.commit()
         
             if cursor:
-                mensaje_ingreso_datos("Registro de pagos","Registro actualizado")
+                ingreso_datos("Registro de pagos","Registro actualizado")
                 self.camposLimpios()
                 self.mostrarPagos()
                 self.tablePagos.clearSelection()  # Deseleccionar la fila eliminada 
             else:
-                mensaje_ingreso_datos("Registro de pagos","Registro no actualizado")
+                ingreso_datos2("Registro de pagos","Registro no actualizado")
             cursor.close()
             db.close()
         except Error as ex:
@@ -2454,7 +2422,7 @@ class VentanaPrincipal(QMainWindow):
             db.commit()
             
             if cursor:
-                mensaje_ingreso_datos("Registro de alumnos","Registo eliminado")
+                ingreso_datos("Registro de alumnos","Registo eliminado")
                 self.tablePagos.removeRow(selectedRow)
                 self.idUser.clear()
                 self.idDis.clear()
@@ -2463,7 +2431,7 @@ class VentanaPrincipal(QMainWindow):
             
                 self.tablePagos.clearSelection()  # Deseleccionar la fila eliminada 
             else:
-                mensaje_ingreso_datos("Registro de alumnos","Registo no eliminado")
+                ingreso_datos2("Registro de alumnos","Registo no eliminado")
                                 
             cursor.close()
             db.close()
@@ -2510,14 +2478,14 @@ class VentanaPrincipal(QMainWindow):
             results = cursor.fetchall()
             
             if len(results) > 0:
-                aviso_resultado("Registro de alumnos",f"Se encontraron {len(results)} coincidencias.")
+                ingreso_datos("Registro de alumnos",f"Se encontraron {len(results)} coincidencias.")
                 self.view_fechaDePago.setDate(QDate.currentDate())
                 self.view_al2.setDate(QDate.currentDate())
                 self.view_nomb.clear()
                 consultaPorAlumno(self,cursor,results,QHeaderView,QTableWidget,QAbstractItemView,QTableWidgetItem,QDate,Qt)
                             
             else:
-                aviso_resultado("Registro de alumnos",f"Se encontraron {len(results)} coincidencias.")
+                ingreso_datos("Registro de alumnos",f"Se encontraron {len(results)} coincidencias.")
                 self.view_fechaDePago.setDate(QDate.currentDate())
                 self.view_al2.setDate(QDate.currentDate())
                 
@@ -2549,13 +2517,13 @@ class VentanaPrincipal(QMainWindow):
             results = cursor.fetchall()
             
             if results:
-                aviso_resultado("Registro de alumnos",f"Se encontraron {len(results)} coincidencias.")
+                ingreso_datos("Registro de alumnos",f"Se encontraron {len(results)} coincidencias.")
                 self.view_fechaDePago.setDate(QDate.currentDate())
                 self.view_al.setDate(QDate.currentDate())
                 totalAlumno(self,cursor,results,QHeaderView,QTableWidget,QAbstractItemView,QAbstractScrollArea,QTableWidgetItem,QDate,Qt)
                 
             else: 
-                aviso_resultado("Registro de alumnos",f"Se encontraron {len(results)} coincidencias.")
+                ingreso_datos("Registro de alumnos",f"Se encontraron {len(results)} coincidencias.")
                 self.view_fechaDePago.setDate(QDate.currentDate())
                 self.view_al2.setDate(QDate.currentDate())
                 
@@ -2589,13 +2557,13 @@ class VentanaPrincipal(QMainWindow):
             results = cursor.fetchall()
             
             if results:
-                aviso_resultado("Registro de alumnos",f"Se encontraron {len(results)} coincidencias.")
+                ingreso_datos("Registro de alumnos",f"Se encontraron {len(results)} coincidencias.")
                 self.view_fechaDePago.setDate(QDate.currentDate())
                 self.view_al2.setDate(QDate.currentDate())
                 consultarDeDisciplina(self,cursor,results,QHeaderView,QTableWidget,QAbstractItemView,QTableWidgetItem,QDate,Qt)
                             
             else:
-                aviso_resultado("Registro de alumnos",f"Se encontraron {len(results)} coincidencias.")
+                ingreso_datos("Registro de alumnos",f"Se encontraron {len(results)} coincidencias.")
                 self.view_fechaDePago.setDate(QDate.currentDate())
                 self.view_al2.setDate(QDate.currentDate())
                 
@@ -2634,13 +2602,13 @@ class VentanaPrincipal(QMainWindow):
             results = cursor.fetchall()
                     
             if len(results) > 0:
-                aviso_resultado("Registro de alumnos",f"Se encontraron {len(results)} coincidencias.")
+                ingreso_datos("Registro de alumnos",f"Se encontraron {len(results)} coincidencias.")
                 self.view_disciplina.clear()
                 self.view_fechaDePago.setDate(QDate.currentDate())
                 self.view_al2.setDate(QDate.currentDate())
                 consultaPorDisciplina(self,cursor,results,QHeaderView,QTableWidget,QAbstractItemView,QTableWidgetItem,QDate,Qt)
             else:
-                aviso_resultado("Registro de alumnos",f"Se encontraron {len(results)} coincidencias.")
+                ingreso_datos("Registro de alumnos",f"Se encontraron {len(results)} coincidencias.")
                 self.view_fechaDePago.setDate(QDate.currentDate())
                 self.view_al2.setDate(QDate.currentDate())
                 
@@ -2671,13 +2639,13 @@ class VentanaPrincipal(QMainWindow):
             results = cursor.fetchall()
             
             if len(results) > 0:
-                aviso_resultado("Registro de alumnos",f"Se encontraron {len(results)} coincidencias.")
+                ingreso_datos("Registro de alumnos",f"Se encontraron {len(results)} coincidencias.")
                 self.view_asistencia.setDate(QDate.currentDate())
                 self.view_al.setDate(QDate.currentDate())
                 asistenciaTotal(self,cursor,results,QHeaderView,QTableWidget,QAbstractItemView,QTableWidgetItem,QDate,Qt)
                 
             else:
-                aviso_resultado("Registro de alumnos",f"Se encontraron {len(results)} coincidencias.")
+                ingreso_datos("Registro de alumnos",f"Se encontraron {len(results)} coincidencias.")
                 self.view_asistencia.setDate(QDate.currentDate())
                 self.view_al.setDate(QDate.currentDate())
                 
@@ -2717,13 +2685,13 @@ class VentanaPrincipal(QMainWindow):
             results5 = cursor.fetchall()
 
             if len(results5) > 0:
-                aviso_resultado_asistencias("Busqueda de alumnos",f"Se encontraron {len(results5)} asistencias.")
+                ingreso_datos("Busqueda de alumnos",f"Se encontraron {len(results5)} asistencias.")
                 self.view_nomb.clear()
                 self.view_asistencia.setDate(QDate.currentDate())
                 self.view_al.setDate(QDate.currentDate())
                 asistenciaPorAlumno(self,cursor,results5,QHeaderView,QTableWidget,QAbstractItemView,QTableWidgetItem,QDate,Qt)
             else:
-                aviso_resultado_asistencias("Busqueda de alumnos",f"Se encontraron {len(results5)} asistencias.")
+                ingreso_datos("Busqueda de alumnos",f"Se encontraron {len(results5)} asistencias.")
                 self.view_asistencia.setDate(QDate.currentDate())
                 self.view_al.setDate(QDate.currentDate())
                 
@@ -2774,7 +2742,7 @@ class VentanaPrincipal(QMainWindow):
             cursor.execute("SELECT COUNT(*) FROM hora WHERE id_empleado = %s AND horas_diaria = %s AND fecha = %s", (id_empleado_seleccionado, horas_horas, fecha_horas))
             result = cursor.fetchone()
             if result[0] > 0:
-                mensaje_ingreso_datos("Registro de empleados", "Ya existe un registro con los mismos datos")
+                ingreso_datos("Registro de empleados", "Ya existe un registro con los mismos datos")
                 return
             
             cursor.execute("INSERT INTO hora (id_empleado,horas_diaria,fecha) VALUES (%s,%s,%s)", (id_empleado_seleccionado,horas_horas,fecha_horas))
@@ -2782,12 +2750,12 @@ class VentanaPrincipal(QMainWindow):
             db.commit()
             
             if cursor:
-                mensaje_ingreso_datos("Registro de empleado","Registro cargado")
+                ingreso_datos("Registro de empleado","Registro cargado")
                 self.id_horas_empleado.clear()
                 self.horas_tra.clear()
                 self.fecha_tra.setDate(QDate.currentDate())
             else:
-                mensaje_ingreso_datos("Registro de empleado","Registro no cargado")
+                ingreso_datos2("Registro de empleado","Registro no cargado")
                 
             cursor.close()
             db.close()
@@ -2892,7 +2860,7 @@ class VentanaPrincipal(QMainWindow):
             db.commit()
             
             if cursor:
-                mensaje_ingreso_datos("Registro de horas","Registro eliminado")
+                ingreso_datos("Registro de horas","Registro eliminado")
                 self.tablaHoras.removeRow(selectedRow)
 
                 if self.tablaHoras.rowCount() == 1:
@@ -2905,7 +2873,7 @@ class VentanaPrincipal(QMainWindow):
                 self.fin_tra.setDate(QDate.currentDate())
                 self.tablaHoras.clearSelection()  # Deseleccionar la fila eliminada
             else:
-                mensaje_ingreso_datos("Registro de horas","Registro no eliminado")
+                ingreso_datos2("Registro de horas","Registro no eliminado")
                 self.periodo.setDate(QDate.currentDate())
                 self.fin_tra.setDate(QDate.currentDate())
                 
@@ -2948,12 +2916,12 @@ class VentanaPrincipal(QMainWindow):
             db.commit() 
             
             if cursor:
-                mensaje_ingreso_datos("Registro de horas","Registro actualizado")
+                ingreso_datos("Registro de horas","Registro actualizado")
                 self.id_horas_empleado.clear()
                 self.horas_tra.clear()
                 self.fecha_tra.setDate(QDate.currentDate())
             else:
-                mensaje_ingreso_datos("Registro de horas","Registro no actualizado")
+                ingreso_datos2("Registro de horas","Registro no actualizado")
                 
             cursor.close()
             db.close() 
@@ -2998,10 +2966,10 @@ class VentanaPrincipal(QMainWindow):
                 db.commit()
                 
                 if cursor:
-                    mensaje_ingreso_datos("Registro de Ingresos-Egresos","Datos cargados correctamente")
+                    ingreso_datos("Registro de Ingresos-Egresos","Datos cargados correctamente")
                     limpiarCampos(self,QDate)
                 else:
-                    mensaje_ingreso_datos("Registro de Ingresos-Egresos","Datos no cargados correctamente")
+                    ingreso_datos("Registro de Ingresos-Egresos","Datos no cargados correctamente")
                     
                 cursor.close()
                 db.close()
@@ -3035,11 +3003,11 @@ class VentanaPrincipal(QMainWindow):
             cursor.execute(query)
             db.commit()
             if cursor:
-                mensaje_ingreso_datos("Registro de Ingresos-Egresos","Datos cargados correctamente")
+                ingreso_datos("Registro de Ingresos-Egresos","Datos cargados correctamente")
                 
                 limpiarCampos(self,QDate)
             else:
-                mensaje_ingreso_datos("Registro de Ingresos-Egresos","Datos no cargados correctamente")
+                ingreso_datos2("Registro de Ingresos-Egresos","Datos no cargados correctamente")
             cursor.close()
             db.close()
             self.tablaGastos.clearSelection() # Deselecciona la fila
@@ -3099,7 +3067,7 @@ class VentanaPrincipal(QMainWindow):
             db.commit()  # Confirmar los cambios en la base de datos
             
             if cursor.rowcount > 0:
-                mensaje_ingreso_datos("Registro de Ingresos-Egresos","Registro eliminado")
+                ingreso_datos("Registro de Ingresos-Egresos","Registro eliminado")
                 self.tablaGastos.clearSelection()  # Deseleccionar la fila eliminada
                 self.tablaGastos.removeRow(registro)
                 
@@ -3108,7 +3076,7 @@ class VentanaPrincipal(QMainWindow):
 
                 limpiarCampos(self,QDate)                    
             else:
-                mensaje_ingreso_datos("Registro de Ingresos-Egresos","Registro no eliminado")
+                ingreso_datos2("Registro de Ingresos-Egresos","Registro no eliminado")
                         
             cursor.close()
             db.close()
@@ -3121,4 +3089,3 @@ class VentanaPrincipal(QMainWindow):
       
     def tabla_resumen(self):
         tabla_libroDiario_CONTABILIDAD(self,Workbook,Font,PatternFill,Border,Side,numbers,QFileDialog)
-        

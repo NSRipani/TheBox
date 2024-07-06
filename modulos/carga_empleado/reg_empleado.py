@@ -75,7 +75,7 @@ class Empleado(QDialog):
         self.celular.setMaxLength(10)
         self.celular.setStyleSheet(style.estilo_lineedit)
         self.fecha = QDateEdit()
-        self.fecha.setStyleSheet(style.estilo_fechas)
+        self.fecha.setStyleSheet(style.fecha)
         self.fecha.setLocale(QLocale("es-AR"))
         self.fecha.setCursor(Qt.CursorShape.PointingHandCursor)
         self.fecha.setFixedWidth(200)
