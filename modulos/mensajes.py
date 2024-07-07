@@ -14,9 +14,15 @@ def mensaje_ingreso_datos(win_title,message):
     mensaje.setStyleSheet(style.message_box_estilos_eliminar_profesor)
     mensaje.setWindowTitle(win_title)
     mensaje.setText(message)
+    mensaje.setIcon(QMessageBox.Icon.Warning)
     mensaje.setStandardButtons(QMessageBox.StandardButton.Ok)
-    mensaje.exec()
     
+    # Mostrar el mensaje durante 5 segundos
+    mensaje.show()
+    timer = QTimer()
+    timer.singleShot(5000, mensaje.close)
+    mensaje.exec()  
+        
 def ingreso_datos(win_title,message):
     mensaje = QMessageBox()
     mensaje.setWindowIcon(QIcon("img/icono-QMessage.png"))
@@ -29,7 +35,7 @@ def ingreso_datos(win_title,message):
     # Mostrar el mensaje durante 5 segundos
     mensaje.show()
     timer = QTimer()
-    timer.singleShot(3000, mensaje.close)
+    timer.singleShot(5000, mensaje.close)
     mensaje.exec()
 
 def ingreso_datos2(win_title,message):
@@ -44,7 +50,7 @@ def ingreso_datos2(win_title,message):
     # Mostrar el mensaje durante 5 segundos
     mensaje2.show()
     timer = QTimer()
-    timer.singleShot(3000, mensaje2.close)
+    timer.singleShot(5000, mensaje2.close)
     mensaje2.exec()
     
 def inicio(title,text):
@@ -53,7 +59,7 @@ def inicio(title,text):
     message_box.setStyleSheet(style.message_box_estilos_eliminar_profesor)
     message_box.setWindowTitle(title)
     message_box.setText(text)
-    message_box.setIcon(QMessageBox.Icon.Information)
+    message_box.setIcon(QMessageBox.Icon.Question)
     message_box.setStandardButtons(QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No)
     message_box.setDefaultButton(QMessageBox.StandardButton.No)
         
@@ -66,37 +72,16 @@ def errorConsulta(mensaje,ex):
     message_box.setWindowIcon(QIcon("img/icono-QMessage.png"))
     message_box.setWindowTitle(mensaje)
     message_box.setText(ex)
+    message_box.setIcon(QMessageBox.Icon.Warning)
     message_box.setDefaultButton(QMessageBox.StandardButton.Ok)
+    
+    # Mostrar el mensaje durante 5 segundos
+    message_box.show()
+    timer = QTimer()
+    timer.singleShot(3000, message_box.close)
     message_box.exec()
-
-def aviso_resultado(mensaje,results):# BORRAR
-    aviso2 = QMessageBox()
-    aviso2.setWindowIcon(QIcon("img/icono-QMessage.png"))
-    aviso2.setStyleSheet(style.message_box_estilos_eliminar_profesor)
-    aviso2.setWindowTitle(mensaje)
-    aviso2.setText(results)
-    aviso2.setDefaultButton(QMessageBox.StandardButton.Ok)
-    aviso2.exec()
     
-def resultado_empleado(mensaje1,busqueda):
-    aviso2 = QMessageBox()
-    aviso2.setWindowIcon(QIcon("img/icono-QMessage.png"))
-    aviso2.setStyleSheet(style.message_box_estilos_eliminar_profesor)
-    aviso2.setWindowTitle(mensaje1)
-    aviso2.setText(busqueda)
-    aviso2.setDefaultButton(QMessageBox.StandardButton.Ok)
-    aviso2.exec()
-    
-def aviso_resultado_asistencias(referenicia,alumno):# BORRAR
-    aviso3 = QMessageBox()
-    aviso3.setWindowIcon(QIcon("img/icono-QMessage.png"))
-    aviso3.setStyleSheet(style.message_box_estilos_eliminar_profesor)
-    aviso3.setWindowTitle(referenicia)
-    aviso3.setText(alumno)
-    aviso3.setDefaultButton(QMessageBox.StandardButton.Ok)
-    aviso3.exec()
-
-def aviso_descarga_execl():
+def aviso_descarga_execl(): # BORRAR
     excel = QFileDialog()
     excel.setStyleSheet(style.message_box_estilos_eliminar_profesor)
     excel.getSaveFileName()
@@ -118,17 +103,14 @@ def aviso_descargaExitosa(encabezado,muestra):
     aviso3.setText(muestra)
     aviso3.setWindowIcon(QIcon("img/excel.png"))
     aviso3.setDefaultButton(QMessageBox.StandardButton.Ok)
+    
+    # Mostrar el mensaje durante 5 segundos
+    aviso3.show()
+    timer = QTimer()
+    timer.singleShot(5000, aviso3.close)
     aviso3.exec()
-    
-def mensaje_horas_empleados(win_title2,message2):
-    mensaje = QMessageBox()
-    mensaje.setStyleSheet(style.message_box_estilos_eliminar_profesor)
-    mensaje.setWindowTitle(win_title2)
-    mensaje.setText(message2)
-    mensaje.setWindowIcon(QIcon("img/icono-QMessage.png"))
-    mensaje.setStandardButtons(QMessageBox.StandardButton.Ok)
-    mensaje.exec()
-    
+
+# ASISTENCIA    
 def mensaje_datos_ingresado(title, message):
     msg = QMessageBox()
     msg.setWindowTitle(title)

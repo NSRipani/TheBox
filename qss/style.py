@@ -200,7 +200,7 @@ message_box_estilos_eliminar_profesor = """
     }
     QMessageBox QLabel {
         color: black;
-        text-align: center;
+        text-align: start;
         margin: 1px 5px;
         padding: 5px;
         font: 15px;

@@ -16,7 +16,7 @@ from qss import style
 # from utilidades.completar_combobox import actualizar_combobox_disc¡
 
 # Modulo de para las cajas de mensajes
-from modulos.mensajes import mensaje_ingreso_datos,mensaje_datos_ingresado
+from modulos.mensajes import mensaje_ingreso_datos,mensaje_datos_ingresado, ingreso_datos
 from conexion_DB.dataBase import conectar_base_de_datos
 from modulos.mensajes import errorConsulta
 
@@ -102,9 +102,9 @@ class Asistencia(QMainWindow):
         # Consulta para obtener los datos de una columna específica
         cursor.execute("SELECT dni FROM usuario ORDER BY dni ASC")
         data = cursor.fetchall()
-        suggestions = [str(item[0]) for item in data]
+        self.suggestions = [str(item[0]) for item in data]
 
-        completer = QCompleter(suggestions)
+        completer = QCompleter(self.suggestions)
         completer.setFilterMode(Qt.MatchFlag.MatchStartsWith)
         completer.popup().setFont(QFont("Segoe UI", 18))
         self.numero_documento.setCompleter(completer)
@@ -179,10 +179,12 @@ class Asistencia(QMainWindow):
         # Dato ingresado por teclado   
         dni = self.numero_documento.text()
         
-        
         # Validar formato de número de documento
         if not dni.isdigit() or len(dni) != 8:
             mensaje_ingreso_datos("Registro de asistencia", "El número de documento debe contener 8 dígitos numéricos.")
+            return
+        if not dni in self.suggestions:
+            mensaje_ingreso_datos("Registro de asistencia", "El número de documento ingresado no se encuentra registrado en lista de cliente.")
             return
         
         try:
@@ -220,7 +222,7 @@ class Asistencia(QMainWindow):
                         disciplinas_registradas.append(id_disciplina)
                         print(f"disciplinas: {disciplinas_registradas}")
                     else:
-                        mensaje_datos_ingresado("Registro de Asistencia",f"Ya existe un registro de asistencia para el usuario con DNI {u_dni} en la fecha {fecha_hoy}. No se registrará de nuevo.")
+                        ingreso_datos("Registro de Asistencia",f"Ya existe un registro de asistencia para el usuario con DNI {u_dni} en la fecha {fecha_hoy}. No se registrará de nuevo.")
                         print(f"Ya existe un registro de asistencia para el usuario con DNI {u_dni} en la fecha {fecha_hoy}. No se registrará de nuevo.")
 
                 # Verificar si se registraron todas las disciplinas
@@ -267,15 +269,12 @@ class Asistencia(QMainWindow):
                 if 31 > dias > 14:
                     self.label_texto2.setText(texto_cuota)
                     self.label_texto2.setStyleSheet("background-color: #7FFF00; color: #000;")
-                    # self.timer.start(5000)
                 elif 14 >= dias > 4:
                     self.label_texto2.setText(texto_cuota)
                     self.label_texto2.setStyleSheet("background-color: #FFFF00;color: #000;")
-                    # self.timer.start(5000)
                 elif 4 >= dias >= 0:
                     self.label_texto2.setText(texto_cuota)
                     self.label_texto2.setStyleSheet("background-color: #FF8000; color: #000;")               
-                    # self.timer.start(5000)
                 else:
                     self.label_texto2.setText(texto_vencido)
                     self.label_texto2.setStyleSheet("background-color: #FF0000; color: #fff;")

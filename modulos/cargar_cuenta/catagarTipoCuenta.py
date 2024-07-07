@@ -24,6 +24,8 @@ def actualizar_combobox_TipoCUENTA(self,QCompleter,Qt,style):
     cursor.close()
     conn.close()
     
+    return sugerencia
+    
 def actualizar_combobox_Categoria(self,QCompleter,Qt,style):
     #  Conexión a la base de datos MySQL
     conn = conectar_base_de_datos()
@@ -35,9 +37,9 @@ def actualizar_combobox_Categoria(self,QCompleter,Qt,style):
     cursor.execute("SELECT nombre FROM categoria ORDER BY nombre ASC")
     resultados = cursor.fetchall()
 
-    sugerencia = [str(item[0]) for item in resultados]
+    debe_haber = [str(item[0]) for item in resultados]
 
-    categoria = QCompleter(sugerencia)
+    categoria = QCompleter(debe_haber)
     categoria.setCaseSensitivity(Qt.CaseSensitivity.CaseInsensitive)
     categoria.setCompletionMode(QCompleter.CompletionMode.PopupCompletion)
     categoria.popup().setStyleSheet(style.completer)
@@ -45,3 +47,5 @@ def actualizar_combobox_Categoria(self,QCompleter,Qt,style):
 
     cursor.close()
     conn.close()
+    
+    return debe_haber

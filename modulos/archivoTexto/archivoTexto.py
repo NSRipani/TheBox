@@ -140,7 +140,7 @@ class ArchivoTexto(QDialog):
         item_seleccionado = self.archivo_list.currentItem()
         if item_seleccionado:
             nombre_archivo = item_seleccionado.text()
-            confirmacion = inicio("Eliminar archivo", f"¿Estás seguro de que deseas eliminar '{nombre_archivo}'?", QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No)
+            confirmacion = inicio("Eliminar archivo", f"¿Estás seguro de que deseas eliminar '{nombre_archivo}'?")
             if confirmacion == QMessageBox.StandardButton.Yes:
                 self.archivos.remove(nombre_archivo)
                 self.actualizar_lista_archivos()

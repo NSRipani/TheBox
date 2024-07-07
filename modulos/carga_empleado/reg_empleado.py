@@ -14,7 +14,7 @@ from PyQt6.QtGui import QIcon, QGuiApplication
 from PyQt6.QtCore import *
 
 # Módulo de para las cajas de mensajes
-from modulos.mensajes import (mensaje_ingreso_datos, errorConsulta, inicio, resultado_empleado)
+from modulos.mensajes import (mensaje_ingreso_datos, errorConsulta, inicio, ingreso_datos)
 
 # Módulo de Estilos
 from qss import style
@@ -208,10 +208,10 @@ class Empleado(QDialog):
             db.commit()
             
             if cursor:
-                mensaje_ingreso_datos("Registro de empleado","Registro cargado")
+                ingreso_datos("Registro de empleado","Registro cargado")
                 lim_campos(self,QDate)
             else:
-                mensaje_ingreso_datos("Registro de empleado","Registro no cargado")
+                ingreso_datos("Registro de empleado","Registro no cargado")
                 
             cursor.close()
             db.close()
@@ -228,10 +228,10 @@ class Empleado(QDialog):
             cursor.execute(f"SELECT * FROM registro_empleado ORDER BY id_empleado")
             busqueda = cursor.fetchall()
             if len(busqueda) > 0:
-                resultado_empleado("Registro de empleado",f"Se encontraron {len(busqueda)} coincidencias.")
+                ingreso_datos("Registro de empleado",f"Se encontraron {len(busqueda)} coincidencias.")
                 verTabla(self,cursor,busqueda,QHeaderView,QTableWidget,QAbstractItemView,QTableWidgetItem,QDate,Qt)
             else:
-                resultado_empleado("Registro de empleado",f"Se encontraron {len(busqueda)} coincidencias.")
+                ingreso_datos("Registro de empleado",f"Se encontraron {len(busqueda)} coincidencias.")
                 
             cursor.close()
             db.close()
@@ -280,10 +280,10 @@ class Empleado(QDialog):
                 db.commit() 
                 
                 if cursor:
-                    mensaje_ingreso_datos("Registro de empleado","Registro actualizado")
+                    ingreso_datos("Registro de empleado","Registro actualizado")
                     lim_campos(self,QDate)
                 else:
-                    mensaje_ingreso_datos("Registro de empleado","Registro no actualizado")
+                    ingreso_datos("Registro de empleado","Registro no actualizado")
                     
                 cursor.close()
                 db.close() 
@@ -314,12 +314,12 @@ class Empleado(QDialog):
                 cursor.execute(f"DELETE FROM registro_empleado WHERE id_empleado = {id_emple}")
                 db.commit()
                 if cursor:
-                    mensaje_ingreso_datos("Registro de empleado","Registro eliminado")
+                    ingreso_datos("Registro de empleado","Registro eliminado")
                     self.tablaEmp.removeRow(selectedRow)
                     lim_campos(self,QDate)
                     self.tablaEmp.clearSelection() # Deselecciona la fila
                 else:
-                    mensaje_ingreso_datos("Registro de empleado","Registro no eliminado")  
+                    ingreso_datos("Registro de empleado","Registro no eliminado")  
                                 
             except Error as ex:
                 errorConsulta("Registro de empleado",f"Error en la consulta: {str(ex)}")
