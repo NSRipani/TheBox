@@ -1,61 +1,59 @@
 from modulos.mensajes import mensaje_ingreso_datos
 import re
 def variables(nom_emp,apell_emp,sex_emp,edad_emp,dni_emp,cel):
-    # Validar nombre y apellido: deben ser strings
-    if not isinstance(nom_emp, str) or not nom_emp.isalpha():
-        mensaje_ingreso_datos("Registro de empleado","El nombre debe contener: \n- Letras y/o espacios entre nombres(si tiene mas de dos).")
-        return 
+    patron = re.compile(r'^[a-zA-ZáéíóúÁÉÍÓÚüÜ\'\s]+$') 
+    if not isinstance(nom_emp, str) or nom_emp.isspace() or not patron.match(nom_emp) or not nom_emp.isalpha(): #'match' -> verificar si la cadena coincide con este patrón.
+        mensaje_ingreso_datos("Registro de empleado","El 'nombre' debe contener:\n\n- Letras y/o espacios entre nombres(si tiene mas de dos).")
+        return
     
-    if not isinstance(apell_emp, str) or not apell_emp.isalpha():
-        mensaje_ingreso_datos("Registro de empleado","El apellido debe contener: \n- Letras y/o espacios entre nombres(si tiene mas de dos).")
-        return 
+    if not isinstance(apell_emp, str) or apell_emp.isspace() or not patron.match(apell_emp) or not nom_emp.isalpha():
+        mensaje_ingreso_datos("Registro de empleado","El 'apellido' debe contener:\n\n- Letras y/o espacios entre nombres(si tiene mas de dos).")
+        return
     
-    # Validar sexo: debe ser un string
     if not isinstance(sex_emp, str) or not sex_emp.isalpha():
-        mensaje_ingreso_datos("Registro de empleado","El sexo es 'Hombre' o 'Mujer'")
-        return 
-    
+        mensaje_ingreso_datos("Registro de empleado","Debe elegir una sexo.\n\nEl sexo es 'Hombre' o 'Mujer'")
+        return
+    if sex_emp:
+        sex_emp = sex_emp.capitalize()
+     
     # Validar edad: debe ser un entero
     patron_mun = re.compile(r'^[0-9]+$')
     if not edad_emp.isdigit() or not len(edad_emp) == 2 or not patron_mun.match(edad_emp):
-        mensaje_ingreso_datos("Registro de empleado","La Edad ser numérico y contener 2 números enteros")
+        mensaje_ingreso_datos("Registro de empleado","La Edad debe contener:\n\n- Contener 2 (DOS) números enteros.\n- No contener puntos(.)")
         return
     try:
         edad_emp and len(str(edad_emp))==2
         edad_emp = int(edad_emp)
     except ValueError:
-        mensaje_ingreso_datos("Registro de empleado","La Edad debe ser numérico y contener 2 números enteros2")
+        mensaje_ingreso_datos("Registro de empleado","La Edad debe contener:\n\n- Contener 2 (DOS) números enteros.\n- No contener puntos(.)")
         return
-        
-    # Validar DNI: debe ser un entero
-    if not (isinstance(dni_emp, str) and dni_emp.isdigit() and len(str(dni_emp))==8):
-        mensaje_ingreso_datos("Registro de empleado","El DNI debe ser numérico y contener 8 números enteros")
+      
+    if not (isinstance(dni_emp, str) and dni_emp.isdigit() and patron_mun.match(dni_emp)):# and len(str(dni_emp))==8 
+        mensaje_ingreso_datos("Registro de empleado","El DNI debe contener:\n\n- Números enteros.\n - No contener puntos(.)")
         return
     try:
-        if dni_emp and len(str(dni_emp))==8:
+        if dni_emp:# and len(str(dni_emp))==8
             dni_emp = int(dni_emp)
     except ValueError:
-        mensaje_ingreso_datos("Registro de empleado","El DNI debe ser numérico y contener 8 números enteros")
+        mensaje_ingreso_datos("Registro de empleado","El DNI debe contener: \n\n- Números enteros.\n - No contener puntos(.)")
         return
     
-    # Validar celular: debe ser un string de números
-    if not (isinstance(cel, str) and re.match(r'^\d+$', cel) and len(str(cel))==10):
-        mensaje_ingreso_datos("Registro de empleado","El celular debe ser numérico y contener 10 números enteros")
+    if not (cel.isdigit() and patron_mun.match(cel)):
+        mensaje_ingreso_datos("Registro de empleado","El Celular debe ser:\n\n- Números enteros.\n- No contener puntos(.)")
         return
     try:
-        cel and len(str(cel))==8
-        print(cel)
+        if cel:
+            print(f"El celular es {cel}")
     except ValueError:
-        mensaje_ingreso_datos("Registro de empleado","El celular debe ser numérico y contener 10 números enteros")
+        mensaje_ingreso_datos("Registro de empleado","El celular debe ser numérico")
         return
-    
+
     return "Validación exitosa."
-    
     
 def lim_campos(self,QDate):
     self.nombre.clear()
     self.apellido.clear()
-    self.sex.clear()
+    self.sex.setCurrentIndex(0)
     self.edad.clear()
     self.dni.clear()
     self.celular.clear()
@@ -75,7 +73,7 @@ def seleccion_DeTabla(self,QDate):
     
     self.nombre.setText(nom_emp)
     self.apellido.setText(apell_emp)
-    self.sex.setText(sex_emp)
+    self.sex.setCurrentText(str(sex_emp))
     self.edad.setText(edad_emp)
     self.dni.setText(dni_emp)
     self.celular.setText(cel)

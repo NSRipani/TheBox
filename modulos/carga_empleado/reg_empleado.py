@@ -9,12 +9,12 @@ from openpyxl.styles import Font, PatternFill, Border, Side, numbers
 # Librerías de PyQt6
 from PyQt6.QtWidgets import (QLabel,QFormLayout,QFileDialog, QCompleter, QHeaderView, QHBoxLayout, QDateEdit, 
                              QMessageBox, QTableWidget, QAbstractItemView, QTableWidgetItem, QPushButton, QLineEdit,
-                             QVBoxLayout, QGroupBox, QDialog)
+                             QVBoxLayout, QGroupBox, QDialog,QComboBox)
 from PyQt6.QtGui import QIcon, QGuiApplication
 from PyQt6.QtCore import *
 
 # Módulo de para las cajas de mensajes
-from modulos.mensajes import (mensaje_ingreso_datos, errorConsulta, inicio, ingreso_datos)
+from modulos.mensajes import mensaje_ingreso_datos, errorConsulta, inicio, ingreso_datos
 
 # Módulo de Estilos
 from qss import style
@@ -55,25 +55,30 @@ class Empleado(QDialog):
         self.nombre.setStyleSheet(style.estilo_lineedit)
         self.apellido = QLineEdit()
         self.apellido.setStyleSheet(style.estilo_lineedit)
-        self.sex = QLineEdit()
-        self.sex.setStyleSheet(style.estilo_lineedit)
-        self.sex.setPlaceholderText("Hombre / Mujer")
+        self.sex = QComboBox()
+        self.sex.setStyleSheet(style.estilo_combo)
+        self.sex.addItem("Seleccione...", "")  # Primer ítem vacío
+        self.sex.addItem("Hombre", "hombre")
+        self.sex.addItem("Mujer", "mujer")
+        self.sex.setCurrentIndex(0)
+        # self.sex.setPlaceholderText("Hombre / Mujer")
         
-        patrones_validos = ["hombre", "mujer"]
-        completer = QCompleter(patrones_validos)
-        completer.popup().setStyleSheet(style.completer)
-        self.sex.setCompleter(completer)
+        # patrones_validos = ["hombre", "mujer"]
+        # completer = QCompleter(patrones_validos)
+        # completer.popup().setStyleSheet(style.completer)
+        # self.sex.setCompleter(completer)
         
         self.edad = QLineEdit()
         self.edad.setMaxLength(2)
+        self.edad.setPlaceholderText("Ej: 23")
         self.edad.setStyleSheet(style.estilo_lineedit)
         self.dni = QLineEdit()
         self.dni.setMaxLength(8)
         self.dni.setPlaceholderText("Sin punto")
         self.dni.setStyleSheet(style.estilo_lineedit)
         self.celular = QLineEdit()
-        self.celular.setMaxLength(10)
         self.celular.setStyleSheet(style.estilo_lineedit)
+        self.celular.setPlaceholderText("Ej: 3424789123")
         self.fecha = QDateEdit()
         self.fecha.setStyleSheet(style.fecha)
         self.fecha.setLocale(QLocale("es-AR"))
@@ -183,18 +188,11 @@ class Empleado(QDialog):
                 
         nom_emp = self.nombre.text().title()
         apell_emp = self.apellido.text().title()
-        sex_emp = self.sex.text()
+        sex_emp = self.sex.currentData()
         edad_emp = self.edad.text()
         dni_emp = self.dni.text()
         cel = self.celular.text()
         fecha = self.fecha.date().toPyDate()
-        
-        patrones_validos = ["hombre", "mujer","Hombre", "Mujer"]
-        if sex_emp not in patrones_validos:
-            mensaje_ingreso_datos("Registro de empleado","Debe elegir un sexo entre 'hombre' o 'mujer'.")
-            return
-        elif sex_emp in patrones_validos:
-            sex_emp = sex_emp.capitalize()
         
         validacion = variables(nom_emp,apell_emp,sex_emp,edad_emp,dni_emp,cel)
         if validacion != "Validación exitosa.":
@@ -241,7 +239,7 @@ class Empleado(QDialog):
 
     def autocompleto_de_datos_empleado(self):
         seleccion_DeTabla(self,QDate)
-
+    
     def actualizar_empleado(self):
         # Verificar si se ha seleccionado una fila
         if not self.tablaEmp.currentItem():
@@ -251,20 +249,12 @@ class Empleado(QDialog):
         id_empl = int(self.tablaEmp.item(self.tablaEmp.currentRow(), 0).text())
         nom_emp = self.nombre.text().title()
         apell_emp = self.apellido.text().title()
-        sex_emp = self.sex.text()
+        sex_emp = self.sex.currentData()
         edad_emp = self.edad.text()
         dni_emp = self.dni.text()
         cel = self.celular.text()
         fecha = self.fecha.date().toPyDate()
         
-        patrones_validos = ["hombre", "mujer","Hombre", "Mujer"]
-        if sex_emp not in patrones_validos:
-            mensaje_ingreso_datos("Registro de empleado","Debe elegir un sexo entre 'hombre' o 'mujer'.")
-            return
-        elif sex_emp in patrones_validos:
-            sex_emp = sex_emp.capitalize()
-        
-        # variables(nom_emp,apell_emp,sex_emp,edad_emp,dni_emp,cel)
         validacion = variables(nom_emp,apell_emp,sex_emp,edad_emp,dni_emp,cel)
         if validacion != "Validación exitosa.":
             mensaje_ingreso_datos("Error de validación", "Verifique los datos por favor")

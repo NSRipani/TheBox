@@ -1,4 +1,4 @@
-from modulos.mensajes import mensaje_ingreso_datos
+from modulos.mensajes import mensaje_ingreso_datos,ingreso_datos
 import re
 from qss.style_item import itemColor_RESULTADO, itemColor_TOTAL
 # from openpyxl import Workbook
@@ -14,27 +14,35 @@ def registroUSER(nombre1 , apellido1, dni, sexo, edad, celu):
         return
 
     patron2 = re.compile(r'^[0-9]+$')
-    if not dni.isdigit() or not len(dni) == 8 or not patron2.match(dni):
-        mensaje_ingreso_datos("Registro de cliente","El 'DNI' debe ser:\n\n- Numérico y contener 8 números enteros")
+    if not dni.isdigit() or not patron2.match(dni):#or not len(dni) == 8
+        mensaje_ingreso_datos("Registro de cliente","El DNI debe contener: \n\n- Números enteros.\n - No contener puntos(.)")
         return   
 
     if not (isinstance(sexo, str) and patron.match(sexo)):
-        mensaje_ingreso_datos("Registro de cliente","Debe elegir una sexo")
+        mensaje_ingreso_datos("Registro de cliente","Debe elegir una sexo.\n\nEl sexo es 'Hombre' o 'Mujer'")
         return
-    
+    if sexo:
+        sexo = sexo.capitalize()    
+    print(sexo)
     if not edad.isdigit() or not len(edad) == 2 or not patron2.match(edad):
-        mensaje_ingreso_datos("Registro de cliente","La 'edad' debe ser:\n\n- Valores numéricos.\n- Contener 2 dígitos.\n- No contener puntos(.)")
+        mensaje_ingreso_datos("Registro de cliente","La Edad debe contener:\n\n- Contener 2 (DOS) números enteros.\n- No contener puntos(.)")
         return
 
     if not (celu.isdigit() and patron2.match(celu)):
-        mensaje_ingreso_datos("Registro de cliente","El 'celular' debe ser:\n\n- Valores numéricos.\n- No contener puntos(.)")
+        mensaje_ingreso_datos("Registro de cliente","El Celular debe ser:\n\n- Números enteros.\n- No contener puntos(.)")
+        return
+    try:
+        if celu:
+            print(f"El celular es {celu}")
+    except ValueError:
+        mensaje_ingreso_datos("Registro de empleado","El celular debe ser numérico")
         return
     
 def limpiasElementosUser(self,QDate):
     self.input_nombre1.clear()
     self.input_apellido1.clear()
     self.input_dni.clear()
-    self.input_sex.clear()
+    self.input_sex.setCurrentIndex(0)
     self.input_age.clear()
     self.input_celular.clear()
     self.input_date.setDate(QDate.currentDate())
@@ -48,7 +56,7 @@ def limpiar_campos(self):
     self.input_nombre2.clear()
     self.input_apellido2.clear()
     self.input_dni2.clear()
-    self.input_sex2.clear()
+    self.input_sex2.setCurrentIndex(0)
     self.input_age2.clear()
     self.input_celular2.clear()
     
@@ -82,7 +90,7 @@ def autoCompletadoACTULIZAR(self,QDate):
     self.input_nombre2.setText(nombre2)  
     self.input_apellido2.setText(apellido2)
     self.input_dni2.setText(dni2)  # Convertir a texto antes de asignar al QLineEdit
-    self.input_sex2.setText(sexo2)
+    self.input_sex2.setCurrentText(sexo2)
     self.input_age2.setText(str(edad2))  # Convertir a texto antes de asignar al QLineEdit
     self.input_celular2.setText(celular2)  # Convertir a texto antes de asignar al QLineEdit
     self.input_date2.setDate(fecha2)
@@ -113,40 +121,11 @@ def limpiar_tablaUpdate(self):
     self.input_date2.setEnabled(False)
     self.input_celular2.setEnabled(False)
     
-def actualizarUSER(nombre2 , apellido2, dni2, sexo2, edad2, celu2):
-    patron_Letras = re.compile(r'^[a-zA-ZáéíóúÁÉÍÓÚüÜ\'\s]+$') 
-    if not isinstance(nombre2, str) or nombre2.isspace() or not patron_Letras.match(nombre2):
-        mensaje_ingreso_datos("Registro de cliente","El 'nombre' solo debe contener letras y/o espacios")
-        return
-
-    if not isinstance(apellido2, str) or apellido2.isspace() or not patron_Letras.match(apellido2):
-        mensaje_ingreso_datos("Registro de cliente","El 'apellido' solo debe contener letras y/o espacios")
-        return
-    
-    patronNum = re.compile(r'^[0-9]+$')
-    if not (dni2.isnumeric() and len(dni2) == 8 and patronNum.match(dni2)):
-        mensaje_ingreso_datos("Registro de cliente","El 'DNI' debe ser:\n- Valores numéricos.\n- Contener 8 dígitos.\n- No contener puntos(.)")
-        return
-    dni2 = int(dni2)    
-
-    if not (isinstance(sexo2, str) and patron_Letras.match(sexo2)):
-        mensaje_ingreso_datos("Registro de cliente","Debe elegir una sexo")
-        return
-    
-    if not (edad2.isnumeric() and len(edad2) == 2 and patronNum.match(edad2)):
-        mensaje_ingreso_datos("Registro de cliente","El 'edad' debe ser:\n- Valores numéricos.\n- Contener 2 dígitos.\n- No contener puntos(.)")
-        return
-    edad2 = int(edad2)
-    
-    if not (celu2.isnumeric() and patronNum.match(celu2)):
-        mensaje_ingreso_datos("Registro de cliente","El 'celular' debe ser: \n- Valores numéricos. \n- No contener puntos(.)")
-        return
-    
 def limpiasElementosUseraActualizar(self,QDate):
     self.input_nombre2.clear()
     self.input_apellido2.clear()
     self.input_dni2.clear()
-    self.input_sex2.clear()
+    self.input_sex2.setCurrentIndex(0)
     self.input_age2.clear()
     self.input_celular2.clear()
     self.input_date2.setDate(QDate.currentDate())

@@ -15,7 +15,7 @@ from mysql.connector import Error
 # Librerías de PyQt6
 from PyQt6.QtWidgets import (QLabel,QFileDialog, QCompleter, QAbstractScrollArea, QHeaderView, QGridLayout, QHBoxLayout, QDateEdit, 
                              QMessageBox, QTableWidget, QAbstractItemView, QTableWidgetItem, QPushButton, QLineEdit, QStatusBar, QWidget,
-                             QVBoxLayout, QGroupBox, QMainWindow, QFrame, QTabWidget)
+                             QVBoxLayout, QGroupBox, QMainWindow, QFrame, QTabWidget,QComboBox)
 from PyQt6.QtGui import QIcon, QKeySequence, QAction, QPixmap
 from PyQt6.QtCore import *
 
@@ -307,23 +307,19 @@ class VentanaPrincipal(QMainWindow):
         layout_H1.addWidget(dni)         
         layout_H1.addWidget(self.input_dni)
 
-        # QComboBox para sexo y disciplina
         sex = QLabel('Sexo:',customer_details)
         sex.setStyleSheet(style.label)
         sex.setFixedWidth(80)
-        self.input_sex = QLineEdit(customer_details)
-        self.input_sex.setStyleSheet(style.estilo_combo)
+        self.input_sex = QComboBox(customer_details)
         self.input_sex.setFixedWidth(200)
-        self.input_sex.setPlaceholderText("'hombre' o 'mujer'")
-        self.input_sex.setStyleSheet(style.estilo_lineedit)
+        self.input_sex.addItem("Seleccione...", "")  # Primer ítem vacío
+        self.input_sex.addItem("Hombre", "hombre")
+        self.input_sex.addItem("Mujer", "mujer")
+        self.input_sex.setCurrentIndex(0)
+        self.input_sex.setStyleSheet(style.estilo_combo)
         layout_H2.addWidget(sex)         
         layout_H2.addWidget(self.input_sex)
-        
-        patrones_validos = ["hombre", "mujer"]
-        completer = QCompleter(patrones_validos)
-        completer.popup().setStyleSheet(style.completer)
-        self.input_sex.setCompleter(completer)
-        
+                
         age = QLabel('Edad:',customer_details)
         age.setStyleSheet(style.label)
         age.setFixedWidth(80)
@@ -505,22 +501,19 @@ class VentanaPrincipal(QMainWindow):
         layout_ele1.addWidget(dni2)    
         layout_ele1.addWidget(self.input_dni2)
 
-        # QComboBox para sexo y disciplina
         sex2 = QLabel('Sexo:',update_customer_details)
         sex2.setStyleSheet(style.label)
         sex2.setFixedWidth(80)
-        self.input_sex2 = QLineEdit(update_customer_details)
-        self.input_sex2.setStyleSheet(style.estilo_lineedit)
+        self.input_sex2 = QComboBox(update_customer_details)
+        self.input_sex2.setStyleSheet(style.estilo_combo)
         self.input_sex2.setFixedWidth(200)
-        self.input_sex2.setPlaceholderText("'hombre' o 'mujer'")
         self.input_sex2.setEnabled(False)
+        self.input_sex2.addItem("Seleccione...", "")  # Primer ítem vacío
+        self.input_sex2.addItem("Hombre", "hombre")
+        self.input_sex2.addItem("Mujer", "mujer")
+        self.input_sex2.setCurrentIndex(0)
         layout_ele2.addWidget(sex2)       
         layout_ele2.addWidget(self.input_sex2)
-        
-        patrones_validos2 = ["hombre", "mujer"]
-        completer = QCompleter(patrones_validos2)
-        completer.popup().setStyleSheet(style.completer)
-        self.input_sex2.setCompleter(completer)
         
         age2 = QLabel('Edad:',update_customer_details)
         age2.setStyleSheet(style.label)
@@ -919,13 +912,12 @@ class VentanaPrincipal(QMainWindow):
         cursor.execute("SELECT id_disciplina, nombre, precio FROM disciplina ORDER BY nombre ASC")
         dato = cursor.fetchall()
         self.disciplinas = {str(item[1]): (item[0], item[2]) for item in dato}  # Mapear nombre a (id_disciplina, precio)
-        print(f"DISCIPLINAS: {self.disciplinas}.\n")
         
         sugerencias = list(self.disciplinas.keys())
         
         # Almacenar sugerencias en un conjunto para verificación rápida
         self.sugeren_set = set(sugerencias)
-        print(self.sugeren_set)
+        
         idDis = QCompleter(sugerencias)
         idDis.setCaseSensitivity(Qt.CaseSensitivity.CaseInsensitive)
         idDis.setCompletionMode(QCompleter.CompletionMode.PopupCompletion)
@@ -1313,7 +1305,6 @@ class VentanaPrincipal(QMainWindow):
         cursor.execute("SELECT id_empleado, nombre FROM registro_empleado ORDER BY nombre ASC")
         datos = cursor.fetchall()
         self.listas = [(str(item[1]), item[0]) for item in datos]  # Crear una lista de tuplas (nombre, id_empleado)
-        print(f"{self.listas[1]} ::+ {type(self.listas[1][1])}")
         
         lista_empleado = QCompleter([item[0] for item in self.listas])  # Usar solo los nombres para la lista desplegable
         lista_empleado.setCaseSensitivity(Qt.CaseSensitivity.CaseInsensitive)
@@ -1817,24 +1808,17 @@ class VentanaPrincipal(QMainWindow):
         nombre1 = self.input_nombre1.text().title()
         apellido1 = self.input_apellido1.text().title()
         dni = self.input_dni.text().replace(".", "")
-        sexo = self.input_sex.text()
+        sexo = self.input_sex.currentData()
         edad = self.input_age.text()
         celu = self.input_celular.text().replace(".", "")
         fecha = self.input_date.date().toPyDate()
-        
-        patrones_validos = ["hombre", "mujer"]
-        if sexo not in patrones_validos:
-            mensaje_ingreso_datos("Registro de cliente","Debe elegir un sexo entre 'hombre' o 'mujer'.")
-            return
-        elif sexo in patrones_validos:
-            sexo = sexo.capitalize()
+
+        registroUSER(nombre1, apellido1, dni, sexo, edad, celu)
             
         # Validar que los campos requeridos no estén vacíos
         if not nombre1 or not apellido1 or not dni or not sexo or not edad or not celu:
             mensaje_ingreso_datos("Registro de cliente", "Todos los campos son obligatorios")
-            return
-        
-        registroUSER(nombre1, apellido1, dni, sexo, edad, celu)
+            return        
         
         try:
             db = conectar_base_de_datos()
@@ -2001,24 +1985,17 @@ class VentanaPrincipal(QMainWindow):
         nombre2 = self.input_nombre2.text().title()
         apellido2 = self.input_apellido2.text().title()
         dni2 = self.input_dni2.text()
-        sexo2 = self.input_sex2.text()
+        sexo2 = self.input_sex2.currentData()
         edad2 = self.input_age2.text()
         celu2 = self.input_celular2.text()
         fecha = self.input_date2.date().toPyDate()
         
-        patrones_validos = ["hombre", "mujer","Hombre", "Mujer"]
-        if sexo2 not in patrones_validos:
-            mensaje_ingreso_datos("Registro de cliente","Debe elegir un sexo entre 'Hombre' o 'Mujer'.")
-            return
-        elif sexo2 in patrones_validos:
-            sexo2 = sexo2.capitalize()
-            
+        registroUSER(nombre2 , apellido2, dni2, sexo2, edad2, celu2)
+                    
         # Validar que los campos requeridos no estén vacíos
         if not nombre2 or not apellido2 or not dni2 or not sexo2 or not edad2 or not celu2:
             mensaje_ingreso_datos("Registro de cliente", "Todos los campos son obligatorios")
             return
-        
-        actualizarUSER(nombre2 , apellido2, dni2, sexo2, edad2, celu2)
         
         try:
             db = conectar_base_de_datos()
@@ -2201,7 +2178,17 @@ class VentanaPrincipal(QMainWindow):
         actividad = self.input_disciplina4.text().capitalize().title()
         precio = self.input_precio.text().replace(".","")
         
-        guardarACTIVIDAD(actividad,precio)
+        patronA = re.compile(r'^[a-zA-ZáéíóúÁÉÍÓÚüÜ\'\s]+$') 
+        if not isinstance(actividad, str) or actividad.isspace() or not patronA.match(actividad):
+            mensaje_ingreso_datos("Registro de disciplina","Debe elegir una disciplina")
+            return
+
+        patron2 = re.compile(r'^[0-9]+$')
+        if not (precio.isdigit() and patron2.match(precio)):# and len(precio) > 0):
+            mensaje_ingreso_datos("Registro de disciplina","El precio debe ser número entero. Sin coma ','.")
+            return
+        if precio: 
+            precio = int(precio)
         
         try:
             db = conectar_base_de_datos()
@@ -2294,7 +2281,6 @@ class VentanaPrincipal(QMainWindow):
         if id_activ is None:
             mensaje_ingreso_datos("Registro de pago", "Debe seleccionar una disciplina antes de guardar el pago")
             return
-        print(id_activ)
         
         tipo = self.input_tipoDePago.text()
         date = self.input_fechaDePago.date().toPyDate()
@@ -2324,7 +2310,6 @@ class VentanaPrincipal(QMainWindow):
                 mensaje_ingreso_datos("Registro de pago", "Ya existe un registro con los mismos datos")
                 return
             
-            print(id_alumno, id_activ, tipo, date, monto)
             cursor.execute("INSERT INTO pago (id_usuario, id_disciplina, modalidad, fecha, precio) VALUE (%s, %s, %s, %s, %s)", (id_alumno, id_activ, tipo, date, monto))
             db.commit()
             if cursor:
@@ -2377,7 +2362,7 @@ class VentanaPrincipal(QMainWindow):
         if id_activ is None:
             mensaje_ingreso_datos("Registro de pago", "Debe seleccionar una disciplina antes de guardar el pago")
             return
-        print(id_activ)
+        
         tipo = self.input_tipoDePago.text()
         date = self.input_fechaDePago.date().toPyDate()
         # monto = self.label_monto.text().split(": ")[1] 
@@ -2454,8 +2439,6 @@ class VentanaPrincipal(QMainWindow):
     # ----------- PESTAÑA BALANCE -----------------
     def consultar_TotalPorAlumno(self):
         dni = self.view_nomb.text()
-        print(dni)
-        print(type(dni))
 
         patron = re.compile(r'^[0-9]+$')
         if not isinstance(dni, str)  or not patron.match(dni):
@@ -2733,7 +2716,6 @@ class VentanaPrincipal(QMainWindow):
             if nombre == texto:
                 # Guardar el id_empleado en una variable o tabla, según tu necesidad
                 self.id_empleado_seleccionado = id_empleado
-                print(f" id_empleado es de tipo: {type(id_empleado)}")
                 break
         else:
             self.id_empleado_seleccionado = None
@@ -2768,7 +2750,6 @@ class VentanaPrincipal(QMainWindow):
                 return
             
             cursor.execute("INSERT INTO hora (id_empleado,horas_diaria,fecha) VALUES (%s,%s,%s)", (id_empleado_seleccionado,horas_horas,fecha_horas))
-            print(id_empleado_seleccionado,horas_horas,fecha_horas)
             db.commit()
             
             if cursor:
