@@ -1,44 +1,63 @@
-from modulos.mensajes import mensaje_ingreso_datos,ingreso_datos
+from modulos.mensajes import mensaje_ingreso_datos,ingreso
 import re
 from qss.style_item import itemColor_RESULTADO, itemColor_TOTAL
 # from openpyxl import Workbook
 
-def registroUSER(nombre1 , apellido1, dni, sexo, edad, celu):
-    patron = re.compile(r'^[a-zA-ZáéíóúÁÉÍÓÚüÜ\'\s]+$') 
-    if not isinstance(nombre1, str) or nombre1.isspace() or not patron.match(nombre1): #'match' -> verificar si la cadena coincide con este patrón.
-        mensaje_ingreso_datos("Registro de cliente","El 'Nombre' debe contener:\n\n- Letras y/o espacios entre nombres(si tiene mas de dos).")
+def registroUSER(nombre1, apellido1, dni, sexo, edad, celu):
+    patron_nom2 = re.compile(r'^[a-zA-ZáéíóúÁÉÍÓÚüÜ\'\s]+$')
+    if not isinstance(nombre1, str) or nombre1.isspace() or not patron_nom2.match(nombre1):
+        mensaje_ingreso_datos("Registro de cliente", "El 'Nombre' debe contener:\n\n- Letras y/o espacios entre nombres (si tiene más de uno).")
         return
-    if nombre1 and not nombre1.isalpha():
-        mensaje_ingreso_datos("Registro de cliente","El 'Nombre' debe contener:\n\n- Letras y/o espacios entre nombres(si tiene mas de dos).")
+    try:
+        if nombre1:
+            print("Validación",f"'{nombre1}' válido")
+    except ValueError:
+        mensaje_ingreso_datos("Registro de cliente", "'Nombre' mal escrito. Vuelva a intentar")
+     
+    if not isinstance(apellido1, str) or apellido1.isspace() or not patron_nom2.match(apellido1): 
+        mensaje_ingreso_datos("Registro de cliente", "El 'Nombre' debe contener:\n\n- Letras y/o espacios entre nombres (si tiene más de uno).")
         return
-            
-    if not isinstance(apellido1, str) or apellido1.isspace() or not patron.match(apellido1) or not nombre1.isalpha():
-        mensaje_ingreso_datos("Registro de cliente","El 'Apellido' debe contener:\n\n- Letras y/o espacios entre nombres(si tiene mas de dos).")
-        return
-    if apellido1 and not apellido1.isalpha():
-        mensaje_ingreso_datos("Registro de cliente","El 'Apellido' debe contener:\n\n- Letras y/o espacios entre nombres(si tiene mas de dos).")
+    try:
+        if apellido1:
+            print("Validación",f"'{apellido1}' válido")
+    except ValueError:
+        mensaje_ingreso_datos("Registro de cliente", "'Nombre' mal escrito. Vuelva a intentar")
+    
+    patron_dni = re.compile(r'^\d{8}$')
+    if not dni.isdigit() or not patron_dni.match(dni) or not len(dni) == 8:#or not len(dni) == 8
+        mensaje_ingreso_datos("Registro de cliente","El DNI debe contener: \n\n- Números enteros (8).\n- No contener puntos(.)")
+        return   
+    try:
+        if dni:
+            dni = int(dni)
+    except ValueError:
+        mensaje_ingreso_datos("Registro de empleado","El Celular debe ser numérico")
         return
     
-    patron2 = re.compile(r'^[0-9]+$')
-    if not dni.isdigit() or not patron2.match(dni) or not len(dni) == 8:#or not len(dni) == 8
-        mensaje_ingreso_datos("Registro de cliente","El DNI debe contener: \n\n- Números enteros.\n - No contener puntos(.)")
-        return   
-
-    if not (isinstance(sexo, str) and patron.match(sexo) and nombre1.isalpha()):
+    if (isinstance(sexo, str) and sexo.isalpha()):
         mensaje_ingreso_datos("Registro de cliente","Debe elegir un sexo.\n\nEl sexo es 'Hombre' o 'Mujer'")
         return
     if sexo:
         sexo = sexo.capitalize()    
     
-    if not edad.isdigit() or not len(edad) == 2 or not patron2.match(edad):
+    patron_edad = re.compile(r'^\d{2}$')
+    if not edad.isdigit() or not len(edad) == 2 or not patron_edad.match(edad):
         mensaje_ingreso_datos("Registro de cliente","La Edad debe contener:\n\n- Contener 2 (DOS) números enteros.\n- No contener puntos(.)")
         return
-
-    if not (celu.isdigit() and patron2.match(celu)):
+    try:
+        if edad:
+            edad = int(edad)
+    except ValueError:
+        mensaje_ingreso_datos("Registro de empleado","El Celular debe ser numérico")
+        return
+            
+    patron_celu = re.compile(r'^\d$')
+    if not (celu.isdigit() and patron_celu.match(celu)):
         mensaje_ingreso_datos("Registro de cliente","El Celular debe ser:\n\n- Números enteros.\n- No contener puntos(.)")
         return
     try:
         if celu:
+            celu = int(celu)
             print(f"El celular es {celu}")
     except ValueError:
         mensaje_ingreso_datos("Registro de empleado","El Celular debe ser numérico")

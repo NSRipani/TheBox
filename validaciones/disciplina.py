@@ -9,7 +9,7 @@ def completar_CAMPOS_ACTIVIDAD(self):
     id_dis = int(id_dis)
     disc6 = self.tableActivi.item(row, 1).text()
     pesos = self.tableActivi.item(row, 2).text()
-    pesos = int(pesos)  # Convertir a entero
+    # pesos = int(pesos)  # Convertir a entero
     
     self.input_disciplina4.setText(disc6)
     self.input_precio.setText(str(pesos))  # Convertir a texto antes de asignar al QLineEdit 

@@ -52,7 +52,6 @@ if __name__ == "__main__":
     
     # Establecer la posición central
     login_window.move(center_x, center_y)
-     
     
     sys.exit(app.exec())
     

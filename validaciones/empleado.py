@@ -6,7 +6,7 @@ def variables(nom_emp,apell_emp,sex_emp,edad_emp,dni_emp,cel):
         mensaje_ingreso_datos("Registro de empleado","El 'nombre' debe contener:\n\n- Letras y/o espacios entre nombres(si tiene mas de dos).")
         return
     
-    if not isinstance(apell_emp, str) or apell_emp.isspace() or not patron.match(apell_emp) or not nom_emp.isalpha():
+    if not isinstance(apell_emp, str) or apell_emp.isspace() or not patron.match(apell_emp) or not apell_emp.isalpha():
         mensaje_ingreso_datos("Registro de empleado","El 'apellido' debe contener:\n\n- Letras y/o espacios entre nombres(si tiene mas de dos).")
         return
     
@@ -28,7 +28,7 @@ def variables(nom_emp,apell_emp,sex_emp,edad_emp,dni_emp,cel):
         mensaje_ingreso_datos("Registro de empleado","La Edad debe contener:\n\n- Contener 2 (DOS) números enteros.\n- No contener puntos(.)")
         return
       
-    if not (isinstance(dni_emp, str) and dni_emp.isdigit() and patron_mun.match(dni_emp)):# and len(str(dni_emp))==8 
+    if not (isinstance(dni_emp, str) and dni_emp.isdigit() and patron_mun.match(dni_emp) and len(edad_emp) == 2):# and len(str(dni_emp))==8 
         mensaje_ingreso_datos("Registro de empleado","El DNI debe contener:\n\n- Números enteros.\n - No contener puntos(.)")
         return
     try:

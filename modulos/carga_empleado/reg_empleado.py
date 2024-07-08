@@ -303,7 +303,9 @@ class Empleado(QDialog):
             try:
                 db = conectar_base_de_datos()
                 cursor = db.cursor()
-                cursor.execute(f"DELETE FROM registro_empleado WHERE id_empleado = {id_emple}")
+                # cursor.execute(f"DELETE FROM registro_empleado WHERE id_empleado = {id_emple}")
+                cursor.execute(f"UPDATE registro_empleado SET habilitado = 0 WHERE id_empleado= {id_emple}")#, (id_dis,))
+                
                 db.commit()
                 if cursor:
                     ingreso_datos("Registro de empleado","Registro eliminado")

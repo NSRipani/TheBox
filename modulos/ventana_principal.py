@@ -2125,7 +2125,8 @@ class VentanaPrincipal(QMainWindow):
             try:
                 db = conectar_base_de_datos()
                 cursor = db.cursor()
-                cursor.execute(f"DELETE FROM usuario WHERE id_usuario = {idUser}")    
+                cursor.execute(f"UPDATE usuario SET habilitado = 0 WHERE id_usuario= {idUser}")#, (idUser))
+                # cursor.execute(f"DELETE FROM usuario WHERE id_usuario = {idUser} AND habilitado = 1")    
                 db.commit()
                 if cursor:
                     self.tablaDeleteRecord.removeRow(selectedRow)
@@ -2281,7 +2282,7 @@ class VentanaPrincipal(QMainWindow):
             db = conectar_base_de_datos()
             cursor = db.cursor()
             # cursor.execute(f"DELETE FROM disciplina WHERE id_disciplina = {id_dis}")    
-            cursor.execute(f"UPDATE disciplina SET habilitado = 0 WHERE id_disciplina=%s", (id_dis,))
+            cursor.execute(f"UPDATE disciplina SET habilitado = 0 WHERE id_disciplina= {id_dis}")#, (id_dis,))
             if cursor:
                 ingreso_datos("Registro de disciplina","Registo eliminado")
                 self.tableActivi.removeRow(selectedRow)
@@ -2363,6 +2364,7 @@ class VentanaPrincipal(QMainWindow):
             if cursor:
                 ingreso_datos("Registro de pago","Registro cargado")
                 self.camposLimpios()
+                self.label_monto.clear()
             else:
                 ingreso_datos("Registro de pago","Registro no cargado")
                 
@@ -2437,6 +2439,7 @@ class VentanaPrincipal(QMainWindow):
                 ingreso_datos("Registro de pago","Registro actualizado")
                 self.camposLimpios()
                 self.mostrarPagos()
+                self.label_monto.clear()
                 self.tablePagos.clearSelection()  # Deseleccionar la fila eliminada 
             else:
                 ingreso_datos("Registro de pago","Registro no actualizado")
@@ -2554,7 +2557,7 @@ class VentanaPrincipal(QMainWindow):
         try:
             db = conectar_base_de_datos()
             cursor = db.cursor()
-            query = f"SELECT u.nombre, u.apellido, u.dni, u.sexo, u.edad, u.celular, u.fecha_registro, d.nombre AS DISCIPLINA, p.precio, p.fecha, p.modalidad FROM usuario u JOIN pago p ON u.dni = p.id_usuario JOIN disciplina d ON p.id_disciplina = d.id_disciplina WHERE p.fecha BETWEEN '{fecha_inicio}' AND '{fecha_fin}' ORDER BY p.fecha ASC"
+            query = f"SELECT u.nombre, u.apellido, u.dni, u.sexo, u.edad, u.celular, u.fecha_registro AS REGISTRO, d.nombre AS DISCIPLINA, p.precio, p.fecha, p.modalidad FROM usuario u JOIN pago p ON u.dni = p.id_usuario JOIN disciplina d ON p.id_disciplina = d.id_disciplina WHERE p.fecha BETWEEN '{fecha_inicio}' AND '{fecha_fin}' ORDER BY p.fecha ASC"
             cursor.execute(query)
             results = cursor.fetchall()
             

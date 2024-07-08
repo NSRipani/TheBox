@@ -38,19 +38,19 @@ def ingreso_datos(win_title,message):
     timer.singleShot(3500, mensaje.close)
     mensaje.exec()
 
-def ingreso_datos2(win_title,message):
+def ingreso(win_title,message):
     mensaje2 = QMessageBox()
     mensaje2.setWindowIcon(QIcon("img/icono-QMessage.png"))
     mensaje2.setStyleSheet(style.message_box_estilos_eliminar_profesor)
     mensaje2.setWindowTitle(win_title)
     mensaje2.setText(message)
-    mensaje2.setIcon(QMessageBox.Icon.Critical)
+    mensaje2.setIcon(QMessageBox.Icon.Information)
     mensaje2.setStandardButtons(QMessageBox.StandardButton.Ok)
     
     # Mostrar el mensaje durante 5 segundos
     mensaje2.show()
     timer = QTimer()
-    timer.singleShot(3500, mensaje2.close)
+    timer.singleShot(200, mensaje2.close)
     mensaje2.exec()
     
 def inicio(title,text):
