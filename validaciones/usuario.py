@@ -6,24 +6,30 @@ from qss.style_item import itemColor_RESULTADO, itemColor_TOTAL
 def registroUSER(nombre1 , apellido1, dni, sexo, edad, celu):
     patron = re.compile(r'^[a-zA-ZáéíóúÁÉÍÓÚüÜ\'\s]+$') 
     if not isinstance(nombre1, str) or nombre1.isspace() or not patron.match(nombre1): #'match' -> verificar si la cadena coincide con este patrón.
-        mensaje_ingreso_datos("Registro de cliente","El 'nombre' debe contener:\n\n- Letras y/o espacios entre nombres(si tiene mas de dos).")
+        mensaje_ingreso_datos("Registro de cliente","El 'Nombre' debe contener:\n\n- Letras y/o espacios entre nombres(si tiene mas de dos).")
         return
-
-    if not isinstance(apellido1, str) or apellido1.isspace() or not patron.match(apellido1):
-        mensaje_ingreso_datos("Registro de cliente","El 'apellido' debe contener:\n\n- Letras y/o espacios entre nombres(si tiene mas de dos).")
+    if nombre1 and not nombre1.isalpha():
+        mensaje_ingreso_datos("Registro de cliente","El 'Nombre' debe contener:\n\n- Letras y/o espacios entre nombres(si tiene mas de dos).")
         return
-
+            
+    if not isinstance(apellido1, str) or apellido1.isspace() or not patron.match(apellido1) or not nombre1.isalpha():
+        mensaje_ingreso_datos("Registro de cliente","El 'Apellido' debe contener:\n\n- Letras y/o espacios entre nombres(si tiene mas de dos).")
+        return
+    if apellido1 and not apellido1.isalpha():
+        mensaje_ingreso_datos("Registro de cliente","El 'Apellido' debe contener:\n\n- Letras y/o espacios entre nombres(si tiene mas de dos).")
+        return
+    
     patron2 = re.compile(r'^[0-9]+$')
-    if not dni.isdigit() or not patron2.match(dni):#or not len(dni) == 8
+    if not dni.isdigit() or not patron2.match(dni) or not len(dni) == 8:#or not len(dni) == 8
         mensaje_ingreso_datos("Registro de cliente","El DNI debe contener: \n\n- Números enteros.\n - No contener puntos(.)")
         return   
 
-    if not (isinstance(sexo, str) and patron.match(sexo)):
-        mensaje_ingreso_datos("Registro de cliente","Debe elegir una sexo.\n\nEl sexo es 'Hombre' o 'Mujer'")
+    if not (isinstance(sexo, str) and patron.match(sexo) and nombre1.isalpha()):
+        mensaje_ingreso_datos("Registro de cliente","Debe elegir un sexo.\n\nEl sexo es 'Hombre' o 'Mujer'")
         return
     if sexo:
         sexo = sexo.capitalize()    
-    print(sexo)
+    
     if not edad.isdigit() or not len(edad) == 2 or not patron2.match(edad):
         mensaje_ingreso_datos("Registro de cliente","La Edad debe contener:\n\n- Contener 2 (DOS) números enteros.\n- No contener puntos(.)")
         return
@@ -35,7 +41,7 @@ def registroUSER(nombre1 , apellido1, dni, sexo, edad, celu):
         if celu:
             print(f"El celular es {celu}")
     except ValueError:
-        mensaje_ingreso_datos("Registro de empleado","El celular debe ser numérico")
+        mensaje_ingreso_datos("Registro de empleado","El Celular debe ser numérico")
         return
     
 def limpiasElementosUser(self,QDate):

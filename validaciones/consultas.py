@@ -30,6 +30,7 @@ def consultaPorAlumno(self,cursor,results,QHeaderView,QTableWidget,QAbstractItem
                 item.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
             if j == 7:  # Ajustar alineación para ciertas columnas
                 item.setTextAlignment(Qt.AlignmentFlag.AlignRight)
+                item.setText(f"$ {val}")
             self.tablaVIEW.setItem(i, j, item)
             
     if self.tablaVIEW.rowCount() == len(results):
@@ -46,7 +47,7 @@ def consultaPorAlumno(self,cursor,results,QHeaderView,QTableWidget,QAbstractItem
         self.tablaVIEW.setItem(total_row, 6, item_total_label_alumno)
 
         # Mostrar la suma total en la celda debajo de la columna 'precios'
-        item_total_precio_alumno = QTableWidgetItem(str(total_precios))
+        item_total_precio_alumno = QTableWidgetItem(str(f"$ {total_precios}"))
         item_total_precio_alumno.setFont(itemColor_RESULTADO(item_total_precio_alumno))  # Funcion para estilos de item
         self.tablaVIEW.setItem(total_row, 7, item_total_precio_alumno)
         item_total_precio_alumno.setTextAlignment(Qt.AlignmentFlag.AlignRight)
@@ -84,6 +85,7 @@ def totalAlumno(self,cursor,results,QHeaderView,QTableWidget,QAbstractItemView,Q
                 item.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
             if j == 8:  # Ajustar alineación para ciertas columnas
                 item.setTextAlignment(Qt.AlignmentFlag.AlignRight)
+                item.setText(f"$ {valor}")
             self.tablaVIEW.setItem(i, j, item)
     
     if self.tablaVIEW.rowCount() == len(results):
@@ -100,7 +102,7 @@ def totalAlumno(self,cursor,results,QHeaderView,QTableWidget,QAbstractItemView,Q
         self.tablaVIEW.setItem(total_row, 7, item_total_label_alumno)
 
         # Mostrar la suma total en la celda debajo de la columna 'precios'
-        item_total_precio_alumno = QTableWidgetItem(str(total_precios))
+        item_total_precio_alumno = QTableWidgetItem(str(f"$ {total_precios}"))
         item_total_precio_alumno.setFont(itemColor_RESULTADO(item_total_precio_alumno))  # Funcion para estilos de item
         self.tablaVIEW.setItem(total_row, 8, item_total_precio_alumno)
         item_total_precio_alumno.setTextAlignment(Qt.AlignmentFlag.AlignRight)
@@ -149,6 +151,7 @@ def consultarDeDisciplina(self,cursor,results,QHeaderView,QTableWidget,QAbstract
                 item.setTextAlignment(Qt.AlignmentFlag.AlignCenter) 
             if j == 3:  # Ajustar alineación para ciertas columnas
                 item.setTextAlignment(Qt.AlignmentFlag.AlignRight) 
+                item.setText(f"$ {val}")
             self.tablaVIEW.setItem(i, j, item)
     
     # Después de mostrar los resultados en la tabla
@@ -166,7 +169,7 @@ def consultarDeDisciplina(self,cursor,results,QHeaderView,QTableWidget,QAbstract
         self.tablaVIEW.setItem(total_row, 2, item_total_label)
 
         # Mostrar la suma total en la celda debajo de la columna 'precios'
-        item_total_precio = QTableWidgetItem(str(total_precios))
+        item_total_precio = QTableWidgetItem(str(f"$ {total_precios}"))
         item_total_precio.setFont(itemColor_RESULTADO(item_total_precio))  # Funcion para estilos de item
         self.tablaVIEW.setItem(total_row, 3, item_total_precio)
         item_total_precio.setTextAlignment(Qt.AlignmentFlag.AlignRight)
@@ -201,6 +204,7 @@ def consultaPorDisciplina(self,cursor,results,QHeaderView,QTableWidget,QAbstract
                 item.setTextAlignment(Qt.AlignmentFlag.AlignCenter)  
             if j == 8:  # Ajustar alineación para ciertas columnas
                 item.setTextAlignment(Qt.AlignmentFlag.AlignRight)
+                item.setText(f"$ {val}")
             self.tablaVIEW.setItem(i, j, item)
                 
     # Después de mostrar los resultados en la tabla
@@ -218,7 +222,7 @@ def consultaPorDisciplina(self,cursor,results,QHeaderView,QTableWidget,QAbstract
         self.tablaVIEW.setItem(total_row, 7, item_total_label2)
 
         # Mostrar la suma total en la celda debajo de la columna 'precios'
-        item_total_precio2 = QTableWidgetItem(str(total_precios))
+        item_total_precio2 = QTableWidgetItem(str(f"$ {total_precios}"))
         item_total_precio2.setFont(itemColor_RESULTADO(item_total_precio2))  # Funcion para estilos de item
         item_total_precio2.setTextAlignment(Qt.AlignmentFlag.AlignRight)
         self.tablaVIEW.setItem(total_row, 8, item_total_precio2)

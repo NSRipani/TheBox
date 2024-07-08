@@ -23,7 +23,7 @@ from PyQt6.QtCore import *
 from modulos.mensajes import ingreso_datos,mensaje_ingreso_datos, errorConsulta, inicio
 
 # Validaciones y demas funciones 
-from validaciones.usuario import (registroUSER, limpiasElementosUser, limpiar_campos, actualizarUSER, limpiasElementosUseraActualizar, 
+from validaciones.usuario import (registroUSER, limpiasElementosUser, limpiar_campos, limpiasElementosUseraActualizar, 
                                   autoCompletadoACTULIZAR,limpiar_tablaRecord, limpiar_tablaUpdate, tabla_registroUSER)
 from validaciones.updateYdelete_usuario import tabla_updateUSER, tabla_eliminarUSER, borrarTabla
 from validaciones.archivo_Excel import (tabla_registroUSUARIO, tabla_registroDISCIPLINA, horas_Excel, 
@@ -50,12 +50,63 @@ class VentanaPrincipal(QMainWindow):
     def __init__(self):#, is_admin):
         super().__init__()
         # self.setIsAdmin(is_admin)
-        # self.setWindowState(Qt.WindowState.WindowFullScreen)
         self.ventana_pricipal()
         self.show()
         
     # def setIsAdmin (self, is_admin):
         # self.is_admin = is_admin
+        
+    def onChangeTab(self,i):
+        #  Conexión a la base de datos MySQL
+        conn = conectar_base_de_datos()
+        cursor = conn.cursor()
+        print(i)
+        match i:
+            case 4:
+                cursor.execute("SELECT id_disciplina, nombre, precio FROM disciplina WHERE habilitado = 1 ORDER BY nombre ASC")
+                dato = cursor.fetchall()
+                self.disciplinas = {str(item[1]): (item[0], item[2]) for item in dato}  # Mapear nombre a (id_disciplina, precio)
+                
+                sugerencias = list(self.disciplinas.keys())
+                
+                # Almacenar sugerencias en un conjunto para verificación rápida
+                self.sugeren_set = set(sugerencias)
+                
+                idDis = QCompleter(sugerencias)
+                idDis.setCaseSensitivity(Qt.CaseSensitivity.CaseInsensitive)
+                idDis.setCompletionMode(QCompleter.CompletionMode.PopupCompletion)
+                idDis.popup().setStyleSheet(style.completer)
+                self.idDis.setCompleter(idDis)
+                
+                # Muestra el precio de cada disciplina al elegitr la disciplina
+                idDis.activated.connect(self.actualizar_precio)
+                return
+            case 0:
+                # Consulta para obtener los datos de una columna específica
+                cursor.execute("SELECT nombre FROM usuario")
+                datos = cursor.fetchall()
+                sugerencia = [str(item[0]) for item in datos]
+
+                lista_nombre = QCompleter(sugerencia)
+                lista_nombre.setCaseSensitivity(Qt.CaseSensitivity.CaseInsensitive)
+                lista_nombre.setCompletionMode(QCompleter.CompletionMode.PopupCompletion)
+                lista_nombre.popup().setStyleSheet(style.completer)
+                self.input_nombre1.setCompleter(lista_nombre)
+                return
+            case 1:
+                # Consulta para obtener los datos de una columna específica
+                cursor.execute("SELECT nombre FROM usuario")
+                datos = cursor.fetchall()
+                suger = [str(item[0]) for item in datos]
+
+                lista_nombres = QCompleter(suger)
+                lista_nombres.setCaseSensitivity(Qt.CaseSensitivity.CaseInsensitive)
+                lista_nombres.setCompletionMode(QCompleter.CompletionMode.PopupCompletion)
+                lista_nombres.popup().setStyleSheet(style.completer)
+                self.input_nombre2.setCompleter(lista_nombres)
+                return
+        cursor.close()
+        conn.close()
     
     def ventana_pricipal(self):        
         self.setWindowIcon(QIcon("img/logo.png"))
@@ -217,8 +268,6 @@ class VentanaPrincipal(QMainWindow):
         pestania_view.setStyleSheet("background-color: #f48c06;")
         pestania_empleados = QWidget()
         pestania_empleados.setStyleSheet("background-color: #f48c06;")
-        # pestania_horas = QWidget()
-        # pestania_horas.setStyleSheet("background-color: #f48c06;")
         pestania_resumen = QWidget()
         pestania_resumen.setStyleSheet("background-color: #f48c06;")
         
@@ -230,13 +279,9 @@ class VentanaPrincipal(QMainWindow):
         self.tab.addTab(pestania_pagos, 'PAGOS')
         self.tab.addTab(pestania_empleados, 'EMPLEADOS')
         self.tab.addTab(pestania_view, 'BALANCE')
-        # self.tab.addTab(pestania_horas, 'HORAS')
         self.tab.addTab(pestania_resumen, 'CONTABILIDAD')
-
-        # if self.is_admin == 1:
-        #     self.tab.addTab(pestania_view, 'BALANCE')
-        #     self.tab.addTab(pestania_resumen, 'CONTABILIDAD')
-            
+        
+        self.tab.currentChanged.connect(self.onChangeTab)
         
         # ----------------------------------------------------
         # PESTAÑA REGISTRAR
@@ -313,8 +358,8 @@ class VentanaPrincipal(QMainWindow):
         self.input_sex = QComboBox(customer_details)
         self.input_sex.setFixedWidth(200)
         self.input_sex.addItem("Seleccione...", "")  # Primer ítem vacío
-        self.input_sex.addItem("Hombre", "hombre")
-        self.input_sex.addItem("Mujer", "mujer")
+        self.input_sex.addItem("Hombre", "Hombre")
+        self.input_sex.addItem("Mujer", "Mujer")
         self.input_sex.setCurrentIndex(0)
         self.input_sex.setStyleSheet(style.estilo_combo)
         layout_H2.addWidget(sex)         
@@ -509,8 +554,8 @@ class VentanaPrincipal(QMainWindow):
         self.input_sex2.setFixedWidth(200)
         self.input_sex2.setEnabled(False)
         self.input_sex2.addItem("Seleccione...", "")  # Primer ítem vacío
-        self.input_sex2.addItem("Hombre", "hombre")
-        self.input_sex2.addItem("Mujer", "mujer")
+        self.input_sex2.addItem("Hombre", "Hombre")
+        self.input_sex2.addItem("Mujer", "Mujer")
         self.input_sex2.setCurrentIndex(0)
         layout_ele2.addWidget(sex2)       
         layout_ele2.addWidget(self.input_sex2)
@@ -909,7 +954,7 @@ class VentanaPrincipal(QMainWindow):
         #  Conexión a la base de datos MySQL
         conn = conectar_base_de_datos()
         cursor = conn.cursor()
-        cursor.execute("SELECT id_disciplina, nombre, precio FROM disciplina ORDER BY nombre ASC")
+        cursor.execute("SELECT id_disciplina, nombre, precio FROM disciplina WHERE disciplina.habilitado = 1 ORDER BY nombre ASC")
         dato = cursor.fetchall()
         self.disciplinas = {str(item[1]): (item[0], item[2]) for item in dato}  # Mapear nombre a (id_disciplina, precio)
         
@@ -1831,6 +1876,7 @@ class VentanaPrincipal(QMainWindow):
             if resultado[0] > 0:
                 # Si el dni ya existe, mostrar un mensaje y no insertar
                 ingreso_datos("Registro de cliente", "El DNI ya está registrado")
+                limpiasElementosUser(self,QDate)
             else:
                 # Si el dni no existe, insertar el nuevo usuario
                 query_insertar = "INSERT INTO usuario (nombre, apellido, dni, sexo, edad, celular, fecha_registro) VALUES (%s, %s, %s, %s, %s, %s, %s)"
@@ -1841,6 +1887,7 @@ class VentanaPrincipal(QMainWindow):
                 if cursor.rowcount > 0:
                     ingreso_datos("Registro de cliente", "Registro cargado")
                     limpiasElementosUser(self, QDate)
+                    self.onChangeTab(0)
                 else:
                     ingreso_datos("Registro de cliente", "Registro no cargado")
 
@@ -1908,7 +1955,7 @@ class VentanaPrincipal(QMainWindow):
         limpiar_tablaRecord(self)
                
     def tabla_registro(self):
-        tabla_registroUSUARIO(self,Workbook,Font,PatternFill,Border,Side,numbers,QFileDialog,os)
+        tabla_registroUSUARIO(self,Workbook,Font,PatternFill,Border,Side,numbers,QFileDialog)
 
     # Pestaña de ACTUALIZAR REGISTRO ---------------------------------------
     def ver(self):
@@ -2009,6 +2056,7 @@ class VentanaPrincipal(QMainWindow):
                 ingreso_datos("Registro de cliente","Registro actualizado")
                 limpiasElementosUseraActualizar(self,QDate)
                 limpiar_tablaUpdate(self)
+                self.onChangeTab(1)
                 self.tablaUpdateRecord.clearSelection()  # Deseleccionar la fila eliminada
             else:
                 ingreso_datos("Registro de cliente","Registro no actualizado")
@@ -2122,7 +2170,7 @@ class VentanaPrincipal(QMainWindow):
             cursor = db.cursor()
 
             # Verificar si la actividad ya existe
-            cursor.execute("SELECT COUNT(*) FROM disciplina WHERE nombre = %s", (actividad,))
+            cursor.execute("SELECT COUNT(*) FROM disciplina WHERE nombre = %s AND habilitado = 1", (actividad,))
             resultado = cursor.fetchone()
 
             if resultado[0] > 0:
@@ -2150,7 +2198,7 @@ class VentanaPrincipal(QMainWindow):
         try:
             db = conectar_base_de_datos()
             cursor = db.cursor()
-            cursor.execute("SELECT * FROM disciplina ORDER BY id_disciplina")
+            cursor.execute("SELECT id_disciplina, nombre, precio FROM disciplina WHERE disciplina.habilitado = 1 ORDER BY id_disciplina")
             resultados = cursor.fetchall()
 
             if len(resultados) > 0:
@@ -2232,8 +2280,8 @@ class VentanaPrincipal(QMainWindow):
         try:
             db = conectar_base_de_datos()
             cursor = db.cursor()
-            cursor.execute(f"DELETE FROM disciplina WHERE id_disciplina = {id_dis}")    
-            
+            # cursor.execute(f"DELETE FROM disciplina WHERE id_disciplina = {id_dis}")    
+            cursor.execute(f"UPDATE disciplina SET habilitado = 0 WHERE id_disciplina=%s", (id_dis,))
             if cursor:
                 ingreso_datos("Registro de disciplina","Registo eliminado")
                 self.tableActivi.removeRow(selectedRow)
@@ -2294,7 +2342,7 @@ class VentanaPrincipal(QMainWindow):
         
         medio_de_pago = ["Efectivo", "Transferencia"]
         if tipo not in medio_de_pago:
-            mensaje_ingreso_datos("Registro de pago","Debe elegir un sexo entre 'Efectivo' o 'Transferencia'.")
+            mensaje_ingreso_datos("Registro de pago","Debe elegir entre 'Efectivo' o 'Transferencia'.")
             return
         elif tipo in medio_de_pago:
             tipo = tipo.capitalize()
@@ -2465,7 +2513,7 @@ class VentanaPrincipal(QMainWindow):
         try:
             db = conectar_base_de_datos()
             cursor = db.cursor()
-            query = f"SELECT u.nombre, u.apellido, u.dni, u.sexo, u.edad, u.fecha_registro, d.nombre AS DISCIPLINA, p.precio, p.fecha, p.modalidad FROM usuario u JOIN pago p ON u.dni = p.id_usuario JOIN disciplina d ON p.id_disciplina = d.id_disciplina WHERE u.dni = '{dni}' AND p.fecha BETWEEN '{fecha_inicio}' AND '{fecha_fin}' ORDER BY p.fecha ASC" # JOIN disciplina d ON p.id_disciplina = d.id_disciplina
+            query = f"SELECT u.nombre, u.apellido, u.dni, u.sexo, u.edad, u.fecha_registro AS REGISTRO, d.nombre AS DISCIPLINA, p.precio, p.fecha, p.modalidad FROM usuario u JOIN pago p ON u.dni = p.id_usuario JOIN disciplina d ON p.id_disciplina = d.id_disciplina WHERE u.dni = '{dni}' AND p.fecha BETWEEN '{fecha_inicio}' AND '{fecha_fin}' ORDER BY p.fecha ASC" # JOIN disciplina d ON p.id_disciplina = d.id_disciplina
             
             cursor.execute(query)
             results = cursor.fetchall()
@@ -2574,7 +2622,7 @@ class VentanaPrincipal(QMainWindow):
         if not isinstance(actividad,str) or not patrones.match(actividad):
             mensaje_ingreso_datos("Balances","Debe elegir una disciplina")
             return
-        if actividad not in self.numeros_dni:  # Verificar si el DNI ingresado está en la lista de DNIs
+        if actividad not in self.activi:  # Verificar si el DNI ingresado está en la lista de DNIs
             mensaje_ingreso_datos("Balances", "La disciplina ingresada no está registrado.")
             self.view_disciplina.clear()
             return

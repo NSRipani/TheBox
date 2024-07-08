@@ -58,22 +58,15 @@ class Empleado(QDialog):
         self.sex = QComboBox()
         self.sex.setStyleSheet(style.estilo_combo)
         self.sex.addItem("Seleccione...", "")  # Primer ítem vacío
-        self.sex.addItem("Hombre", "hombre")
-        self.sex.addItem("Mujer", "mujer")
+        self.sex.addItem("Hombre", "Hombre")
+        self.sex.addItem("Mujer", "Mujer")
         self.sex.setCurrentIndex(0)
-        # self.sex.setPlaceholderText("Hombre / Mujer")
-        
-        # patrones_validos = ["hombre", "mujer"]
-        # completer = QCompleter(patrones_validos)
-        # completer.popup().setStyleSheet(style.completer)
-        # self.sex.setCompleter(completer)
         
         self.edad = QLineEdit()
         self.edad.setMaxLength(2)
         self.edad.setPlaceholderText("Ej: 23")
         self.edad.setStyleSheet(style.estilo_lineedit)
         self.dni = QLineEdit()
-        self.dni.setMaxLength(8)
         self.dni.setPlaceholderText("Sin punto")
         self.dni.setStyleSheet(style.estilo_lineedit)
         self.celular = QLineEdit()
@@ -201,6 +194,15 @@ class Empleado(QDialog):
         try:
             db = conectar_base_de_datos()
             cursor = db.cursor()
+            
+            # Verificar si el 'dni' ya existe
+            cursor.execute("SELECT COUNT(*) FROM registro_empleado WHERE dni = %s", (dni_emp,))
+            resultado = cursor.fetchone()
+            
+            if resultado[0] > 0:
+                mensaje_ingreso_datos("Registro duplicado", "Ya existe un registro con ese DNI")
+                return
+            
             cursor.execute("INSERT INTO registro_empleado (nombre, apellido, sexo, edad, dni, celular, fecha) VALUES (%s,%s,%s,%s,%s,%s,%s)",
                             (nom_emp,apell_emp,sex_emp,edad_emp,dni_emp,cel,fecha))
             db.commit()

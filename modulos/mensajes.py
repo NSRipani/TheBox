@@ -20,7 +20,7 @@ def mensaje_ingreso_datos(win_title,message):
     # Mostrar el mensaje durante 5 segundos
     mensaje.show()
     timer = QTimer()
-    timer.singleShot(5000, mensaje.close)
+    timer.singleShot(3500, mensaje.close)
     mensaje.exec()  
         
 def ingreso_datos(win_title,message):
@@ -35,7 +35,7 @@ def ingreso_datos(win_title,message):
     # Mostrar el mensaje durante 5 segundos
     mensaje.show()
     timer = QTimer()
-    timer.singleShot(5000, mensaje.close)
+    timer.singleShot(3500, mensaje.close)
     mensaje.exec()
 
 def ingreso_datos2(win_title,message):
@@ -50,7 +50,7 @@ def ingreso_datos2(win_title,message):
     # Mostrar el mensaje durante 5 segundos
     mensaje2.show()
     timer = QTimer()
-    timer.singleShot(5000, mensaje2.close)
+    timer.singleShot(3500, mensaje2.close)
     mensaje2.exec()
     
 def inicio(title,text):
@@ -78,7 +78,7 @@ def errorConsulta(mensaje,ex):
     # Mostrar el mensaje durante 5 segundos
     message_box.show()
     timer = QTimer()
-    timer.singleShot(3000, message_box.close)
+    timer.singleShot(3500, message_box.close)
     message_box.exec()
     
 def aviso_descarga_execl(): # BORRAR
@@ -107,7 +107,7 @@ def aviso_descargaExitosa(encabezado,muestra):
     # Mostrar el mensaje durante 5 segundos
     aviso3.show()
     timer = QTimer()
-    timer.singleShot(5000, aviso3.close)
+    timer.singleShot(3500, aviso3.close)
     aviso3.exec()
 
 # ASISTENCIA    
@@ -120,5 +120,5 @@ def mensaje_datos_ingresado(title, message):
     # Mostrar el mensaje durante 5 segundos
     msg.show()
     timer = QTimer()
-    timer.singleShot(5000, msg.close)
+    timer.singleShot(3500, msg.close)
     msg.exec()

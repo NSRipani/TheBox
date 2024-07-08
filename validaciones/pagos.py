@@ -46,9 +46,10 @@ def tabla_pagos(self, cursor, result, QHeaderView, QTableWidget, QAbstractItemVi
                 fecha = QDate.fromString(str(val), "yyyy-MM-dd")  # Convertir la fecha a objeto QDate
                 item.setText(fecha.toString("dd-MM-yyyy"))  # Establecer el formato de visualización
             if j in [0, 1, 3, 4]:  # Ajustar alineación para ciertas columnas
-                item.setTextAlignment(Qt.AlignmentFlag.AlignCenter) 
+                item.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
             if j == 5:  # Ajustar alineación para ciertas columnas
-                item.setTextAlignment(Qt.AlignmentFlag.AlignRight)  
+                item.setTextAlignment(Qt.AlignmentFlag.AlignRight)
+                item.setText(f"$ {val}")
             self.tablePagos.setItem(i, j, item)   
             
     total_pagos = sum(int(row[5]) for row in result)
@@ -62,7 +63,7 @@ def tabla_pagos(self, cursor, result, QHeaderView, QTableWidget, QAbstractItemVi
     motrar_total.setTextAlignment(Qt.AlignmentFlag.AlignRight)
     self.tablePagos.setItem(len(result), 4, motrar_total)
     
-    suma_pagos = QTableWidgetItem(str(total_pagos))
+    suma_pagos = QTableWidgetItem(str(f"$ {total_pagos}"))
     suma_pagos.setFont(itemColor_RESULTADO(suma_pagos))  # Funcion para estilos de item
     suma_pagos.setTextAlignment(Qt.AlignmentFlag.AlignRight)
     self.tablePagos.setItem(len(result), 5, suma_pagos)       

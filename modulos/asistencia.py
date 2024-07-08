@@ -200,8 +200,6 @@ class Asistencia(QMainWindow):
             if len(result) > 0:
                 disciplinas_registradas = []
                 fecha_hoy = date.today()
-                print(disciplinas_registradas)
-                print(f"Resultado: {result}")
                 
                 for row in result:
                     u_dni = row[0]
@@ -210,7 +208,6 @@ class Asistencia(QMainWindow):
                     # Verificar si ya existe un registro de asistencia para el usuario y la disciplina en la fecha actual
                     cursor.execute("SELECT COUNT(*) FROM asistencia WHERE dni = %s AND asistencia = CURDATE() AND id_disciplina = %s", (u_dni, id_disciplina))
                     registros_existentes = cursor.fetchone()[0]
-                    print(f"Existen: {registros_existentes}")
                     
                     if registros_existentes == 0:
                         # Insertar los datos de asistencia
@@ -236,7 +233,6 @@ class Asistencia(QMainWindow):
             # Consultar nombre y apellido del usuario
             cursor.execute("SELECT nombre, apellido FROM usuario WHERE dni = %s", (dni,))
             result_usuario = cursor.fetchone()
-            print(result_usuario)
             if result_usuario:
                 nombre = result_usuario[0]
                 apellido = result_usuario[1]
@@ -244,7 +240,6 @@ class Asistencia(QMainWindow):
                 # Mostrar mensaje en la interfaz
                 self.label_texto1.setText(f"¡En hora buena {nombre} {apellido}! \n\nSu asistencia fue registrada.")
                 self.label_texto1.setStyleSheet("background-color: #DAD7CD; color: #000;")
-                print(nombre)
             else:
                 mensaje_datos_ingresado("Registro de asistencia","No se encontraron resultados para el usuario con DNI: {}".format(dni))
                 print(f"No se encontró información del usuario con DNI {dni}.")
@@ -255,13 +250,11 @@ class Asistencia(QMainWindow):
             
             if ultima_fecha:
                 ultima_fecha = ultima_fecha[0]
-                print(ultima_fecha)
 
                 # Paso 2: Calcular la diferencia de días entre la fecha actual y la última fecha registrada
                 fecha_actual = datetime.now().date()
                 diferencia_dias = (ultima_fecha + timedelta(days=30)) - fecha_actual
                 dias = diferencia_dias.days
-                print(dias)
                 
                 texto_cuota = f"\nÚltimo pago: {ultima_fecha}. \n\nPróximo pago en {abs(dias)} días.\n"
                 texto_vencido = f"\n!Atención! Cuota vencida hace {abs(dias)} días.\n\nRegularice su cuenta mensual.\n"
@@ -278,7 +271,7 @@ class Asistencia(QMainWindow):
                 else:
                     self.label_texto2.setText(texto_vencido)
                     self.label_texto2.setStyleSheet("background-color: #FF0000; color: #fff;")
-                self.timer.start(8000)
+                self.timer.start(7000)
             else:
                 print(f"No se pudo obtener la última fecha de pago para el usuario con DNI {dni}.")
 

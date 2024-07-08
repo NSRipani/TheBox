@@ -111,6 +111,7 @@ def tabla_contabilidad(self,cursor,busqueda,QHeaderView,QTableWidget,QAbstractIt
                 item.setTextAlignment(Qt.AlignmentFlag.AlignCenter) 
             if j in [4, 5]:
                 item.setTextAlignment(Qt.AlignmentFlag.AlignRight) 
+                item.setText(f"$ {val}")
             self.tablaGastos.setItem(i, j, item)
             
         # Calcular y mostrar la suma de las horas diarias en la fila adicional
@@ -120,13 +121,13 @@ def tabla_contabilidad(self,cursor,busqueda,QHeaderView,QTableWidget,QAbstractIt
         item_total_horas.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
         self.tablaGastos.setItem(len(busqueda), 3, item_total_horas)
         
-        item_suma_horas1 = QTableWidgetItem(str(total_debe))
+        item_suma_horas1 = QTableWidgetItem(str(f"$ {total_debe}"))
         item_suma_horas1.setFont(itemColor_RESULTADO(item_suma_horas1))  # Funcion para estilos de item
         item_suma_horas1.setTextAlignment(Qt.AlignmentFlag.AlignRight)
         self.tablaGastos.setItem(len(busqueda), 4, item_suma_horas1)
         
         total_haber = sum(int(row[5]) for row in busqueda)
-        item_suma_horas2 = QTableWidgetItem(str(total_haber))
+        item_suma_horas2 = QTableWidgetItem(str(f"$ {total_haber}"))
         item_suma_horas2.setFont(itemColor_RESULTADO(item_suma_horas2))  # Funcion para estilos de item
         item_suma_horas2.setTextAlignment(Qt.AlignmentFlag.AlignRight)
         self.tablaGastos.setItem(len(busqueda), 5, item_suma_horas2)
