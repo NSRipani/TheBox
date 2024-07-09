@@ -4,18 +4,18 @@ from qss.style_item import itemColor_RESULTADO, itemColor_TOTAL
 # from openpyxl import Workbook
 
 def registroUSER(nombre1, apellido1, dni, sexo, edad, celu):
-    patron_nom2 = re.compile(r'^[a-zA-ZáéíóúÁÉÍÓÚüÜ\'\s]+$')
-    if not isinstance(nombre1, str) or nombre1.isspace() or not patron_nom2.match(nombre1):
-        mensaje_ingreso_datos("Registro de cliente", "El 'Nombre' debe contener:\n\n- Letras y/o espacios entre nombres (si tiene más de uno).")
+    patron = re.compile(r'^[a-zA-ZáéíóúÁÉÍÓÚüÜ\'\s]+$') 
+    if not nombre1.isalpha() or not patron.match(nombre1): #not isinstance(nombre1, str) or #'match' -> verificar si la cadena coincide con este patrón.
+        mensaje_ingreso_datos("Registro de cliente","El 'nombre' debe contener:\n\n- Letras y/o espacios entre nombres(si tiene mas de dos).")
         return
     try:
         if nombre1:
             print("Validación",f"'{nombre1}' válido")
     except ValueError:
         mensaje_ingreso_datos("Registro de cliente", "'Nombre' mal escrito. Vuelva a intentar")
-     
-    if not isinstance(apellido1, str) or apellido1.isspace() or not patron_nom2.match(apellido1): 
-        mensaje_ingreso_datos("Registro de cliente", "El 'Nombre' debe contener:\n\n- Letras y/o espacios entre nombres (si tiene más de uno).")
+        
+    if not apellido1.isalpha() or not patron.match(apellido1): #isinstance(apellido1, str) or not :
+        mensaje_ingreso_datos("Registro de cliente","El 'apellido' debe contener:\n\n- Letras y/o espacios entre nombres(si tiene mas de dos).")
         return
     try:
         if apellido1:
@@ -31,10 +31,10 @@ def registroUSER(nombre1, apellido1, dni, sexo, edad, celu):
         if dni:
             dni = int(dni)
     except ValueError:
-        mensaje_ingreso_datos("Registro de empleado","El Celular debe ser numérico")
+        mensaje_ingreso_datos("Registro de cliente","El Celular debe ser numérico")
         return
     
-    if (isinstance(sexo, str) and sexo.isalpha()):
+    if not isinstance(sexo, str) or not sexo.isalpha():
         mensaje_ingreso_datos("Registro de cliente","Debe elegir un sexo.\n\nEl sexo es 'Hombre' o 'Mujer'")
         return
     if sexo:
@@ -48,10 +48,10 @@ def registroUSER(nombre1, apellido1, dni, sexo, edad, celu):
         if edad:
             edad = int(edad)
     except ValueError:
-        mensaje_ingreso_datos("Registro de empleado","El Celular debe ser numérico")
+        mensaje_ingreso_datos("Registro de cliente","El Celular debe ser numérico")
         return
             
-    patron_celu = re.compile(r'^\d$')
+    patron_celu = re.compile(r'^[0-9]+$')
     if not (celu.isdigit() and patron_celu.match(celu)):
         mensaje_ingreso_datos("Registro de cliente","El Celular debe ser:\n\n- Números enteros.\n- No contener puntos(.)")
         return
@@ -60,8 +60,10 @@ def registroUSER(nombre1, apellido1, dni, sexo, edad, celu):
             celu = int(celu)
             print(f"El celular es {celu}")
     except ValueError:
-        mensaje_ingreso_datos("Registro de empleado","El Celular debe ser numérico")
+        mensaje_ingreso_datos("Registro de cliente","El Celular debe ser numérico")
         return
+    
+    return "Validación exitosa."
     
 def limpiasElementosUser(self,QDate):
     self.input_nombre1.clear()

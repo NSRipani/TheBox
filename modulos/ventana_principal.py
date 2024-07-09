@@ -1858,12 +1858,16 @@ class VentanaPrincipal(QMainWindow):
         celu = self.input_celular.text().replace(".", "")
         fecha = self.input_date.date().toPyDate()
 
-        registroUSER(nombre1, apellido1, dni, sexo, edad, celu)
+        validacion = registroUSER(nombre1, apellido1, dni, sexo, edad, celu)
+        if validacion != "Validación exitosa.":
+            mensaje_ingreso_datos("Error de validación", "Verifique los datos por favor")
+            return
+        # registroUSER(nombre1, apellido1, dni, sexo, edad, celu)
             
         # Validar que los campos requeridos no estén vacíos
-        if not nombre1 or not apellido1 or not dni or not sexo or not edad or not celu:
-            mensaje_ingreso_datos("Registro de cliente", "Todos los campos son obligatorios")
-            return        
+        # if not nombre1 or not apellido1 or not dni or not sexo or not edad or not celu:
+        #     mensaje_ingreso_datos("Registro de cliente", "Todos los campos son obligatorios")
+        #     return        
         
         try:
             db = conectar_base_de_datos()
@@ -1935,7 +1939,7 @@ class VentanaPrincipal(QMainWindow):
         try:
             db = conectar_base_de_datos()
             cursor = db.cursor()
-            cursor.execute("SELECT * FROM usuario ORDER BY nombre ASC")
+            cursor.execute("SELECT nombre, apellido, dni, sexo, edad, celular, fecha_registro AS REGISTRO FROM usuario ORDER BY nombre ASC")
             resultados = cursor.fetchall()
                     
             if len(resultados) > 0:

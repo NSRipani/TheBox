@@ -225,7 +225,7 @@ class Empleado(QDialog):
         try:
             db = conectar_base_de_datos()
             cursor = db.cursor()
-            cursor.execute(f"SELECT * FROM registro_empleado ORDER BY id_empleado")
+            cursor.execute(f"SELECT id_empleado AS ID, nombre, apellido, sexo, edad, dni, celular, fecha FROM registro_empleado ORDER BY id_empleado")
             busqueda = cursor.fetchall()
             if len(busqueda) > 0:
                 ingreso_datos("Registro de empleado",f"Se encontraron {len(busqueda)} coincidencias.")

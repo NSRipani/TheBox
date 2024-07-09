@@ -11,7 +11,7 @@ def variables(nom_emp,apell_emp,sex_emp,edad_emp,dni_emp,cel):
         return
     
     if not isinstance(sex_emp, str) or not sex_emp.isalpha():
-        mensaje_ingreso_datos("Registro de empleado","Debe elegir una sexo.\n\nEl sexo es 'Hombre' o 'Mujer'")
+        mensaje_ingreso_datos("Registro de empleado","Debe elegir un sexo.\n\nEl sexo es 'Hombre' o 'Mujer'")
         return
     if sex_emp:
         sex_emp = sex_emp.capitalize()
@@ -28,7 +28,7 @@ def variables(nom_emp,apell_emp,sex_emp,edad_emp,dni_emp,cel):
         mensaje_ingreso_datos("Registro de empleado","La Edad debe contener:\n\n- Contener 2 (DOS) números enteros.\n- No contener puntos(.)")
         return
       
-    if not (isinstance(dni_emp, str) and dni_emp.isdigit() and patron_mun.match(dni_emp) and len(edad_emp) == 2):# and len(str(dni_emp))==8 
+    if not (isinstance(dni_emp, str) and dni_emp.isdigit() and patron_mun.match(dni_emp) and len(str(dni_emp)) == 8):# and len(str(dni_emp))==8 
         mensaje_ingreso_datos("Registro de empleado","El DNI debe contener:\n\n- Números enteros.\n - No contener puntos(.)")
         return
     try:
