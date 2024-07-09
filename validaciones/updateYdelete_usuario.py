@@ -20,11 +20,11 @@ def tabla_updateUSER(self, cursor, resultados, QHeaderView, QTableWidget, QAbstr
         for j, val in enumerate(row):
             item = QTableWidgetItem(str(val))
             # Indices de las columnas que contienen fechas
-            if j == 7:  
+            if j == 6:  
                 fecha = QDate.fromString(str(val), "yyyy-MM-dd")  # Convertir la fecha a objeto QDate
                 item.setText(fecha.toString("dd-MM-yyyy"))  # Establecer el formato de visualización
             
-            if j in [0, 3, 5, 6, 7]:  # Ajustar alineación para ciertas columnas
+            if j in [2, 4, 5, 6]:  # Ajustar alineación para ciertas columnas
                 item.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
             self.tablaUpdateRecord.setItem(i, j, item)
             

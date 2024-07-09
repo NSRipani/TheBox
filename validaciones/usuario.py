@@ -97,14 +97,14 @@ def limpiar_campos(self):
 def autoCompletadoACTULIZAR(self,QDate):
     row = self.tablaUpdateRecord.currentRow()
     
-    nombre2 = self.tablaUpdateRecord.item(row, 1).text()
-    apellido2 = self.tablaUpdateRecord.item(row, 2).text()
-    dni2 = self.tablaUpdateRecord.item(row, 3).text().replace(".", "")  # Eliminar cualquier punto en el DNI
-    sexo2 = self.tablaUpdateRecord.item(row, 4).text()
-    edad2 = self.tablaUpdateRecord.item(row, 5).text().replace(".", "")
+    nombre2 = self.tablaUpdateRecord.item(row, 0).text()
+    apellido2 = self.tablaUpdateRecord.item(row, 1).text()
+    dni2 = self.tablaUpdateRecord.item(row, 2).text().replace(".", "")  # Eliminar cualquier punto en el DNI
+    sexo2 = self.tablaUpdateRecord.item(row, 3).text()
+    edad2 = self.tablaUpdateRecord.item(row, 4).text().replace(".", "")
     edad2 = int(edad2)
-    celular2 = self.tablaUpdateRecord.item(row, 6).text()
-    fecha2 = self.tablaUpdateRecord.item(row, 7).text()
+    celular2 = self.tablaUpdateRecord.item(row, 5).text()
+    fecha2 = self.tablaUpdateRecord.item(row, 6).text()
     fecha2 = QDate.fromString(fecha2, "dd-MM-yyyy")
     
     self.input_apellido2.setEnabled(True)
@@ -122,7 +122,7 @@ def autoCompletadoACTULIZAR(self,QDate):
     self.input_celular2.setText(celular2)  # Convertir a texto antes de asignar al QLineEdit
     self.input_date2.setDate(fecha2)
 
-    self.tablaUpdateRecord.clearSelection()  # Deseleccionar la fila eliminada
+    # self.tablaUpdateRecord.clearSelection()  # Deseleccionar la fila eliminada
 
 def limpiar_tablaRecord(self):  
     # Obtener el número de filas de la tabla
@@ -179,10 +179,10 @@ def tabla_registroUSER(self, cursor, resultados, QHeaderView, QTableWidget, QAbs
         for j, val in enumerate(row):
             item = QTableWidgetItem(str(val))
             # Indices de las columnas que contienen fechas
-            if j == 7:  
+            if j == 6:  
                 fecha = QDate.fromString(str(val), "yyyy-MM-dd")  # Convertir la fecha a objeto QDate
                 item.setText(fecha.toString("dd-MM-yyyy"))  # Establecer el formato de visualización
-            if j in [0, 3, 5, 6, 7]:  # Ajustar alineación para ciertas columnas
+            if j in [2, 4, 5, 6]:  # Ajustar alineación para ciertas columnas
                 item.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
             self.tablaRecord.setItem(i, j, item)
     

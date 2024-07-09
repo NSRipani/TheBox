@@ -1,6 +1,3 @@
-# libreria para realizar operaciones relacionadas con archivos
-import os
-
 # libreria para usar patrones, utilizados para buscar y manipular cadenas de texto de manera flexible
 import re
 
@@ -62,25 +59,6 @@ class VentanaPrincipal(QMainWindow):
         cursor = conn.cursor()
         print(i)
         match i:
-            case 4:
-                cursor.execute("SELECT id_disciplina, nombre, precio FROM disciplina WHERE habilitado = 1 ORDER BY nombre ASC")
-                dato = cursor.fetchall()
-                self.disciplinas = {str(item[1]): (item[0], item[2]) for item in dato}  # Mapear nombre a (id_disciplina, precio)
-                
-                sugerencias = list(self.disciplinas.keys())
-                
-                # Almacenar sugerencias en un conjunto para verificación rápida
-                self.sugeren_set = set(sugerencias)
-                
-                idDis = QCompleter(sugerencias)
-                idDis.setCaseSensitivity(Qt.CaseSensitivity.CaseInsensitive)
-                idDis.setCompletionMode(QCompleter.CompletionMode.PopupCompletion)
-                idDis.popup().setStyleSheet(style.completer)
-                self.idDis.setCompleter(idDis)
-                
-                # Muestra el precio de cada disciplina al elegitr la disciplina
-                idDis.activated.connect(self.actualizar_precio)
-                return
             case 0:
                 # Consulta para obtener los datos de una columna específica
                 cursor.execute("SELECT nombre FROM usuario")
@@ -105,14 +83,59 @@ class VentanaPrincipal(QMainWindow):
                 lista_nombres.popup().setStyleSheet(style.completer)
                 self.input_nombre2.setCompleter(lista_nombres)
                 return
+            case 2:
+                # Consulta para obtener los datos de una columna específica
+                cursor.execute("SELECT nombre FROM usuario")
+                datos = cursor.fetchall()
+                suger2 = [str(item[0]) for item in datos]
+
+                lista_nombre = QCompleter(suger2)
+                lista_nombre.setCaseSensitivity(Qt.CaseSensitivity.CaseInsensitive)
+                lista_nombre.setCompletionMode(QCompleter.CompletionMode.PopupCompletion)
+                lista_nombre.popup().setStyleSheet(style.completer)
+                self.nombre_buscar3.setCompleter(lista_nombre)
+            case 4:
+                cursor.execute("SELECT id_disciplina, nombre, precio FROM disciplina WHERE habilitado = 1 ORDER BY nombre ASC")
+                dato = cursor.fetchall()
+                self.disciplinas = {str(item[1]): (item[0], item[2]) for item in dato}  # Mapear nombre a (id_disciplina, precio)
+                
+                sugerencias = list(self.disciplinas.keys())
+                
+                # Almacenar sugerencias en un conjunto para verificación rápida
+                self.sugeren_set = set(sugerencias)
+                
+                idDis = QCompleter(sugerencias)
+                idDis.setCaseSensitivity(Qt.CaseSensitivity.CaseInsensitive)
+                idDis.setCompletionMode(QCompleter.CompletionMode.PopupCompletion)
+                idDis.popup().setStyleSheet(style.completer)
+                self.idDis.setCompleter(idDis)
+                
+                # Muestra el precio de cada disciplina al elegitr la disciplina
+                idDis.activated.connect(self.actualizar_precio)
+                return
+            case 5:
+                # Consulta para obtener los datos de una columna específica
+                cursor.execute("SELECT id_empleado, nombre FROM registro_empleado ORDER BY nombre ASC")
+                datos = cursor.fetchall()
+                self.listas = [(str(item[1]), item[0]) for item in datos]  # Crear una lista de tuplas (nombre, id_empleado)
+                
+                lista_empleado = QCompleter([item[0] for item in self.listas])  # Usar solo los nombres para la lista desplegable
+                lista_empleado.setCaseSensitivity(Qt.CaseSensitivity.CaseInsensitive)
+                lista_empleado.setCompletionMode(QCompleter.CompletionMode.PopupCompletion)
+                lista_empleado.popup().setStyleSheet(style.completer)
+                self.id_horas_empleado.setCompleter(lista_empleado)
+                
+                # # Agregar evento de selección de elemento del completer
+                lista_empleado.activated[str].connect(self.guardar_id_empleado)#[str]
+                
         cursor.close()
         conn.close()
     
     def ventana_pricipal(self):        
         self.setWindowIcon(QIcon("img/logo.png"))
         self.setWindowTitle("The Box - Gestion de usuarios")
-        # self.setWindowState(Qt.WindowState.WindowMaximized) # WindowMaximized)
-        # self.showMaximized()
+        self.setWindowState(Qt.WindowState.WindowMaximized)
+        # self.show()
         
         #BARRA INFERIOR DE ESTADO
         self.status_Bar = QStatusBar()
@@ -237,8 +260,6 @@ class VentanaPrincipal(QMainWindow):
         frame_layout.addWidget(empleados_button)
         frame_layout.setSpacing(20)
         frame_layout.addWidget(balances_button)
-        # frame_layout.setSpacing(15)
-        # frame_layout.addWidget(horas)
         frame_layout.setSpacing(20)
         frame_layout.addWidget(gastos_button)
         frame_layout.setSpacing(20)
@@ -697,7 +718,6 @@ class VentanaPrincipal(QMainWindow):
         suger2 = [str(item[0]) for item in datos]
 
         lista_nombre = QCompleter(suger2)
-        # lista_nombre.setFilterMode(Qt.MatchFlag.MatchStartsWith)
         lista_nombre.setCaseSensitivity(Qt.CaseSensitivity.CaseInsensitive)
         lista_nombre.setCompletionMode(QCompleter.CompletionMode.PopupCompletion)
         lista_nombre.popup().setStyleSheet(style.completer)
@@ -1967,7 +1987,7 @@ class VentanaPrincipal(QMainWindow):
         try:
             db = conectar_base_de_datos()
             cursor = db.cursor()
-            cursor.execute("SELECT * FROM usuario ORDER BY nombre ASC")
+            cursor.execute("SELECT nombre, apellido, dni, sexo, edad, celular, fecha_registro FROM usuario ORDER BY nombre ASC")
             resultados = cursor.fetchall()
 
             if len(resultados) > 0:

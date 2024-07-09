@@ -169,14 +169,15 @@ class Empleado(QDialog):
         
         # Centrar la ventana
         self.centrar_ventana()
-
+    
     def centrar_ventana(self):
         screen = QGuiApplication.primaryScreen()
         screen_geometry = screen.availableGeometry()
         x = (screen_geometry.width() - self.width()) // 2
         y = (screen_geometry.height() - self.height()) // 2
         self.move(x, y)
-        
+    
+    
     def guardar_empleado(self):
                 
         nom_emp = self.nombre.text().title()

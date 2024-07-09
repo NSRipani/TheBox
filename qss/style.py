@@ -557,6 +557,10 @@ esttabla = """
         font-size: 20px;
         font-family: "Segoe UI";
     }
+    QTableWidget::item:selected {
+        background-color: #d4a373;
+        color: black;
+    }
     QHeaderView::section{
         background-color: #9a9a9a;
         color: black;
