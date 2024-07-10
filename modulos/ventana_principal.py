@@ -94,7 +94,24 @@ class VentanaPrincipal(QMainWindow):
                 lista_nombre.setCompletionMode(QCompleter.CompletionMode.PopupCompletion)
                 lista_nombre.popup().setStyleSheet(style.completer)
                 self.nombre_buscar3.setCompleter(lista_nombre)
+                return
             case 4:
+                # ---- Para 'DNI' ---
+                # Consulta para obtener los datos de una columna específica
+                cursor.execute("SELECT dni FROM usuario ORDER BY dni ASC")
+                dato = cursor.fetchall()
+                self.sugerencia = [str(item[0]) for item in dato]
+                
+                # Almacenar sugerencias en un conjunto para verificación rápida
+                self.sugerencias_set = set(self.sugerencia)
+                
+                idDNI = QCompleter(self.sugerencia)
+                idDNI.setCaseSensitivity(Qt.CaseSensitivity.CaseInsensitive)
+                idDNI.setCompletionMode(QCompleter.CompletionMode.PopupCompletion)
+                idDNI.popup().setStyleSheet(style.completer)
+                self.idUser.setCompleter(idDNI)
+                
+                # Para 'DISCIPLINA'
                 cursor.execute("SELECT id_disciplina, nombre, precio FROM disciplina WHERE habilitado = 1 ORDER BY nombre ASC")
                 dato = cursor.fetchall()
                 self.disciplinas = {str(item[1]): (item[0], item[2]) for item in dato}  # Mapear nombre a (id_disciplina, precio)
@@ -112,8 +129,18 @@ class VentanaPrincipal(QMainWindow):
                 
                 # Muestra el precio de cada disciplina al elegitr la disciplina
                 idDis.activated.connect(self.actualizar_precio)
+                
+                # Para 'MEDIO DE PAGO'
+                medio_de_pago = ["Efectivo", "Transferencia"]
+                completer2 = QCompleter(medio_de_pago)
+                completer2.setCaseSensitivity(Qt.CaseSensitivity.CaseInsensitive)
+                completer2.setCompletionMode(QCompleter.CompletionMode.PopupCompletion)
+                completer2.popup().setStyleSheet(style.completer)
+                self.input_tipoDePago.setCompleter(completer2)
+                
                 return
             case 5:
+                # ---- Para 'EMPLEADO' ----
                 # Consulta para obtener los datos de una columna específica
                 cursor.execute("SELECT id_empleado, nombre FROM registro_empleado ORDER BY nombre ASC")
                 datos = cursor.fetchall()
@@ -125,9 +152,32 @@ class VentanaPrincipal(QMainWindow):
                 lista_empleado.popup().setStyleSheet(style.completer)
                 self.id_horas_empleado.setCompleter(lista_empleado)
                 
-                # # Agregar evento de selección de elemento del completer
-                lista_empleado.activated[str].connect(self.guardar_id_empleado)#[str]
-                
+                return
+            case 6:
+                # --- Para 'BALANCE' --- Actualización para la USUARIO
+                cursor.execute("SELECT u.dni FROM usuario u ORDER BY u.dni ASC")        
+                datos = cursor.fetchall()
+                self.numeros_dni = [str(item[0]) for item in datos]
+
+                nombre = QCompleter(self.numeros_dni)
+                nombre.setCaseSensitivity(Qt.CaseSensitivity.CaseInsensitive)
+                nombre.setCompletionMode(QCompleter.CompletionMode.PopupCompletion)
+                nombre.popup().setStyleSheet(style.completer)
+                self.view_nomb.setCompleter(nombre)
+
+                # --- Para 'BALANCE' --- Actualización para la DISCIPLINA
+                cursor.execute("SELECT d.nombre FROM disciplina d ORDER BY d.nombre ASC")
+                datos = cursor.fetchall()
+                self.activi = [str(item[0]) for item in datos]
+
+                actividad = QCompleter(self.activi)
+                actividad.setCaseSensitivity(Qt.CaseSensitivity.CaseInsensitive)
+                actividad.setCompletionMode(QCompleter.CompletionMode.PopupCompletion)
+                actividad.popup().setStyleSheet(style.completer)
+                self.view_disciplina.setCompleter(actividad)
+                return
+            case 7:
+                pass
         cursor.close()
         conn.close()
     
@@ -1935,7 +1985,8 @@ class VentanaPrincipal(QMainWindow):
         try:
             db = conectar_base_de_datos()
             cursor = db.cursor()
-            cursor.execute(f"SELECT * FROM usuario WHERE nombre LIKE '%{nombre}%'")
+            cursor.execute(f"SELECT id_usuario AS ID, nombre, apellido, dni, sexo, edad, celular, fecha_registro AS REGISTRO FROM usuario WHERE nombre LIKE '%{nombre}%' ORDER BY nombre ASC")
+            # cursor.execute(f"SELECT * FROM usuario WHERE nombre LIKE '%{nombre}%'")
             resultados = cursor.fetchall()
             
             if len(resultados) > 0:
@@ -1959,7 +2010,7 @@ class VentanaPrincipal(QMainWindow):
         try:
             db = conectar_base_de_datos()
             cursor = db.cursor()
-            cursor.execute("SELECT nombre, apellido, dni, sexo, edad, celular, fecha_registro AS REGISTRO FROM usuario ORDER BY nombre ASC")
+            cursor.execute("SELECT id_usuario AS ID, nombre, apellido, dni, sexo, edad, celular, fecha_registro AS REGISTRO FROM usuario ORDER BY nombre ASC")
             resultados = cursor.fetchall()
                     
             if len(resultados) > 0:
@@ -1987,7 +2038,7 @@ class VentanaPrincipal(QMainWindow):
         try:
             db = conectar_base_de_datos()
             cursor = db.cursor()
-            cursor.execute("SELECT nombre, apellido, dni, sexo, edad, celular, fecha_registro FROM usuario ORDER BY nombre ASC")
+            cursor.execute("SELECT id_usuario AS ID, nombre, apellido, dni, sexo, edad, celular, fecha_registro AS REGISTRO FROM usuario ORDER BY nombre ASC")
             resultados = cursor.fetchall()
 
             if len(resultados) > 0:
@@ -2021,18 +2072,18 @@ class VentanaPrincipal(QMainWindow):
         try:
             db = conectar_base_de_datos()
             cursor = db.cursor()
-            cursor.execute("SELECT * FROM usuario ORDER BY nombre ASC")
+            # cursor.execute("SELECT * FROM usuario ORDER BY nombre ASC")
+            cursor.execute(f"SELECT id_usuario AS ID, nombre, apellido, dni, sexo, edad, celular, fecha_registro AS REGISTRO FROM usuario WHERE nombre LIKE '%{nombre_seleccionado}%' ORDER BY nombre ASC")
             resultados = cursor.fetchall()
             
             if len(resultados) > 0:
                 ingreso_datos("Registro de cliente",f"Se encontraron {len(resultados)} coincidencias.")
-
                 self.input_nombre2.clear()
                 tabla_updateUSER(self, cursor, resultados, QHeaderView, QTableWidget, QAbstractItemView, QTableWidgetItem, QDate, Qt)
-                
                 self.tablaUpdateRecord.clearSelection()  # Deseleccionar la fila eliminada
             else:
                 ingreso_datos("Registro de cliente",f"Se encontraron {len(resultados)} coincidencias.")
+                self.tablaUpdateRecord.clearSelection()  # Deseleccionar la fila eliminada
                 
             cursor.close()
             db.close()
@@ -2110,7 +2161,8 @@ class VentanaPrincipal(QMainWindow):
         try:
             db = conectar_base_de_datos()
             cursor = db.cursor()
-            cursor.execute(f"SELECT * FROM usuario WHERE nombre LIKE '%{nombre_seleccionado3}%'")
+            cursor.execute(f"SELECT id_usuario AS ID, nombre, apellido, dni, sexo, edad, celular, fecha_registro AS REGISTRO FROM usuario WHERE nombre LIKE '%{nombre_seleccionado3}%' ORDER BY nombre ASC")
+            # cursor.execute(f"SELECT * FROM usuario WHERE nombre LIKE '%{nombre_seleccionado3}%'")
             resultados = cursor.fetchall()
             
             if len(resultados) > 0:
@@ -2134,7 +2186,7 @@ class VentanaPrincipal(QMainWindow):
         row = self.tablaDeleteRecord.currentRow()
         nombre_cliente = self.tablaDeleteRecord.item(row, 1).text()
         self.nombre_buscar3.setText(nombre_cliente)
-        self.tablaDeleteRecord.clearSelection()  # Deseleccionar la fila eliminada
+        # self.tablaDeleteRecord.clearSelection()  # Deseleccionar la fila eliminada
         
     def delete(self): # eliminar por seleccion de fila      
         if not self.tablaDeleteRecord.currentItem():
@@ -2149,20 +2201,21 @@ class VentanaPrincipal(QMainWindow):
             try:
                 db = conectar_base_de_datos()
                 cursor = db.cursor()
-                cursor.execute(f"UPDATE usuario SET habilitado = 0 WHERE id_usuario= {idUser}")#, (idUser))
+                cursor.execute(f"UPDATE usuario SET habilitado = 0 WHERE id_usuario = {idUser}")#, (idUser))
                 # cursor.execute(f"DELETE FROM usuario WHERE id_usuario = {idUser} AND habilitado = 1")    
                 db.commit()
                 if cursor:
                     self.tablaDeleteRecord.removeRow(selectedRow)
                     self.nombre_buscar3.clear()
                     self.limpiar_tabla()
+                    self.tablaDeleteRecord.clearSelection()
                     ingreso_datos("Registro de cliente","Registo eliminado")
                 else:
                     ingreso_datos("Registro de cliente","Registo no eliminado")
+                    self.tablaDeleteRecord.clearSelection()  # Deseleccionar la fila eliminada
                     
                 cursor.close()
                 db.close()
-                self.tablaDeleteRecord.clearSelection()  # Deseleccionar la fila eliminada
 
             except Error as ex:
                 errorConsulta("Registro de cliente",f"Error en la consulta: {str(ex)}")
@@ -2302,27 +2355,29 @@ class VentanaPrincipal(QMainWindow):
         selectedRow = self.tableActivi.currentItem().row()
         id_dis = int(self.tableActivi.item(selectedRow, 0).text())
         
-        try:
-            db = conectar_base_de_datos()
-            cursor = db.cursor()
-            # cursor.execute(f"DELETE FROM disciplina WHERE id_disciplina = {id_dis}")    
-            cursor.execute(f"UPDATE disciplina SET habilitado = 0 WHERE id_disciplina= {id_dis}")#, (id_dis,))
-            if cursor:
-                ingreso_datos("Registro de disciplina","Registo eliminado")
-                self.tableActivi.removeRow(selectedRow)
-                self.input_disciplina4.clear()
-                self.input_precio.clear()
-                self.tableActivi.clearSelection()  # Deseleccionar la fila eliminada
-            else:
-                ingreso_datos("Registro de disciplina","Registo no eliminado")
+        elim = inicio("Registro de cliente","¿Seguro que desea eliminar cliente?")
+        if elim == QMessageBox.StandardButton.Yes:
+            try:
+                db = conectar_base_de_datos()
+                cursor = db.cursor()
+                # cursor.execute(f"DELETE FROM disciplina WHERE id_disciplina = {id_dis}")    
+                cursor.execute(f"UPDATE disciplina SET habilitado = 0 WHERE id_disciplina= {id_dis}")#, (id_dis,))
+                if cursor:
+                    ingreso_datos("Registro de disciplina","Registo eliminado")
+                    self.tableActivi.removeRow(selectedRow)
+                    self.input_disciplina4.clear()
+                    self.input_precio.clear()
+                    self.tableActivi.clearSelection()  # Deseleccionar la fila eliminada
+                else:
+                    ingreso_datos("Registro de disciplina","Registo no eliminado")
+                    
+                cursor.close()
+                db.commit()
                 
-            cursor.close()
-            db.commit()
-            
-        except Error as ex:
-            errorConsulta("Registro de disciplina",f"Error en la consulta: {str(ex)}")
-        cursor.close()
-        db.close()
+            except Error as ex:
+                errorConsulta("Registro de disciplina",f"Error en la consulta: {str(ex)}")
+        else:
+            pass
             
     def planilla_disciplina(self):
         tabla_registroDISCIPLINA(self,Workbook,Font,PatternFill,Border,Side,numbers,QFileDialog)

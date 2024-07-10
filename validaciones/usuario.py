@@ -5,7 +5,7 @@ from qss.style_item import itemColor_RESULTADO, itemColor_TOTAL
 
 def registroUSER(nombre1, apellido1, dni, sexo, edad, celu):
     patron = re.compile(r'^[a-zA-ZáéíóúÁÉÍÓÚüÜ\'\s]+$') 
-    if not nombre1.isalpha() or not patron.match(nombre1): #not isinstance(nombre1, str) or #'match' -> verificar si la cadena coincide con este patrón.
+    if not nombre1.isalpha() or nombre1.isspace() or not patron.match(nombre1): #not isinstance(nombre1, str) or #'match' -> verificar si la cadena coincide con este patrón.
         mensaje_ingreso_datos("Registro de cliente","El 'nombre' debe contener:\n\n- Letras y/o espacios entre nombres(si tiene mas de dos).")
         return
     try:
@@ -14,7 +14,7 @@ def registroUSER(nombre1, apellido1, dni, sexo, edad, celu):
     except ValueError:
         mensaje_ingreso_datos("Registro de cliente", "'Nombre' mal escrito. Vuelva a intentar")
         
-    if not apellido1.isalpha() or not patron.match(apellido1): #isinstance(apellido1, str) or not :
+    if not apellido1.isalpha() or apellido1.isspace() or not patron.match(apellido1): #isinstance(apellido1, str) or not :
         mensaje_ingreso_datos("Registro de cliente","El 'apellido' debe contener:\n\n- Letras y/o espacios entre nombres(si tiene mas de dos).")
         return
     try:
@@ -97,14 +97,14 @@ def limpiar_campos(self):
 def autoCompletadoACTULIZAR(self,QDate):
     row = self.tablaUpdateRecord.currentRow()
     
-    nombre2 = self.tablaUpdateRecord.item(row, 0).text()
-    apellido2 = self.tablaUpdateRecord.item(row, 1).text()
-    dni2 = self.tablaUpdateRecord.item(row, 2).text().replace(".", "")  # Eliminar cualquier punto en el DNI
-    sexo2 = self.tablaUpdateRecord.item(row, 3).text()
-    edad2 = self.tablaUpdateRecord.item(row, 4).text().replace(".", "")
+    nombre2 = self.tablaUpdateRecord.item(row, 1).text()
+    apellido2 = self.tablaUpdateRecord.item(row, 2).text()
+    dni2 = self.tablaUpdateRecord.item(row, 3).text().replace(".", "")  # Eliminar cualquier punto en el DNI
+    sexo2 = self.tablaUpdateRecord.item(row, 4).text()
+    edad2 = self.tablaUpdateRecord.item(row, 5).text().replace(".", "")
     edad2 = int(edad2)
-    celular2 = self.tablaUpdateRecord.item(row, 5).text()
-    fecha2 = self.tablaUpdateRecord.item(row, 6).text()
+    celular2 = self.tablaUpdateRecord.item(row, 6).text()
+    fecha2 = self.tablaUpdateRecord.item(row, 7).text()
     fecha2 = QDate.fromString(fecha2, "dd-MM-yyyy")
     
     self.input_apellido2.setEnabled(True)
@@ -179,10 +179,10 @@ def tabla_registroUSER(self, cursor, resultados, QHeaderView, QTableWidget, QAbs
         for j, val in enumerate(row):
             item = QTableWidgetItem(str(val))
             # Indices de las columnas que contienen fechas
-            if j == 6:  
+            if j == 7:  
                 fecha = QDate.fromString(str(val), "yyyy-MM-dd")  # Convertir la fecha a objeto QDate
                 item.setText(fecha.toString("dd-MM-yyyy"))  # Establecer el formato de visualización
-            if j in [2, 4, 5, 6]:  # Ajustar alineación para ciertas columnas
+            if j in [0, 3, 5, 6,7]:  # Ajustar alineación para ciertas columnas
                 item.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
             self.tablaRecord.setItem(i, j, item)
     
