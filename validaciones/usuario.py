@@ -1,7 +1,7 @@
 from modulos.mensajes import mensaje_ingreso_datos,ingreso
 import re
 from qss.style_item import itemColor_RESULTADO, itemColor_TOTAL
-# from openpyxl import Workbook
+    
 
 def registroUSER(nombre1, apellido1, dni, sexo, edad, celu):
     patron = re.compile(r'^[a-zA-ZáéíóúÁÉÍÓÚüÜ\'\s]+$') 

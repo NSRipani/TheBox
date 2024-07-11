@@ -25,7 +25,7 @@ from validaciones.usuario import (registroUSER, limpiasElementosUser, limpiar_ca
 from validaciones.updateYdelete_usuario import tabla_updateUSER, tabla_eliminarUSER, borrarTabla
 from validaciones.archivo_Excel import (tabla_registroUSUARIO, tabla_registroDISCIPLINA, horas_Excel, 
                                         tabla_libroDiario_CONTABILIDAD, pagos_EXCEL, excelConsulta)
-from validaciones.disciplina import completar_CAMPOS_ACTIVIDAD, clear_tabla_disciplina, tabla_DISCIPLINA #guardarACTIVIDAD
+from validaciones.disciplina import completar_CAMPOS_ACTIVIDAD, clear_tabla_disciplina, tabla_DISCIPLINA
 from validaciones.pagos import seleccionDeTablaPAGOS, tabla_pagos
 from validaciones.contabilidad import validadciones, tabla_contabilidad, selccionarTabla, limpiarCampos, clear_tabla
 from validaciones.horas import tabla_HorasTotales,tabla_HorasXEmpleado, autoCompletado, clearTabla
@@ -44,14 +44,11 @@ from qss import style
 from conexion_DB.dataBase import conectar_base_de_datos
 
 class VentanaPrincipal(QMainWindow):
-    def __init__(self):#, is_admin):
+    def __init__(self):
         super().__init__()
-        # self.setIsAdmin(is_admin)
         self.ventana_pricipal()
         self.show()
         self.input_nombre1.setFocus()
-    # def setIsAdmin (self, is_admin):
-        # self.is_admin = is_admin
         
     def onChangeTab(self,i):
         #  Conexión a la base de datos MySQL
@@ -414,8 +411,8 @@ class VentanaPrincipal(QMainWindow):
         layout_H.setAlignment(Qt.AlignmentFlag.AlignLeft)
         
         # # Establecer un validador que permita espacios en el texto
-        # validator = QRegularExpressionValidator(self)
-        # validator.setRegularExpression(re.Match.string)
+        # validator = QRegularExpression()
+        # validator.match(r"^[a-zA-Z\s]+$")
         
         nombre1 = QLabel('Nombre:',customer_details)
         nombre1.setStyleSheet(style.label)
