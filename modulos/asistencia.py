@@ -24,6 +24,7 @@ class Asistencia(QMainWindow):
     def __init__(self):
         super().__init__()
         self.asistir()
+        self.set_focus()
         
     def asistir(self):
         self.showMaximized()
@@ -91,9 +92,14 @@ class Asistencia(QMainWindow):
         self.numero_documento = QLineEdit()
         self.numero_documento.setStyleSheet(style.estilo_lineedit)
         self.numero_documento.setMaxLength(8)
-        self.numero_documento.textChanged.connect(self.set_focus)
+        self.numero_documento.setFocus()
+        
+        # self.numero_documento.textChanged.connect(self.set_focus)
         lV.addWidget(label_numero_documento)
         lV.addWidget(self.numero_documento)
+        
+        # Conectar la señal de finalización de edición a una función que establece el foco
+        self.numero_documento.editingFinished.connect(self.set_focus)
         
         # Conexión a la base de datos MySQL
         conn = conectar_base_de_datos()
@@ -176,6 +182,8 @@ class Asistencia(QMainWindow):
             self.registrar_asistencia()
         
     def registrar_asistencia(self):
+        self.set_focus()
+        
         # Dato ingresado por teclado   
         dni = self.numero_documento.text()
         
@@ -276,7 +284,7 @@ class Asistencia(QMainWindow):
                 print(f"No se pudo obtener la última fecha de pago para el usuario con DNI {dni}.")
 
             self.numero_documento.clear()
-
+            
         except Error as e:
             errorConsulta("Registro de asistencia", f"Error al registrar la asistencia: {str(e)}")
             print(e)

@@ -6,7 +6,7 @@ import re
 
 # Librerías de PyQt6
 from PyQt6.QtWidgets import (QLabel,QFormLayout,QDialog, QCompleter, QHeaderView, QHBoxLayout, QTableWidget, QAbstractItemView, QTableWidgetItem, QPushButton, QLineEdit, QVBoxLayout, QGroupBox)
-from PyQt6.QtGui import QIcon,QGuiApplication
+from PyQt6.QtGui import QIcon,QGuiApplication, QRegularExpressionValidator
 from PyQt6.QtCore import *
 
 # Módulo de para las cajas de mensajes
@@ -59,14 +59,21 @@ class CuentaContable(QDialog):
         categoria = QLabel("Categoría: ")
         categoria.setStyleSheet(style.label)
         
+        # validor = QRegularExpressionValidator()
+        # validor.setRegularExpression(r"^[\w\s]+$")
+        
         self.n_cuenta = QLineEdit()
+        self.n_cuenta.setFocus()
+        # self.n_cuenta.setValidator(validor)
         self.n_cuenta.setStyleSheet(style.estilo_lineedit)
         self.t_cuenta = QLineEdit()
         self.t_cuenta.setStyleSheet(style.estilo_lineedit)
         self.t_cuenta.setPlaceholderText("Activos, Pasivos, Patrimonio, Ingresos o Egreso")
         actualizar_combobox_TipoCUENTA(self,QCompleter,Qt,style)
         self.descripcion = QLineEdit()
+        # self.descripcion.setValidator(validor)
         self.descripcion.setStyleSheet(style.estilo_lineedit)
+        self.descripcion.setPlaceholderText("Referencia a la cuenta")
         self.categoria = QLineEdit()
         self.categoria.setStyleSheet(style.estilo_lineedit)
         self.categoria.setPlaceholderText("'Debe' o 'Haber'")

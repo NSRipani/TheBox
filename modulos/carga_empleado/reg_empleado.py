@@ -10,7 +10,7 @@ from openpyxl.styles import Font, PatternFill, Border, Side, numbers
 from PyQt6.QtWidgets import (QLabel,QFormLayout,QFileDialog, QCompleter, QHeaderView, QHBoxLayout, QDateEdit, 
                              QMessageBox, QTableWidget, QAbstractItemView, QTableWidgetItem, QPushButton, QLineEdit,
                              QVBoxLayout, QGroupBox, QDialog,QComboBox)
-from PyQt6.QtGui import QIcon, QGuiApplication
+from PyQt6.QtGui import QIcon, QGuiApplication, QRegularExpressionValidator
 from PyQt6.QtCore import *
 
 # Módulo de para las cajas de mensajes
@@ -50,10 +50,16 @@ class Empleado(QDialog):
         form_layout.setSpacing(10)
         form_layout.setContentsMargins(10, 10, 10, 10)
 
+        # espacios = QRegularExpressionValidator(r"^[\w\s]+$")
+        # valido = QRegularExpressionValidator(espacios, self)
+        
         # Crear widgets de etiquetas y entradas
         self.nombre = QLineEdit()
+        self.nombre.setFocus()
+        # self.nombre.setValidator(valido)
         self.nombre.setStyleSheet(style.estilo_lineedit)
         self.apellido = QLineEdit()
+        # self.apellido.setValidator(valido)
         self.apellido.setStyleSheet(style.estilo_lineedit)
         self.sex = QComboBox()
         self.sex.setStyleSheet(style.estilo_combo)
@@ -61,13 +67,13 @@ class Empleado(QDialog):
         self.sex.addItem("Hombre", "Hombre")
         self.sex.addItem("Mujer", "Mujer")
         self.sex.setCurrentIndex(0)
-        
         self.edad = QLineEdit()
         self.edad.setMaxLength(2)
         self.edad.setPlaceholderText("Ej: 23")
         self.edad.setStyleSheet(style.estilo_lineedit)
         self.dni = QLineEdit()
         self.dni.setPlaceholderText("Sin punto")
+        self.dni.setMaxLength(8)
         self.dni.setStyleSheet(style.estilo_lineedit)
         self.celular = QLineEdit()
         self.celular.setStyleSheet(style.estilo_lineedit)

@@ -10,10 +10,10 @@ import mysql.connector
 from mysql.connector import Error
 
 # Librerías de PyQt6
-from PyQt6.QtWidgets import (QLabel,QFileDialog, QCompleter, QAbstractScrollArea, QHeaderView, QGridLayout, QHBoxLayout, QDateEdit, 
+from PyQt6.QtWidgets import (QLabel, QFileDialog, QCompleter, QAbstractScrollArea, QHeaderView, QGridLayout, QHBoxLayout, QDateEdit, 
                              QMessageBox, QTableWidget, QAbstractItemView, QTableWidgetItem, QPushButton, QLineEdit, QStatusBar, QWidget,
                              QVBoxLayout, QGroupBox, QMainWindow, QFrame, QTabWidget,QComboBox)
-from PyQt6.QtGui import QIcon, QKeySequence, QAction, QPixmap
+from PyQt6.QtGui import QIcon, QKeySequence, QAction, QPixmap, QRegularExpressionValidator
 from PyQt6.QtCore import *
 
 # Módulo de para las cajas de mensajes
@@ -49,7 +49,7 @@ class VentanaPrincipal(QMainWindow):
         # self.setIsAdmin(is_admin)
         self.ventana_pricipal()
         self.show()
-        
+        self.input_nombre1.setFocus()
     # def setIsAdmin (self, is_admin):
         # self.is_admin = is_admin
         
@@ -60,6 +60,8 @@ class VentanaPrincipal(QMainWindow):
         print(i)
         match i:
             case 0:
+                self.input_nombre1.setFocus()
+                
                 # Consulta para obtener los datos de una columna específica
                 cursor.execute("SELECT nombre FROM usuario")
                 datos = cursor.fetchall()
@@ -72,6 +74,8 @@ class VentanaPrincipal(QMainWindow):
                 self.input_nombre1.setCompleter(lista_nombre)
                 return
             case 1:
+                self.input_nombre2.setFocus()
+                
                 # Consulta para obtener los datos de una columna específica
                 cursor.execute("SELECT nombre FROM usuario")
                 datos = cursor.fetchall()
@@ -84,6 +88,8 @@ class VentanaPrincipal(QMainWindow):
                 self.input_nombre2.setCompleter(lista_nombres)
                 return
             case 2:
+                self.nombre_buscar3.setFocus()
+
                 # Consulta para obtener los datos de una columna específica
                 cursor.execute("SELECT nombre FROM usuario")
                 datos = cursor.fetchall()
@@ -96,6 +102,8 @@ class VentanaPrincipal(QMainWindow):
                 self.nombre_buscar3.setCompleter(lista_nombre)
                 return
             case 4:
+                self.idUser.setFocus()
+                
                 # ---- Para 'DNI' ---
                 # Consulta para obtener los datos de una columna específica
                 cursor.execute("SELECT dni FROM usuario ORDER BY dni ASC")
@@ -140,6 +148,8 @@ class VentanaPrincipal(QMainWindow):
                 
                 return
             case 5:
+                self.id_horas_empleado.setFocus()
+                
                 # ---- Para 'EMPLEADO' ----
                 # Consulta para obtener los datos de una columna específica
                 cursor.execute("SELECT id_empleado, nombre FROM registro_empleado ORDER BY nombre ASC")
@@ -152,8 +162,12 @@ class VentanaPrincipal(QMainWindow):
                 lista_empleado.popup().setStyleSheet(style.completer)
                 self.id_horas_empleado.setCompleter(lista_empleado)
                 
+                # Agregar evento de selección de elemento del completer
+                lista_empleado.activated[str].connect(self.guardar_id_empleado)#[str]
                 return
             case 6:
+                self.view_nomb.setFocus()
+                
                 # --- Para 'BALANCE' --- Actualización para la USUARIO
                 cursor.execute("SELECT u.dni FROM usuario u ORDER BY u.dni ASC")        
                 datos = cursor.fetchall()
@@ -177,7 +191,32 @@ class VentanaPrincipal(QMainWindow):
                 self.view_disciplina.setCompleter(actividad)
                 return
             case 7:
-                pass
+                self.concepto_debe.setFocus()
+                
+                # --- Para CONTABILIDAD --- CUENTA DEBE
+                # Consulta para obtener los datos de una columna específica
+                cursor.execute("SELECT nombre FROM cuenta WHERE categoria = 'debe'")
+                dato = cursor.fetchall()
+                sugerencia = [str(item[0]) for item in dato]
+
+                lista_debe = QCompleter(sugerencia)
+                lista_debe.setCaseSensitivity(Qt.CaseSensitivity.CaseInsensitive)
+                lista_debe.setCompletionMode(QCompleter.CompletionMode.PopupCompletion)
+                lista_debe.popup().setStyleSheet(style.completer)
+                self.concepto_debe.setCompleter(lista_debe)
+                
+                # --- Para CONTABILIDAD --- CUENTA HABER
+                # Consulta para obtener los datos de una columna específica
+                cursor.execute("SELECT nombre FROM cuenta WHERE categoria = 'haber'")
+                datos = cursor.fetchall()
+                sugerencia = [str(item[0]) for item in datos]
+
+                lista_haber = QCompleter(sugerencia)
+                lista_haber.setCaseSensitivity(Qt.CaseSensitivity.CaseInsensitive)
+                lista_haber.setCompletionMode(QCompleter.CompletionMode.PopupCompletion)
+                lista_haber.popup().setStyleSheet(style.completer)
+                self.concepto_haber.setCompleter(lista_haber)
+                return        
         cursor.close()
         conn.close()
     
@@ -374,13 +413,19 @@ class VentanaPrincipal(QMainWindow):
         layout_H = QHBoxLayout()
         layout_H.setAlignment(Qt.AlignmentFlag.AlignLeft)
         
+        # # Establecer un validador que permita espacios en el texto
+        # validator = QRegularExpressionValidator(self)
+        # validator.setRegularExpression(re.Match.string)
+        
         nombre1 = QLabel('Nombre:',customer_details)
         nombre1.setStyleSheet(style.label)
         nombre1.setFixedWidth(80)
         self.input_nombre1 = QLineEdit(customer_details)
         self.input_nombre1.setFixedWidth(200)
         self.input_nombre1.setPlaceholderText("Ingrese nombre...")
+        # self.input_nombre1.setValidator(validator)
         self.input_nombre1.setStyleSheet(style.estilo_lineedit)
+        self.input_nombre1.setFocus()
         layout_H1.addWidget(nombre1)        
         layout_H1.addWidget(self.input_nombre1)
         
@@ -408,6 +453,7 @@ class VentanaPrincipal(QMainWindow):
         self.input_apellido1 = QLineEdit(customer_details)
         self.input_apellido1.setStyleSheet(style.estilo_lineedit)
         self.input_apellido1.setPlaceholderText("Ingrese apellido...")
+        # self.input_apellido1.setValidator(validator)
         self.input_apellido1.setFixedWidth(200)
         layout_H1.addWidget(apellido1)       
         layout_H1.addWidget(self.input_apellido1)
@@ -572,7 +618,9 @@ class VentanaPrincipal(QMainWindow):
         self.input_nombre2 = QLineEdit(update_customer_details)
         self.input_nombre2.setStyleSheet(style.estilo_lineedit)
         self.input_nombre2.setPlaceholderText("Ingrese nombre...")
+        # self.input_nombre2.setValidator(validator)
         self.input_nombre2.setFixedWidth(200)
+        self.input_nombre2.setFocus()
         layout_ele1.addWidget(nombre2)       
         layout_ele1.addWidget(self.input_nombre2)
         
@@ -600,6 +648,7 @@ class VentanaPrincipal(QMainWindow):
         self.input_apellido2 = QLineEdit(update_customer_details)
         self.input_apellido2.setStyleSheet(style.estilo_lineedit)
         self.input_apellido2.setPlaceholderText("Ingrese apellido...")
+        # self.input_apellido2.setValidator(validator)
         self.input_apellido2.setEnabled(False)
         self.input_apellido2.setFixedWidth(200)
         layout_ele1.addWidget(apellido2)          
@@ -753,8 +802,10 @@ class VentanaPrincipal(QMainWindow):
         nombre_buscar3.setFixedWidth(100)
         self.nombre_buscar3 = QLineEdit(delete_Record)
         self.nombre_buscar3.setStyleSheet(style.estilo_lineedit)
+        # self.nombre_buscar3.setValidator(validator)
         self.nombre_buscar3.setFixedWidth(300)
         self.nombre_buscar3.setPlaceholderText("Ingrese el nombre o su inicial")
+        self.nombre_buscar3.setFocus()
         layout_H7.addWidget(nombre_buscar3)
         layout_H7.addWidget(self.nombre_buscar3)
         
@@ -846,7 +897,9 @@ class VentanaPrincipal(QMainWindow):
         self.input_disciplina4 = QLineEdit(comboActiv)
         self.input_disciplina4.setStyleSheet(style.estilo_lineedit)
         self.input_disciplina4.setFixedWidth(200)
+        # self.input_disciplina4.setValidator(validator)
         self.input_disciplina4.setPlaceholderText("Ingrese una disciplina")
+        self.input_disciplina4.setFocus()
         layout_H8.addWidget(disciplina4)        
         layout_H8.addWidget(self.input_disciplina4)
         
@@ -981,6 +1034,7 @@ class VentanaPrincipal(QMainWindow):
         self.idUser.setStyleSheet(style.estilo_lineedit)
         self.idUser.setPlaceholderText("Ingrese un DNI")
         self.idUser.setFixedWidth(180)
+        self.idUser.setFocus()
         layout_elementos_pagos.addWidget(idUser)     
         layout_elementos_pagos.addWidget(self.idUser)
 
@@ -1180,6 +1234,7 @@ class VentanaPrincipal(QMainWindow):
         self.view_nomb.setPlaceholderText("Ingrese un DNI")
         self.view_nomb.setMaxLength(8)
         self.view_nomb.setFixedWidth(200)
+        self.view_nomb.setFocus()
         self.view_nomb.setStyleSheet(style.estilo_lineedit)
         elementos.addWidget(view_nomb)     
         elementos.addWidget(self.view_nomb)
@@ -1409,6 +1464,7 @@ class VentanaPrincipal(QMainWindow):
         self.id_horas_empleado.setStyleSheet(style.estilo_lineedit)
         self.id_horas_empleado.setFixedWidth(200)
         self.id_horas_empleado.setPlaceholderText("Nombre del empleado")
+        self.id_horas_empleado.setFocus()
         layout_emp.addWidget(id_horas_empleado)        
         layout_emp.addWidget(self.id_horas_empleado)
         
@@ -1629,6 +1685,7 @@ class VentanaPrincipal(QMainWindow):
         self.concepto_debe = QLineEdit(grupo_resumen)
         self.concepto_debe.setStyleSheet(style.estilo_lineedit)
         self.concepto_debe.setFixedWidth(200)
+        self.concepto_debe.setFocus()
         layout_conepto.addWidget(concepto_debe)  
         layout_conepto.addWidget(self.concepto_debe)
         layout_conepto.addSpacing(5)
@@ -1872,51 +1929,53 @@ class VentanaPrincipal(QMainWindow):
     def record(self):
         self.tab.setCurrentIndex(0)
         self.tab.setDisabled(False)
-
+        self.input_nombre1.setFocus()
+        
     def update(self):
         self.tab.setCurrentIndex(1)
         self.tab.setDisabled(False)
+        self.input_nombre2.setFocus()
 
     def deleteRecord(self):
         self.tab.setCurrentIndex(2)
         self.tab.setDisabled(False)
-    
+        self.nombre_buscar3.setFocus()
+        
     def activity(self):
         self.tab.setCurrentIndex(3)
         self.tab.setDisabled(False)
-    
+        self.input_disciplina4.setFocus()
+        
     def pagos(self):
         self.tab.setCurrentIndex(4)
         self.tab.setDisabled(False)    
+        self.idUser.setFocus()
+    
+    def empleados(self):
+        self.tab.setCurrentIndex(5)
+        self.tab.setDisabled(False)
+    
+    def emp(self): # REGISTRO DE EMPLEADO
+        self.cargaEmple = Empleado()
+        self.cargaEmple.show()
+        
+    def balances(self):
+        self.tab.setCurrentIndex(6)
+        self.tab.setDisabled(False)
+        
+    def registro_de_ingYegreso(self):
+        self.tab.setCurrentIndex(7)
+        self.tab.setDisabled(False)
+        self.concepto_debe.setFocus()
+    
+    def cargar_cuenta(self):
+        self.tipo_cuenta = CuentaContable()
+        self.tipo_cuenta.show()
         
     # FUNCION QUE VINCULA LA VENTANA DE ASISTENCIA
     def assistance(self):
         self.boton = Asistencia()
         self.boton.show()
-        
-    def empleados(self):
-        self.tab.setCurrentIndex(5)
-        self.tab.setDisabled(False)
-        # completar_nombre_empleado(self)
-    
-    def balances(self):
-        self.tab.setCurrentIndex(6)
-        self.tab.setDisabled(False)
-    
-    def registro_de_ingYegreso(self):
-        self.tab.setCurrentIndex(7)
-        self.tab.setDisabled(False)
-        # actualizar_combobox_IDcuenta(self)        
-        # actualizar_combobox_cuentaHaber(self)
-
-
-    def emp(self): # REGISTRO DE EMPLEADO
-        self.cargaEmple = Empleado()
-        self.cargaEmple.show()
-        
-    def cargar_cuenta(self):
-        self.tipo_cuenta = CuentaContable()
-        self.tipo_cuenta.show()
     
     # Pestaña de REGISTRO ---------------------------------------
     def guardar(self):

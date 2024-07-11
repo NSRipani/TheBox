@@ -5,7 +5,7 @@ from qss.style_item import itemColor_RESULTADO, itemColor_TOTAL
 
 def registroUSER(nombre1, apellido1, dni, sexo, edad, celu):
     patron = re.compile(r'^[a-zA-ZáéíóúÁÉÍÓÚüÜ\'\s]+$') 
-    if not nombre1.isalpha() or nombre1.isspace() or not patron.match(nombre1): #not isinstance(nombre1, str) or #'match' -> verificar si la cadena coincide con este patrón.
+    if not nombre1.isalpha() or not patron.match(nombre1): #not isinstance(nombre1, str) or #'match' -> verificar si la cadena coincide con este patrón.
         mensaje_ingreso_datos("Registro de cliente","El 'nombre' debe contener:\n\n- Letras y/o espacios entre nombres(si tiene mas de dos).")
         return
     try:
@@ -14,7 +14,7 @@ def registroUSER(nombre1, apellido1, dni, sexo, edad, celu):
     except ValueError:
         mensaje_ingreso_datos("Registro de cliente", "'Nombre' mal escrito. Vuelva a intentar")
         
-    if not apellido1.isalpha() or apellido1.isspace() or not patron.match(apellido1): #isinstance(apellido1, str) or not :
+    if not apellido1.isalpha() or not patron.match(apellido1): #isinstance(apellido1, str) or not :
         mensaje_ingreso_datos("Registro de cliente","El 'apellido' debe contener:\n\n- Letras y/o espacios entre nombres(si tiene mas de dos).")
         return
     try:
