@@ -132,7 +132,7 @@ class Asistencia(QMainWindow):
         layout_vertical.setContentsMargins(50,100,80,100)
         
         self.label_texto1 = QLabel()
-        self.label_texto1.setFont(QFont("Segoe UI", 45))
+        self.label_texto1.setFont(QFont("Segoe UI", 42))
         self.label_texto1.setFrameShadow(QFrame.Shadow.Plain)
         self.label_texto1.setFrameShape(QFrame.Shape.Panel)
         self.label_texto1.setWordWrap(True)
@@ -146,7 +146,7 @@ class Asistencia(QMainWindow):
         layout_vertical.addItem(spacer5)
 
         self.label_texto2 = QLabel()
-        self.label_texto2.setFont(QFont("Segoe UI", 40))
+        self.label_texto2.setFont(QFont("Segoe UI", 42))
         self.label_texto2.setFrameShadow(QFrame.Shadow.Plain)
         self.label_texto2.setFrameShape(QFrame.Shape.Panel)
         self.label_texto2.setWordWrap(True)
