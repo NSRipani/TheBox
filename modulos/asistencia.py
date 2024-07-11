@@ -51,7 +51,8 @@ class Asistencia(QMainWindow):
         image_label.setPixmap(pixmap)
                 
         # Después de crear image_label
-        texto = QLabel("Un espacio pensando en el movimiento, en todas sus formas")
+        # texto = QLabel("Un espacio pensando en el movimiento, en todas sus formas")
+        texto = QLabel("UN ESPACIO PENSADO EN EL MOVIMIENTO, EN TODAS SUS FORMAS")
         texto.setStyleSheet(style.estilo_texto)
         texto.setWordWrap(True)
         texto.setAlignment(Qt.AlignmentFlag.AlignVCenter | Qt.AlignmentFlag.AlignHCenter)
@@ -118,7 +119,7 @@ class Asistencia(QMainWindow):
         cursor.close()
         conn.close()
 
-        button_registrar_asistencia = QPushButton("Registrar asistencia")
+        button_registrar_asistencia = QPushButton("REGISTRAR ASISTENCIA")
         button_registrar_asistencia.setStyleSheet(style.boton)
         button_registrar_asistencia.setCursor(Qt.CursorShape.PointingHandCursor)
         button_registrar_asistencia.clicked.connect(self.registrar_asistencia)
@@ -131,7 +132,7 @@ class Asistencia(QMainWindow):
         layout_vertical.setContentsMargins(50,100,80,100)
         
         self.label_texto1 = QLabel()
-        self.label_texto1.setFont(QFont("Segoe UI", 40))
+        self.label_texto1.setFont(QFont("Segoe UI", 45))
         self.label_texto1.setFrameShadow(QFrame.Shadow.Plain)
         self.label_texto1.setFrameShape(QFrame.Shape.Panel)
         self.label_texto1.setWordWrap(True)
@@ -247,7 +248,7 @@ class Asistencia(QMainWindow):
             
                 # Mostrar mensaje en la interfaz
                 self.label_texto1.setText(f"¡En hora buena {nombre} {apellido}! \n\nSu asistencia fue registrada.")
-                self.label_texto1.setStyleSheet("background-color: #DAD7CD; color: #000;")
+                self.label_texto1.setStyleSheet("background-color: #DAD7CD; color: #000; font-weight: bold;")
             else:
                 mensaje_datos_ingresado("Registro de asistencia","No se encontraron resultados para el usuario con DNI: {}".format(dni))
                 print(f"No se encontró información del usuario con DNI {dni}.")
@@ -269,16 +270,16 @@ class Asistencia(QMainWindow):
                 
                 if 31 > dias > 14:
                     self.label_texto2.setText(texto_cuota)
-                    self.label_texto2.setStyleSheet("background-color: #7FFF00; color: #000;")
+                    self.label_texto2.setStyleSheet("background-color: #7FFF00; color: #000; font-weight: bold;")
                 elif 14 >= dias > 4:
                     self.label_texto2.setText(texto_cuota)
-                    self.label_texto2.setStyleSheet("background-color: #FFFF00;color: #000;")
+                    self.label_texto2.setStyleSheet("background-color: #FFFF00;color: #000; font-weight: bold;")
                 elif 4 >= dias >= 0:
                     self.label_texto2.setText(texto_cuota)
-                    self.label_texto2.setStyleSheet("background-color: #FF8000; color: #000;")               
+                    self.label_texto2.setStyleSheet("background-color: #FF8000; color: #000; font-weight: bold;")               
                 else:
                     self.label_texto2.setText(texto_vencido)
-                    self.label_texto2.setStyleSheet("background-color: #FF0000; color: #fff;")
+                    self.label_texto2.setStyleSheet("background-color: #FF0000; color: #fff; font-weight: bold;")
                 self.timer.start(7000)
             else:
                 print(f"No se pudo obtener la última fecha de pago para el usuario con DNI {dni}.")

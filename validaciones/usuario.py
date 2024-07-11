@@ -1,27 +1,31 @@
 from modulos.mensajes import mensaje_ingreso_datos,ingreso
 import re
 from qss.style_item import itemColor_RESULTADO, itemColor_TOTAL
-    
+
 
 def registroUSER(nombre1, apellido1, dni, sexo, edad, celu):
-    patron = re.compile(r'^[a-zA-ZáéíóúÁÉÍÓÚüÜ\'\s]+$') 
-    if not nombre1.isalpha() or not patron.match(nombre1): #not isinstance(nombre1, str) or #'match' -> verificar si la cadena coincide con este patrón.
-        mensaje_ingreso_datos("Registro de cliente","El 'nombre' debe contener:\n\n- Letras y/o espacios entre nombres(si tiene mas de dos).")
+    # patron = re.compile(r'^[a-zA-ZáéíóúÁÉÍÓÚüÜ\'\s]+$') 
+    # patron2 = re.compile(r'[!@#$%^&*()_+-={};:"\|,.<>/?~`]')
+    espacio = " "
+    if (nombre1.isalpha() and isinstance(nombre1, str) and re.findall(r'^[a-zA-ZáéíóúÁÉÍÓÚüÜ\'\s]+$',nombre1)) or nombre1.isalnum() or re.findall(r'[!@#$%^&*()_+-={};:"\|,.<>/?~`]', nombre1):
+        mensaje_ingreso_datos("Registro de cliente","El 'Nombre' debe contener:\n\n- Letras y/o espacios entre nombres(si tiene mas de dos).")
+        print(nombre1)
         return
     try:
-        if nombre1:
+        if nombre1 or re.sub(r'" "',espacio, nombre1):
             print("Validación",f"'{nombre1}' válido")
     except ValueError:
         mensaje_ingreso_datos("Registro de cliente", "'Nombre' mal escrito. Vuelva a intentar")
         
-    if not apellido1.isalpha() or not patron.match(apellido1): #isinstance(apellido1, str) or not :
+    if (apellido1.isalpha() and isinstance(apellido1, str) and re.findall(r'^[a-zA-ZáéíóúÁÉÍÓÚüÜ\'\s]+$',apellido1)) or apellido1.isalnum() or re.findall(r'[!@#$%^&*()_+-={};:"\|,.<>/?~`]', apellido1):
         mensaje_ingreso_datos("Registro de cliente","El 'apellido' debe contener:\n\n- Letras y/o espacios entre nombres(si tiene mas de dos).")
+        print(apellido1)
         return
     try:
-        if apellido1:
+        if apellido1 or re.sub(r'" "',espacio, apellido1):
             print("Validación",f"'{apellido1}' válido")
     except ValueError:
-        mensaje_ingreso_datos("Registro de cliente", "'Nombre' mal escrito. Vuelva a intentar")
+        mensaje_ingreso_datos("Registro de cliente", "'apellido' mal escrito. Vuelva a intentar")
     
     patron_dni = re.compile(r'^\d{8}$')
     if not dni.isdigit() or not patron_dni.match(dni) or not len(dni) == 8:#or not len(dni) == 8

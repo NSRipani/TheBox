@@ -665,7 +665,9 @@ label_logo = """
 estilo_texto = """
     QLabel{
         background-color: transparent;
-        font-size: 25px;
+        padding: 15px; 
+        text-align: justify;
+        font-size: 28px;
         font-family: "Segoe UI";
         color: white;
         font-weight: bold;
@@ -701,6 +703,7 @@ label_documento = """
         font-size: 35px;
         padding: 0px;
         width: 200px;
+        font-weight: bold;            
         font-family: "Segoe UI";
         color: black;
         text-align: left;

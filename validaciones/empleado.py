@@ -1,14 +1,33 @@
 from modulos.mensajes import mensaje_ingreso_datos
 import re
 def variables(nom_emp,apell_emp,sex_emp,edad_emp,dni_emp,cel):
-    patron = re.compile(r'^[a-zA-ZáéíóúÁÉÍÓÚüÜ\'\s]+$') 
-    if not isinstance(nom_emp, str) or nom_emp.isspace() or not patron.match(nom_emp) or not nom_emp.isalpha(): #'match' -> verificar si la cadena coincide con este patrón.
+    espacio = " "
+    if (nom_emp.isalpha() and isinstance(nom_emp, str) and re.findall(r'^[a-zA-ZáéíóúÁÉÍÓÚüÜ\'\s]+$',nom_emp)) or nom_emp.isalnum() or re.findall(r'[!@#$%^&*()_+-={};:"\|,.<>/?~`]', nom_emp):
         mensaje_ingreso_datos("Registro de empleado","El 'nombre' debe contener:\n\n- Letras y/o espacios entre nombres(si tiene mas de dos).")
+        print(nom_emp)
         return
-    
-    if not isinstance(apell_emp, str) or apell_emp.isspace() or not patron.match(apell_emp) or not apell_emp.isalpha():
+    try:
+        if nom_emp or re.sub(r'" "',espacio, nom_emp):
+            print("Validación",f"'{nom_emp}' válido")
+    except ValueError:
+        mensaje_ingreso_datos("Registro de empleado", "'Nombre' mal escrito. Vuelva a intentar")
+        
+    if (apell_emp.isalpha() and isinstance(apell_emp, str) and re.findall(r'^[a-zA-ZáéíóúÁÉÍÓÚüÜ\'\s]+$',apell_emp)) or apell_emp.isalnum() or re.findall(r'[!@#$%^&*()_+-={};:"\|,.<>/?~`]', apell_emp):
         mensaje_ingreso_datos("Registro de empleado","El 'apellido' debe contener:\n\n- Letras y/o espacios entre nombres(si tiene mas de dos).")
         return
+    try:
+        if apell_emp or re.sub(r'" "',espacio, apell_emp):
+            print("Validación",f"'{apell_emp}' válido")
+    except ValueError:
+        mensaje_ingreso_datos("Registro de empleado", "'apellido' mal escrito. Vuelva a intentar")
+    # patron = re.compile(r'^[a-zA-ZáéíóúÁÉÍÓÚüÜ\'\s]+$') 
+    # if not isinstance(nom_emp, str) or nom_emp.isspace() or not patron.match(nom_emp) or not nom_emp.isalpha(): #'match' -> verificar si la cadena coincide con este patrón.
+    #     mensaje_ingreso_datos("Registro de empleado","El 'nombre' debe contener:\n\n- Letras y/o espacios entre nombres(si tiene mas de dos).")
+    #     return
+    
+    # if not isinstance(apell_emp, str) or apell_emp.isspace() or not patron.match(apell_emp) or not apell_emp.isalpha():
+    #     mensaje_ingreso_datos("Registro de empleado","El 'apellido' debe contener:\n\n- Letras y/o espacios entre nombres(si tiene mas de dos).")
+    #     return
     
     if not isinstance(sex_emp, str) or not sex_emp.isalpha():
         mensaje_ingreso_datos("Registro de empleado","Debe elegir un sexo.\n\nEl sexo es 'Hombre' o 'Mujer'")
