@@ -2,7 +2,7 @@ from qss.style_item import itemColor_RESULTADO,itemColor_TOTAL
 import re
 from modulos.mensajes import mensaje_ingreso_datos
 
-def validadciones(date,descripcion,descripcion_h,deber,haberes):
+def validaciones(date,descripcion,descripcion_h,deber,haberes):
     if not date:
         mensaje_ingreso_datos("Registro de Ingresos-Egresos","Debe establcer un rango de inicio y fin de fechas.")
         return

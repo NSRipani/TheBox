@@ -194,7 +194,7 @@ class Empleado(QDialog):
         cel = self.celular.text()
         fecha = self.fecha.date().toPyDate()
         
-        validacion = variables(nom_emp,apell_emp,sex_emp,edad_emp,dni_emp,cel)
+        validacion = variables(self,nom_emp,apell_emp,sex_emp,edad_emp,dni_emp,cel)
         if validacion != "Validación exitosa.":
             mensaje_ingreso_datos("Error de validación", "Verifique los datos por favor")
             return
@@ -232,7 +232,7 @@ class Empleado(QDialog):
         try:
             db = conectar_base_de_datos()
             cursor = db.cursor()
-            cursor.execute(f"SELECT id_empleado AS ID, nombre, apellido, sexo, edad, dni, celular, fecha FROM registro_empleado ORDER BY id_empleado")
+            cursor.execute(f"SELECT id_empleado AS ID, nombre, apellido, sexo, edad, dni, celular, fecha FROM registro_empleado WHERE habilitado = 1 ORDER BY id_empleado")
             busqueda = cursor.fetchall()
             if len(busqueda) > 0:
                 ingreso_datos("Registro de empleado",f"Se encontraron {len(busqueda)} coincidencias.")
@@ -245,7 +245,8 @@ class Empleado(QDialog):
         except Error as ex:
             errorConsulta("Registro de empleado",f"Error en la consulta: {str(ex)}")
             print("Error executing the query", ex)
-
+        return busqueda
+    
     def autocompleto_de_datos_empleado(self):
         seleccion_DeTabla(self,QDate)
     
@@ -264,7 +265,7 @@ class Empleado(QDialog):
         cel = self.celular.text()
         fecha = self.fecha.date().toPyDate()
         
-        validacion = variables(nom_emp,apell_emp,sex_emp,edad_emp,dni_emp,cel)
+        validacion = variables(self,nom_emp,apell_emp,sex_emp,edad_emp,dni_emp,cel)
         if validacion != "Validación exitosa.":
             mensaje_ingreso_datos("Error de validación", "Verifique los datos por favor")
             return
@@ -311,8 +312,7 @@ class Empleado(QDialog):
                 db = conectar_base_de_datos()
                 cursor = db.cursor()
                 # cursor.execute(f"DELETE FROM registro_empleado WHERE id_empleado = {id_emple}")
-                cursor.execute(f"UPDATE registro_empleado SET habilitado = 0 WHERE id_empleado= {id_emple}")#, (id_dis,))
-                
+                cursor.execute("UPDATE registro_empleado SET habilitado = 0 WHERE id_empleado= %s", (id_emple,))
                 db.commit()
                 if cursor:
                     ingreso_datos("Registro de empleado","Registro eliminado")

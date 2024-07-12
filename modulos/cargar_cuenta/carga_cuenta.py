@@ -145,6 +145,13 @@ class CuentaContable(QDialog):
         self.move(x, y)
         
     ### ////////////////////////// PARA CUENTA ///////////////////////////////////////       
+    def limpiarCampos(self):
+        self.n_cuenta.clear()
+        self.t_cuenta.clear()
+        self.descripcion.clear()
+        self.categoria.clear()
+        self.tablacuenta.clearSelection() # Deselecciona la fila
+        
     def guardar_cuenta(self):       
         nomTipo = self.n_cuenta.text().capitalize()
         tipo = self.t_cuenta.text() #Activo, Pasivo,....
@@ -187,11 +194,7 @@ class CuentaContable(QDialog):
             
             if cursor:
                 ingreso_datos("Registro de cuenta","Registro cargado")
-                self.n_cuenta.clear()
-                self.t_cuenta.clear()
-                self.descripcion.clear()
-                self.categoria.clear()
-                self.tablacuenta.clearSelection() # Deselecciona la fila
+                self.limpiarCampos()
             else:
                 ingreso_datos("Registro de cuenta","Registro no cargado")
                 
@@ -205,7 +208,7 @@ class CuentaContable(QDialog):
         try:
             db = conectar_base_de_datos()
             cursor = db.cursor()
-            cursor.execute(f"SELECT * FROM cuenta ORDER BY id_cuenta")
+            cursor.execute(f"SELECT nombre ,tipo, descripcion, categoria FROM cuenta WHERE habilitado = 1 ORDER BY id_cuenta")
             busqueda = cursor.fetchall()
             if len(busqueda) > 0:
                 ingreso_datos("Registro de cuenta",f"Se encontraron {len(busqueda)} coincidencias.")
@@ -283,10 +286,7 @@ class CuentaContable(QDialog):
             
             if cursor:
                 ingreso_datos("Registro de cuenta","Registro actualizado")
-                self.n_cuenta.clear()
-                self.t_cuenta.clear()
-                self.descripcion.clear()
-                self.categoria.clear()
+                self.limpiarCampos()
                 self.tablacuenta.clearSelection() # Deselecciona la fila
             else:
                 ingreso_datos("Registro de cuenta","Registro no actualizado")
@@ -307,23 +307,20 @@ class CuentaContable(QDialog):
         selectedRow = self.tablacuenta.currentItem().row()
         id_cuenta = int(self.tablacuenta.item(selectedRow, 0).text())
         
-        elimCuenta = inicio("Registro de disciplina","¿Desea eliminar cliente?")
+        elimCuenta = inicio("Registro de cuenta","¿Desea eliminar cliente?")
         if elimCuenta == QMessageBox.StandardButton.Yes:
-            elimCuenta = inicio("Registro de disciplina","¿Seguro que desea eliminar cliente?")
+            elimCuenta = inicio("Registro de cuenta","¿Seguro que desea eliminar cliente?")
             if elimCuenta == QMessageBox.StandardButton.Yes:
                 try:
                     db = conectar_base_de_datos()
                     cursor = db.cursor()
-                    cursor.execute(f"DELETE FROM cuenta WHERE id_cuenta = {id_cuenta}")
+                    cursor.execute("UPDATE cuenta SET habilitado = 0 WHERE id_cuenta = %s", (id_cuenta,))
+                    # cursor.execute(f"DELETE FROM cuenta WHERE id_cuenta = {id_cuenta}")
                     db.commit()
                     if cursor:
                         ingreso_datos("Registro de cuenta","Registro eliminado")
                         self.tablacuenta.removeRow(selectedRow)
-                        self.n_cuenta.clear()
-                        self.t_cuenta.clear()
-                        self.descripcion.clear()
-                        self.categoria.clear()
-                        self.tablacuenta.clearSelection() # Deselecciona la fila
+                        self.limpiarCampos()
                     else:
                         ingreso_datos("Registro de cuenta","Registro no eliminado")  
                                     

@@ -1,36 +1,24 @@
 from modulos.mensajes import mensaje_ingreso_datos
 import re
-def variables(nom_emp,apell_emp,sex_emp,edad_emp,dni_emp,cel):
-    espacio = " "
-    if (nom_emp.isalpha() and isinstance(nom_emp, str) and re.findall(r'^[a-zA-ZáéíóúÁÉÍÓÚüÜ\'\s]+$',nom_emp)) or nom_emp.isalnum() or re.findall(r'[!@#$%^&*()_+-={};:"\|,.<>/?~`]', nom_emp):
-        mensaje_ingreso_datos("Registro de empleado","El 'nombre' debe contener:\n\n- Letras y/o espacios entre nombres(si tiene mas de dos).")
-        print(nom_emp)
+def variables(self, nom_emp,apell_emp,sex_emp,edad_emp,dni_emp,cel):
+    # Valida NOMBRE
+    nom_emp = nom_emp.strip()
+    if not (nom_emp != "" and nom_emp.replace("", " ") and isinstance(nom_emp, str) and re.findall(r'^[a-zA-ZáéíóúÁÉÍÓÚüÜ\'\s]+$',nom_emp)):
+        mensaje_ingreso_datos("Registro de empleado","El 'Nombre' debe contener:\n\n- Letras y/o espacios entre nombres(si tiene mas de dos).")
+        self.nombre.setFocus()
         return
-    try:
-        if nom_emp or re.sub(r'" "',espacio, nom_emp):
-            print("Validación",f"'{nom_emp}' válido")
-    except ValueError:
-        mensaje_ingreso_datos("Registro de empleado", "'Nombre' mal escrito. Vuelva a intentar")
-        
-    if (apell_emp.isalpha() and isinstance(apell_emp, str) and re.findall(r'^[a-zA-ZáéíóúÁÉÍÓÚüÜ\'\s]+$',apell_emp)) or apell_emp.isalnum() or re.findall(r'[!@#$%^&*()_+-={};:"\|,.<>/?~`]', apell_emp):
+    
+    # Valida APELLIDO
+    apell_emp = apell_emp.strip()
+    if not (apell_emp != "" and apell_emp.replace("", " ") and isinstance(apell_emp, str) and re.findall(r'^[a-zA-ZáéíóúÁÉÍÓÚüÜ\'\s]+$',apell_emp)):
         mensaje_ingreso_datos("Registro de empleado","El 'apellido' debe contener:\n\n- Letras y/o espacios entre nombres(si tiene mas de dos).")
+        self.apellido.setFocus()
         return
-    try:
-        if apell_emp or re.sub(r'" "',espacio, apell_emp):
-            print("Validación",f"'{apell_emp}' válido")
-    except ValueError:
-        mensaje_ingreso_datos("Registro de empleado", "'apellido' mal escrito. Vuelva a intentar")
-    # patron = re.compile(r'^[a-zA-ZáéíóúÁÉÍÓÚüÜ\'\s]+$') 
-    # if not isinstance(nom_emp, str) or nom_emp.isspace() or not patron.match(nom_emp) or not nom_emp.isalpha(): #'match' -> verificar si la cadena coincide con este patrón.
-    #     mensaje_ingreso_datos("Registro de empleado","El 'nombre' debe contener:\n\n- Letras y/o espacios entre nombres(si tiene mas de dos).")
-    #     return
     
-    # if not isinstance(apell_emp, str) or apell_emp.isspace() or not patron.match(apell_emp) or not apell_emp.isalpha():
-    #     mensaje_ingreso_datos("Registro de empleado","El 'apellido' debe contener:\n\n- Letras y/o espacios entre nombres(si tiene mas de dos).")
-    #     return
-    
+    # Valida SEXO
     if not isinstance(sex_emp, str) or not sex_emp.isalpha():
         mensaje_ingreso_datos("Registro de empleado","Debe elegir un sexo.\n\nEl sexo es 'Hombre' o 'Mujer'")
+        sex_emp = self.sex.setCurrent(0)
         return
     if sex_emp:
         sex_emp = sex_emp.capitalize()
@@ -39,32 +27,40 @@ def variables(nom_emp,apell_emp,sex_emp,edad_emp,dni_emp,cel):
     patron_mun = re.compile(r'^[0-9]+$')
     if not edad_emp.isdigit() or not len(edad_emp) == 2 or not patron_mun.match(edad_emp):
         mensaje_ingreso_datos("Registro de empleado","La Edad debe contener:\n\n- Contener 2 (DOS) números enteros.\n- No contener puntos(.)")
+        self.edad.setFocus()
         return
     try:
         edad_emp and len(str(edad_emp))==2
         edad_emp = int(edad_emp)
     except ValueError:
         mensaje_ingreso_datos("Registro de empleado","La Edad debe contener:\n\n- Contener 2 (DOS) números enteros.\n- No contener puntos(.)")
+        self.edad.setFocus()
         return
-      
-    if not (isinstance(dni_emp, str) and dni_emp.isdigit() and patron_mun.match(dni_emp) and len(str(dni_emp)) == 8):# and len(str(dni_emp))==8 
+    
+    # Validar DNI
+    if not (isinstance(dni_emp, str) and dni_emp.isdigit() and patron_mun.match(dni_emp) and len(str(dni_emp)) == 8):
         mensaje_ingreso_datos("Registro de empleado","El DNI debe contener:\n\n- Números enteros.\n - No contener puntos(.)")
+        self.dni.setFocus()
         return
     try:
-        if dni_emp:# and len(str(dni_emp))==8
+        if dni_emp:
             dni_emp = int(dni_emp)
     except ValueError:
         mensaje_ingreso_datos("Registro de empleado","El DNI debe contener: \n\n- Números enteros.\n - No contener puntos(.)")
+        self.dni.setFocus()
         return
     
+    # Validar CELULAR
     if not (cel.isdigit() and patron_mun.match(cel)):
         mensaje_ingreso_datos("Registro de empleado","El Celular debe ser:\n\n- Números enteros.\n- No contener puntos(.)")
+        self.celular.setFocus()
         return
     try:
         if cel:
             print(f"El celular es {cel}")
     except ValueError:
         mensaje_ingreso_datos("Registro de empleado","El celular debe ser numérico")
+        self.celular.setFocus()
         return
 
     return "Validación exitosa."

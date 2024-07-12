@@ -27,7 +27,7 @@ from validaciones.archivo_Excel import (tabla_registroUSUARIO, tabla_registroDIS
                                         tabla_libroDiario_CONTABILIDAD, pagos_EXCEL, excelConsulta)
 from validaciones.disciplina import guardarACTIVIDAD, completar_CAMPOS_ACTIVIDAD, clear_tabla_disciplina, tabla_DISCIPLINA
 from validaciones.pagos import seleccionDeTablaPAGOS, tabla_pagos
-from validaciones.contabilidad import validadciones, tabla_contabilidad, selccionarTabla, limpiarCampos, clear_tabla
+from validaciones.contabilidad import validaciones, tabla_contabilidad, selccionarTabla, limpiarCampos, clear_tabla
 from validaciones.horas import tabla_HorasTotales,tabla_HorasXEmpleado, autoCompletado, clearTabla
 from validaciones.consultas import consultaPorAlumno, totalAlumno, limpiar, consultarDeDisciplina, consultaPorDisciplina, asistenciaTotal,asistenciaPorAlumno
 
@@ -60,7 +60,7 @@ class VentanaPrincipal(QMainWindow):
                 self.input_nombre1.setFocus()
                 
                 # Consulta para obtener los datos de una columna específica
-                cursor.execute("SELECT nombre FROM usuario")
+                cursor.execute("SELECT nombre FROM usuario WHERE habilitado = 1")
                 datos = cursor.fetchall()
                 sugerencia = [str(item[0]) for item in datos]
 
@@ -74,7 +74,7 @@ class VentanaPrincipal(QMainWindow):
                 self.input_nombre2.setFocus()
                 
                 # Consulta para obtener los datos de una columna específica
-                cursor.execute("SELECT nombre FROM usuario")
+                cursor.execute("SELECT nombre FROM usuario WHERE habilitado = 1")
                 datos = cursor.fetchall()
                 suger = [str(item[0]) for item in datos]
 
@@ -88,7 +88,7 @@ class VentanaPrincipal(QMainWindow):
                 self.nombre_buscar3.setFocus()
 
                 # Consulta para obtener los datos de una columna específica
-                cursor.execute("SELECT nombre FROM usuario")
+                cursor.execute("SELECT nombre FROM usuario WHERE habilitado = 1")
                 datos = cursor.fetchall()
                 suger2 = [str(item[0]) for item in datos]
 
@@ -103,7 +103,7 @@ class VentanaPrincipal(QMainWindow):
                 
                 # ---- Para 'DNI' ---
                 # Consulta para obtener los datos de una columna específica
-                cursor.execute("SELECT dni FROM usuario ORDER BY dni ASC")
+                cursor.execute("SELECT dni FROM usuario WHERE habilitado = 1 ORDER BY dni ASC")
                 dato = cursor.fetchall()
                 self.sugerencia = [str(item[0]) for item in dato]
                 
@@ -146,10 +146,10 @@ class VentanaPrincipal(QMainWindow):
                 return
             case 5:
                 self.id_horas_empleado.setFocus()
-                
+                                                
                 # ---- Para 'EMPLEADO' ----
                 # Consulta para obtener los datos de una columna específica
-                cursor.execute("SELECT id_empleado, nombre FROM registro_empleado ORDER BY nombre ASC")
+                cursor.execute("SELECT id_empleado, nombre FROM registro_empleado WHERE habilitado = 1 ORDER BY nombre ASC")
                 datos = cursor.fetchall()
                 self.listas = [(str(item[1]), item[0]) for item in datos]  # Crear una lista de tuplas (nombre, id_empleado)
                 
@@ -166,7 +166,7 @@ class VentanaPrincipal(QMainWindow):
                 self.view_nomb.setFocus()
                 
                 # --- Para 'BALANCE' --- Actualización para la USUARIO
-                cursor.execute("SELECT u.dni FROM usuario u ORDER BY u.dni ASC")        
+                cursor.execute("SELECT u.dni FROM usuario u WHERE habilitado = 1 ORDER BY u.dni ASC")        
                 datos = cursor.fetchall()
                 self.numeros_dni = [str(item[0]) for item in datos]
 
@@ -177,7 +177,7 @@ class VentanaPrincipal(QMainWindow):
                 self.view_nomb.setCompleter(nombre)
 
                 # --- Para 'BALANCE' --- Actualización para la DISCIPLINA
-                cursor.execute("SELECT d.nombre FROM disciplina d ORDER BY d.nombre ASC")
+                cursor.execute("SELECT d.nombre FROM disciplina d WHERE habilitado = 1 2mnbvcxz 1_x m14[_nhyup´+0 0000 ORDER BY d.nombre ASC")
                 datos = cursor.fetchall()
                 self.activi = [str(item[0]) for item in datos]
 
@@ -220,8 +220,7 @@ class VentanaPrincipal(QMainWindow):
     def ventana_pricipal(self):        
         self.setWindowIcon(QIcon("img/logo.png"))
         self.setWindowTitle("The Box - Gestion de usuarios")
-        self.setWindowState(Qt.WindowState.WindowMaximized)
-        # self.show()
+        # self.setWindowState(Qt.WindowState.WindowMaximized)
         
         #BARRA INFERIOR DE ESTADO
         self.status_Bar = QStatusBar()
@@ -803,7 +802,7 @@ class VentanaPrincipal(QMainWindow):
         cursor = conn.cursor()
 
         # Consulta para obtener los datos de una columna específica
-        cursor.execute("SELECT nombre FROM usuario")
+        cursor.execute("SELECT nombre FROM usuario WHERE habilitado = 1")
         datos = cursor.fetchall()
         suger2 = [str(item[0]) for item in datos]
 
@@ -1030,7 +1029,7 @@ class VentanaPrincipal(QMainWindow):
         cursor = conn.cursor()
 
         # Consulta para obtener los datos de una columna específica
-        cursor.execute("SELECT dni FROM usuario ORDER BY dni ASC")
+        cursor.execute("SELECT dni FROM usuario WHERE habilitado = 1 ORDER BY dni ASC")
         dato = cursor.fetchall()
         self.sugerencia = [str(item[0]) for item in dato]
         
@@ -1461,7 +1460,7 @@ class VentanaPrincipal(QMainWindow):
         cursor = conn.cursor()
 
         # Consulta para obtener los datos de una columna específica
-        cursor.execute("SELECT id_empleado, nombre FROM registro_empleado ORDER BY nombre ASC")
+        cursor.execute("SELECT id_empleado, nombre FROM registro_empleado WHERE habilitado = 1 ORDER BY nombre ASC")
         datos = cursor.fetchall()
         self.listas = [(str(item[1]), item[0]) for item in datos]  # Crear una lista de tuplas (nombre, id_empleado)
         
@@ -1978,13 +1977,7 @@ class VentanaPrincipal(QMainWindow):
         validacion = registroUSER(self, nombre1, apellido1, dni, sexo, edad, celu)
         if validacion != "Validación exitosa.":
             mensaje_ingreso_datos("Error de validación", "Verifique los datos por favor")
-            return
-        # registroUSER(nombre1, apellido1, dni, sexo, edad, celu)
-            
-        # Validar que los campos requeridos no estén vacíos
-        # if not nombre1 or not apellido1 or not dni or not sexo or not edad or not celu:
-        #     mensaje_ingreso_datos("Registro de cliente", "Todos los campos son obligatorios")
-        #     return        
+            return      
         
         try:
             db = conectar_base_de_datos()
@@ -2032,7 +2025,7 @@ class VentanaPrincipal(QMainWindow):
         try:
             db = conectar_base_de_datos()
             cursor = db.cursor()
-            cursor.execute(f"SELECT id_usuario AS ID, nombre, apellido, dni, sexo, edad, celular, fecha_registro AS REGISTRO FROM usuario WHERE nombre LIKE '%{nombre}%' ORDER BY nombre ASC")
+            cursor.execute(f"SELECT id_usuario AS ID, nombre, apellido, dni, sexo, edad, celular, fecha_registro AS REGISTRO FROM usuario WHERE habilitado = 1 AND nombre LIKE '%{nombre}%' ORDER BY nombre ASC")
             # cursor.execute(f"SELECT * FROM usuario WHERE nombre LIKE '%{nombre}%'")
             resultados = cursor.fetchall()
             
@@ -2057,7 +2050,7 @@ class VentanaPrincipal(QMainWindow):
         try:
             db = conectar_base_de_datos()
             cursor = db.cursor()
-            cursor.execute("SELECT id_usuario AS ID, nombre, apellido, dni, sexo, edad, celular, fecha_registro AS REGISTRO FROM usuario ORDER BY nombre ASC")
+            cursor.execute("SELECT id_usuario AS ID, nombre, apellido, dni, sexo, edad, celular, fecha_registro AS REGISTRO FROM usuario WHERE habilitado = 1 ORDER BY nombre ASC")
             resultados = cursor.fetchall()
                     
             if len(resultados) > 0:
@@ -2085,7 +2078,7 @@ class VentanaPrincipal(QMainWindow):
         try:
             db = conectar_base_de_datos()
             cursor = db.cursor()
-            cursor.execute("SELECT id_usuario AS ID, nombre, apellido, dni, sexo, edad, celular, fecha_registro AS REGISTRO FROM usuario ORDER BY nombre ASC")
+            cursor.execute("SELECT id_usuario AS ID, nombre, apellido, dni, sexo, edad, celular, fecha_registro AS REGISTRO FROM usuario WHERE habilitado = 1 ORDER BY nombre ASC")
             resultados = cursor.fetchall()
 
             if len(resultados) > 0:
@@ -2120,7 +2113,7 @@ class VentanaPrincipal(QMainWindow):
             db = conectar_base_de_datos()
             cursor = db.cursor()
             # cursor.execute("SELECT * FROM usuario ORDER BY nombre ASC")
-            cursor.execute(f"SELECT id_usuario AS ID, nombre, apellido, dni, sexo, edad, celular, fecha_registro AS REGISTRO FROM usuario WHERE nombre LIKE '%{nombre_seleccionado}%' ORDER BY nombre ASC")
+            cursor.execute(f"SELECT id_usuario AS ID, nombre, apellido, dni, sexo, edad, celular, fecha_registro AS REGISTRO FROM usuario WHERE habilitado = 1 AND nombre LIKE '%{nombre_seleccionado}%' ORDER BY nombre ASC")
             resultados = cursor.fetchall()
             
             if len(resultados) > 0:
@@ -2208,7 +2201,7 @@ class VentanaPrincipal(QMainWindow):
         try:
             db = conectar_base_de_datos()
             cursor = db.cursor()
-            cursor.execute(f"SELECT id_usuario AS ID, nombre, apellido, dni, sexo, edad, celular, fecha_registro AS REGISTRO FROM usuario WHERE nombre LIKE '%{nombre_seleccionado3}%' ORDER BY nombre ASC")
+            cursor.execute(f"SELECT id_usuario AS ID, nombre, apellido, dni, sexo, edad, celular, fecha_registro AS REGISTRO FROM usuario WHERE habilitado = 1 AND nombre LIKE '%{nombre_seleccionado3}%' ORDER BY nombre ASC")
             # cursor.execute(f"SELECT * FROM usuario WHERE nombre LIKE '%{nombre_seleccionado3}%'")
             resultados = cursor.fetchall()
             
@@ -2250,7 +2243,7 @@ class VentanaPrincipal(QMainWindow):
                 try:
                     db = conectar_base_de_datos()
                     cursor = db.cursor()
-                    cursor.execute(f"UPDATE usuario SET habilitado = 0 WHERE id_usuario = {idUser}")#, (idUser,))
+                    cursor.execute("UPDATE usuario SET habilitado = 0 WHERE id_usuario = %s", (idUser,))
                     # cursor.execute(f"UPDATE disciplina SET habilitado = 0 WHERE id_disciplina= {id_dis}")#, (id_dis,))
                     # cursor.execute(f"DELETE FROM usuario WHERE id_usuario = {idUser} AND habilitado = 1")    
                     db.commit()
@@ -2408,7 +2401,7 @@ class VentanaPrincipal(QMainWindow):
                     db = conectar_base_de_datos()
                     cursor = db.cursor()
                     # cursor.execute(f"DELETE FROM disciplina WHERE id_disciplina = {id_dis}")    
-                    cursor.execute(f"UPDATE disciplina SET habilitado = 0 WHERE id_disciplina= {id_dis}")#, (id_dis,))
+                    cursor.execute("UPDATE disciplina SET habilitado = 0 WHERE id_disciplina= %s", (id_dis,))
                     if cursor:
                         ingreso_datos("Registro de disciplina","Registo eliminado")
                         self.tableActivi.removeRow(selectedRow)
@@ -2451,12 +2444,12 @@ class VentanaPrincipal(QMainWindow):
         id_alumno = self.idUser.text()
         # Verificar si el id_alumno está en las sugerencias
         if not id_alumno in self.sugerencia:
-            mensaje_ingreso_datos("Registro de pago", "Debe elegir un DNI de usuario de la lista de sugerencias")
+            mensaje_ingreso_datos("Registro de pagos", "Debe elegir un DNI de usuario de la lista de sugerencias")
             return
         
         id_activ = self.current_id_disciplina
         if id_activ is None:
-            mensaje_ingreso_datos("Registro de pago", "Debe seleccionar una disciplina antes de guardar el pago")
+            mensaje_ingreso_datos("Registro de pagos", "Debe seleccionar una disciplina antes de guardar el pago")
             return
         
         tipo = self.input_tipoDePago.text()
@@ -2466,12 +2459,12 @@ class VentanaPrincipal(QMainWindow):
         
         patronB = re.compile(r'^[a-zA-ZáéíóúÁÉÍÓÚüÜ\'\s]+$') 
         if not isinstance(tipo, str) or not patronB.match(tipo):
-            mensaje_ingreso_datos("Registro de pago","Debe elegir un tipo de pago")
+            mensaje_ingreso_datos("Registro de pagos","Debe elegir un tipo de pago")
             return
         
         medio_de_pago = ["Efectivo", "Transferencia"]
         if tipo not in medio_de_pago:
-            mensaje_ingreso_datos("Registro de pago","Debe elegir entre 'Efectivo' o 'Transferencia'.")
+            mensaje_ingreso_datos("Registro de pagos","Debe elegir entre 'Efectivo' o 'Transferencia'.")
             return
         elif tipo in medio_de_pago:
             tipo = tipo.capitalize()
@@ -2484,29 +2477,29 @@ class VentanaPrincipal(QMainWindow):
             cursor.execute("SELECT COUNT(*) FROM pago WHERE id_usuario = %s AND id_disciplina = %s AND modalidad = %s AND fecha = %s", (id_alumno, id_activ, tipo, date))
             result = cursor.fetchone()
             if result[0] > 0:
-                mensaje_ingreso_datos("Registro de pago", "Ya existe un registro con los mismos datos")
+                mensaje_ingreso_datos("Registro de pagos", "Ya existe un registro con los mismos datos")
                 return
             
             cursor.execute("INSERT INTO pago (id_usuario, id_disciplina, modalidad, fecha, precio) VALUE (%s, %s, %s, %s, %s)", (id_alumno, id_activ, tipo, date, monto))
             db.commit()
             if cursor:
-                ingreso_datos("Registro de pago","Registro cargado")
+                ingreso_datos("Registro de pagos","Registro cargado")
                 self.camposLimpios()
                 self.label_monto.clear()
             else:
-                ingreso_datos("Registro de pago","Registro no cargado")
+                ingreso_datos("Registro de pagos","Registro no cargado")
                 
             cursor.close()
             db.close()
         except Error as ex:
-            errorConsulta("Registro de pago",f"Error en la cosulta: {str(ex)}")
+            errorConsulta("Registro de pagos",f"Error en la cosulta: {str(ex)}")
             print(ex)
 
     def mostrarPagos(self):
         try:
             db = conectar_base_de_datos()
             cursor = db.cursor()
-            cursor.execute("SELECT p.id_pago, p.id_usuario, c.nombre AS DISCIPLINA, p.modalidad, p.fecha, p.precio FROM pago as p INNER JOIN disciplina as c on p.id_disciplina = c.id_disciplina ORDER BY p.fecha;")
+            cursor.execute("SELECT p.id_pago, p.id_usuario, c.nombre AS DISCIPLINA, p.modalidad, p.fecha, p.precio FROM pago as p INNER JOIN disciplina as c on p.id_disciplina = c.id_disciplina WHERE p.habilitado = 1 ORDER BY p.fecha;")
             result = cursor.fetchall()
             
             if len(result) > 0:
@@ -2514,7 +2507,7 @@ class VentanaPrincipal(QMainWindow):
                                
                 self.tablePagos.clearSelection()  # Deseleccionar la fila eliminada
             else:
-                mensaje_ingreso_datos("Registro de pagos","Tabla se encuentra vacia")   
+                ingreso_datos("Registro de pagos","Tabla se encuentra vacia")   
             cursor.close()
             db.close()
             
@@ -2533,12 +2526,12 @@ class VentanaPrincipal(QMainWindow):
         id_alumno = self.idUser.text() #currentData()[0]
         # Verificar si el id_alumno está en las sugerencias
         if id_alumno not in self.sugerencia:
-            mensaje_ingreso_datos("Registro de pago", "Debe elegir un ID de usuario de la lista de sugerencias")
+            mensaje_ingreso_datos("Registro de pagos", "Debe elegir un ID de usuario de la lista de sugerencias")
             return
         
         id_activ = self.current_id_disciplina
         if id_activ is None:
-            mensaje_ingreso_datos("Registro de pago", "Debe seleccionar una disciplina antes de guardar el pago")
+            mensaje_ingreso_datos("Registro de pagos", "Debe seleccionar una disciplina antes de guardar el pago")
             return
         
         tipo = self.input_tipoDePago.text()
@@ -2547,12 +2540,12 @@ class VentanaPrincipal(QMainWindow):
             
         patronB = re.compile(r'^[a-zA-ZáéíóúÁÉÍÓÚüÜ\'\s]+$') 
         if not isinstance(tipo, str) or not patronB.match(tipo):
-            mensaje_ingreso_datos("Registro de pago","Debe elegir un tipo de pago")
+            mensaje_ingreso_datos("Registro de pagos","Debe elegir un tipo de pago")
             return
         
         medio_de_pago = ["Efectivo", "Transferencia"]
         if tipo not in medio_de_pago:
-            mensaje_ingreso_datos("Registro de pago","Debe elegir un sexo entre 'Efectivo' o 'Transferencia'.")
+            mensaje_ingreso_datos("Registro de pagos","Debe elegir un sexo entre 'Efectivo' o 'Transferencia'.")
             return
         elif tipo in medio_de_pago:
             tipo = tipo.capitalize()
@@ -2564,55 +2557,53 @@ class VentanaPrincipal(QMainWindow):
             db.commit()
         
             if cursor:
-                ingreso_datos("Registro de pago","Registro actualizado")
+                ingreso_datos("Registro de pagos","Registro actualizado")
                 self.camposLimpios()
                 self.mostrarPagos()
                 self.label_monto.clear()
                 self.tablePagos.clearSelection()  # Deseleccionar la fila eliminada 
             else:
-                ingreso_datos("Registro de pago","Registro no actualizado")
+                ingreso_datos("Registro de pagos","Registro no actualizado")
             cursor.close()
             db.close()
         except Error as ex:
-            errorConsulta("Registro de pago",f"Error en la cosulta: {str(ex)}")
+            errorConsulta("Registro de pagos",f"Error en la cosulta: {str(ex)}")
     
     def eliminarPagos(self):
         # Primero corroborar la seleccion de la fila
         if not self.tablePagos.currentItem():
-            mensaje_ingreso_datos("Registro de pago","Debe seleccione el registro de la tabla y presione 'ELIMINAR'")
+            mensaje_ingreso_datos("Registro de pagos","Debe seleccione el registro de la tabla y presione 'ELIMINAR'")
             return
         
         # Selecciona la fila acutal
         selectedRow = self.tablePagos.currentItem().row()
         itemPagos = int(self.tablePagos.item(selectedRow, 0).text())
         
-        elimPagos = inicio("Registro de pago","¿Desea eliminar de pago?")
+        elimPagos = inicio("Registro de pagos","¿Desea eliminar de pago?")
         if elimPagos == QMessageBox.StandardButton.Yes:
-            elimPagos2 = inicio("Registro de pago","¿Seguro que desea eliminar de pago?")
+            elimPagos2 = inicio("Registro de pagos","¿Seguro que desea eliminar de pago?")
             if elimPagos2 == QMessageBox.StandardButton.Yes:
                 try:
                     db = conectar_base_de_datos()
                     cursor = db.cursor()
-                    cursor.execute(f"DELETE FROM pago WHERE id_pago = '{itemPagos}'")    
+                    cursor.execute("UPDATE pago SET habilitado = 0 WHERE id_pago = %s", (itemPagos,))
+                    # cursor.execute(f"DELETE FROM pago WHERE id_pago = '{itemPagos}'")    
                     db.commit()
                     
                     if cursor:
-                        ingreso_datos("Registro de pago","Registo eliminado")
+                        ingreso_datos("Registro de pagos","Registo eliminado")
                         self.tablePagos.removeRow(selectedRow)
-                        self.idUser.clear()
-                        self.idDis.clear()
-                        self.input_tipoDePago.clear()
-                        self.input_fechaDePago.setDate(QDate.currentDate())
+                        self.camposLimpios()
                     
                         self.tablePagos.clearSelection()  # Deseleccionar la fila eliminada 
                     else:
-                        ingreso_datos("Registro de pago","Registo no eliminado")
+                        ingreso_datos("Registro de pagos","Registo no eliminado")
                                         
                     cursor.close()
                     db.close()
                     
                 except Error as ex:
-                    errorConsulta("Registro de pago",f"Error en la consulta: {str(ex)}")
+                    errorConsulta("Registro de pagos",f"Error en la consulta: {str(ex)}")
                 cursor.close()
                 db.close()
             else:
@@ -2911,14 +2902,12 @@ class VentanaPrincipal(QMainWindow):
         id_empleado_seleccionado = self.id_empleado_seleccionado  # Obtener el id_empleado seleccionado
         # Verificar si el id_alumno está en las sugerencias
         if id_empleado_seleccionado is None:
-            mensaje_ingreso_datos("Registro de hora", "Debe elegir un Nombre de empleado de la lista de sugerencias")
+            mensaje_ingreso_datos("Registro de horas", "Debe elegir un Nombre de empleado de la lista de sugerencias")
             return
         
         horas_horas = self.horas_tra.text()
         fecha_horas = self.fecha_tra.date().toPyDate()
-        
-        
-        
+    
         patron_mun = re.compile(r'^[0-9]+$')
         if not (horas_horas.isnumeric() and patron_mun.match(horas_horas)):
             mensaje_ingreso_datos("Registro de hora","Las 'Horas diarias' debe ser numérico.")
@@ -2933,24 +2922,24 @@ class VentanaPrincipal(QMainWindow):
             cursor.execute("SELECT COUNT(*) FROM hora WHERE id_empleado = %s AND horas_diaria = %s AND fecha = %s", (id_empleado_seleccionado, horas_horas, fecha_horas))
             result = cursor.fetchone()
             if result[0] > 0:
-                ingreso_datos("Registro de hora", "Ya existe un registro con los mismos datos")
+                ingreso_datos("Registro de horas", "Ya existe un registro con los mismos datos")
                 return
             
             cursor.execute("INSERT INTO hora (id_empleado,horas_diaria,fecha) VALUES (%s,%s,%s)", (id_empleado_seleccionado,horas_horas,fecha_horas))
             db.commit()
             
             if cursor:
-                ingreso_datos("Registro de hora","Registro cargado")
+                ingreso_datos("Registro de horas","Registro cargado")
                 self.id_horas_empleado.clear()
                 self.horas_tra.clear()
                 self.fecha_tra.setDate(QDate.currentDate())
             else:
-                ingreso_datos("Registro de hora","Registro no cargado")
+                ingreso_datos("Registro de horas","Registro no cargado")
                 
             cursor.close()
             db.close()
         except Error as ex:
-            errorConsulta("Registro de hora",f"Error en la consulta: {str(ex)}")
+            errorConsulta("Registro de horas",f"Error en la consulta: {str(ex)}")
             print("Error executing the query", ex)
                 
     def limpiar_tabla_horas(self):
@@ -2959,19 +2948,19 @@ class VentanaPrincipal(QMainWindow):
     def horas_empleado(self):        
         id_empleado = self.id_horas_empleado.text()
         if not id_empleado:
-            mensaje_ingreso_datos("Registro de hora","Debe completar el nombre del empleado")
+            mensaje_ingreso_datos("Registro de horas","Debe completar el nombre del empleado")
             return
         
         principio = self.periodo.date().toString("yyyy-MM-dd")
         if not principio or principio > QDate.currentDate().toString("yyyy-MM-dd"):
             self.periodo.setDate(QDate.currentDate())
-            mensaje_ingreso_datos("Registro de hora","La fecha de inicio debe ser la actual o una fecha anterior.")
+            mensaje_ingreso_datos("Registro de horas","La fecha de inicio debe ser la actual o una fecha anterior.")
             return 
         
         final = self.fin_tra.date().toString("yyyy-MM-dd")
         if final > QDate.currentDate().toString("yyyy-MM-dd") or final < principio:
             self.fin_tra.setDate(QDate.currentDate())
-            mensaje_ingreso_datos("Registro de hora","La fecha de inicio debe ser la actual o una fecha anterior.\nLa fecha final de periodo debe ser igual o no anterior a la fecha de inicio de periodo")
+            mensaje_ingreso_datos("Registro de horas","La fecha de inicio debe ser la actual o una fecha anterior.\nLa fecha final de periodo debe ser igual o no anterior a la fecha de inicio de periodo")
             return
         
         try:
@@ -2981,32 +2970,32 @@ class VentanaPrincipal(QMainWindow):
             busqueda = cursor.fetchall()
                         
             if len(busqueda) > 0:
-                ingreso_datos("Registro de hora",f"Se encontraron {len(busqueda)} coincidencias.")
+                ingreso_datos("Registro de horas",f"Se encontraron {len(busqueda)} coincidencias.")
                 self.periodo.setDate(QDate.currentDate())
                 self.fin_tra.setDate(QDate.currentDate())
                 tabla_HorasXEmpleado(self,cursor,busqueda,QHeaderView,QTableWidget,QAbstractItemView,QTableWidgetItem,Qt,QDate)            
             else:    
-                ingreso_datos("Registro de hora",f"Se encontraron {len(busqueda)} coincidencias.")
+                ingreso_datos("Registro de horas",f"Se encontraron {len(busqueda)} coincidencias.")
                 self.periodo.setDate(QDate.currentDate())
                 self.fin_tra.setDate(QDate.currentDate())
                 
             cursor.close()
             db.close()
         except Error as ex:
-            errorConsulta("Registro de hora",f"Error en la consulta: {str(ex)}")
+            errorConsulta("Registro de horas",f"Error en la consulta: {str(ex)}")
             print("Error executing the query", ex)
         
     def horas_empleado_totales(self):
         principio = self.periodo.date().toString("yyyy-MM-dd")
         if not principio or principio > QDate.currentDate().toString("yyyy-MM-dd"):
             self.periodo.setDate(QDate.currentDate())
-            mensaje_ingreso_datos("Registro de hora","La fecha de inicio debe ser la actual o una fecha anterior.")
+            mensaje_ingreso_datos("Registro de horas","La fecha de inicio debe ser la actual o una fecha anterior.")
             return 
         
         final = self.fin_tra.date().toString("yyyy-MM-dd")
         if final > QDate.currentDate().toString("yyyy-MM-dd") or final < principio:
             self.fin_tra.setDate(QDate.currentDate())
-            mensaje_ingreso_datos("Registro de hora","La fecha de inicio debe ser la actual o una fecha anterior.\nLa fecha final de periodo debe ser igual o no anterior a la fecha de inicio de periodo")
+            mensaje_ingreso_datos("Registro de horas","La fecha de inicio debe ser la actual o una fecha anterior.\nLa fecha final de periodo debe ser igual o no anterior a la fecha de inicio de periodo")
             return
         
         try:
@@ -3016,19 +3005,19 @@ class VentanaPrincipal(QMainWindow):
             busqueda = cursor.fetchall()
                         
             if len(busqueda) > 0:
-                ingreso_datos("Registro de hora",f"Se encontraron {len(busqueda)} coincidencias.")
+                ingreso_datos("Registro de horas",f"Se encontraron {len(busqueda)} coincidencias.")
                 self.periodo.setDate(QDate.currentDate())
                 self.fin_tra.setDate(QDate.currentDate())
                 tabla_HorasTotales(self,cursor,busqueda,QHeaderView,QTableWidget,QAbstractItemView,QTableWidgetItem,Qt,QDate)
             else:
-                ingreso_datos("Registro de hora",f"Se encontraron {len(busqueda)} coincidencias.")
+                ingreso_datos("Registro de horas",f"Se encontraron {len(busqueda)} coincidencias.")
                 self.periodo.setDate(QDate.currentDate())
                 self.fin_tra.setDate(QDate.currentDate())
                 
             cursor.close()
             db.close()
         except Error as ex:
-            errorConsulta("Registro de hora",f"Error en la consulta: {str(ex)}")
+            errorConsulta("Registro de horas",f"Error en la consulta: {str(ex)}")
             
     def autocompleto_de_datos_horas(self):
         autoCompletado(self,QDate,mensaje_ingreso_datos)
@@ -3036,25 +3025,26 @@ class VentanaPrincipal(QMainWindow):
     def eliminar_horas(self):
         # Primero corroborar la seleccion de la fila
         if not self.tablaHoras.currentItem():
-            mensaje_ingreso_datos("Registro de hora","Debe buscar el registro a eliminar")
+            mensaje_ingreso_datos("Registro de horas","Debe buscar el registro a eliminar")
             return
         
         # Selecciona la fila acutal
         selectedRow = self.tablaHoras.currentRow()
         id_hor = int(self.tablaHoras.item(selectedRow, 0).text())
         
-        elimHora = inicio("Registro de disciplina","¿Desea eliminar cliente?")
+        elimHora = inicio("Registro de horas","¿Desea eliminar cliente?")
         if elimHora == QMessageBox.StandardButton.Yes:
-            elimHora2 = inicio("Registro de disciplina","¿Seguro que desea eliminar cliente?")
+            elimHora2 = inicio("Registro de horas","¿Seguro que desea eliminar cliente?")
             if elimHora2 == QMessageBox.StandardButton.Yes:
                 try:
                     db = conectar_base_de_datos()
                     cursor = db.cursor()
-                    cursor.execute(f"DELETE FROM hora WHERE id_hora = '{id_hor}'")
+                    cursor.execute("UPDATE hora SET habilitado = 0 WHERE id_hora = %s", (id_hor,))
+                    # cursor.execute("DELETE FROM hora WHERE id_hora = %s", (id_hor,))
                     db.commit()
                     
                     if cursor:
-                        ingreso_datos("Registro de hora","Registro eliminado")
+                        ingreso_datos("Registro de horas","Registro eliminado")
                         self.tablaHoras.removeRow(selectedRow)
 
                         if self.tablaHoras.rowCount() == 1:
@@ -3067,14 +3057,14 @@ class VentanaPrincipal(QMainWindow):
                         self.fin_tra.setDate(QDate.currentDate())
                         self.tablaHoras.clearSelection()  # Deseleccionar la fila eliminada
                     else:
-                        ingreso_datos("Registro de hora","Registro no eliminado")
+                        ingreso_datos("Registro de horas","Registro no eliminado")
                         self.periodo.setDate(QDate.currentDate())
                         self.fin_tra.setDate(QDate.currentDate())
                         
                     cursor.close()
                     db.close()
                 except Error as ex:
-                    errorConsulta("Registro de hora",f"Error en la consulta: {str(ex)}")
+                    errorConsulta("Registro de horas",f"Error en la consulta: {str(ex)}")
                     print("Error executing the query", ex)
                 cursor.close()
                 db.close()
@@ -3086,7 +3076,7 @@ class VentanaPrincipal(QMainWindow):
     def actualizar_horas(self):
         # Verificar si se ha seleccionado una fila
         if not self.tablaHoras.currentItem():
-            mensaje_ingreso_datos("Registro de hora","Debe seleccionar el registro de la tabla para actualizar")
+            mensaje_ingreso_datos("Registro de horas","Debe seleccionar el registro de la tabla para actualizar")
             return
         
         id_ref = self.tablaHoras.item(self.tablaHoras.currentRow(), 0).text()
@@ -3098,12 +3088,12 @@ class VentanaPrincipal(QMainWindow):
             
         # Verificar si el id_alumno está en las sugerencias
         if id_empleado_seleccionado is None:
-            mensaje_ingreso_datos("Registro de hora", "Debe elegir un Nombre de empleado de la lista de sugerencias")
+            mensaje_ingreso_datos("Registro de horas", "Debe elegir un Nombre de empleado de la lista de sugerencias")
             return
         
         patron_mun = re.compile(r'^[0-9]+$')
         if not (horas_h.isnumeric() and patron_mun.match(horas_h)):
-            mensaje_ingreso_datos("Registro de hora","Las 'Horas diarias' debe ser numérico.")
+            mensaje_ingreso_datos("Registro de horas","Las 'Horas diarias' debe ser numérico.")
             return
         horas_h = int(horas_h)
           
@@ -3114,12 +3104,12 @@ class VentanaPrincipal(QMainWindow):
             db.commit() 
             
             if cursor:
-                ingreso_datos("Registro de hora","Registro actualizado")
+                ingreso_datos("Registro de horas","Registro actualizado")
                 self.id_horas_empleado.clear()
                 self.horas_tra.clear()
                 self.fecha_tra.setDate(QDate.currentDate())
             else:
-                ingreso_datos("Registro de hora","Registro no actualizado")
+                ingreso_datos("Registro de horas","Registro no actualizado")
                 
             cursor.close()
             db.close() 
@@ -3127,7 +3117,7 @@ class VentanaPrincipal(QMainWindow):
             self.tablaHoras.clearSelection() # Deselecciona la fila
             
         except Error as ex:
-            errorConsulta("Registro de hora",f"Error en la consulta: {str(ex)}")
+            errorConsulta("Registro de horas",f"Error en la consulta: {str(ex)}")
             print("Error executing the query", ex)
     
     def excel_horas(self):
@@ -3141,7 +3131,7 @@ class VentanaPrincipal(QMainWindow):
         deber = self.debe.text()
         haberes = self.haber.text()      
         
-        validadcion = validadciones(date,descripcion,descripcion_h,deber,haberes)
+        validadcion = validaciones(date,descripcion,descripcion_h,deber,haberes)
         if validadcion != "Validación exitosa.":
             mensaje_ingreso_datos("Error de validación", "Verifique los datos por favor")
             return
@@ -3192,8 +3182,10 @@ class VentanaPrincipal(QMainWindow):
         deber = self.debe.text()
         haberes = self.haber.text()
         
-        validadciones(date,descripcion,descripcion_h,deber,haberes)
-        
+        validadcion = validaciones(date,descripcion,descripcion_h,deber,haberes)
+        if validadcion != "Validación exitosa.":
+            mensaje_ingreso_datos("Error de validación", "Verifique los datos por favor")
+            return        
         try:
             db = conectar_base_de_datos()
             cursor = db.cursor()
@@ -3202,13 +3194,14 @@ class VentanaPrincipal(QMainWindow):
             db.commit()
             if cursor:
                 ingreso_datos("Registro de Ingresos-Egresos","Datos cargados correctamente")
-                
                 limpiarCampos(self,QDate)
+                self.tablaGastos.clearSelection() # Deselecciona la fila
             else:
                 ingreso_datos("Registro de Ingresos-Egresos","Datos no cargados correctamente")
+                limpiarCampos(self,QDate)
+                self.tablaGastos.clearSelection() # Deselecciona la fila
             cursor.close()
             db.close()
-            self.tablaGastos.clearSelection() # Deselecciona la fila
             
         except Error as ex:
             errorConsulta("Registro de Ingresos-Egresos",f"Error en la consulta: {str(ex)}")
@@ -3258,15 +3251,16 @@ class VentanaPrincipal(QMainWindow):
         registro = self.tablaGastos.currentItem().row()
         idconcepto = int(self.tablaGastos.item(registro,0).text())
        
-        elimContabilidad = inicio("Registro de disciplina","¿Desea eliminar cliente?")
+        elimContabilidad = inicio("Registro de Ingresos-Egresos","¿Desea eliminar cliente?")
         if elimContabilidad == QMessageBox.StandardButton.Yes:
-            elimContabilidad2 = inicio("Registro de disciplina","¿Seguro que desea eliminar cliente?")
+            elimContabilidad2 = inicio("Registro de Ingresos-Egresos","¿Seguro que desea eliminar cliente?")
             if elimContabilidad2 == QMessageBox.StandardButton.Yes:
                 try:
                     db = conectar_base_de_datos()
                     cursor = db.cursor()
-                    cursor.execute(f"DELETE FROM contabilidad WHERE id_concepto = {idconcepto}")
-                    db.commit()  # Confirmar los cambios en la base de datos
+                    cursor.execute("UPDATE contabilidad SET habilitado = 0 WHERE id_concepto = %s", (idconcepto,))
+                    # cursor.execute(f"DELETE FROM contabilidad WHERE id_concepto = {idconcepto}")
+                    db.commit()
                     
                     if cursor.rowcount > 0:
                         ingreso_datos("Registro de Ingresos-Egresos","Registro eliminado")
