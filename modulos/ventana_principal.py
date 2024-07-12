@@ -13,19 +13,19 @@ from mysql.connector import Error
 from PyQt6.QtWidgets import (QLabel, QFileDialog, QCompleter, QAbstractScrollArea, QHeaderView, QGridLayout, QHBoxLayout, QDateEdit, 
                              QMessageBox, QTableWidget, QAbstractItemView, QTableWidgetItem, QPushButton, QLineEdit, QStatusBar, QWidget,
                              QVBoxLayout, QGroupBox, QMainWindow, QFrame, QTabWidget,QComboBox)
-from PyQt6.QtGui import QIcon, QKeySequence, QAction, QPixmap, QRegularExpressionValidator
+from PyQt6.QtGui import QIcon, QKeySequence, QAction, QPixmap
 from PyQt6.QtCore import *
 
 # Módulo de para las cajas de mensajes
 from modulos.mensajes import ingreso_datos,mensaje_ingreso_datos, errorConsulta, inicio
 
 # Validaciones y demas funciones 
-from validaciones.usuario import (registroUSER, limpiasElementosUser, limpiar_campos, limpiasElementosUseraActualizar, 
+from validaciones.usuario import (registroUSER, actualizacionUSER, limpiasElementosUser, limpiar_campos, limpiasElementosUseraActualizar, 
                                   autoCompletadoACTULIZAR,limpiar_tablaRecord, limpiar_tablaUpdate, tabla_registroUSER)
 from validaciones.updateYdelete_usuario import tabla_updateUSER, tabla_eliminarUSER, borrarTabla
 from validaciones.archivo_Excel import (tabla_registroUSUARIO, tabla_registroDISCIPLINA, horas_Excel, 
                                         tabla_libroDiario_CONTABILIDAD, pagos_EXCEL, excelConsulta)
-from validaciones.disciplina import completar_CAMPOS_ACTIVIDAD, clear_tabla_disciplina, tabla_DISCIPLINA
+from validaciones.disciplina import guardarACTIVIDAD, completar_CAMPOS_ACTIVIDAD, clear_tabla_disciplina, tabla_DISCIPLINA
 from validaciones.pagos import seleccionDeTablaPAGOS, tabla_pagos
 from validaciones.contabilidad import validadciones, tabla_contabilidad, selccionarTabla, limpiarCampos, clear_tabla
 from validaciones.horas import tabla_HorasTotales,tabla_HorasXEmpleado, autoCompletado, clearTabla
@@ -409,18 +409,13 @@ class VentanaPrincipal(QMainWindow):
         layout_H2.setAlignment(Qt.AlignmentFlag.AlignLeft)
         layout_H = QHBoxLayout()
         layout_H.setAlignment(Qt.AlignmentFlag.AlignLeft)
-        
-        # # Establecer un validador que permita espacios en el texto
-        # validator = QRegularExpression()
-        # validator.match(r"^[a-zA-Z\s]+$")
-        
+            
         nombre1 = QLabel('Nombre:',customer_details)
         nombre1.setStyleSheet(style.label)
         nombre1.setFixedWidth(80)
         self.input_nombre1 = QLineEdit(customer_details)
         self.input_nombre1.setFixedWidth(200)
         self.input_nombre1.setPlaceholderText("Ingrese nombre...")
-        # self.input_nombre1.setValidator(validator)
         self.input_nombre1.setStyleSheet(style.estilo_lineedit)
         self.input_nombre1.setFocus()
         layout_H1.addWidget(nombre1)        
@@ -450,7 +445,6 @@ class VentanaPrincipal(QMainWindow):
         self.input_apellido1 = QLineEdit(customer_details)
         self.input_apellido1.setStyleSheet(style.estilo_lineedit)
         self.input_apellido1.setPlaceholderText("Ingrese apellido...")
-        # self.input_apellido1.setValidator(validator)
         self.input_apellido1.setFixedWidth(200)
         layout_H1.addWidget(apellido1)       
         layout_H1.addWidget(self.input_apellido1)
@@ -645,7 +639,6 @@ class VentanaPrincipal(QMainWindow):
         self.input_apellido2 = QLineEdit(update_customer_details)
         self.input_apellido2.setStyleSheet(style.estilo_lineedit)
         self.input_apellido2.setPlaceholderText("Ingrese apellido...")
-        # self.input_apellido2.setValidator(validator)
         self.input_apellido2.setEnabled(False)
         self.input_apellido2.setFixedWidth(200)
         layout_ele1.addWidget(apellido2)          
@@ -799,7 +792,6 @@ class VentanaPrincipal(QMainWindow):
         nombre_buscar3.setFixedWidth(100)
         self.nombre_buscar3 = QLineEdit(delete_Record)
         self.nombre_buscar3.setStyleSheet(style.estilo_lineedit)
-        # self.nombre_buscar3.setValidator(validator)
         self.nombre_buscar3.setFixedWidth(300)
         self.nombre_buscar3.setPlaceholderText("Ingrese el nombre o su inicial")
         self.nombre_buscar3.setFocus()
@@ -894,7 +886,6 @@ class VentanaPrincipal(QMainWindow):
         self.input_disciplina4 = QLineEdit(comboActiv)
         self.input_disciplina4.setStyleSheet(style.estilo_lineedit)
         self.input_disciplina4.setFixedWidth(200)
-        # self.input_disciplina4.setValidator(validator)
         self.input_disciplina4.setPlaceholderText("Ingrese una disciplina")
         self.input_disciplina4.setFocus()
         layout_H8.addWidget(disciplina4)        
@@ -1984,7 +1975,7 @@ class VentanaPrincipal(QMainWindow):
         celu = self.input_celular.text().replace(".", "")
         fecha = self.input_date.date().toPyDate()
 
-        validacion = registroUSER(nombre1, apellido1, dni, sexo, edad, celu)
+        validacion = registroUSER(self, nombre1, apellido1, dni, sexo, edad, celu)
         if validacion != "Validación exitosa.":
             mensaje_ingreso_datos("Error de validación", "Verifique los datos por favor")
             return
@@ -2168,7 +2159,7 @@ class VentanaPrincipal(QMainWindow):
         celu2 = self.input_celular2.text()
         fecha = self.input_date2.date().toPyDate()
         
-        registroUSER(nombre2 , apellido2, dni2, sexo2, edad2, celu2)
+        actualizacionUSER(self, nombre2 , apellido2, dni2, sexo2, edad2, celu2)
                     
         # Validar que los campos requeridos no estén vacíos
         if not nombre2 or not apellido2 or not dni2 or not sexo2 or not edad2 or not celu2:
@@ -2243,8 +2234,8 @@ class VentanaPrincipal(QMainWindow):
         nombre_cliente = self.tablaDeleteRecord.item(row, 1).text()
         self.nombre_buscar3.setText(nombre_cliente)
         # self.tablaDeleteRecord.clearSelection()  # Deseleccionar la fila eliminada
-        
-    def delete(self): # eliminar por seleccion de fila      
+    
+    def delete(self): # VER PORQUE NO DESHABILITA      
         if not self.tablaDeleteRecord.currentItem():
             mensaje_ingreso_datos("Registro de cliente","Debe seleccione el registro de la tabla y presione 'ELIMINAR'")
             return
@@ -2252,33 +2243,38 @@ class VentanaPrincipal(QMainWindow):
         selectedRow = self.tablaDeleteRecord.currentItem().row()
         idUser = int(self.tablaDeleteRecord.item(selectedRow, 0).text())
 
-        elim = inicio("Registro de cliente","¿Desea eliminar cliente?")
+        elim = inicio("Registro de cliente","¿Desea eliminar el cliente?")
         if elim == QMessageBox.StandardButton.Yes:
-            try:
-                db = conectar_base_de_datos()
-                cursor = db.cursor()
-                cursor.execute(f"UPDATE usuario SET habilitado = 0 WHERE id_usuario = {idUser}")#, (idUser))
-                # cursor.execute(f"DELETE FROM usuario WHERE id_usuario = {idUser} AND habilitado = 1")    
-                db.commit()
-                if cursor:
-                    self.tablaDeleteRecord.removeRow(selectedRow)
-                    self.nombre_buscar3.clear()
-                    self.limpiar_tabla()
-                    self.tablaDeleteRecord.clearSelection()
-                    ingreso_datos("Registro de cliente","Registo eliminado")
-                else:
-                    ingreso_datos("Registro de cliente","Registo no eliminado")
-                    self.tablaDeleteRecord.clearSelection()  # Deseleccionar la fila eliminada
-                    
-                cursor.close()
-                db.close()
+            elim2 = inicio("Registro de cliente","¿Estas seguro de eliminar cliente?")
+            if elim2 == QMessageBox.StandardButton.Yes:
+                try:
+                    db = conectar_base_de_datos()
+                    cursor = db.cursor()
+                    cursor.execute(f"UPDATE usuario SET habilitado = 0 WHERE id_usuario = {idUser}")#, (idUser,))
+                    # cursor.execute(f"UPDATE disciplina SET habilitado = 0 WHERE id_disciplina= {id_dis}")#, (id_dis,))
+                    # cursor.execute(f"DELETE FROM usuario WHERE id_usuario = {idUser} AND habilitado = 1")    
+                    db.commit()
+                    if cursor:
+                        self.tablaDeleteRecord.removeRow(selectedRow)
+                        self.nombre_buscar3.clear()
+                        self.limpiar_tabla()
+                        self.tablaDeleteRecord.clearSelection()
+                        ingreso_datos("Registro de cliente","Registo eliminado")
+                    else:
+                        ingreso_datos("Registro de cliente","Registo no eliminado")
+                        self.tablaDeleteRecord.clearSelection()  # Deseleccionar la fila eliminada
+                        
+                    cursor.close()
+                    db.close()
 
-            except Error as ex:
-                errorConsulta("Registro de cliente",f"Error en la consulta: {str(ex)}")
-                print("Error executing the query", ex)
+                except Error as ex:
+                    errorConsulta("Registro de cliente",f"Error en la consulta: {str(ex)}")
+                    print("Error executing the query", ex)
+            else:
+                print("No se elimina registro")
         else:
-            print("No se elimina registro")
-    
+            print("Decidio no elimina registro")
+
     def limpiar_tabla(self):
         borrarTabla(self) 
     
@@ -2286,19 +2282,12 @@ class VentanaPrincipal(QMainWindow):
     def guardarACTIV(self):
         actividad = self.input_disciplina4.text().capitalize()
         precio = self.input_precio.text()
-        # guardarACTIVIDAD(actividad, precio)
-        patronA = re.compile(r'^[a-zA-ZáéíóúÁÉÍÓÚüÜ\'\s]+$') 
-        if not isinstance(actividad, str) or actividad.isspace() or not patronA.match(actividad):
-            mensaje_ingreso_datos("Registro de disciplina","Debe elegir una disciplina")
+        
+        validacion = guardarACTIVIDAD(self, actividad, precio)
+        if validacion != "Carga de datos correcta":
+            mensaje_ingreso_datos("Error de validación", "Verifique los datos por favor")
             return
-
-        patron2 = re.compile(r'^[0-9]+$')
-        if not (precio.isdigit() and patron2.match(precio)):# and len(precio) > 0):
-            mensaje_ingreso_datos("Registro de disciplina","El precio debe ser número entero. Sin coma ','.")
-            return
-        if precio: 
-            precio = int(precio)
-
+        
         try:
             db = conectar_base_de_datos()
             cursor = db.cursor()
@@ -2411,29 +2400,33 @@ class VentanaPrincipal(QMainWindow):
         selectedRow = self.tableActivi.currentItem().row()
         id_dis = int(self.tableActivi.item(selectedRow, 0).text())
         
-        elim = inicio("Registro de cliente","¿Seguro que desea eliminar cliente?")
+        elim = inicio("Registro de disciplina","¿Desea eliminar cliente?")
         if elim == QMessageBox.StandardButton.Yes:
-            try:
-                db = conectar_base_de_datos()
-                cursor = db.cursor()
-                # cursor.execute(f"DELETE FROM disciplina WHERE id_disciplina = {id_dis}")    
-                cursor.execute(f"UPDATE disciplina SET habilitado = 0 WHERE id_disciplina= {id_dis}")#, (id_dis,))
-                if cursor:
-                    ingreso_datos("Registro de disciplina","Registo eliminado")
-                    self.tableActivi.removeRow(selectedRow)
-                    self.input_disciplina4.clear()
-                    self.input_precio.clear()
-                    self.tableActivi.clearSelection()  # Deseleccionar la fila eliminada
-                else:
-                    ingreso_datos("Registro de disciplina","Registo no eliminado")
+            elim2 = inicio("Registro de disciplina","¿Seguro que desea eliminar cliente?")
+            if elim2 == QMessageBox.StandardButton.Yes:
+                try:
+                    db = conectar_base_de_datos()
+                    cursor = db.cursor()
+                    # cursor.execute(f"DELETE FROM disciplina WHERE id_disciplina = {id_dis}")    
+                    cursor.execute(f"UPDATE disciplina SET habilitado = 0 WHERE id_disciplina= {id_dis}")#, (id_dis,))
+                    if cursor:
+                        ingreso_datos("Registro de disciplina","Registo eliminado")
+                        self.tableActivi.removeRow(selectedRow)
+                        self.input_disciplina4.clear()
+                        self.input_precio.clear()
+                        self.tableActivi.clearSelection()  # Deseleccionar la fila eliminada
+                    else:
+                        ingreso_datos("Registro de disciplina","Registo no eliminado")
+                        
+                    cursor.close()
+                    db.commit()
                     
-                cursor.close()
-                db.commit()
-                
-            except Error as ex:
-                errorConsulta("Registro de disciplina",f"Error en la consulta: {str(ex)}")
+                except Error as ex:
+                    errorConsulta("Registro de disciplina",f"Error en la consulta: {str(ex)}")
+            else:
+                print("NO se elimina disciplina")
         else:
-            pass
+            print("NO elimina disciplina")
             
     def planilla_disciplina(self):
         tabla_registroDISCIPLINA(self,Workbook,Font,PatternFill,Border,Side,numbers,QFileDialog)
@@ -2593,31 +2586,39 @@ class VentanaPrincipal(QMainWindow):
         selectedRow = self.tablePagos.currentItem().row()
         itemPagos = int(self.tablePagos.item(selectedRow, 0).text())
         
-        try:
-            db = conectar_base_de_datos()
-            cursor = db.cursor()
-            cursor.execute(f"DELETE FROM pago WHERE id_pago = '{itemPagos}'")    
-            db.commit()
-            
-            if cursor:
-                ingreso_datos("Registro de pago","Registo eliminado")
-                self.tablePagos.removeRow(selectedRow)
-                self.idUser.clear()
-                self.idDis.clear()
-                self.input_tipoDePago.clear()
-                self.input_fechaDePago.setDate(QDate.currentDate())
-            
-                self.tablePagos.clearSelection()  # Deseleccionar la fila eliminada 
+        elimPagos = inicio("Registro de pago","¿Desea eliminar de pago?")
+        if elimPagos == QMessageBox.StandardButton.Yes:
+            elimPagos2 = inicio("Registro de pago","¿Seguro que desea eliminar de pago?")
+            if elimPagos2 == QMessageBox.StandardButton.Yes:
+                try:
+                    db = conectar_base_de_datos()
+                    cursor = db.cursor()
+                    cursor.execute(f"DELETE FROM pago WHERE id_pago = '{itemPagos}'")    
+                    db.commit()
+                    
+                    if cursor:
+                        ingreso_datos("Registro de pago","Registo eliminado")
+                        self.tablePagos.removeRow(selectedRow)
+                        self.idUser.clear()
+                        self.idDis.clear()
+                        self.input_tipoDePago.clear()
+                        self.input_fechaDePago.setDate(QDate.currentDate())
+                    
+                        self.tablePagos.clearSelection()  # Deseleccionar la fila eliminada 
+                    else:
+                        ingreso_datos("Registro de pago","Registo no eliminado")
+                                        
+                    cursor.close()
+                    db.close()
+                    
+                except Error as ex:
+                    errorConsulta("Registro de pago",f"Error en la consulta: {str(ex)}")
+                cursor.close()
+                db.close()
             else:
-                ingreso_datos("Registro de pago","Registo no eliminado")
-                                
-            cursor.close()
-            db.close()
-            
-        except Error as ex:
-            errorConsulta("Registro de pago",f"Error en la consulta: {str(ex)}")
-        cursor.close()
-        db.close()
+                print("NO se elimina pago")
+        else:
+            print("NO elimina pago")
             
     def planilla_pagos(self):
         pagos_EXCEL(self,Workbook,Font,PatternFill,Border,Side,numbers,QFileDialog)
@@ -3042,38 +3043,46 @@ class VentanaPrincipal(QMainWindow):
         selectedRow = self.tablaHoras.currentRow()
         id_hor = int(self.tablaHoras.item(selectedRow, 0).text())
         
-        try:
-            db = conectar_base_de_datos()
-            cursor = db.cursor()
-            cursor.execute(f"DELETE FROM hora WHERE id_hora = '{id_hor}'")
-            db.commit()
-            
-            if cursor:
-                ingreso_datos("Registro de hora","Registro eliminado")
-                self.tablaHoras.removeRow(selectedRow)
+        elimHora = inicio("Registro de disciplina","¿Desea eliminar cliente?")
+        if elimHora == QMessageBox.StandardButton.Yes:
+            elimHora2 = inicio("Registro de disciplina","¿Seguro que desea eliminar cliente?")
+            if elimHora2 == QMessageBox.StandardButton.Yes:
+                try:
+                    db = conectar_base_de_datos()
+                    cursor = db.cursor()
+                    cursor.execute(f"DELETE FROM hora WHERE id_hora = '{id_hor}'")
+                    db.commit()
+                    
+                    if cursor:
+                        ingreso_datos("Registro de hora","Registro eliminado")
+                        self.tablaHoras.removeRow(selectedRow)
 
-                if self.tablaHoras.rowCount() == 1:
-                    self.tablaHoras.setRowCount(0)  # Eliminar el registro de las sumatorias
-                
-                self.id_horas_empleado.clear()
-                self.horas_tra.clear()
-                self.fecha_tra.setDate(QDate.currentDate())
-                self.periodo.setDate(QDate.currentDate())
-                self.fin_tra.setDate(QDate.currentDate())
-                self.tablaHoras.clearSelection()  # Deseleccionar la fila eliminada
+                        if self.tablaHoras.rowCount() == 1:
+                            self.tablaHoras.setRowCount(0)  # Eliminar el registro de las sumatorias
+                        
+                        self.id_horas_empleado.clear()
+                        self.horas_tra.clear()
+                        self.fecha_tra.setDate(QDate.currentDate())
+                        self.periodo.setDate(QDate.currentDate())
+                        self.fin_tra.setDate(QDate.currentDate())
+                        self.tablaHoras.clearSelection()  # Deseleccionar la fila eliminada
+                    else:
+                        ingreso_datos("Registro de hora","Registro no eliminado")
+                        self.periodo.setDate(QDate.currentDate())
+                        self.fin_tra.setDate(QDate.currentDate())
+                        
+                    cursor.close()
+                    db.close()
+                except Error as ex:
+                    errorConsulta("Registro de hora",f"Error en la consulta: {str(ex)}")
+                    print("Error executing the query", ex)
+                cursor.close()
+                db.close()
             else:
-                ingreso_datos("Registro de hora","Registro no eliminado")
-                self.periodo.setDate(QDate.currentDate())
-                self.fin_tra.setDate(QDate.currentDate())
+                print("NO se elimino")
+        else:
+            print("NO se eliimina hora")
                 
-            cursor.close()
-            db.close()
-        except Error as ex:
-            errorConsulta("Registro de hora",f"Error en la consulta: {str(ex)}")
-            print("Error executing the query", ex)
-        cursor.close()
-        db.close()
-        
     def actualizar_horas(self):
         # Verificar si se ha seleccionado una fila
         if not self.tablaHoras.currentItem():
@@ -3249,30 +3258,38 @@ class VentanaPrincipal(QMainWindow):
         registro = self.tablaGastos.currentItem().row()
         idconcepto = int(self.tablaGastos.item(registro,0).text())
        
-        try:
-            db = conectar_base_de_datos()
-            cursor = db.cursor()
-            cursor.execute(f"DELETE FROM contabilidad WHERE id_concepto = {idconcepto}")
-            db.commit()  # Confirmar los cambios en la base de datos
-            
-            if cursor.rowcount > 0:
-                ingreso_datos("Registro de Ingresos-Egresos","Registro eliminado")
-                self.tablaGastos.clearSelection()  # Deseleccionar la fila eliminada
-                self.tablaGastos.removeRow(registro)
-                
-                if self.tablaGastos.rowCount() == 1:
-                    self.tablaGastos.setRowCount(0)  # Eliminar el registro de las sumatorias
-
-                limpiarCampos(self,QDate)                    
-            else:
-                ingreso_datos("Registro de Ingresos-Egresos","Registro no eliminado")
+        elimContabilidad = inicio("Registro de disciplina","¿Desea eliminar cliente?")
+        if elimContabilidad == QMessageBox.StandardButton.Yes:
+            elimContabilidad2 = inicio("Registro de disciplina","¿Seguro que desea eliminar cliente?")
+            if elimContabilidad2 == QMessageBox.StandardButton.Yes:
+                try:
+                    db = conectar_base_de_datos()
+                    cursor = db.cursor()
+                    cursor.execute(f"DELETE FROM contabilidad WHERE id_concepto = {idconcepto}")
+                    db.commit()  # Confirmar los cambios en la base de datos
+                    
+                    if cursor.rowcount > 0:
+                        ingreso_datos("Registro de Ingresos-Egresos","Registro eliminado")
+                        self.tablaGastos.clearSelection()  # Deseleccionar la fila eliminada
+                        self.tablaGastos.removeRow(registro)
                         
-            cursor.close()
-            db.close()
-        except Error as ex:
-            errorConsulta("Registro de Ingresos-Egresos",f"Error en la consulta: {str(ex)}")
-            print("Error executing the query", ex)
-    
+                        if self.tablaGastos.rowCount() == 1:
+                            self.tablaGastos.setRowCount(0)  # Eliminar el registro de las sumatorias
+
+                        limpiarCampos(self,QDate)                    
+                    else:
+                        ingreso_datos("Registro de Ingresos-Egresos","Registro no eliminado")
+                                
+                    cursor.close()
+                    db.close()
+                except Error as ex:
+                    errorConsulta("Registro de Ingresos-Egresos",f"Error en la consulta: {str(ex)}")
+                    print("Error executing the query", ex)
+            else:
+                print("NO se elimino")
+        else:
+            print("NO se eliimina contabilidad")
+            
     def limp_tabla(self):
         clear_tabla(self)
       

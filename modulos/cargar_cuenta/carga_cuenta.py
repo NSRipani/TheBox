@@ -5,7 +5,7 @@ from mysql.connector import Error
 import re
 
 # Librerías de PyQt6
-from PyQt6.QtWidgets import (QLabel,QFormLayout,QDialog, QCompleter, QHeaderView, QHBoxLayout, QTableWidget, QAbstractItemView, QTableWidgetItem, QPushButton, QLineEdit, QVBoxLayout, QGroupBox)
+from PyQt6.QtWidgets import (QLabel,QFormLayout,QDialog, QCompleter, QHeaderView, QHBoxLayout, QTableWidget, QAbstractItemView, QTableWidgetItem, QPushButton, QLineEdit, QVBoxLayout, QGroupBox,QMessageBox)
 from PyQt6.QtGui import QIcon,QGuiApplication, QRegularExpressionValidator
 from PyQt6.QtCore import *
 
@@ -19,7 +19,7 @@ from validaciones.contabilidad import cuentas
 from qss import style
 
 # Cargar tipo
-from modulos.cargar_cuenta.catagarTipoCuenta import actualizar_combobox_TipoCUENTA,actualizar_combobox_Categoria
+from modulos.cargar_cuenta.catagarTipoCuenta import actualizar_combobox_TipoCUENTA,actualizar_combobox_Categoria #validar_datos
 
 # conexion
 from conexion_DB.dataBase import conectar_base_de_datos
@@ -58,26 +58,21 @@ class CuentaContable(QDialog):
         descripcion.setStyleSheet(style.label)
         categoria = QLabel("Categoría: ")
         categoria.setStyleSheet(style.label)
-        
-        # validor = QRegularExpressionValidator()
-        # validor.setRegularExpression(r"^[\w\s]+$")
-        
+                
         self.n_cuenta = QLineEdit()
         self.n_cuenta.setFocus()
-        # self.n_cuenta.setValidator(validor)
         self.n_cuenta.setStyleSheet(style.estilo_lineedit)
         self.t_cuenta = QLineEdit()
         self.t_cuenta.setStyleSheet(style.estilo_lineedit)
         self.t_cuenta.setPlaceholderText("Activos, Pasivos, Patrimonio, Ingresos o Egreso")
-        actualizar_combobox_TipoCUENTA(self,QCompleter,Qt,style)
+        actualizar_combobox_TipoCUENTA(self)
         self.descripcion = QLineEdit()
-        # self.descripcion.setValidator(validor)
         self.descripcion.setStyleSheet(style.estilo_lineedit)
         self.descripcion.setPlaceholderText("Referencia a la cuenta")
         self.categoria = QLineEdit()
         self.categoria.setStyleSheet(style.estilo_lineedit)
         self.categoria.setPlaceholderText("'Debe' o 'Haber'")
-        actualizar_combobox_Categoria(self,QCompleter,Qt,style)
+        actualizar_combobox_Categoria(self)
         
         # Añadir widgets al formulario
         form_layout_Cuenta.addRow(titulo_tipocuenta)
@@ -149,36 +144,39 @@ class CuentaContable(QDialog):
         y = (screen_geometry.height() - self.height()) // 2
         self.move(x, y)
         
-    ### ////////////////////////// PARA CUENTA ///////////////////////////////////////
+    ### ////////////////////////// PARA CUENTA ///////////////////////////////////////       
     def guardar_cuenta(self):       
         nomTipo = self.n_cuenta.text().capitalize()
         tipo = self.t_cuenta.text() #Activo, Pasivo,....
         descrip = self.descripcion.text().capitalize() 
         categor = self.categoria.text().capitalize() #Debe/Haber
-        
-        patron = re.compile(r'^[a-zA-ZáéíóúÁÉÍÓÚüÜ\'\s]+$') 
-        if not isinstance(nomTipo, str) or nomTipo.isspace() or not patron.match(nomTipo): 
-            mensaje_ingreso_datos("Registro de cuenta","El 'nombre' debe corresponder a una cuenta contable")
+
+        nomTipo = nomTipo.strip()
+        if not (nomTipo != "" and nomTipo.replace("", " ") and isinstance(nomTipo, str) and re.findall(r'^[a-zA-ZáéíóúÁÉÍÓÚüÜ\'\s]+$',nomTipo)):
+            mensaje_ingreso_datos("Registro de cuenta","El 'Nombre' debe corresponder a una cuenta contable")
+            self.n_cuenta.setFocus()
             return
         
         if not isinstance(tipo, str) or not tipo.isalpha():
-            mensaje_ingreso_datos("Registro de cuenta","El tipo debe contener: \n- Activo.\n- Pasivo.\n- Ingreso.\n- Engreso.\n- Patrimonio.")
+            mensaje_ingreso_datos("Registro de cuenta","El Tipo debe contener:\n\n- Activo.\n- Pasivo.\n- Ingreso.\n- Engreso.\n- Patrimonio.")
             return
         sugerencia = actualizar_combobox_TipoCUENTA(self,QCompleter,Qt,style)
         if tipo not in sugerencia: 
             mensaje_ingreso_datos("Registro de cuenta", "Debe elegir el tipo de cuenta de la lista de sugerencias")
             return
         
-        if not isinstance(descrip, str) or descrip.isspace() or not patron.match(descrip): 
-            mensaje_ingreso_datos("Registro de cuenta","La descripción debe contener: \n- Solo texto.")
+        descrip = descrip.strip()
+        if not (descrip != "" and descrip.replace("", " ") and isinstance(descrip, str) and re.findall(r'^[a-zA-ZáéíóúÁÉÍÓÚüÜ\'\s]+$',descrip)):
+            mensaje_ingreso_datos("Registro de cuenta","La Descripción debe contener:\n\n- Solo texto.")
+            self.descripcion.setFocus()
             return
          
         if not isinstance(categor, str) or not categor.isalpha():
-            mensaje_ingreso_datos("Registro de cuenta","La categoría deben contener: \n- 'Debe' o 'Haber'.")
+            mensaje_ingreso_datos("Registro de cuenta","La Categoría deben contener:\n\n- 'Debe' o 'Haber'.")
             return 
         debe_haber = actualizar_combobox_Categoria(self,QCompleter,Qt,style)
         if categor not in debe_haber: 
-            mensaje_ingreso_datos("Registro de cuenta", "Debe elegir la categoria('debe' o 'haber') correspondiente a la cuenta a crear y a la lista de sugerencias")
+            mensaje_ingreso_datos("Registro de cuenta", "Debe elegir la categoria('debe' o 'haber') correspondiente\na la cuenta a crear y a la lista de sugerencias")
             return
         
         try:
@@ -249,19 +247,33 @@ class CuentaContable(QDialog):
         descrip = self.descripcion.text().capitalize()
         categor = self.categoria.text().capitalize()
         
-        patron = re.compile(r'^[a-zA-ZáéíóúÁÉÍÓÚüÜ\'\s]+$') 
-        if not isinstance(nomTipo, str) or nomTipo.isspace() or not patron.match(nomTipo): 
-            mensaje_ingreso_datos("Registro de cuenta","El 'nombre' debe contener:\n\n- Letras y/o espacios entre nombres(si tiene mas de dos).")
+        nomTipo = nomTipo.strip()
+        if not (nomTipo != "" and nomTipo.replace("", " ") and isinstance(nomTipo, str) and re.findall(r'^[a-zA-ZáéíóúÁÉÍÓÚüÜ\'\s]+$',nomTipo)):
+            mensaje_ingreso_datos("Registro de cuenta","El 'Nombre' debe corresponder a una cuenta contable")
+            self.n_cuenta.setFocus()
             return
+        
         if not isinstance(tipo, str) or not tipo.isalpha():
-            mensaje_ingreso_datos("Registro de cuenta","El tipo debe contener: \n- Las opciones mostradas.")
+            mensaje_ingreso_datos("Registro de cuenta","El Tipo debe contener:\n\n- Activo.\n- Pasivo.\n- Ingreso.\n- Engreso.\n- Patrimonio.")
             return
-        if not isinstance(descrip, str) or descrip.isspace() or not patron.match(descrip): 
-            mensaje_ingreso_datos("Registro de cuenta","La descripción debe contener: \n- Solo texto.")
-            return 
+        sugerencia = actualizar_combobox_TipoCUENTA(self,QCompleter,Qt,style)
+        if tipo not in sugerencia: 
+            mensaje_ingreso_datos("Registro de cuenta", "Debe elegir el tipo de cuenta de la lista de sugerencias")
+            return
+        
+        descrip = descrip.strip()
+        if not (descrip != "" and descrip.replace("", " ") and isinstance(descrip, str) and re.findall(r'^[a-zA-ZáéíóúÁÉÍÓÚüÜ\'\s]+$',descrip)):
+            mensaje_ingreso_datos("Registro de cuenta","La Descripción debe contener:\n\n- Solo texto.")
+            self.descripcion.setFocus()
+            return
+         
         if not isinstance(categor, str) or not categor.isalpha():
-            mensaje_ingreso_datos("Registro de cuenta","La categoría deben contener: \n- 'Debe' o 'Haber'.")
+            mensaje_ingreso_datos("Registro de cuenta","La Categoría deben contener:\n\n- 'Debe' o 'Haber'.")
             return 
+        debe_haber = actualizar_combobox_Categoria(self,QCompleter,Qt,style)
+        if categor not in debe_haber: 
+            mensaje_ingreso_datos("Registro de cuenta", "Debe elegir la categoria('debe' o 'haber') correspondiente\na la cuenta a crear y a la lista de sugerencias")
+            return
            
         try:
             db = conectar_base_de_datos()
@@ -295,24 +307,33 @@ class CuentaContable(QDialog):
         selectedRow = self.tablacuenta.currentItem().row()
         id_cuenta = int(self.tablacuenta.item(selectedRow, 0).text())
         
-        try:
-            db = conectar_base_de_datos()
-            cursor = db.cursor()
-            cursor.execute(f"DELETE FROM cuenta WHERE id_cuenta = {id_cuenta}")
-            db.commit()
-            if cursor:
-                ingreso_datos("Registro de cuenta","Registro eliminado")
-                self.tablacuenta.removeRow(selectedRow)
-                self.n_cuenta.clear()
-                self.t_cuenta.clear()
-                self.descripcion.clear()
-                self.categoria.clear()
-                self.tablacuenta.clearSelection() # Deselecciona la fila
+        elimCuenta = inicio("Registro de disciplina","¿Desea eliminar cliente?")
+        if elimCuenta == QMessageBox.StandardButton.Yes:
+            elimCuenta = inicio("Registro de disciplina","¿Seguro que desea eliminar cliente?")
+            if elimCuenta == QMessageBox.StandardButton.Yes:
+                try:
+                    db = conectar_base_de_datos()
+                    cursor = db.cursor()
+                    cursor.execute(f"DELETE FROM cuenta WHERE id_cuenta = {id_cuenta}")
+                    db.commit()
+                    if cursor:
+                        ingreso_datos("Registro de cuenta","Registro eliminado")
+                        self.tablacuenta.removeRow(selectedRow)
+                        self.n_cuenta.clear()
+                        self.t_cuenta.clear()
+                        self.descripcion.clear()
+                        self.categoria.clear()
+                        self.tablacuenta.clearSelection() # Deselecciona la fila
+                    else:
+                        ingreso_datos("Registro de cuenta","Registro no eliminado")  
+                                    
+                except Error as ex:
+                    errorConsulta("Registro de cuenta",f"Error en la consulta: {str(ex)}")
+                    print("Error executing the query", ex)
+                cursor.close()
+                db.close()
             else:
-                ingreso_datos("Registro de cuenta","Registro no eliminado")  
-                            
-        except Error as ex:
-            errorConsulta("Registro de cuenta",f"Error en la consulta: {str(ex)}")
-            print("Error executing the query", ex)
-        cursor.close()
-        db.close()
+                print("Error, no eliminado")
+        else:
+            print("NO SE ELIMINO")
+                

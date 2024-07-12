@@ -1,6 +1,23 @@
 from modulos.mensajes import mensaje_ingreso_datos
 import re
    
+def guardarACTIVIDAD(self, actividad, precio):
+    actividad = actividad.strip()
+    if not (actividad != "" and actividad.replace("", " ") and isinstance(actividad, str) and re.findall(r'^[a-zA-ZáéíóúÁÉÍÓÚüÜ\s]+$',actividad)):
+        mensaje_ingreso_datos("Registro de disciplina","La 'Disciplina' debe contener:\n\n- Letras y/o espacios entre nombres(si tiene mas de dos).")
+        self.input_disciplina4.setFocus()
+        return
+    
+    precio = precio.stirp()
+    patron2 = re.compile(r'^[0-9]+$')
+    if not (precio.isdigit() and patron2.match(precio)):# and len(precio) > 0):
+        mensaje_ingreso_datos("Registro de disciplina","El precio debe ser número entero. Sin coma ','.")
+        self.input_precio.setFocus()
+        return
+    if precio: 
+        precio = int(precio)
+        
+    return "Carga de datos correcta"
 
 def completar_CAMPOS_ACTIVIDAD(self):
     row = self.tableActivi.currentRow()

@@ -3,34 +3,25 @@ import re
 from qss.style_item import itemColor_RESULTADO, itemColor_TOTAL
 
 
-def registroUSER(nombre1, apellido1, dni, sexo, edad, celu):
-    # patron = re.compile(r'^[a-zA-ZáéíóúÁÉÍÓÚüÜ\'\s]+$') 
-    # patron2 = re.compile(r'[!@#$%^&*()_+-={};:"\|,.<>/?~`]')
-    espacio = " "
-    if (nombre1.isalpha() and isinstance(nombre1, str) and re.findall(r'^[a-zA-ZáéíóúÁÉÍÓÚüÜ\'\s]+$',nombre1)) or nombre1.isalnum() or re.findall(r'[!@#$%^&*()_+-={};:"\|,.<>/?~`]', nombre1):
+def registroUSER(self,nombre1, apellido1, dni, sexo, edad, celu):
+    
+    nombre1 = nombre1.strip()
+    if not (nombre1 != "" and nombre1.replace("", " ") and isinstance(nombre1, str) and re.findall(r'^[a-zA-ZáéíóúÁÉÍÓÚüÜ\'\s]+$',nombre1)):
         mensaje_ingreso_datos("Registro de cliente","El 'Nombre' debe contener:\n\n- Letras y/o espacios entre nombres(si tiene mas de dos).")
-        print(nombre1)
+        self.input_nombre1.setFocus()
         return
-    try:
-        if nombre1 or re.sub(r'" "',espacio, nombre1):
-            print("Validación",f"'{nombre1}' válido")
-    except ValueError:
-        mensaje_ingreso_datos("Registro de cliente", "'Nombre' mal escrito. Vuelva a intentar")
-        
-    if (apellido1.isalpha() and isinstance(apellido1, str) and re.findall(r'^[a-zA-ZáéíóúÁÉÍÓÚüÜ\'\s]+$',apellido1)) or apellido1.isalnum() or re.findall(r'[!@#$%^&*()_+-={};:"\|,.<>/?~`]', apellido1):
+    
+    apellido1 = apellido1.strip()
+    if not (apellido1 != "" and apellido1.replace("", " ") and isinstance(apellido1, str) and re.findall(r'^[a-zA-ZáéíóúÁÉÍÓÚüÜ\'\s]+$',apellido1)):
         mensaje_ingreso_datos("Registro de cliente","El 'apellido' debe contener:\n\n- Letras y/o espacios entre nombres(si tiene mas de dos).")
-        print(apellido1)
+        self.input_apellido1.setFocus()
         return
-    try:
-        if apellido1 or re.sub(r'" "',espacio, apellido1):
-            print("Validación",f"'{apellido1}' válido")
-    except ValueError:
-        mensaje_ingreso_datos("Registro de cliente", "'apellido' mal escrito. Vuelva a intentar")
     
     patron_dni = re.compile(r'^\d{8}$')
     if not dni.isdigit() or not patron_dni.match(dni) or not len(dni) == 8:#or not len(dni) == 8
         mensaje_ingreso_datos("Registro de cliente","El DNI debe contener: \n\n- Números enteros (8).\n- No contener puntos(.)")
-        return   
+        self.input_dni.setFocus()
+        return
     try:
         if dni:
             dni = int(dni)
@@ -47,6 +38,7 @@ def registroUSER(nombre1, apellido1, dni, sexo, edad, celu):
     patron_edad = re.compile(r'^\d{2}$')
     if not edad.isdigit() or not len(edad) == 2 or not patron_edad.match(edad):
         mensaje_ingreso_datos("Registro de cliente","La Edad debe contener:\n\n- Contener 2 (DOS) números enteros.\n- No contener puntos(.)")
+        self.input_age.setFocus()
         return
     try:
         if edad:
@@ -58,6 +50,7 @@ def registroUSER(nombre1, apellido1, dni, sexo, edad, celu):
     patron_celu = re.compile(r'^[0-9]+$')
     if not (celu.isdigit() and patron_celu.match(celu)):
         mensaje_ingreso_datos("Registro de cliente","El Celular debe ser:\n\n- Números enteros.\n- No contener puntos(.)")
+        self.input_celular.setFocus()
         return
     try:
         if celu:
@@ -77,6 +70,14 @@ def limpiasElementosUser(self,QDate):
     self.input_age.clear()
     self.input_celular.clear()
     self.input_date.setDate(QDate.currentDate())
+
+def limpiar_tablaRecord(self):  
+    # Obtener el número de filas de la tabla
+    filas = self.tablaRecord.rowCount()
+
+    # Eliminar todas las filas de la tabla
+    for i in range(filas):
+        self.tablaRecord.removeRow(0)  # Eliminar la fila en la posición 0
     
 def limpiar_campos(self):
     if not self.tablaUpdateRecord.currentItem():
@@ -128,13 +129,65 @@ def autoCompletadoACTULIZAR(self,QDate):
 
     # self.tablaUpdateRecord.clearSelection()  # Deseleccionar la fila eliminada
 
-def limpiar_tablaRecord(self):  
-    # Obtener el número de filas de la tabla
-    filas = self.tablaRecord.rowCount()
+def actualizacionUSER(self,nombre2, apellido2, dni2, sexo2, edad2, celu2):
+    
+    nombre2 = nombre2.strip()
+    if not (nombre2 != "" and nombre2.replace("", " ") and isinstance(nombre2, str) and re.findall(r'^[a-zA-ZáéíóúÁÉÍÓÚüÜ\'\s]+$',nombre2)):
+        mensaje_ingreso_datos("Registro de cliente","El 'Nombre' debe contener:\n\n- Letras y/o espacios entre nombres(si tiene mas de dos).")
+        self.input_nombre2.setFocus()
+        return
+    
+    apellido2 = apellido2.strip()
+    if not (apellido2 != "" and apellido2.replace("", " ") and isinstance(apellido2, str) and re.findall(r'^[a-zA-ZáéíóúÁÉÍÓÚüÜ\'\s]+$',apellido2)):
+        mensaje_ingreso_datos("Registro de cliente","El 'apellido' debe contener:\n\n- Letras y/o espacios entre nombres(si tiene mas de dos).")
+        self.input_apellido2.setFocus()
+        return
+    
+    patron_dni = re.compile(r'^\d{8}$')
+    if not dni2.isdigit() or not patron_dni.match(dni2) or not len(dni2) == 8:#or not len(dni) == 8
+        mensaje_ingreso_datos("Registro de cliente","El DNI debe contener: \n\n- Números enteros (8).\n- No contener puntos(.)")
+        self.input_dni.setFocus()
+        return
+    try:
+        if dni2:
+            dni2 = int(dni2)
+    except ValueError:
+        mensaje_ingreso_datos("Registro de cliente","El Celular debe ser numérico")
+        return
+    
+    if not isinstance(sexo2, str) or not sexo2.isalpha():
+        mensaje_ingreso_datos("Registro de cliente","Debe elegir un sexo.\n\nEl sexo es 'Hombre' o 'Mujer'")
+        return
+    if sexo2:
+        sexo2 = sexo2.capitalize()    
+    
+    patron_edad = re.compile(r'^\d{2}$')
+    if not edad2.isdigit() or not len(edad2) == 2 or not patron_edad.match(edad2):
+        mensaje_ingreso_datos("Registro de cliente","La Edad debe contener:\n\n- Contener 2 (DOS) números enteros.\n- No contener puntos(.)")
+        self.input_age2.setFocus()
+        return
+    try:
+        if edad2:
+            edad2 = int(edad2)
+    except ValueError:
+        mensaje_ingreso_datos("Registro de cliente","El Celular debe ser numérico")
+        return
+            
+    patron_celu = re.compile(r'^[0-9]+$')
+    if not (celu2.isdigit() and patron_celu.match(celu2)):
+        mensaje_ingreso_datos("Registro de cliente","El Celular debe ser:\n\n- Números enteros.\n- No contener puntos(.)")
+        self.input_celular2.setFocus()
+        return
+    try:
+        if celu2:
+            celu2 = int(celu2)
+            print(f"El celular es {celu2}")
+    except ValueError:
+        mensaje_ingreso_datos("Registro de cliente","El Celular debe ser numérico")
+        return
+    
+    return "Validación exitosa."
 
-    # Eliminar todas las filas de la tabla
-    for i in range(filas):
-        self.tablaRecord.removeRow(0)  # Eliminar la fila en la posición 0
         
 def limpiar_tablaUpdate(self):
     # Obtener el número de filas de la tabla
