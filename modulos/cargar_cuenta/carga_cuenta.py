@@ -167,7 +167,7 @@ class CuentaContable(QDialog):
         if not isinstance(tipo, str) or not tipo.isalpha():
             mensaje_ingreso_datos("Registro de cuenta","El Tipo debe contener:\n\n- Activo.\n- Pasivo.\n- Ingreso.\n- Engreso.\n- Patrimonio.")
             return
-        sugerencia = actualizar_combobox_TipoCUENTA(self,QCompleter,Qt,style)
+        sugerencia = actualizar_combobox_TipoCUENTA(self)
         if tipo not in sugerencia: 
             mensaje_ingreso_datos("Registro de cuenta", "Debe elegir el tipo de cuenta de la lista de sugerencias")
             return
@@ -181,7 +181,7 @@ class CuentaContable(QDialog):
         if not isinstance(categor, str) or not categor.isalpha():
             mensaje_ingreso_datos("Registro de cuenta","La Categoría deben contener:\n\n- 'Debe' o 'Haber'.")
             return 
-        debe_haber = actualizar_combobox_Categoria(self,QCompleter,Qt,style)
+        debe_haber = actualizar_combobox_Categoria(self)
         if categor not in debe_haber: 
             mensaje_ingreso_datos("Registro de cuenta", "Debe elegir la categoria('debe' o 'haber') correspondiente\na la cuenta a crear y a la lista de sugerencias")
             return

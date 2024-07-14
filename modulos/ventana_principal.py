@@ -146,7 +146,10 @@ class VentanaPrincipal(QMainWindow):
                 return
             case 5:
                 self.id_horas_empleado.setFocus()
-                                                
+                
+                # Definir el atributo id_empleado_seleccionado
+                self.id_empleado_seleccionado = None
+                
                 # ---- Para 'EMPLEADO' ----
                 # Consulta para obtener los datos de una columna específica
                 cursor.execute("SELECT id_empleado, nombre FROM registro_empleado WHERE habilitado = 1 ORDER BY nombre ASC")
@@ -177,7 +180,7 @@ class VentanaPrincipal(QMainWindow):
                 self.view_nomb.setCompleter(nombre)
 
                 # --- Para 'BALANCE' --- Actualización para la DISCIPLINA
-                cursor.execute("SELECT d.nombre FROM disciplina d WHERE habilitado = 1 2mnbvcxz 1_x m14[_nhyup´+0 0000 ORDER BY d.nombre ASC")
+                cursor.execute("SELECT d.nombre FROM disciplina d WHERE habilitado = 1 ORDER BY d.nombre ASC")
                 datos = cursor.fetchall()
                 self.activi = [str(item[0]) for item in datos]
 

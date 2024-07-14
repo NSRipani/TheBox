@@ -265,7 +265,7 @@ class Asistencia(QMainWindow):
                 diferencia_dias = (ultima_fecha + timedelta(days=30)) - fecha_actual
                 dias = diferencia_dias.days
                 
-                texto_cuota = f"\nÚltimo pago: {ultima_fecha}. \n\nPróximo pago en {abs(dias)} días.\n"
+                texto_cuota = f"\nÚltimo pago: {ultima_fecha.strftime('%d-%m-%Y')}. \n\nPróximo pago en {abs(dias)} días.\n"
                 texto_vencido = f"\n!Atención! Cuota vencida hace {abs(dias)} días.\n\nRegularice su cuenta mensual.\n"
                 
                 if 31 > dias > 14:
