@@ -2,18 +2,21 @@ from qss.style_item import itemColor_RESULTADO,itemColor_TOTAL
 import re
 from modulos.mensajes import mensaje_ingreso_datos
 
-def validaciones(date,descripcion,descripcion_h,deber,haberes):
+def validaciones(self,date,descripcion,descripcion_h,deber,haberes):
     if not date:
         mensaje_ingreso_datos("Registro de Ingresos-Egresos","Debe establcer un rango de inicio y fin de fechas.")
         return
-    patron_texto_con_espacio = re.compile(r'^[a-zA-Z\s]+$')
-    if not descripcion.isalpha() and descripcion_h != '' and patron_texto_con_espacio.match(descripcion):
+    
+    descripcion = descripcion.strip()
+    if not (descripcion != " " and descripcion.replace(" ", "") and isinstance(descripcion, str) and re.findall(r'^[a-zA-ZáéíóúÁÉÍÓÚüÜ\'\s]+$',descripcion)):
         mensaje_ingreso_datos("Registro de Ingresos-Egresos", "El concepto en el 'Debe' debe ser solo texto o puede estar vacio.")
+        self.concepto_debe.setFocus()
         return
     
-    if not descripcion_h.isalpha() and descripcion_h != '' and patron_texto_con_espacio.match(descripcion_h):
+    descripcion_h = descripcion_h.strip()
+    if not (descripcion_h != " " and descripcion_h.replace(" ", "") and isinstance(descripcion_h, str) and re.findall(r'^[a-zA-ZáéíóúÁÉÍÓÚüÜ\'\s]+$',descripcion_h)):
         mensaje_ingreso_datos("Registro de Ingresos-Egresos", "El concepto en el 'Haber' debe ser solo texto o puede estar vacio.")
-        return
+        self.concepto_haber.setFocus() 
     
     patron_mun = re.compile(r'^[0-9]+$')
     if not (deber.isnumeric() and patron_mun.match(deber)):

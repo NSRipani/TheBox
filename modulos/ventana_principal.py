@@ -189,17 +189,18 @@ class VentanaPrincipal(QMainWindow):
                 actividad.setCompletionMode(QCompleter.CompletionMode.PopupCompletion)
                 actividad.popup().setStyleSheet(style.completer)
                 self.view_disciplina.setCompleter(actividad)
-                return
+                return 
             case 7:
                 self.concepto_debe.setFocus()
                 
+                
                 # --- Para CONTABILIDAD --- CUENTA DEBE
                 # Consulta para obtener los datos de una columna específica
-                cursor.execute("SELECT nombre FROM cuenta WHERE categoria = 'debe'")
+                cursor.execute("SELECT nombre FROM cuenta WHERE habilitado = 1 AND categoria = 'debe'")
                 dato = cursor.fetchall()
-                sugerencia = [str(item[0]) for item in dato]
-
-                lista_debe = QCompleter(sugerencia)
+                self.sugerencia1 = [str(item[0]) for item in dato]
+                
+                lista_debe = QCompleter(self.sugerencia1)
                 lista_debe.setCaseSensitivity(Qt.CaseSensitivity.CaseInsensitive)
                 lista_debe.setCompletionMode(QCompleter.CompletionMode.PopupCompletion)
                 lista_debe.popup().setStyleSheet(style.completer)
@@ -207,16 +208,18 @@ class VentanaPrincipal(QMainWindow):
                 
                 # --- Para CONTABILIDAD --- CUENTA HABER
                 # Consulta para obtener los datos de una columna específica
-                cursor.execute("SELECT nombre FROM cuenta WHERE categoria = 'haber'")
+                cursor.execute("SELECT nombre FROM cuenta WHERE habilitado = 1 AND categoria = 'haber'")
                 datos = cursor.fetchall()
-                sugerencia = [str(item[0]) for item in datos]
+                self.sugerencia2 = [str(item[0]) for item in datos]
 
-                lista_haber = QCompleter(sugerencia)
+                lista_haber = QCompleter(self.sugerencia2)
                 lista_haber.setCaseSensitivity(Qt.CaseSensitivity.CaseInsensitive)
                 lista_haber.setCompletionMode(QCompleter.CompletionMode.PopupCompletion)
                 lista_haber.popup().setStyleSheet(style.completer)
                 self.concepto_haber.setCompleter(lista_haber)
-                return        
+                                
+                return
+            
         cursor.close()
         conn.close()
     
@@ -3128,13 +3131,22 @@ class VentanaPrincipal(QMainWindow):
         
     # -------------- LIBRO DIARIO -----------------------------
     def registrar_datos(self):
+        
         date = self.fecha_gastos.date().toPyDate()
         descripcion = self.concepto_debe.text().capitalize()
+        if descripcion not in self.sugerencia1:
+            mensaje_ingreso_datos("Registro de Ingresos-Egresos", "El concepto que desea ingresar, para el DEBE, no esta en lista de sugerencias")
+            return
+        
         descripcion_h = self.concepto_haber.text().capitalize()
+        if descripcion_h not in self.sugerencia2:
+            mensaje_ingreso_datos("Registro de Ingresos-Egresos", "El concepto que desea ingresar, para el HABER, no esta en lista de sugerencias")
+            return
+        
         deber = self.debe.text()
         haberes = self.haber.text()      
         
-        validadcion = validaciones(date,descripcion,descripcion_h,deber,haberes)
+        validadcion = validaciones(self,date,descripcion,descripcion_h,deber,haberes)
         if validadcion != "Validación exitosa.":
             mensaje_ingreso_datos("Error de validación", "Verifique los datos por favor")
             return
@@ -3180,12 +3192,21 @@ class VentanaPrincipal(QMainWindow):
         
         id_concepto = int(self.tablaGastos.item(self.tablaGastos.currentRow(),0).text())
         date = self.fecha_gastos.date().toPyDate()
+        
         descripcion = self.concepto_debe.text().capitalize()
+        if descripcion not in self.sugerencia1:
+            mensaje_ingreso_datos("Registro de Ingresos-Egresos", "El concepto que desea ingresar, para el DEBE, no esta en lista de sugerencias")
+            return
+        
         descripcion_h = self.concepto_haber.text().capitalize()
+        if descripcion_h not in self.sugerencia2 :
+            mensaje_ingreso_datos("Registro de Ingresos-Egresos", "El concepto que desea ingresar, para el HABER, no esta en lista de sugerencias")
+            return
+        
         deber = self.debe.text()
         haberes = self.haber.text()
         
-        validadcion = validaciones(date,descripcion,descripcion_h,deber,haberes)
+        validadcion = validaciones(self,date,descripcion,descripcion_h,deber,haberes)
         if validadcion != "Validación exitosa.":
             mensaje_ingreso_datos("Error de validación", "Verifique los datos por favor")
             return        
@@ -3227,7 +3248,7 @@ class VentanaPrincipal(QMainWindow):
             db = conectar_base_de_datos()
             cursor = db.cursor()
             
-            cursor.execute(f"SELECT * FROM contabilidad WHERE fecha BETWEEN '{principio}' AND '{final}' ORDER BY fecha ASC")
+            cursor.execute(f"SELECT * FROM contabilidad WHERE habilitado = 1 AND fecha BETWEEN '{principio}' AND '{final}' ORDER BY fecha ASC")
             busqueda = cursor.fetchall()
             if len(busqueda) > 0:
                 ingreso_datos("Registro de Ingresos-Egresos",f"Se encontraron {len(busqueda)} coincidencias.")
