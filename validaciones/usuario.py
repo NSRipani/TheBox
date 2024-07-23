@@ -18,7 +18,7 @@ def registroUSER(self,nombre1, apellido1, dni, sexo, edad, celu):
         return
     
     patron_dni = re.compile(r'^\d{8}$')
-    if not dni.isdigit() or not patron_dni.match(dni) or not len(dni) == 8:#or not len(dni) == 8
+    if not dni.isdigit() or not patron_dni.match(dni) or not len(dni) == 8:
         mensaje_ingreso_datos("Registro de cliente","El DNI debe contener: \n\n- Números enteros (8).\n- No contener puntos(.)")
         self.input_dni.setFocus()
         return

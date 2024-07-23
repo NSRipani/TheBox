@@ -65,6 +65,5 @@ def tabla_DISCIPLINA(self, resultados, cursor, QHeaderView, QTableWidget, QAbstr
             if j in [0, 2]:  # Ajustar alineación para ciertas columnas
                 item.setTextAlignment(Qt.AlignmentFlag.AlignCenter)   
             if j == 2:   
-                item.setText(f"$ {val}")
                 item.setTextAlignment(Qt.AlignmentFlag.AlignRight)   
             self.tableActivi.setItem(i, j, item)

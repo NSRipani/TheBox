@@ -2,21 +2,25 @@ from qss.style_item import itemColor_RESULTADO,itemColor_TOTAL
 import re
 from modulos.mensajes import mensaje_ingreso_datos
 
-def validaciones(self,date,descripcion,descripcion_h,deber,haberes):
+def validaciones(self,sugerencia1,sugerencia2,date,descripcion,descripcion_h,deber,haberes):
     if not date:
         mensaje_ingreso_datos("Registro de Ingresos-Egresos","Debe establcer un rango de inicio y fin de fechas.")
         return
     
     descripcion = descripcion.strip()
-    if not (descripcion != " " and descripcion.replace(" ", "") and isinstance(descripcion, str) and re.findall(r'^[a-zA-ZáéíóúÁÉÍÓÚüÜ\'\s]+$',descripcion)):
+    if not (descripcion in self.sugerencia1 and isinstance(descripcion, str) and re.findall(r'^[a-zA-ZáéíóúÁÉÍÓÚüÜ\'\s]+$',descripcion)):
         mensaje_ingreso_datos("Registro de Ingresos-Egresos", "El concepto en el 'Debe' debe ser solo texto o puede estar vacio.")
         self.concepto_debe.setFocus()
         return
+    descripcion = " ".replace(" ", "") 
+    # and descripcion != " " and descripcion.replace(" ", "")
     
     descripcion_h = descripcion_h.strip()
-    if not (descripcion_h != " " and descripcion_h.replace(" ", "") and isinstance(descripcion_h, str) and re.findall(r'^[a-zA-ZáéíóúÁÉÍÓÚüÜ\'\s]+$',descripcion_h)):
+    if not (descripcion_h in self.sugerencia2 and isinstance(descripcion_h, str) and re.findall(r'^[a-zA-ZáéíóúÁÉÍÓÚüÜ\'\s]+$',descripcion_h)):
         mensaje_ingreso_datos("Registro de Ingresos-Egresos", "El concepto en el 'Haber' debe ser solo texto o puede estar vacio.")
         self.concepto_haber.setFocus() 
+    descripcion_h = " ".replace(" ", "") 
+    # and descripcion_h != " " and descripcion_h.replace(" ", "") 
     
     patron_mun = re.compile(r'^[0-9]+$')
     if not (deber.isnumeric() and patron_mun.match(deber)):
@@ -113,8 +117,7 @@ def tabla_contabilidad(self,cursor,busqueda,QHeaderView,QTableWidget,QAbstractIt
             if j in [0, 1]:  # Ajustar alineación para ciertas columnas
                 item.setTextAlignment(Qt.AlignmentFlag.AlignCenter) 
             if j in [4, 5]:
-                item.setTextAlignment(Qt.AlignmentFlag.AlignRight) 
-                item.setText(f"$ {val}")
+                item.setTextAlignment(Qt.AlignmentFlag.AlignRight)
             self.tablaGastos.setItem(i, j, item)
             
         # Calcular y mostrar la suma de las horas diarias en la fila adicional

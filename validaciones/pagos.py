@@ -49,7 +49,7 @@ def tabla_pagos(self, cursor, result, QHeaderView, QTableWidget, QAbstractItemVi
                 item.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
             if j == 5:  # Ajustar alineación para ciertas columnas
                 item.setTextAlignment(Qt.AlignmentFlag.AlignRight)
-                item.setText(f"$ {val}")
+                # item.setText(f"$ {val}")
             self.tablePagos.setItem(i, j, item)   
             
     total_pagos = sum(int(row[5]) for row in result)

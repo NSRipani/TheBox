@@ -1728,7 +1728,7 @@ class VentanaPrincipal(QMainWindow):
         
         cursor.close()
         conn.close()
-        
+    
         debe = QLabel('Debe ($):',grupo_resumen)
         debe.setStyleSheet(style.label)
         debe.setFixedWidth(80)
@@ -2320,7 +2320,7 @@ class VentanaPrincipal(QMainWindow):
         try:
             db = conectar_base_de_datos()
             cursor = db.cursor()
-            cursor.execute("SELECT id_disciplina, nombre, precio FROM disciplina WHERE disciplina.habilitado = 1 ORDER BY id_disciplina")
+            cursor.execute("SELECT id_disciplina, nombre, precio AS 'PRECIO ($)' FROM disciplina WHERE disciplina.habilitado = 1 ORDER BY id_disciplina")
             resultados = cursor.fetchall()
 
             if len(resultados) > 0:
@@ -2441,7 +2441,7 @@ class VentanaPrincipal(QMainWindow):
     def actualizar_precio(self, text):
         if text in self.disciplinas:
             id_disciplina, precio = self.disciplinas[text]
-            self.label_monto.setText(f"Precio: {precio}")
+            self.label_monto.setText(f"Precio: $ {precio}")
             self.current_id_disciplina = id_disciplina
         else:
             self.label_monto.setText("Precio no encontrado")
@@ -2505,7 +2505,7 @@ class VentanaPrincipal(QMainWindow):
         try:
             db = conectar_base_de_datos()
             cursor = db.cursor()
-            cursor.execute("SELECT p.id_pago, p.id_usuario, c.nombre AS DISCIPLINA, p.modalidad, p.fecha, p.precio FROM pago as p INNER JOIN disciplina as c on p.id_disciplina = c.id_disciplina WHERE p.habilitado = 1 ORDER BY p.fecha;")
+            cursor.execute("SELECT p.id_pago, p.id_usuario, c.nombre AS DISCIPLINA, p.modalidad, p.fecha, p.precio AS 'PRECIO ($)' FROM pago as p INNER JOIN disciplina as c on p.id_disciplina = c.id_disciplina WHERE p.habilitado = 1 ORDER BY p.fecha;")
             result = cursor.fetchall()
             
             if len(result) > 0:
@@ -2649,8 +2649,7 @@ class VentanaPrincipal(QMainWindow):
         try:
             db = conectar_base_de_datos()
             cursor = db.cursor()
-            query = f"SELECT u.nombre, u.apellido, u.dni, u.sexo, u.edad, u.fecha_registro AS REGISTRO, d.nombre AS DISCIPLINA, p.precio, p.fecha, p.modalidad FROM usuario u JOIN pago p ON u.dni = p.id_usuario JOIN disciplina d ON p.id_disciplina = d.id_disciplina WHERE u.dni = '{dni}' AND p.fecha BETWEEN '{fecha_inicio}' AND '{fecha_fin}' ORDER BY p.fecha ASC" # JOIN disciplina d ON p.id_disciplina = d.id_disciplina
-            
+            query = f"SELECT u.nombre, u.apellido, u.dni, u.sexo, u.edad, u.fecha_registro AS REGISTRO, d.nombre AS DISCIPLINA, p.precio AS 'PRECIO ($)', p.fecha, p.modalidad FROM usuario u JOIN pago p ON u.dni = p.id_usuario JOIN disciplina d ON p.id_disciplina = d.id_disciplina WHERE u.dni = '{dni}' AND p.fecha BETWEEN '{fecha_inicio}' AND '{fecha_fin}' ORDER BY p.fecha ASC"
             cursor.execute(query)
             results = cursor.fetchall()
             
@@ -2690,7 +2689,7 @@ class VentanaPrincipal(QMainWindow):
         try:
             db = conectar_base_de_datos()
             cursor = db.cursor()
-            query = f"SELECT u.nombre, u.apellido, u.dni, u.sexo, u.edad, u.celular, u.fecha_registro AS REGISTRO, d.nombre AS DISCIPLINA, p.precio, p.fecha, p.modalidad FROM usuario u JOIN pago p ON u.dni = p.id_usuario JOIN disciplina d ON p.id_disciplina = d.id_disciplina WHERE p.fecha BETWEEN '{fecha_inicio}' AND '{fecha_fin}' ORDER BY p.fecha ASC"
+            query = f"SELECT u.nombre, u.apellido, u.dni, u.sexo, u.edad, u.celular, u.fecha_registro AS REGISTRO, d.nombre AS DISCIPLINA, p.precio AS 'PRECIO ($)', p.fecha, p.modalidad FROM usuario u JOIN pago p ON u.dni = p.id_usuario JOIN disciplina d ON p.id_disciplina = d.id_disciplina WHERE p.fecha BETWEEN '{fecha_inicio}' AND '{fecha_fin}' ORDER BY p.fecha ASC"
             cursor.execute(query)
             results = cursor.fetchall()
             
@@ -2730,7 +2729,7 @@ class VentanaPrincipal(QMainWindow):
         try:
             db = conectar_base_de_datos()
             cursor = db.cursor()
-            query = f"SELECT u.nombre, u.apellido, d.nombre AS DISCIPLINA, SUM(p.precio) AS total_precio, '{fecha_inicio}' AS inicio_periodo, '{fecha_fin}' AS fin_periodo FROM usuario u JOIN pago p ON u.dni = p.id_usuario JOIN disciplina d ON p.id_disciplina = d.id_disciplina WHERE p.fecha BETWEEN '{fecha_inicio}' AND '{fecha_fin}' GROUP BY u.nombre, u.apellido, d.nombre"
+            query = f"SELECT u.nombre, u.apellido, d.nombre AS DISCIPLINA, SUM(p.precio) AS 'TOTAL PRECIO ($)', '{fecha_inicio}' AS inicio_periodo, '{fecha_fin}' AS fin_periodo FROM usuario u JOIN pago p ON u.dni = p.id_usuario JOIN disciplina d ON p.id_disciplina = d.id_disciplina WHERE p.fecha BETWEEN '{fecha_inicio}' AND '{fecha_fin}' GROUP BY u.nombre, u.apellido, d.nombre"
             cursor.execute(query)
             results = cursor.fetchall()
             
@@ -2778,7 +2777,7 @@ class VentanaPrincipal(QMainWindow):
         try:
             db = conectar_base_de_datos()
             cursor = db.cursor()
-            query = f"SELECT u.nombre, u.apellido, u.dni, u.sexo, u.edad, d.nombre AS DISCIPLINA, p.modalidad, p.fecha, SUM(p.precio) AS total_precio FROM usuario u JOIN pago p ON u.dni = p.id_usuario JOIN disciplina d ON p.id_disciplina = d.id_disciplina WHERE p.fecha BETWEEN '{fecha_inicio}' AND '{fecha_fin}' AND d.nombre = '{actividad}' GROUP BY u.nombre, u.apellido, u.dni, u.sexo, u.edad, d.nombre, p.modalidad, p.fecha ORDER BY p.fecha ASC"
+            query = f"SELECT u.nombre, u.apellido, u.dni, u.sexo, u.edad, d.nombre AS DISCIPLINA, p.modalidad, p.fecha, SUM(p.precio) AS 'TOTAL PRECIO ($)' FROM usuario u JOIN pago p ON u.dni = p.id_usuario JOIN disciplina d ON p.id_disciplina = d.id_disciplina WHERE p.fecha BETWEEN '{fecha_inicio}' AND '{fecha_fin}' AND d.nombre = '{actividad}' GROUP BY u.nombre, u.apellido, u.dni, u.sexo, u.edad, d.nombre, p.modalidad, p.fecha ORDER BY p.fecha ASC"
             
             cursor.execute(query)
             results = cursor.fetchall()
@@ -3130,27 +3129,28 @@ class VentanaPrincipal(QMainWindow):
         horas_Excel(self,Workbook,Font,PatternFill,Border,Side,numbers,QFileDialog)
         
     # -------------- LIBRO DIARIO -----------------------------
+        
     def registrar_datos(self):
         
         date = self.fecha_gastos.date().toPyDate()
         descripcion = self.concepto_debe.text().capitalize()
-        if descripcion not in self.sugerencia1:
-            mensaje_ingreso_datos("Registro de Ingresos-Egresos", "El concepto que desea ingresar, para el DEBE, no esta en lista de sugerencias")
-            return
-        
         descripcion_h = self.concepto_haber.text().capitalize()
-        if descripcion_h not in self.sugerencia2:
-            mensaje_ingreso_datos("Registro de Ingresos-Egresos", "El concepto que desea ingresar, para el HABER, no esta en lista de sugerencias")
-            return
-        
         deber = self.debe.text()
-        haberes = self.haber.text()      
-        
-        validadcion = validaciones(self,date,descripcion,descripcion_h,deber,haberes)
+        haberes = self.haber.text()
+                
+        validadcion = validaciones(self,self.sugerencia1,self.sugerencia2,date,descripcion,descripcion_h,deber,haberes)
         if validadcion != "Validación exitosa.":
             mensaje_ingreso_datos("Error de validación", "Verifique los datos por favor")
             return
 
+        # if descripcion not in self.sugerencia1 or not descripcion == "":
+        #     mensaje_ingreso_datos("Registro de Ingresos-Egresos", "El concepto que desea ingresar, para el DEBE, no esta en lista de sugerencias")
+        #     return
+        
+        # if descripcion_h not in self.sugerencia2 or not descripcion_h == "":
+        #     mensaje_ingreso_datos("Registro de Ingresos-Egresos", "El concepto que desea ingresar, para el HABER, no esta en lista de sugerencias")
+        #     return
+        
         ingYegreso = inicio("Registro de Ingresos-Egresos","¿Desea guardar los datos?")
         if ingYegreso == QMessageBox.StandardButton.Yes: 
             try:
@@ -3192,21 +3192,20 @@ class VentanaPrincipal(QMainWindow):
         
         id_concepto = int(self.tablaGastos.item(self.tablaGastos.currentRow(),0).text())
         date = self.fecha_gastos.date().toPyDate()
-        
         descripcion = self.concepto_debe.text().capitalize()
-        if descripcion not in self.sugerencia1:
-            mensaje_ingreso_datos("Registro de Ingresos-Egresos", "El concepto que desea ingresar, para el DEBE, no esta en lista de sugerencias")
-            return
-        
         descripcion_h = self.concepto_haber.text().capitalize()
-        if descripcion_h not in self.sugerencia2 :
-            mensaje_ingreso_datos("Registro de Ingresos-Egresos", "El concepto que desea ingresar, para el HABER, no esta en lista de sugerencias")
-            return
-        
         deber = self.debe.text()
         haberes = self.haber.text()
         
-        validadcion = validaciones(self,date,descripcion,descripcion_h,deber,haberes)
+        # if descripcion not in self.sugerencia1:
+        #     mensaje_ingreso_datos("Registro de Ingresos-Egresos", "El concepto que desea ingresar, para el DEBE, no esta en lista de sugerencias")
+        #     return
+        
+        # if descripcion_h not in self.sugerencia2 :
+        #     mensaje_ingreso_datos("Registro de Ingresos-Egresos", "El concepto que desea ingresar, para el HABER, no esta en lista de sugerencias")
+        #     return
+        
+        validadcion = validaciones(self,self.sugerencia1,self.sugerencia2,date,descripcion,descripcion_h,deber,haberes)
         if validadcion != "Validación exitosa.":
             mensaje_ingreso_datos("Error de validación", "Verifique los datos por favor")
             return        
@@ -3248,7 +3247,7 @@ class VentanaPrincipal(QMainWindow):
             db = conectar_base_de_datos()
             cursor = db.cursor()
             
-            cursor.execute(f"SELECT * FROM contabilidad WHERE habilitado = 1 AND fecha BETWEEN '{principio}' AND '{final}' ORDER BY fecha ASC")
+            cursor.execute(f"SELECT id_concepto AS REGISTRO, fecha, concepto_debe, concepto_haber, debe AS 'DEBE ($)', haber AS 'HABER ($)' FROM contabilidad WHERE fecha BETWEEN '{principio}' AND '{final}' AND habilitado = 1 ORDER BY fecha ASC")
             busqueda = cursor.fetchall()
             if len(busqueda) > 0:
                 ingreso_datos("Registro de Ingresos-Egresos",f"Se encontraron {len(busqueda)} coincidencias.")
