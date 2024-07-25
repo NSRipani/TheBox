@@ -30,6 +30,7 @@ class Empleado(QDialog):
     def __init__(self):
         super().__init__()
         self.empleo()
+        self.eliminacion_pendiente = False  # Atributo para controlar el estado del botón
         
     def empleo(self):
         self.setWindowTitle("Registro de empleado")
@@ -156,7 +157,8 @@ class Empleado(QDialog):
         self.tablaEmp = QTableWidget()
         self.tablaEmp.setStyleSheet(style.esttabla)
         self.tablaEmp.clicked.connect(self.autocompleto_de_datos_empleado)
-        
+        self.tablaEmp.itemSelectionChanged.connect(self.seleccionar_fila)
+
         # Crear un layout vertical para el QGroupBox
         vbox = QVBoxLayout()
         vbox.addLayout(form_layout)
@@ -256,6 +258,11 @@ class Empleado(QDialog):
             mensaje_ingreso_datos("Registro de empleado","Debe seleccionar el empleado te la tabla para actualizar")
             return
         
+        # Verifica si ya se presionó el botón sin seleccionar una nueva fila
+        if self.eliminacion_pendiente:
+            mensaje_ingreso_datos("Registro de empleado", "Debe seleccionar una nueva fila antes de eliminar otro registro")
+            return
+        
         id_empl = int(self.tablaEmp.item(self.tablaEmp.currentRow(), 0).text())
         nom_emp = self.nombre.text().title()
         apell_emp = self.apellido.text().title()
@@ -269,32 +276,30 @@ class Empleado(QDialog):
         if validacion != "Validación exitosa.":
             mensaje_ingreso_datos("Error de validación", "Verifique los datos por favor")
             return
-                
-        empleado_Actualizar = inicio("Busqueda de empleado","¿Seguro que desea actulizar?")
-        if empleado_Actualizar == QMessageBox.StandardButton.Yes:   
-            try:
-                db = conectar_base_de_datos()
-                cursor = db.cursor()
-                cursor.execute("UPDATE registro_empleado SET nombre = %s, apellido = %s, sexo = %s, edad = %s,  dni = %s, celular = %s, fecha = %s"
-                               "WHERE id_empleado = %s", (nom_emp,apell_emp,sex_emp,edad_emp,dni_emp,cel,fecha,id_empl))
-                db.commit() 
-                
-                if cursor:
-                    ingreso_datos("Registro de empleado","Registro actualizado")
-                    lim_campos(self,QDate)
-                else:
-                    ingreso_datos("Registro de empleado","Registro no actualizado")
-                    
-                cursor.close()
-                db.close() 
-                
+       
+        try:
+            db = conectar_base_de_datos()
+            cursor = db.cursor()
+            cursor.execute("UPDATE registro_empleado SET nombre = %s, apellido = %s, sexo = %s, edad = %s,  dni = %s, celular = %s, fecha = %s"
+                            "WHERE id_empleado = %s", (nom_emp,apell_emp,sex_emp,edad_emp,dni_emp,cel,fecha,id_empl))
+            db.commit() 
+            
+            if cursor:
+                ingreso_datos("Registro de empleado","Registro actualizado")
+                lim_campos(self,QDate)
                 self.tablaEmp.clearSelection() # Deselecciona la fila
+            else:
+                ingreso_datos("Registro de empleado","Registro no actualizado")
                 
-            except Error as ex:
-                errorConsulta("Registro de empleado",f"Error en la consulta: {str(ex)}")
-                print("Error executing the query", ex)
-        else:
-            print("No se actualiza registro")
+            cursor.close()
+            db.close() 
+            
+            # self.tablaEmp.clearSelection() # Deselecciona la fila
+            self.eliminacion_pendiente = True  # Marca que se ha eliminado un registro y no se ha seleccionado una nueva fila
+            
+        except Error as ex:
+            errorConsulta("Registro de empleado",f"Error en la consulta: {str(ex)}")
+            print("Error executing the query", ex)    
 
     def eliminar_empleado(self):
         # Primero corroborar la seleccion de la fila
@@ -306,8 +311,15 @@ class Empleado(QDialog):
         selectedRow = self.tablaEmp.currentItem().row()
         id_emple = int(self.tablaEmp.item(selectedRow, 0).text())
         
+        # Verifica si ya se presionó el botón sin seleccionar una nueva fila
+        if self.eliminacion_pendiente:
+            mensaje_ingreso_datos("Registro de empleado", "Debe seleccionar una nueva fila antes de eliminar otro registro")
+            return
+        
         empleado_eliminar = inicio("Registro de empleado","¿Desea eliminar el empleado?")
         if empleado_eliminar == QMessageBox.StandardButton.Yes:
+            # empleado_eliminar = inicio("Registro de empleado","¿Seguro que desea eliminar el empleado?")
+            # if empleado_eliminar == QMessageBox.StandardButton.Yes:
             try:
                 db = conectar_base_de_datos()
                 cursor = db.cursor()
@@ -317,11 +329,13 @@ class Empleado(QDialog):
                 if cursor:
                     ingreso_datos("Registro de empleado","Registro eliminado")
                     self.tablaEmp.removeRow(selectedRow)
+                    self.mostrar_empleado()
                     lim_campos(self,QDate)
-                    self.tablaEmp.clearSelection() # Deselecciona la fila
                 else:
                     ingreso_datos("Registro de empleado","Registro no eliminado")  
-                                
+                self.tablaEmp.clearSelection() # Deselecciona la fila
+                self.eliminacion_pendiente = True  # Marca que se ha eliminado un registro y no se ha seleccionado una nueva fila
+
             except Error as ex:
                 errorConsulta("Registro de empleado",f"Error en la consulta: {str(ex)}")
                 print("Error executing the query", ex)
@@ -330,6 +344,10 @@ class Empleado(QDialog):
             
         else:
             print("No se elimino registro")
-            
+    
+    def seleccionar_fila(self):
+        # Método para manejar la selección de una nueva fila
+        self.eliminacion_pendiente = False  # Restablece el estado al seleccionar una nueva fila
+
     def planilla_excel(self):
         empleado_EXCEL(self,Workbook,Font,PatternFill,Border,Side,numbers,QFileDialog)

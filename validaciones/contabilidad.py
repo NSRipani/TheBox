@@ -2,36 +2,36 @@ from qss.style_item import itemColor_RESULTADO,itemColor_TOTAL
 import re
 from modulos.mensajes import mensaje_ingreso_datos
 
-def validaciones(self,sugerencia1,sugerencia2,date,descripcion,descripcion_h,deber,haberes):
+def validaciones(date,deber,haberes):# self descripcion,descripcion_h,
     if not date:
-        mensaje_ingreso_datos("Registro de Ingresos-Egresos","Debe establcer un rango de inicio y fin de fechas.")
+        mensaje_ingreso_datos("Registro de Ingresos-Egresos","Debe establcer una fecha de registro.")
         return
-    
-    descripcion = descripcion.strip()
-    if not (descripcion in self.sugerencia1 and isinstance(descripcion, str) and re.findall(r'^[a-zA-ZáéíóúÁÉÍÓÚüÜ\'\s]+$',descripcion)):
-        mensaje_ingreso_datos("Registro de Ingresos-Egresos", "El concepto en el 'Debe' debe ser solo texto o puede estar vacio.")
-        self.concepto_debe.setFocus()
-        return
-    descripcion = " ".replace(" ", "") 
-    # and descripcion != " " and descripcion.replace(" ", "")
-    
-    descripcion_h = descripcion_h.strip()
-    if not (descripcion_h in self.sugerencia2 and isinstance(descripcion_h, str) and re.findall(r'^[a-zA-ZáéíóúÁÉÍÓÚüÜ\'\s]+$',descripcion_h)):
-        mensaje_ingreso_datos("Registro de Ingresos-Egresos", "El concepto en el 'Haber' debe ser solo texto o puede estar vacio.")
-        self.concepto_haber.setFocus() 
-    descripcion_h = " ".replace(" ", "") 
-    # and descripcion_h != " " and descripcion_h.replace(" ", "") 
     
     patron_mun = re.compile(r'^[0-9]+$')
     if not (deber.isnumeric() and patron_mun.match(deber)):
         mensaje_ingreso_datos("Registro de Ingresos-Egresos","El debe debe ser numérico")
         return
+    deber = int(deber)
     
     if not (haberes.isnumeric() and patron_mun.match(haberes)):
         mensaje_ingreso_datos("Registro de Ingresos-Egresos","El haber debe ser numérico")
         return
+    haberes = int(haberes)
     
     return "Validación exitosa."
+
+def autocompletoDEBE(self):
+    if self.concepto_debe.text() in self.sugerencia1:
+        self.haber.setText("0")
+    elif not (self.concepto_debe.text() in self.sugerencia2) or self.concepto_debe.clear():
+        self.haber.setText("")
+        
+def autocompletoHABER(self):
+    if self.concepto_haber.text() in self.sugerencia2:
+        self.debe.setText("0")
+    elif not (self.concepto_haber.text() in self.sugerencia2) or self.concepto_haber.clear():
+        self.debe.setText("")
+        
     
 def limpiarCampos(self,QDate):
     self.fecha_gastos.setDate(QDate.currentDate())

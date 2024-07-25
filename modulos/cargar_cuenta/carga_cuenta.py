@@ -28,7 +28,8 @@ class CuentaContable(QDialog):
     def __init__(self):
         super().__init__()
         self.cuenta()
-        
+        self.eliminacion_pendiente = False  # Atributo para controlar el estado del botón
+
     def cuenta(self):
         self.setWindowTitle("Registro de empleado")
         self.setWindowIcon(QIcon("img/logo.png"))
@@ -116,6 +117,7 @@ class CuentaContable(QDialog):
         self.tablacuenta = QTableWidget()
         self.tablacuenta.setStyleSheet(style.esttabla)
         self.tablacuenta.clicked.connect(self.autocompleto_de_datos_tipo)
+        self.tablacuenta.itemSelectionChanged.connect(self.seleccionar_fila)
         
         # Crear un layout vertical para el QGroupBox
         vbox = QVBoxLayout()
@@ -208,7 +210,7 @@ class CuentaContable(QDialog):
         try:
             db = conectar_base_de_datos()
             cursor = db.cursor()
-            cursor.execute(f"SELECT nombre ,tipo, descripcion, categoria FROM cuenta WHERE habilitado = 1 ORDER BY id_cuenta")
+            cursor.execute(f"SELECT id_cuenta AS ID, nombre ,tipo, descripcion, categoria FROM cuenta WHERE habilitado = 1 ORDER BY id_cuenta")
             busqueda = cursor.fetchall()
             if len(busqueda) > 0:
                 ingreso_datos("Registro de cuenta",f"Se encontraron {len(busqueda)} coincidencias.")
@@ -277,7 +279,7 @@ class CuentaContable(QDialog):
         if categor not in debe_haber: 
             mensaje_ingreso_datos("Registro de cuenta", "Debe elegir la categoria('debe' o 'haber') correspondiente\na la cuenta a crear y a la lista de sugerencias")
             return
-           
+        
         try:
             db = conectar_base_de_datos()
             cursor = db.cursor()
@@ -307,9 +309,14 @@ class CuentaContable(QDialog):
         selectedRow = self.tablacuenta.currentItem().row()
         id_cuenta = int(self.tablacuenta.item(selectedRow, 0).text())
         
-        elimCuenta = inicio("Registro de cuenta","¿Desea eliminar cliente?")
+        # Verifica si ya se presionó el botón sin seleccionar una nueva fila
+        if self.eliminacion_pendiente:
+            mensaje_ingreso_datos("Registro de empleado", "Debe seleccionar una nueva fila antes de eliminar otro registro")
+            return
+        
+        elimCuenta = inicio("Registro de cuenta","¿Desea eliminar cuenta?")
         if elimCuenta == QMessageBox.StandardButton.Yes:
-            elimCuenta = inicio("Registro de cuenta","¿Seguro que desea eliminar cliente?")
+            elimCuenta = inicio("Registro de cuenta","¿Seguro que desea eliminar cuenta?")
             if elimCuenta == QMessageBox.StandardButton.Yes:
                 try:
                     db = conectar_base_de_datos()
@@ -323,7 +330,10 @@ class CuentaContable(QDialog):
                         self.limpiarCampos()
                     else:
                         ingreso_datos("Registro de cuenta","Registro no eliminado")  
-                                    
+    
+                    self.tablacuenta.clearSelection()  # Deselecciona la fila
+                    self.eliminacion_pendiente = True  # Marca que se ha eliminado un registro y no se ha seleccionado una nueva fila
+             
                 except Error as ex:
                     errorConsulta("Registro de cuenta",f"Error en la consulta: {str(ex)}")
                     print("Error executing the query", ex)
@@ -333,4 +343,7 @@ class CuentaContable(QDialog):
                 print("Error, no eliminado")
         else:
             print("NO SE ELIMINO")
-                
+    
+    def seleccionar_fila(self):
+        # Método para manejar la selección de una nueva fila
+        self.eliminacion_pendiente = False  # Restablece el estado al seleccionar una nueva fila
