@@ -194,7 +194,6 @@ class VentanaPrincipal(QMainWindow):
             case 7:
                 self.concepto_debe.setFocus()
                 
-                
                 # --- Para CONTABILIDAD --- CUENTA DEBE
                 # Consulta para obtener los datos de una columna específica
                 cursor.execute("SELECT nombre FROM cuenta WHERE habilitado = 1 AND categoria = 'debe'")
