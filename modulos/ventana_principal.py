@@ -2556,7 +2556,7 @@ class VentanaPrincipal(QMainWindow):
         
         tipo = self.input_tipoDePago.text()
         date = self.input_fechaDePago.date().toPyDate()
-        monto = self.label_monto.text().split(": $ ")[1] 
+        # monto = self.label_monto.text().split(": $ ")[1] 
             
         patronB = re.compile(r'^[a-zA-ZáéíóúÁÉÍÓÚüÜ\'\s]+$') 
         if not isinstance(tipo, str) or not patronB.match(tipo):
@@ -2573,7 +2573,7 @@ class VentanaPrincipal(QMainWindow):
         try:
             db = conectar_base_de_datos()
             cursor = db.cursor()
-            cursor.execute(f"UPDATE pago SET id_usuario='{id_alumno}', id_disciplina='{id_activ}', modalidad='{tipo}', fecha='{date}', precio='{monto}' WHERE id_pago='{idpago}'")#
+            cursor.execute(f"UPDATE pago SET id_usuario='{id_alumno}', id_disciplina='{id_activ}', modalidad='{tipo}', fecha='{date}' WHERE id_pago='{idpago}'")#, precio='{monto}'
             db.commit()
         
             if cursor:
