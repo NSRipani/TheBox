@@ -94,7 +94,7 @@ def seleccion_DeTabla(self,QDate):
     self.celular.setText(cel)
     self.fecha.setDate(fecha)
 
-    self.tablaEmp.clearSelection() # Deselecciona la fila
+    # self.tablaEmp.clearSelection() # Deselecciona la fila
 
 def verTabla(self,cursor,busqueda,QHeaderView,QTableWidget,QAbstractItemView,QTableWidgetItem,QDate,Qt):
     headers = [description[0].replace('_', ' ').upper() for description in cursor.description]

@@ -1,6 +1,14 @@
 from qss.style_item import itemColor_RESULTADO, itemColor_TOTAL
 
-def seleccionDeTablaPAGOS(self,QDate):
+def seleccionDeTablaPAGOS(self,QDate,mensaje_ingreso_datos):
+    fila = self.tablePagos.currentRow()
+    if fila == -1:  # Verifica si no se ha seleccionado ninguna fila
+        return
+    # Verifica si la fila seleccionada es la última fila de la tabla
+    if fila == self.tablePagos.rowCount() - 1:
+        mensaje_ingreso_datos("Registro de pagos","La última fila no debe ser precionada")
+        return
+    
     fila = self.tablePagos.currentRow()
     
     id_user = self.tablePagos.item(fila,1).text()
@@ -20,7 +28,7 @@ def seleccionDeTablaPAGOS(self,QDate):
     
     self.actualizar_precio(name_discipl)
     
-    self.tablePagos.clearSelection()  # Deseleccionar la fila eliminada
+    # self.tablePagos.clearSelection()  # Deseleccionar la fila eliminada
 
 def tabla_pagos(self, cursor, result, QHeaderView, QTableWidget, QAbstractItemView, QTableWidgetItem, QDate, Qt):
     # Coloca los nomnbres de la cabecera en mayuscula

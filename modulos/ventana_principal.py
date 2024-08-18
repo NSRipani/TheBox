@@ -517,11 +517,11 @@ class VentanaPrincipal(QMainWindow):
         botonera_registro = QHBoxLayout()
         botonera_registro.setAlignment(Qt.AlignmentFlag.AlignRight)
         button_Guardar = QPushButton('GUARDAR',customer_details)
-        button_Guardar.setFixedWidth(250)
+        button_Guardar.setFixedWidth(200)
         button_Guardar.setCursor(Qt.CursorShape.PointingHandCursor)
         button_Guardar.setStyleSheet(style.estilo_boton)
         button_search = QPushButton('BUSCAR',customer_details)
-        button_search.setFixedWidth(250)
+        button_search.setFixedWidth(200)
         button_search.setCursor(Qt.CursorShape.PointingHandCursor)
         button_search.setStyleSheet(style.estilo_boton)
         
@@ -529,18 +529,18 @@ class VentanaPrincipal(QMainWindow):
         botonera_registro2 = QHBoxLayout()
         botonera_registro2.setAlignment(Qt.AlignmentFlag.AlignRight)
         button_MostrarTabla = QPushButton('MOSTRAR TABLA',customer_details)
-        button_MostrarTabla.setFixedWidth(250)
+        button_MostrarTabla.setFixedWidth(200)
         button_MostrarTabla.setCursor(Qt.CursorShape.PointingHandCursor)
         button_MostrarTabla.setStyleSheet(style.estilo_boton)
         button_limparTabla = QPushButton('LIMPIAR TABLA',customer_details)
-        button_limparTabla.setFixedWidth(250)
+        button_limparTabla.setFixedWidth(200)
         button_limparTabla.setCursor(Qt.CursorShape.PointingHandCursor)
         button_limparTabla.setStyleSheet(style.estilo_boton)
         
         botonera_registro3 = QHBoxLayout()
         botonera_registro3.setAlignment(Qt.AlignmentFlag.AlignRight)
         excel_registro = QPushButton('DESCARGAR PLANILLA', customer_details)
-        excel_registro.setFixedWidth(250)
+        excel_registro.setFixedWidth(200)
         excel_registro.setCursor(Qt.CursorShape.PointingHandCursor)
         excel_registro.setStyleSheet(style.boton_excel)
         
@@ -566,7 +566,8 @@ class VentanaPrincipal(QMainWindow):
         layout_V1.addLayout(layout_cont1)
         layout_V1.addLayout(layout_cont2)
         layout_V1.addLayout(layout_cont3)
-        
+        layout_V1.setContentsMargins(0,0,0,4)
+
         # Crear un QGridLayout para organizar los elementos en la QGroupBox
         grid1.addLayout(layout_V1,0,0,1,1)
         
@@ -717,11 +718,11 @@ class VentanaPrincipal(QMainWindow):
         button_layout2 = QHBoxLayout()
         button_layout2.setAlignment(Qt.AlignmentFlag.AlignRight)
         button_Buscar1 = QPushButton('BUSCAR', update_customer_details)
-        button_Buscar1.setFixedWidth(250)
+        button_Buscar1.setFixedWidth(200)
         button_Buscar1.setCursor(Qt.CursorShape.PointingHandCursor)
         button_Buscar1.setStyleSheet(style.estilo_boton)
         button_Mostrar_tabla = QPushButton('MOSTRAR TABLA',update_customer_details)        
-        button_Mostrar_tabla.setFixedWidth(250)
+        button_Mostrar_tabla.setFixedWidth(200)
         button_Mostrar_tabla.setCursor(Qt.CursorShape.PointingHandCursor)
         button_Mostrar_tabla.setStyleSheet(style.estilo_boton)
         
@@ -733,11 +734,11 @@ class VentanaPrincipal(QMainWindow):
         button_layout3 = QHBoxLayout()
         button_layout3.setAlignment(Qt.AlignmentFlag.AlignRight)
         button_Actualizar = QPushButton('ACTUALIZAR',update_customer_details)
-        button_Actualizar.setFixedWidth(250)
+        button_Actualizar.setFixedWidth(200)
         button_Actualizar.setCursor(Qt.CursorShape.PointingHandCursor)
         button_Actualizar.setStyleSheet(style.estilo_boton)
         button_Limpiar = QPushButton('LIMPIAR',update_customer_details)
-        button_Limpiar.setFixedWidth(250)
+        button_Limpiar.setFixedWidth(200)
         button_Limpiar.setCursor(Qt.CursorShape.PointingHandCursor)
         button_Limpiar.setStyleSheet(style.estilo_boton)
         
@@ -756,7 +757,8 @@ class VentanaPrincipal(QMainWindow):
         layout_V2.addLayout(layout_ele1)
         layout_V2.addLayout(layout_ele2)
         layout_V2.addLayout(layout_ele3)
-        
+        layout_V2.setContentsMargins(0,0,0,4)
+
         # Crear un QGridLayout para organizar los elementos en la QGroupBox
         grid2 = QGridLayout(update_customer_details)
         grid2.addLayout(layout_V2,0,0,1,4)
@@ -825,26 +827,31 @@ class VentanaPrincipal(QMainWindow):
         layout_horiz2 = QHBoxLayout()
         layout_horiz2.setAlignment(Qt.AlignmentFlag.AlignRight)
         button_Buscar = QPushButton('BUSCAR',delete_Record)
-        button_Buscar.setFixedWidth(250)
+        button_Buscar.setFixedWidth(200)
         button_Buscar.setCursor(Qt.CursorShape.PointingHandCursor)
         button_Buscar.setStyleSheet(style.estilo_boton)
+        
         button_Eliminar = QPushButton('ELIMINAR',delete_Record)
-        button_Eliminar.setFixedWidth(250)
+        button_Eliminar.setFixedWidth(200)
         button_Eliminar.setCursor(Qt.CursorShape.PointingHandCursor)
         button_Eliminar.setStyleSheet(style.estilo_boton)
+        
         button_LimpiarTabla = QPushButton('LIMPIAR TABLA',delete_Record)
-        button_LimpiarTabla.setFixedWidth(250)
+        button_LimpiarTabla.setFixedWidth(200)
         button_LimpiarTabla.setCursor(Qt.CursorShape.PointingHandCursor)
         button_LimpiarTabla.setStyleSheet(style.estilo_boton)
         
         # Agregar al "layout" botones
         layout_horiz2.addWidget(button_Buscar)
+        layout_horiz2.addSpacing(5)
         layout_horiz2.addWidget(button_Eliminar)
+        layout_horiz2.addSpacing(5)
         layout_horiz2.addWidget(button_LimpiarTabla)
         layout_horiz2.addSpacing(15)
         
         vert.addLayout(layout_H7)
         vert.addLayout(layout_horiz2)
+        vert.setContentsMargins(0,4,0,4)
         
         # Conexiones de selañes a las funciones
         button_Buscar.clicked.connect(self.buscar_para_eliminar)
@@ -933,13 +940,13 @@ class VentanaPrincipal(QMainWindow):
         limpiar_tabla.setFixedWidth(200)
         limpiar_tabla.setCursor(Qt.CursorShape.PointingHandCursor)
         limpiar_tabla.setStyleSheet(style.estilo_boton)
-        button_limp = QPushButton('LIMPIAR CAMPOS',comboActiv)
-        button_limp.setFixedWidth(200)
-        button_limp.setCursor(Qt.CursorShape.PointingHandCursor)
-        button_limp.setStyleSheet(style.estilo_boton)
+        # button_limp = QPushButton('LIMPIAR CAMPOS',comboActiv)
+        # button_limp.setFixedWidth(200)
+        # button_limp.setCursor(Qt.CursorShape.PointingHandCursor)
+        # button_limp.setStyleSheet(style.estilo_boton)
         
-        lay_excel = QHBoxLayout()
-        lay_excel.setAlignment(Qt.AlignmentFlag.AlignRight)
+        # lay_excel = QHBoxLayout()
+        # lay_excel.setAlignment(Qt.AlignmentFlag.AlignRight)
         excel = QPushButton('DESCARGAR PLANILLA', comboActiv)
         excel.setFixedWidth(200)
         excel.setCursor(Qt.CursorShape.PointingHandCursor)
@@ -947,12 +954,13 @@ class VentanaPrincipal(QMainWindow):
         
         # AGREGA A LOS "LAYOUT"
         layout_botones9_10.addWidget(button_Gurd)
-        layout_botones9_10.addWidget(button_Tabla)
         layout_botones9_10.addWidget(button_Actaul)
-        layout_botones11_12.addWidget(limpiar_tabla)
+        layout_botones9_10.addWidget(limpiar_tabla)#limpiar_tabla
+        layout_botones11_12.addWidget(button_Tabla)#button_Tabla
         layout_botones11_12.addWidget(button_Elim)
-        layout_botones11_12.addWidget(button_limp)
-        lay_excel.addWidget(excel)
+        layout_botones11_12.addWidget(excel)#button_Elim
+        # lay_excel.addWidget(limpiar_tabla)
+        # lay_excel.addWidget(excel)
         
         layout_grup1 = QHBoxLayout()
         layout_grup1.addLayout(layout_H8)
@@ -960,16 +968,16 @@ class VentanaPrincipal(QMainWindow):
         layout_grup2 = QHBoxLayout()
         layout_grup2.addLayout(layout_H9)
         layout_grup2.addLayout(layout_botones11_12)
-        layout_grup3 = QHBoxLayout()
-        layout_grup3.addLayout(lay_excel)
-        
+        # layout_grup3 = QHBoxLayout()
+        # layout_grup3.addLayout(lay_excel)
         
         # LAYOUT VENTICAL Y AGREGA LOS LAYOUT HORIZONTALES
         layoutV = QVBoxLayout()
         layoutV.addLayout(layout_grup1)
         layoutV.addLayout(layout_grup2)
-        layoutV.addLayout(layout_grup3)        
-       
+        # layoutV.addLayout(layout_grup3)
+        layoutV.setContentsMargins(0,0,0,4)
+        
         # ESTABLECE EL LAYOUT VENTICAL A LA GRILLA
         grid4.addLayout(layoutV,0,0,1,1)
             
@@ -978,7 +986,7 @@ class VentanaPrincipal(QMainWindow):
         button_Tabla.clicked.connect(self.mostrarACTIC)
         button_Actaul.clicked.connect(self.actualizarACTIV)
         button_Elim.clicked.connect(self.eliminarACTIV)
-        button_limp.clicked.connect(self.limp)
+        # button_limp.clicked.connect(self.limp)
         limpiar_tabla.clicked.connect(self.limpiar_tabla_disciplina)
         excel.clicked.connect(self.planilla_disciplina)
 
@@ -1112,7 +1120,7 @@ class VentanaPrincipal(QMainWindow):
         tipoDePago.setFixedWidth(150)
         self.input_tipoDePago = QLineEdit(grupo_pagos)
         self.input_tipoDePago.setStyleSheet(style.estilo_lineedit)
-        self.input_tipoDePago.setFixedWidth(300)
+        self.input_tipoDePago.setFixedWidth(250)
         self.input_tipoDePago.setPlaceholderText("'Efectivo' o 'Transferencia'")
         layout_elementos_pagos2.addWidget(tipoDePago)   
         layout_elementos_pagos2.addWidget(self.input_tipoDePago)
@@ -1128,10 +1136,10 @@ class VentanaPrincipal(QMainWindow):
         layoutBoton.setAlignment(Qt.AlignmentFlag.AlignRight)
         guar_pagos = QPushButton('GUARDAR', grupo_pagos)
         guar_pagos.setCursor(Qt.CursorShape.PointingHandCursor)
-        guar_pagos.setFixedWidth(250)
+        guar_pagos.setFixedWidth(200)
         guar_pagos.setStyleSheet(style.estilo_boton) 
         most_pagos = QPushButton('MOSTRAR', grupo_pagos)
-        most_pagos.setFixedWidth(250)
+        most_pagos.setFixedWidth(200)
         most_pagos.setCursor(Qt.CursorShape.PointingHandCursor)
         most_pagos.setStyleSheet(style.estilo_boton)
         layoutBoton.addWidget(guar_pagos)
@@ -1141,19 +1149,19 @@ class VentanaPrincipal(QMainWindow):
         layoutBoton2.setAlignment(Qt.AlignmentFlag.AlignRight)
         act_pagos = QPushButton('ACTUALIZAR', grupo_pagos)
         act_pagos.setCursor(Qt.CursorShape.PointingHandCursor)
-        act_pagos.setFixedWidth(250)
+        act_pagos.setFixedWidth(200)
         act_pagos.setStyleSheet(style.estilo_boton)
         eli_pagos = QPushButton('ELIMINAR', grupo_pagos)
         eli_pagos.setCursor(Qt.CursorShape.PointingHandCursor)
-        eli_pagos.setFixedWidth(250)
+        eli_pagos.setFixedWidth(200)
         eli_pagos.setStyleSheet(style.estilo_boton)
         layoutBoton2.addWidget(act_pagos)
         layoutBoton2.addWidget(eli_pagos)
         
         layout_panilla = QHBoxLayout() 
         layout_panilla.setAlignment(Qt.AlignmentFlag.AlignRight)
-        planilla = QPushButton('PLANILLA', grupo_pagos)
-        planilla.setFixedWidth(250)
+        planilla = QPushButton('DESCARGAR PLANILLA', grupo_pagos)
+        planilla.setFixedWidth(200)
         planilla.setCursor(Qt.CursorShape.PointingHandCursor)
         planilla.setStyleSheet(style.boton_excel)
         layout_panilla.addWidget(planilla)
@@ -1172,7 +1180,8 @@ class VentanaPrincipal(QMainWindow):
         v.addLayout(l1)
         v.addLayout(l2)
         v.addLayout(l3)
-        
+        v.setContentsMargins(0,0,0,4)
+
         # Señales de botones
         guar_pagos.clicked.connect(self.guardarPagos)
         most_pagos.clicked.connect(self.mostrarPagos)
@@ -1306,7 +1315,7 @@ class VentanaPrincipal(QMainWindow):
         self.view_al2.setCalendarPopup(True)
         elementos2.addWidget(view_al2)      
         elementos2.addWidget(self.view_al2)
-        elementos2.setContentsMargins(0,0,50,0)     # AGREGA MARGEN ENTRE ELEMENTOS
+        elementos2.setContentsMargins(0,0,50,0)
         
         view_asistencia = QLabel("Asistentcia:", comboView)
         view_asistencia.setStyleSheet(style.label)
@@ -1412,7 +1421,8 @@ class VentanaPrincipal(QMainWindow):
         layout_V4.addLayout(horizontal)
         layout_V4.addLayout(horizontal2)
         layout_V4.addLayout(horizontal3)
-        
+        layout_V4.setContentsMargins(0,0,0,4)
+
         # AGREGAR AL "GRID" EL LAYOUT VERTICAL
         grid5.addLayout(layout_V4,0,0,1,5)
         
@@ -1489,11 +1499,12 @@ class VentanaPrincipal(QMainWindow):
         horas_tra.setFixedWidth(120)
         self.horas_tra = QLineEdit(grupo_empleados)
         self.horas_tra.setStyleSheet(style.estilo_lineedit)
+        self.horas_tra.setPlaceholderText("Ej: 8")
         self.horas_tra.setFixedWidth(100)
         layout_emp.addWidget(horas_tra)      
         layout_emp.addWidget(self.horas_tra)
         
-        fecha_tra = QLabel('Fecha:',grupo_empleados)
+        fecha_tra = QLabel('Fecha diaria:',grupo_empleados)
         fecha_tra.setStyleSheet(style.label)
         fecha_tra.setFixedWidth(60)
         self.fecha_tra = QDateEdit(grupo_empleados)
@@ -1521,7 +1532,7 @@ class VentanaPrincipal(QMainWindow):
         layout_emp1.addWidget(periodo)       
         layout_emp1.addWidget(self.periodo)
         
-        fin_tra = QLabel('Al:',grupo_empleados)
+        fin_tra = QLabel('Al: ',grupo_empleados)
         fin_tra.setStyleSheet(style.label)
         fin_tra.setFixedWidth(50)
         self.fin_tra = QDateEdit(grupo_empleados)
@@ -1580,6 +1591,7 @@ class VentanaPrincipal(QMainWindow):
         # AGREDA LAYOUT HORIZONTALES AL LAYOUT VERTICAL
         vertical_v.addLayout(primer)
         vertical_v.addLayout(segundo)
+        vertical_v.setContentsMargins(0,0,0,4)
         
         grid_emp.addLayout(vertical_v,0,0,1,5)
         
@@ -1631,6 +1643,7 @@ class VentanaPrincipal(QMainWindow):
         h.addSpacing(25)
         h.addLayout(v)
         h.addSpacing(25)
+        
         grid_emp.addLayout(h,1,0,1,5)       
         
         # Establecer el diseño del QGroupBox
@@ -1695,7 +1708,7 @@ class VentanaPrincipal(QMainWindow):
         cursor.execute("SELECT nombre FROM cuenta WHERE categoria = 'debe'")
         dato = cursor.fetchall()
         self.sugerencia1 = [str(item[0]) for item in dato]
-        print(self.sugerencia1)
+        # print(self.sugerencia1)
 
         lista_debe = QCompleter(self.sugerencia1)
         lista_debe.setCaseSensitivity(Qt.CaseSensitivity.CaseInsensitive)
@@ -1725,7 +1738,7 @@ class VentanaPrincipal(QMainWindow):
         cursor.execute("SELECT nombre FROM cuenta WHERE categoria = 'haber'")
         datos = cursor.fetchall()
         self.sugerencia2 = [str(item[0]) for item in datos]
-        print(self.sugerencia2)
+        # print(self.sugerencia2)
         
         lista_haber = QCompleter(self.sugerencia2)
         lista_haber.setCaseSensitivity(Qt.CaseSensitivity.CaseInsensitive)
@@ -1790,7 +1803,8 @@ class VentanaPrincipal(QMainWindow):
         vertical.addLayout(layout_libro)
         vertical.addLayout(layout_conepto)
         vertical.addLayout(layout_libro3)
-                
+        vertical.setContentsMargins(0,0,0,4)
+        
         # AGREDA LOS LAYOUT VERTICAL A LA GRILLA
         grid_resumen.addLayout(vertical,0,0,1,5)
         
@@ -2392,11 +2406,7 @@ class VentanaPrincipal(QMainWindow):
             
     def limpiar_tabla_disciplina(self):
         clear_tabla_disciplina(self)
-    
-    def limp(self):
-        self.input_disciplina4.clear()
-        self.input_precio.clear()
-    
+       
     def eliminarACTIV(self):#-----------------------------
         # Primero corroborar la seleccion de la fila
         if not self.tableActivi.currentItem():
@@ -2535,7 +2545,7 @@ class VentanaPrincipal(QMainWindow):
             errorConsulta("Registro de pagos",f"Error en la cosulta: {str(ex)}")
         
     def establecer_datos(self):
-        seleccionDeTablaPAGOS(self,QDate)
+        seleccionDeTablaPAGOS(self,QDate,mensaje_ingreso_datos)
         
     def actualizarPagos(self):
         if not self.tablePagos.currentItem():
@@ -2581,6 +2591,7 @@ class VentanaPrincipal(QMainWindow):
                 self.camposLimpios()
                 self.mostrarPagos()
                 self.label_monto.clear()
+                self.tablePagos.clearSelection()  # Deseleccionar la fila eliminada 
             else:
                 ingreso_datos("Registro de pagos","Registro no actualizado")
             cursor.close()
@@ -3141,6 +3152,7 @@ class VentanaPrincipal(QMainWindow):
                 self.id_horas_empleado.clear()
                 self.horas_tra.clear()
                 self.fecha_tra.setDate(QDate.currentDate())
+                self.tablaHoras.clearSelection() # Deselecciona la fila
             else:
                 ingreso_datos("Registro de horas","Registro no actualizado")
                 

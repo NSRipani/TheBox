@@ -30,7 +30,7 @@ def consultaPorAlumno(self,cursor,results,QHeaderView,QTableWidget,QAbstractItem
                 item.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
             if j == 7:  # Ajustar alineación para ciertas columnas
                 item.setTextAlignment(Qt.AlignmentFlag.AlignRight)
-                item.setText(f"$ {val}")
+                # item.setText(f"$ {val}")
             self.tablaVIEW.setItem(i, j, item)
             
     if self.tablaVIEW.rowCount() == len(results):
@@ -85,7 +85,7 @@ def totalAlumno(self,cursor,results,QHeaderView,QTableWidget,QAbstractItemView,Q
                 item.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
             if j == 8:  # Ajustar alineación para ciertas columnas
                 item.setTextAlignment(Qt.AlignmentFlag.AlignRight)
-                item.setText(f"$ {valor}")
+                # item.setText(f"$ {valor}")
             self.tablaVIEW.setItem(i, j, item)
     
     if self.tablaVIEW.rowCount() == len(results):
@@ -151,7 +151,7 @@ def consultarDeDisciplina(self,cursor,results,QHeaderView,QTableWidget,QAbstract
                 item.setTextAlignment(Qt.AlignmentFlag.AlignCenter) 
             if j == 3:  # Ajustar alineación para ciertas columnas
                 item.setTextAlignment(Qt.AlignmentFlag.AlignRight) 
-                item.setText(f"$ {val}")
+                # item.setText(f"$ {val}")
             self.tablaVIEW.setItem(i, j, item)
     
     # Después de mostrar los resultados en la tabla
@@ -200,11 +200,11 @@ def consultaPorDisciplina(self,cursor,results,QHeaderView,QTableWidget,QAbstract
                 fecha = QDate.fromString(str(val), "yyyy-MM-dd")  # Convertir la fecha a objeto QDate
                 item.setText(fecha.toString("dd-MM-yyyy"))  # Establecer el formato de visualización
             
-            if j in [2, 4, 6, 7]:  # Ajustar alineación para ciertas columnas
+            if j in [2, 4, 7]:  # Ajustar alineación para ciertas columnas
                 item.setTextAlignment(Qt.AlignmentFlag.AlignCenter)  
             if j == 8:  # Ajustar alineación para ciertas columnas
                 item.setTextAlignment(Qt.AlignmentFlag.AlignRight)
-                item.setText(f"$ {val}")
+                # item.setText(f"$ {val}")
             self.tablaVIEW.setItem(i, j, item)
                 
     # Después de mostrar los resultados en la tabla

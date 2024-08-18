@@ -632,10 +632,10 @@ estilo_menubar = """
         font-weight: bold;
         border-bottom: 2px solid #808080;
     }
-    QMenuBar::item:selected {
+    QAction::item:selected {
         background-color: #333333; 
     }
-    QMenuBar::item:selected:disabled {
+    QAction::item:selected:disabled {
         background-color: #1a1a1a; 
     }   
     QAction:hover {
