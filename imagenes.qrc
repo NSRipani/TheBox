@@ -1,5 +1,5 @@
 <RCC>
-    <qresource png= prefix="imagenes">
+    <qresource prefix="imagenes">
         <file>cepillar.png</file>
         <file>obrar.png</file>
         <file>contabilidad.png</file>
