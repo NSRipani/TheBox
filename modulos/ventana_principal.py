@@ -1,6 +1,8 @@
 # libreria para usar patrones, utilizados para buscar y manipular cadenas de texto de manera flexible
 import re
 
+import img
+
 # Librería para generar Archivos de tipo Excel(.xlsx)
 from openpyxl import Workbook
 from openpyxl.styles import Font, PatternFill, Border, Side, numbers

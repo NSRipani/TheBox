@@ -1,6 +1,5 @@
 # Módulo para abrir aplicación
 import sys
-
 # Librería de MySQL
 import mysql.connector
 from mysql.connector import Error

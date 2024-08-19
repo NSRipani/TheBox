@@ -1,0 +1,27 @@
+<RCC>
+  <qresource prefix="img">
+    <file>img/actualizar-alumno.png</file>
+    <file>img/archivo.png</file>
+    <file>img/asistencia.png</file>
+    <file>img/asistencia-alumno.png</file>
+    <file>img/balance.png</file>
+    <file>img/buscar-alumno.png</file>
+    <file>img/carpeta-abierta.png</file>
+    <file>img/cepillar.png</file>
+    <file>img/cobrar.png</file>
+    <file>img/contabilidad.png</file>
+    <file>img/controlar.png</file>
+    <file>img/disciplina.png</file>
+    <file>img/disquete.png</file>
+    <file>img/eliminar-alumno.png</file>
+    <file>img/empleado.png</file>
+    <file>img/excel.png</file>
+    <file>img/expediente.png</file>
+    <file>img/flecha-combo.png</file>
+    <file>img/hora.png</file>
+    <file>img/icono-QMessage.png</file>
+    <file>img/logo.png</file>
+    <file>img/registro-alumno.png</file>
+    <file>img/resumen.png</file>
+  </qresource>
+</RCC>
