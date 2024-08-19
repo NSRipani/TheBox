@@ -1,14 +1,22 @@
-<!DOCTYPE RCC><RCC version="1.0">
+<RCC>
     <qresource prefix="imagenes">
         <file>actualizar-alumno.png</file>
-        <file>asistencia-alumno.png</file>
+        <file>archivo.png</file>
         <file>asistencia.png</file>
+        <file>asistencia-alumno.png</file>
         <file>balance.png</file>
         <file>buscar-alumno.png</file>
+        <file>carpeta-abierta.png</file>
+        <file>cepillar.png</file>
+        <file>cobrar.png</file>
+        <file>contabilidad.png</file>
+        <file>controlar.png</file>
         <file>disciplina.png</file>
+        <file>disquete.png</file>
         <file>eliminar-alumno.png</file>
         <file>empleado.png</file>
         <file>excel.png</file>
+        <file>expediente.png</file>
         <file>flecha-combo.png</file>
         <file>hora.png</file>
         <file>icono-QMessage.png</file>
