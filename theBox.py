@@ -1,5 +1,8 @@
 # Módulo para abrir aplicación
 import sys
+
+import img.img as img
+
 # Librería de MySQL
 import mysql.connector
 from mysql.connector import Error
